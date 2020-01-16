@@ -26,7 +26,7 @@ object TpsData {
 
   val created = LocalDateTime.now
   val id = TpsId(BSONObjectID.generate.stringify)
-  val tpsPayment: TpsPayment = TpsPayment(1.92, TaxTypes.cds, StatusTypes.SENT, "12345X", None, created)
+  val tpsPayment: TpsPayment = TpsPayment(1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created)
   val tpsPayments: TpsPayments = TpsPayments(Some(id), created, List(tpsPayment))
 
   //language=JSON
@@ -38,7 +38,7 @@ object TpsData {
         {
         "amount": 1.92,
         "taxType": "cds",
-        "status": "SENT",
+        "status": "sent",
         "reference": "12345X",
         "updated": "${created}"
         }

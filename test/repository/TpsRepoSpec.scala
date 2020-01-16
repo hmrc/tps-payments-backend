@@ -25,6 +25,7 @@ class TpsRepoSpec extends ItSpec {
   val repo = injector.instanceOf[TpsRepo]
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     val remove = repo.removeAll().futureValue
   }
 

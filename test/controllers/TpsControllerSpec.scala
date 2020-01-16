@@ -26,6 +26,7 @@ class TpsControllerSpec extends ItSpec {
   val testConnector = injector.instanceOf[TestConnector]
 
   override def beforeEach(): Unit = {
+    super.beforeEach()
     val remove = repo.removeAll().futureValue
   }
 

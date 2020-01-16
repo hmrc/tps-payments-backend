@@ -37,31 +37,34 @@ object AuthWireMockResponses {
     stubFor(post(urlEqualTo("/auth/authorise"))
       .withRequestBody(
         equalToJson(
+          //language=JSON
           s"""
-             |{
-             |  "authorise": [
-             |    {
-             |     "identifiers":[],
-             |     "state":"Activated",
-             |     "enrolment":"tps_payments"
-             |    },
-             |    {
-             |      "authProviders": [
-             |        "$authProvider"
-             |      ]
-             |    }
-             |  ]
-             |}
+             {
+               "authorise": [
+                 {
+                  "identifiers":[],
+                  "state":"Activated",
+                  "enrolment":"tps_payments"
+                 },
+                 {
+                   "authProviders": [
+                     "$authProvider"
+                   ]
+                 }
+               ]
+             }
            """.stripMargin, true, true))
       .willReturn(aResponse()
         .withStatus(200)
-        .withBody(s"""
-                     |{
-                     |  "optionalCredentials":{
-                     |    "providerId": "$strideUserId",
-                     |    "providerType": "$authProvider"
-                     |  }
-                     |}
+        .withBody(
+          //language=JSON
+          s"""
+                     {
+                       "optionalCredentials":{
+                         "providerId": "$strideUserId",
+                         "providerType": "$authProvider"
+                       }
+                     }
        """.stripMargin)))
 
   }
@@ -70,7 +73,7 @@ object AuthWireMockResponses {
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
-        .withHeader("WWW-Authenticate", s"""MDTP detail=\"$error\"""")
+        .withHeader("WWW-Authenticate", s"""MDTP detail="$error"""")
       )
     )
   }

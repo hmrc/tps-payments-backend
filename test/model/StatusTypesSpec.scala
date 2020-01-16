@@ -19,14 +19,14 @@ package model
 import play.api.libs.json.{JsString, Json}
 import support.{RichMatchers, UnitSpec}
 
-class StatusTypesSpec extends UnitSpec with RichMatchers {
+class StatusTypesSpec extends UnitSpec {
 
   "de/serialize TaxTypes" in {
 
     val statusTypes = List(
-      "SENT" -> StatusTypes.SENT,
-      "COMPLETE" -> StatusTypes.COMPLETE,
-      "FAILED" -> StatusTypes.FAILED
+      "sent" -> StatusTypes.sent,
+      "complete" -> StatusTypes.complete,
+      "failed" -> StatusTypes.failed
     )
 
     statusTypes.foreach { tt =>

@@ -19,7 +19,7 @@ package model
 import play.api.libs.json.{JsString, Json}
 import support.{RichMatchers, UnitSpec}
 
-class TaxTypesSpec extends UnitSpec with RichMatchers {
+class TaxTypesSpec extends UnitSpec {
 
   "de/serialize TaxTypes" in {
 
