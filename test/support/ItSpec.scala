@@ -88,7 +88,7 @@ trait ItSpec
     .configure(configMap).build()
 
   def configMap = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-it",
+    "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
     "microservice.services.auth.port" -> WireMockSupport.port
   )
 
