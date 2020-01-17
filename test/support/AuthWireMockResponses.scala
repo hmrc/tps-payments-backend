@@ -42,16 +42,12 @@ object AuthWireMockResponses {
              {
                "authorise": [
                  {
-                  "identifiers":[],
-                  "state":"Activated",
-                  "enrolment":"tps_payments"
-                 },
-                 {
                    "authProviders": [
                      "$authProvider"
                    ]
                  }
-               ]
+               ],
+             "retrieve" : [ "allEnrolments" ]
              }
            """.stripMargin, true, true))
       .willReturn(aResponse()
@@ -59,12 +55,7 @@ object AuthWireMockResponses {
         .withBody(
           //language=JSON
           s"""
-                     {
-                       "optionalCredentials":{
-                         "providerId": "$strideUserId",
-                         "providerType": "$authProvider"
-                       }
-                     }
+                    {"allEnrolments":[{"key":"tps_payments","identifiers":[],"state":"activated"}]}
        """.stripMargin)))
 
   }
