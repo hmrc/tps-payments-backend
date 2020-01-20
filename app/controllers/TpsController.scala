@@ -16,18 +16,18 @@
 
 package controllers
 
-import auth.{AuthActions, UnhappyPathResponses}
+import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import model.{TpsId, TpsPayments}
 import play.api.mvc.{Action, ControllerComponents}
 import repository.TpsRepo
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TpsController @Inject() (authConnector:        AuthConnector,
+class TpsController @Inject() (actions:              Actions,
                                cc:                   ControllerComponents,
                                tpsRepo:              TpsRepo,
                                appConfig:            AppConfig,
@@ -35,9 +35,9 @@ class TpsController @Inject() (authConnector:        AuthConnector,
 )(
     implicit
     executionContext: ExecutionContext
-) extends AuthActions(authConnector, cc, appConfig, unhappyPathResponses) {
+) extends BackendController(cc) {
 
-  def storeTpsPayments(): Action[TpsPayments] = strideAuthenticate[TpsPayments] { implicit request =>
+  def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
     val tpsId: TpsId = TpsId.fresh
     for {
