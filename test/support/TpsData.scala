@@ -24,7 +24,7 @@ import reactivemongo.bson.BSONObjectID
 
 object TpsData {
 
-  val created = LocalDateTime.now
+  val created = LocalDateTime.parse("2020-01-20T11:56:46")
   val id = TpsId(BSONObjectID.generate.stringify)
   val tpsPayment: TpsPayment = TpsPayment(1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created)
   val tpsPayments: TpsPayments = TpsPayments(Some(id), created, List(tpsPayment))

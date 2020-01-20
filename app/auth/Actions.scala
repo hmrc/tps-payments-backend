@@ -16,12 +16,16 @@
 
 package auth
 
-import play.api.mvc.{Request, WrappedRequest}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
+import com.google.inject.Inject
+import play.api.mvc._
 
-final class AuthenticatedRequest[A](val request:     Request[A],
-                                    val credentials: Credentials
-) extends WrappedRequest[A](request) {
+import scala.concurrent.ExecutionContext
 
+class Actions @Inject() (
+    authoriseAction: AuthenticatedAction,
+    actionBuilder:   DefaultActionBuilder)(implicit ec: ExecutionContext) {
+
+  def strideAuthenticateAction() = {
+    actionBuilder andThen authoriseAction
+  }
 }
-

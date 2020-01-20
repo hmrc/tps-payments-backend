@@ -16,37 +16,36 @@
 
 package auth
 
-import com.google.inject.Inject
 import config.AppConfig
+import controllers.TpsController
+import javax.inject._
+import play.api.Logger
 import play.api.mvc._
-import play.api.{Configuration, Environment, Logger}
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.credentials
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
-import uk.gov.hmrc.play.bootstrap.config.AuthRedirects
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class StrideAuthenticatedAction @Inject() (
+class AuthenticatedAction @Inject() (
     af:           AuthorisedFunctions,
-    appConfig:    AppConfig,
     badResponses: UnhappyPathResponses,
-    cc:           ControllerComponents)(implicit ec: ExecutionContext) extends ActionBuilder[AuthenticatedRequest, AnyContent] with AuthRedirects {
+    cc:           MessagesControllerComponents,
+    appConfig:    AppConfig)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
 
-  override def invokeBlock[A](request: Request[A], block: AuthenticatedRequest[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
     implicit val r: Request[A] = request
 
-    val strideEnrolment = Enrolment(appConfig.strideRole)
-
-    af.authorised((strideEnrolment) and AuthProviders(PrivilegedApplication)).retrieve(credentials) {
-      case Some(creds) =>
-        block(new AuthenticatedRequest(request, creds))
-      case None =>
+    af.authorised(AuthProviders(PrivilegedApplication)).retrieve(allEnrolments) {
+      case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
+        block(request)
+      case e => {
         Logger.warn(s"user logged in with no credentials")
-        Future.successful(badResponses.unauthorised)
+        Future successful badResponses.unauthorised
+      }
     }.recover {
       case _: NoActiveSession => {
         Logger.warn(s"no active session")
@@ -56,13 +55,11 @@ class StrideAuthenticatedAction @Inject() (
         Logger.debug(s"Unauthorised because of ${e.reason}, $e")
         badResponses.unauthorised
     }
+
   }
 
   override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 
-  override protected def executionContext: ExecutionContext = ec
+  override protected def executionContext: ExecutionContext = cc.executionContext
 
-  override def env: Environment = appConfig.runModeEnvironment
-
-  override def config: Configuration = appConfig.runTimeConfig
 }
