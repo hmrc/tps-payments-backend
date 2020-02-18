@@ -17,7 +17,7 @@
 package support
 
 import javax.inject.{Inject, Singleton}
-import model.TpsPayments
+import model.{TpsId, TpsPayments}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -29,6 +29,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   val port = 19001
   val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
-  def store(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.POST(s"http://localhost:$port/tps-payments-backend/store", tpsPayments, headers)
+  def store(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Future[TpsId] =
+    httpClient.POST[TpsPayments, TpsId](s"http://localhost:$port/tps-payments-backend/store", tpsPayments, headers)
+
+  def find(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
+    httpClient.GET[TpsPayments](s"http://localhost:$port/tps-payments-backend/find/id/${id.value}", headers)
 }

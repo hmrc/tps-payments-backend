@@ -20,19 +20,20 @@ import java.time.LocalDateTime
 
 import model._
 import play.api.libs.json.{JsValue, Json}
-import reactivemongo.bson.BSONObjectID
 
 object TpsData {
 
   val created = LocalDateTime.parse("2020-01-20T11:56:46")
-  val id = TpsId(BSONObjectID.generate.stringify)
+  val id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val pid = "123"
   val tpsPayment: TpsPayment = TpsPayment(1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created)
-  val tpsPayments: TpsPayments = TpsPayments(Some(id), created, List(tpsPayment))
+  val tpsPayments: TpsPayments = TpsPayments(Some(id), pid, created, List(tpsPayment))
 
   //language=JSON
   val tpsPaymentsJson: JsValue = Json.parse(
     s"""{
         "_id" : "${id.value}",
+        "pid" : "${pid}",
         "created":  "${created}",
        "payments": [
         {

@@ -16,7 +16,11 @@
 
 package controllers
 
+import model.TpsId
+import play.api.Logger
 import play.api.http.Status
+import play.api.libs.json.Json
+import reactivemongo.api.commands.UpdateWriteResult
 import repository.TpsRepo
 import support.{AuthWireMockResponses, ItSpec, TestConnector, TpsData}
 
@@ -33,8 +37,7 @@ class TpsControllerSpec extends ItSpec {
   "store data when authorised" in {
     AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
     val result = testConnector.store(TpsData.tpsPayments).futureValue
-    result.status shouldBe Status.OK
-    result.body shouldBe "updated 1 records"
+    result shouldBe TpsData.id
   }
 
   "Not authorised should get an exception" in {
@@ -45,6 +48,20 @@ class TpsControllerSpec extends ItSpec {
   "Insufficient Enrolments should get an exception" in {
     AuthWireMockResponses.failsWith("InsufficientEnrolments")
     an[Exception] should be thrownBy testConnector.store(TpsData.tpsPayments).futureValue
+  }
+
+  "Check that TpsData can be found" in {
+    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
+    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
+    upserted.n shouldBe 1
+    val result = testConnector.find(TpsData.id).futureValue
+    result shouldBe TpsData.tpsPayments
+  }
+
+  "Check that TpsData cannot be found" in {
+    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
+    val result = testConnector.find(TpsData.id).failed.futureValue
+    result.getMessage should include(s"No payments found for id ${TpsData.id.value}")
   }
 
 }

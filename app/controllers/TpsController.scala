@@ -20,7 +20,9 @@ import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
 import model.{TpsId, TpsPayments}
-import play.api.mvc.{Action, ControllerComponents}
+import play.api.Logger
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
@@ -39,13 +41,31 @@ class TpsController @Inject() (actions:              Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
-    val tpsId: TpsId = TpsId.fresh
-    for {
-      result <- tpsRepo.upsert(tpsId, request.body.copy(_id = Some(tpsId)))
-    } yield {
-      Ok(s"updated ${result.n.toString} records")
+    val valueToInsert: TpsPayments = request.body._id match {
+      case Some(x) => request.body
+      case None => {
+        val tpsId: TpsId = TpsId.fresh
+        request.body.copy(_id = Some(tpsId))
+      }
     }
+    for {
+      result <- tpsRepo.upsert(valueToInsert._id.getOrElse(throw new RuntimeException("Error getting id for insert")), valueToInsert)
+    } yield {
+      Ok(Json.toJson(valueToInsert._id))
+    }
+  }
 
+  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction.async { implicit request =>
+    Logger.debug(s"received vrn ${id}")
+    for {
+      data <- tpsRepo.findPayment(id)
+    } yield {
+      data match {
+        case Some(x) => Ok(Json.toJson(x))
+        case None    => NotFound(s"No payments found for id ${id.value}")
+      }
+
+    }
   }
 
 }

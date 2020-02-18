@@ -22,7 +22,7 @@ import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.indexes._
 import reactivemongo.bson.BSONDocument
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, config: RepoConfig)(implicit ec: ExecutionContext)
@@ -35,5 +35,7 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
       options = BSONDocument("expireAfterSeconds" -> config.expireMongo.toSeconds)
     )
   )
+
+  def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
 }

@@ -21,12 +21,12 @@ import java.time.LocalDateTime
 import play.api.libs.json.{Json, OFormat}
 
 case class TpsPayment(
-    amount:          BigDecimal,
+    amount:          Double,
     taxType:         TaxType,
     status:          StatusType,
     reference:       String,
-    chargeReference: Option[String],
-    updated:         LocalDateTime
+    chargeReference: Option[String] = None,
+    updated:         LocalDateTime  = LocalDateTime.now()
 )
 
 object TpsPayment {

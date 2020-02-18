@@ -63,5 +63,8 @@ object StatusTypes extends Enum[StatusType] {
   case object failed extends StatusType {
   }
 
+  case object initial extends StatusType {
+  }
+
   def values: immutable.IndexedSeq[StatusType] = findValues
 }

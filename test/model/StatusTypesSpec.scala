@@ -26,7 +26,8 @@ class StatusTypesSpec extends UnitSpec {
     val statusTypes = List(
       "sent" -> StatusTypes.sent,
       "complete" -> StatusTypes.complete,
-      "failed" -> StatusTypes.failed
+      "failed" -> StatusTypes.failed,
+      "initial" -> StatusTypes.initial
     )
 
     statusTypes.foreach { tt =>
