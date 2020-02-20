@@ -19,7 +19,7 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.{TpsId, TpsPayments}
+import model.{TpsId, TpsPayment, TpsPayments}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -41,11 +41,12 @@ class TpsController @Inject() (actions:              Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
+    val updatedPayments: List[TpsPayment] = request.body.payments map (payment => payment.copy(_id = Some(TpsId.fresh)))
     val valueToInsert: TpsPayments = request.body._id match {
-      case Some(x) => request.body
+      case Some(x) => request.body.copy(payments = updatedPayments)
       case None => {
         val tpsId: TpsId = TpsId.fresh
-        request.body.copy(_id = Some(tpsId))
+        request.body.copy(_id      = Some(tpsId), payments = updatedPayments)
       }
     }
     for {
