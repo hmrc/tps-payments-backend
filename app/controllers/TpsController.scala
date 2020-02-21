@@ -41,7 +41,7 @@ class TpsController @Inject() (actions:              Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
-    val updatedPayments: List[TpsPayment] = request.body.payments map (payment => payment.copy(_id = Some(TpsId.fresh)))
+    val updatedPayments: List[TpsPayment] = request.body.payments map (payment => payment.copy(paymentId = Some(TpsId.fresh)))
     val valueToInsert: TpsPayments = request.body._id match {
       case Some(x) => request.body.copy(payments = updatedPayments)
       case None => {

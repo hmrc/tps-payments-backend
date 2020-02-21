@@ -26,7 +26,7 @@ object TpsData {
   val created = LocalDateTime.parse("2020-01-20T11:56:46")
   val id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pid = "123"
-  val tpsPayment: TpsPayment = TpsPayment(1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created, Some(id), 2000, "AR")
+  val tpsPayment: TpsPayment = TpsPayment(Some(id), 1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created, Some(2000), "AR")
   val tpsPayments: TpsPayments = TpsPayments(Some(id), pid, created, List(tpsPayment))
 
   //language=JSON
@@ -37,12 +37,12 @@ object TpsData {
         "created":  "${created}",
        "payments": [
         {
+         "paymentId" : "${id.value}",
         "amount": 1.92,
         "taxType": "cds",
         "status": "sent",
         "reference": "12345X",
         "updated": "${created}",
-         "_id" : "${id.value}",
          "period": 2000,
          "customerName" : "AR"
         }
