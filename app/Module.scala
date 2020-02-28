@@ -15,9 +15,7 @@
  */
 
 import com.google.inject.{AbstractModule, Provides, Singleton}
-import play.api.{Configuration, Environment, Mode}
 import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 
 class Module extends AbstractModule {
 

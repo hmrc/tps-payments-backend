@@ -37,6 +37,7 @@ class TpsControllerSpec extends ItSpec {
   "store data when authorised" in {
     AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
     val result = testConnector.store(TpsData.tpsPayments).futureValue
+    Logger.error(Json.toJson(result).toString())
     result shouldBe TpsData.id
   }
 
