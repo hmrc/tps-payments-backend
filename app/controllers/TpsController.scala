@@ -19,7 +19,7 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.{TpsId, TpsPayment, TpsPayments}
+import model.{TpsId, TpsPaymentItem, TpsPayments, PaymentItemId}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -41,7 +41,7 @@ class TpsController @Inject() (actions:              Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
-    val updatedPayments: List[TpsPayment] = request.body.payments map (payment => payment.copy(paymentId = Some(TpsId.fresh)))
+    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
     val valueToInsert: TpsPayments = request.body._id match {
       case Some(x) => request.body.copy(payments = updatedPayments)
       case None => {

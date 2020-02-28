@@ -15,18 +15,19 @@
  */
 
 package model
+import controllers.ValueClassBinder.valueClassBinder
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.PathBindable
+import reactivemongo.bson.BSONObjectID
 
-import java.time.LocalDateTime
-
-import play.api.libs.json.{Json, OFormat}
-
-case class TpsPayments(
-    _id:      Option[TpsId]        = None,
-    pid:      String,
-    created:  LocalDateTime        = LocalDateTime.now(),
-    payments: List[TpsPaymentItem]
+final case class PaymentItemId(
+    value: String
 )
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+object PaymentItemId {
+  implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
+  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  def fresh: PaymentItemId = PaymentItemId(BSONObjectID.generate.stringify)
 }
+
