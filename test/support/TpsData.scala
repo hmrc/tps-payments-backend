@@ -28,7 +28,7 @@ object TpsData {
   val paymentId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pid = "123"
   val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, TaxTypes.cds, StatusTypes.sent, "12345X", None, created, Some(2000), "AR")
-  val tpsPayments: TpsPayments = TpsPayments(Some(id), pid, created, List(tpsPayment))
+  val tpsPayments: TpsPayments = TpsPayments(id, pid, created, List(tpsPayment))
 
   //language=JSON
   val tpsPaymentsJson: JsValue = Json.parse(

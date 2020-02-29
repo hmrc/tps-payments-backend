@@ -16,7 +16,6 @@
 
 package controllers
 
-import model.TpsId
 import play.api.Logger
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -39,6 +38,12 @@ class TpsControllerSpec extends ItSpec {
     val result = testConnector.store(TpsData.tpsPayments).futureValue
     Logger.error(Json.toJson(result).toString())
     result shouldBe TpsData.id
+  }
+
+  "getId" in {
+    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
+    val result = testConnector.getId.futureValue
+    result.status shouldBe Status.OK
   }
 
   "Not authorised should get an exception" in {

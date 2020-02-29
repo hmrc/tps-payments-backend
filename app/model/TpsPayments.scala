@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 import play.api.libs.json.{Json, OFormat}
 
 case class TpsPayments(
-    _id:      Option[TpsId]        = None,
+    _id:      TpsId,
     pid:      String,
     created:  LocalDateTime        = LocalDateTime.now(),
     payments: List[TpsPaymentItem]

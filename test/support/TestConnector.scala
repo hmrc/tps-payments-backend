@@ -34,4 +34,8 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def find(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
     httpClient.GET[TpsPayments](s"http://localhost:$port/tps-payments-backend/find/id/${id.value}", headers)
+
+  def getId(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.GET[HttpResponse](s"http://localhost:$port/tps-payments-backend/get-id", headers)
+
 }
