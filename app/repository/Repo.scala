@@ -18,7 +18,7 @@ package repository
 
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.commands.{UpdateWriteResult, WriteResult}
+import reactivemongo.api.commands.{UpdateWriteResult}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.ReactiveRepository
 

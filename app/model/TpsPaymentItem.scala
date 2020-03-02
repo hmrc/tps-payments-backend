@@ -20,15 +20,17 @@ import java.time.LocalDateTime
 
 import play.api.libs.json.{Json, OFormat}
 
-case class TpsPayment(
+case class TpsPaymentItem(
+    paymentItemId:   Option[PaymentItemId] = None,
     amount:          BigDecimal,
     taxType:         TaxType,
     status:          StatusType,
     reference:       String,
-    chargeReference: Option[String],
-    updated:         LocalDateTime
-)
+    chargeReference: Option[String]        = None,
+    updated:         LocalDateTime         = LocalDateTime.now(),
+    period:          Option[Int],
+    customerName:    String)
 
-object TpsPayment {
-  implicit val format: OFormat[TpsPayment] = Json.format[TpsPayment]
+object TpsPaymentItem {
+  implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
 }

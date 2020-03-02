@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+package model
+import controllers.ValueClassBinder.valueClassBinder
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.PathBindable
+import reactivemongo.bson.BSONObjectID
 
-class Module extends AbstractModule {
+final case class PaymentItemId(
+    value: String
+)
 
-  @Provides
-  @Singleton
-  def authorisedFunctions(ac: AuthConnector): AuthorisedFunctions = new AuthorisedFunctions {
-    override def authConnector: AuthConnector = ac
-  }
-
-  override def configure(): Unit = ()
+object PaymentItemId {
+  implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
+  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  def fresh: PaymentItemId = PaymentItemId(BSONObjectID.generate.stringify)
 }
+

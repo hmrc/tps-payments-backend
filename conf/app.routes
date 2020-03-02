@@ -1,2 +1,4 @@
 # microservice specific routes
-POST        /store                               controllers.TpsController.storeTpsPayments()
+POST       /store                                controllers.TpsController.storeTpsPayments()
+GET        /find/id/:id                          controllers.TpsController.findTpsPayments(id: TpsId)
+GET        /get-id                               controllers.TpsController.getId()

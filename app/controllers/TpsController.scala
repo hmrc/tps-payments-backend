@@ -19,12 +19,14 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.{TpsId, TpsPayments}
-import play.api.mvc.{Action, ControllerComponents}
+import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments}
+import play.api.Logger
+import play.api.libs.json.Json
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TpsController @Inject() (actions:              Actions,
@@ -39,13 +41,29 @@ class TpsController @Inject() (actions:              Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
 
-    val tpsId: TpsId = TpsId.fresh
+    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
     for {
-      result <- tpsRepo.upsert(tpsId, request.body.copy(_id = Some(tpsId)))
+      _ <- tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments))
     } yield {
-      Ok(s"updated ${result.n.toString} records")
+      Ok(Json.toJson(request.body._id))
     }
-
   }
 
+  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction.async { implicit request =>
+    Logger.debug(s"findTpsPayments received vrn ${id}")
+    for {
+      data <- tpsRepo.findPayment(id)
+    } yield {
+      data match {
+        case Some(x) => Ok(Json.toJson(x))
+        case None    => NotFound(s"No payments found for id ${id.value}")
+      }
+
+    }
+  }
+
+  def getId(): Action[AnyContent] = actions.strideAuthenticateAction.async { implicit request =>
+    Logger.debug(s"getId")
+    Future.successful(Ok(Json.toJson(TpsId.fresh)))
+  }
 }
