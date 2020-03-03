@@ -38,4 +38,7 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def getId(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET[HttpResponse](s"http://localhost:$port/tps-payments-backend/get-id", headers)
 
+  def delete(id: TpsId)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.DELETE[HttpResponse](s"http://localhost:$port/tps-payments-backend/delete/id/${id.value}", headers)
+
 }

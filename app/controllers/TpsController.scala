@@ -66,4 +66,14 @@ class TpsController @Inject() (actions:              Actions,
     Logger.debug(s"getId")
     Future.successful(Ok(Json.toJson(TpsId.fresh)))
   }
+
+  def delete(tpsId: TpsId) = actions.strideAuthenticateAction.async { implicit request =>
+    Logger.debug(s"delete, id= ${tpsId.value}")
+    for {
+      del <- tpsRepo.removeById(tpsId)
+    } yield {
+      Ok
+    }
+  }
+
 }

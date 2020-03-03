@@ -21,10 +21,11 @@ import java.time.LocalDateTime
 import play.api.libs.json.{Json, OFormat}
 
 case class TpsPayments(
-    _id:      TpsId,
-    pid:      String,
-    created:  LocalDateTime        = LocalDateTime.now(),
-    payments: List[TpsPaymentItem]
+    _id:          TpsId,
+    pid:          String,
+    sentToPciPal: Boolean              = false,
+    created:      LocalDateTime        = LocalDateTime.now(),
+    payments:     List[TpsPaymentItem]
 )
 
 object TpsPayments {
