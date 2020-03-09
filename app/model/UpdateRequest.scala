@@ -16,19 +16,11 @@
 
 package model
 
-import java.time.LocalDateTime
-
 import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
 
-case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         LocalDateTime           = LocalDateTime.now(),
-    payments:        List[TpsPaymentItem]
-)
+final case class UpdateRequest(tpsId: TpsId, pcipalSessionId: PcipalSessionId)
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+object UpdateRequest {
+  implicit val format: OFormat[UpdateRequest] = Json.format[UpdateRequest]
 }

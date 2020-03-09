@@ -27,7 +27,8 @@ class StatusTypesSpec extends UnitSpec {
       "sent" -> StatusTypes.sent,
       "complete" -> StatusTypes.complete,
       "failed" -> StatusTypes.failed,
-      "initial" -> StatusTypes.initial
+      "initial" -> StatusTypes.initial,
+      "validated" -> StatusTypes.validated
     )
 
     statusTypes.foreach { tt =>

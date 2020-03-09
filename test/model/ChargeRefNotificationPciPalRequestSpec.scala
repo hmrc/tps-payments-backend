@@ -16,19 +16,18 @@
 
 package model
 
-import java.time.LocalDateTime
+import model.pcipal.ChargeRefNotificationPciPalRequest
+import play.api.libs.json.Json
+import support.{TpsData, UnitSpec}
 
-import model.pcipal.PcipalSessionId
-import play.api.libs.json.{Json, OFormat}
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
-case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         LocalDateTime           = LocalDateTime.now(),
-    payments:        List[TpsPaymentItem]
-)
+  "to json" in {
+    Json.toJson(TpsData.chargeRefNotificationPciPalRequest) shouldBe TpsData.chargeRefNotificationPciPalRequestJson
+  }
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+  "from json" in {
+    TpsData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPciPalRequest] shouldBe TpsData.chargeRefNotificationPciPalRequest
+  }
+
 }

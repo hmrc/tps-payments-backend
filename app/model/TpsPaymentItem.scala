@@ -18,18 +18,18 @@ package model
 
 import java.time.LocalDateTime
 
+import model.pcipal.PcipalData
 import play.api.libs.json.{Json, OFormat}
 
 case class TpsPaymentItem(
-    paymentItemId:   Option[PaymentItemId] = None,
-    amount:          BigDecimal,
-    taxType:         TaxType,
-    status:          StatusType,
-    reference:       String,
-    chargeReference: Option[String]        = None,
-    updated:         LocalDateTime         = LocalDateTime.now(),
-    period:          Option[Int],
-    customerName:    String)
+    paymentItemId: Option[PaymentItemId] = None,
+    amount:        BigDecimal,
+    taxType:       TaxType,
+    reference:     String,
+    updated:       LocalDateTime         = LocalDateTime.now(),
+    period:        Option[Int],
+    customerName:  String,
+    pcipalData:    Option[PcipalData]    = None)
 
 object TpsPaymentItem {
   implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]

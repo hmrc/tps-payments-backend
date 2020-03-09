@@ -16,19 +16,18 @@
 
 package model
 
-import java.time.LocalDateTime
+import play.api.libs.json.Json
+import support.{TpsData, UnitSpec}
+import model.pcipal.PcipalData
 
-import model.pcipal.PcipalSessionId
-import play.api.libs.json.{Json, OFormat}
+class PcipalDataSpec extends UnitSpec {
 
-case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         LocalDateTime           = LocalDateTime.now(),
-    payments:        List[TpsPaymentItem]
-)
+  "to json" in {
+    Json.toJson(TpsData.pcipalData) shouldBe TpsData.pcipalDataJson
+  }
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+  "from json" in {
+    TpsData.pcipalDataJson.as[PcipalData] shouldBe TpsData.pcipalData
+  }
+
 }

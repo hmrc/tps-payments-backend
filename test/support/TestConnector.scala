@@ -17,7 +17,8 @@
 package support
 
 import javax.inject.{Inject, Singleton}
-import model.{TpsId, TpsPayments}
+import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
+import model.{TpsId, TpsPayments, UpdateRequest}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
@@ -40,5 +41,11 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def delete(id: TpsId)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.DELETE[HttpResponse](s"http://localhost:$port/tps-payments-backend/delete/id/${id.value}", headers)
+
+  def updateWithSessionId(id: TpsId, pId: PcipalSessionId)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.PATCH[UpdateRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/update-with-pid", UpdateRequest(id, pId), headers)
+
+  def updateTpsPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.PATCH[ChargeRefNotificationPciPalRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/update-with-pcipal-data", chargeRefNotificationPciPalRequest, headers)
 
 }

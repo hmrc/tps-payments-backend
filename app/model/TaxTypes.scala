@@ -76,10 +76,7 @@ object TaxTypes extends Enum[TaxType] {
   case object class2NationalInsurance extends TaxType {
   }
 
-  /**
-   * Customs or Custom Declarations Service
-   */
-  case object cds extends TaxType {
+  case object CDSX extends TaxType {
   }
 
   /**

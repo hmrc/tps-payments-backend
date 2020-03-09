@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package model
+package model.pcipal
 
-import java.time.LocalDateTime
+import controllers.ValueClassBinder.valueClassBinder
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.PathBindable
 
-import model.pcipal.PcipalSessionId
-import play.api.libs.json.{Json, OFormat}
-
-case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         LocalDateTime           = LocalDateTime.now(),
-    payments:        List[TpsPaymentItem]
+final case class PcipalSessionId(
+    value: String
 )
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+object PcipalSessionId {
+  implicit val format: Format[PcipalSessionId] = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
+  implicit val pciPalIdBinder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
 }
+
