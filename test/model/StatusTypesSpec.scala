@@ -24,11 +24,8 @@ class StatusTypesSpec extends UnitSpec {
   "de/serialize TaxTypes" in {
 
     val statusTypes = List(
-      "sent" -> StatusTypes.sent,
       "complete" -> StatusTypes.complete,
-      "failed" -> StatusTypes.failed,
-      "initial" -> StatusTypes.initial,
-      "validated" -> StatusTypes.validated
+      "failed" -> StatusTypes.failed
     )
 
     statusTypes.foreach { tt =>

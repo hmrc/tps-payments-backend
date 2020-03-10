@@ -38,19 +38,10 @@ object StatusTypes extends Enum[StatusType] {
 
   def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
-  case object sent extends StatusType {
-  }
-
   case object complete extends StatusType {
   }
 
   case object failed extends StatusType {
-  }
-
-  case object initial extends StatusType {
-  }
-
-  case object validated extends StatusType {
   }
 
   def values: immutable.IndexedSeq[StatusType] = findValues

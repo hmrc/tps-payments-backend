@@ -18,9 +18,7 @@ package controllers
 
 import model.PaymentItemId
 import model.pcipal.PcipalSessionId
-import play.api.Logger
 import play.api.http.Status
-import play.api.libs.json.Json
 import reactivemongo.api.commands.UpdateWriteResult
 import repository.TpsRepo
 import support.{AuthWireMockResponses, ItSpec, TestConnector, TpsData}
@@ -100,7 +98,7 @@ class TpsControllerSpec extends ItSpec {
     pciPaledUpdated.status shouldBe Status.OK
     val result = testConnector.find(TpsData.id).futureValue
     result.payments(0).pcipalData match {
-      case Some(x) => x shouldBe TpsData.pcipalData
+      case Some(x) => x shouldBe TpsData.chargeRefNotificationPciPalRequest
       case None    => throw new RuntimeException("Pcipal data missing")
     }
   }

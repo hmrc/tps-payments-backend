@@ -33,13 +33,4 @@ final case class ChargeRefNotificationPciPalRequest(
 
 object ChargeRefNotificationPciPalRequest {
   implicit val format: OFormat[ChargeRefNotificationPciPalRequest] = Json.format[ChargeRefNotificationPciPalRequest]
-
-  def toPcipalData(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest): PcipalData = {
-    PcipalData(
-      chargeRefNotificationPciPalRequest.Commission,
-      chargeRefNotificationPciPalRequest.CardType,
-      chargeRefNotificationPciPalRequest.TransactionReference,
-      chargeRefNotificationPciPalRequest.Status)
-
-  }
 }

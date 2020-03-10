@@ -19,7 +19,7 @@ package support
 import java.time.LocalDateTime
 
 import model._
-import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalData, PcipalSessionId}
+import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
 import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
@@ -33,8 +33,6 @@ object TpsData {
   val transReference = "51e267d84f91"
   val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, TaxTypes.CDSX, reference, created, Some(2000), "AR", None)
   val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
-
-  val pcipalData: PcipalData = PcipalData(1.23, "VISA", transReference, StatusTypes.complete)
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(
     TaxTypes.CDSX,
@@ -61,16 +59,6 @@ object TpsData {
             "TransactionReference": "${transReference}",
             "paymentItemId": "${paymentId.value}"
       }""".stripMargin)
-
-  //language=JSON
-  val pcipalDataJson: JsValue = Json.parse(
-    s"""{
-        "Commission": 1.23,
-        "CardType": "VISA",
-        "TransactionReference" : "51e267d84f91",
-         "Status" : "${StatusTypes.complete.toString}"
-        }
-        """)
 
   //language=JSON
   val tpsPaymentsJson: JsValue = Json.parse(

@@ -19,7 +19,7 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalData}
+import model.pcipal.ChargeRefNotificationPciPalRequest
 import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments, UpdateRequest}
 import play.api.Logger
 import play.api.libs.json.Json
@@ -88,7 +88,7 @@ class TpsController @Inject() (actions:              Actions,
     }
   }
 
-  def updateWithPcipalData(): Action[ChargeRefNotificationPciPalRequest] = actions.strideAuthenticateAction.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+  def updateWithPcipalData(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
     Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
@@ -106,7 +106,7 @@ class TpsController @Inject() (actions:              Actions,
 
     val tpsPaymentsListNew = update.headOption match {
       case Some(singleUpdate) => {
-        val updated = singleUpdate.copy(pcipalData = Some(ChargeRefNotificationPciPalRequest.toPcipalData(chargeRefNotificationPciPalRequest)))
+        val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
         remainder.::(updated)
       }
       case None => throw new RuntimeException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
