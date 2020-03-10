@@ -20,7 +20,9 @@ import javax.inject.{Inject, Singleton}
 import model.pcipal.PcipalSessionId
 import model.{TpsId, TpsPayments}
 import play.api.Logger
+import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes._
 import reactivemongo.bson.BSONDocument
 
@@ -63,5 +65,13 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
 
     }
 
+  }
+
+  def removeByReferenceForTest(references: List[String]): Future[WriteResult] = {
+    remove("payments.reference" -> Json.obj("$in" -> Json.toJson(references)))
+  }
+
+  def findByReferenceForTest(reference: String): Future[List[TpsPayments]] = {
+    find("payments.reference" -> reference)
   }
 }
