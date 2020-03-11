@@ -16,21 +16,18 @@
 
 package model
 
-import java.time.LocalDateTime
-
 import model.pcipal.ChargeRefNotificationPciPalRequest
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.Json
+import support.{TpsData, UnitSpec}
 
-case class TpsPaymentItem(
-    paymentItemId: Option[PaymentItemId]                      = None,
-    amount:        BigDecimal,
-    taxType:       TaxType,
-    reference:     String,
-    updated:       LocalDateTime                              = LocalDateTime.now(),
-    period:        Option[Int],
-    customerName:  String,
-    pcipalData:    Option[ChargeRefNotificationPciPalRequest] = None)
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
-object TpsPaymentItem {
-  implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
+  "to json" in {
+    Json.toJson(TpsData.chargeRefNotificationPciPalRequest) shouldBe TpsData.chargeRefNotificationPciPalRequestJson
+  }
+
+  "from json" in {
+    TpsData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPciPalRequest] shouldBe TpsData.chargeRefNotificationPciPalRequest
+  }
+
 }

@@ -17,8 +17,12 @@
 package repository
 
 import javax.inject.{Inject, Singleton}
+import model.pcipal.PcipalSessionId
 import model.{TpsId, TpsPayments}
+import play.api.Logger
+import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoComponent
+import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes._
 import reactivemongo.bson.BSONDocument
 
@@ -38,4 +42,36 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
+  def getPayment(tpsId: TpsId): Future[TpsPayments] = {
+    for {
+      tpsPaymentsOption <- findById(tpsId)
+    } yield (tpsPaymentsOption match {
+      case Some(tpsPayment) => tpsPayment
+      case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
+    })
+  }
+
+  def findByPcipalSessionId(pcipalSessionId: PcipalSessionId): Future[TpsPayments] = {
+    for {
+      tpsPayments <- find("pciPalSessionId" -> pcipalSessionId.value)
+    } yield {
+      if (tpsPayments.nonEmpty && (tpsPayments.size == 1))
+        tpsPayments(0)
+      else
+        throw new RuntimeException(
+          if (tpsPayments.nonEmpty) s"Found more than one record with id ${pcipalSessionId.value}, size was ${tpsPayments.size}"
+          else s"Could not find pcipalSessionId: ${pcipalSessionId.value}"
+        )
+
+    }
+
+  }
+
+  def removeByReferenceForTest(references: List[String]): Future[WriteResult] = {
+    remove("payments.reference" -> Json.obj("$in" -> Json.toJson(references)))
+  }
+
+  def findByReferenceForTest(reference: String): Future[List[TpsPayments]] = {
+    find("payments.reference" -> reference)
+  }
 }

@@ -16,21 +16,11 @@
 
 package model
 
-import java.time.LocalDateTime
-
-import model.pcipal.ChargeRefNotificationPciPalRequest
+import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
 
-case class TpsPaymentItem(
-    paymentItemId: Option[PaymentItemId]                      = None,
-    amount:        BigDecimal,
-    taxType:       TaxType,
-    reference:     String,
-    updated:       LocalDateTime                              = LocalDateTime.now(),
-    period:        Option[Int],
-    customerName:  String,
-    pcipalData:    Option[ChargeRefNotificationPciPalRequest] = None)
+final case class UpdateRequest(tpsId: TpsId, pcipalSessionId: PcipalSessionId)
 
-object TpsPaymentItem {
-  implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
+object UpdateRequest {
+  implicit val format: OFormat[UpdateRequest] = Json.format[UpdateRequest]
 }

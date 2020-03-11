@@ -33,7 +33,7 @@ class TaxTypesSpec extends UnitSpec {
       "stamp-duty" -> TaxTypes.`stamp-duty`,
       "class2NationalInsurance" -> TaxTypes.class2NationalInsurance,
       "class3NationalInsurance" -> TaxTypes.class3NationalInsurance,
-      "cds" -> TaxTypes.cds,
+      "CDSX" -> TaxTypes.CDSX,
       "pngr" -> TaxTypes.pngr,
       "corporation-tax" -> TaxTypes.`corporation-tax`,
       "p800" -> TaxTypes.p800,

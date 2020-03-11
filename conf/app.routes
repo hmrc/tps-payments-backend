@@ -1,5 +1,7 @@
 # microservice specific routes
-POST       /store                                controllers.TpsController.storeTpsPayments()
-GET        /find/id/:id                          controllers.TpsController.findTpsPayments(id: TpsId)
-GET        /get-id                               controllers.TpsController.getId()
-DELETE     /delete/id/:id                        controllers.TpsController.delete(id: TpsId)
+POST       /store                                                   controllers.TpsController.storeTpsPayments()
+GET        /find/id/:id                                             controllers.TpsController.findTpsPayments(id: TpsId)
+GET        /get-id                                                  controllers.TpsController.getId()
+DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
+PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId
+PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData

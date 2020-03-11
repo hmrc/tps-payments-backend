@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package model
+package model.pcipal
 
-import java.time.LocalDateTime
-
-import model.pcipal.ChargeRefNotificationPciPalRequest
+import model.{PaymentItemId, StatusType, TaxType}
 import play.api.libs.json.{Json, OFormat}
 
-case class TpsPaymentItem(
-    paymentItemId: Option[PaymentItemId]                      = None,
-    amount:        BigDecimal,
-    taxType:       TaxType,
-    reference:     String,
-    updated:       LocalDateTime                              = LocalDateTime.now(),
-    period:        Option[Int],
-    customerName:  String,
-    pcipalData:    Option[ChargeRefNotificationPciPalRequest] = None)
+final case class ChargeRefNotificationPciPalRequest(
+    HoD:                  TaxType,
+    TaxReference:         String,
+    Amount:               BigDecimal,
+    Commission:           BigDecimal,
+    CardType:             String,
+    Status:               StatusType,
+    PCIPalSessionId:      PcipalSessionId,
+    TransactionReference: String,
+    paymentItemId:        PaymentItemId
+)
 
-object TpsPaymentItem {
-  implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
+object ChargeRefNotificationPciPalRequest {
+  implicit val format: OFormat[ChargeRefNotificationPciPalRequest] = Json.format[ChargeRefNotificationPciPalRequest]
 }

@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package model
+package model.pcipal
 
-import play.api.libs.json.{JsString, Json}
-import support.{RichMatchers, UnitSpec}
+import controllers.ValueClassBinder.valueClassBinder
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+import play.api.mvc.PathBindable
 
-class StatusTypesSpec extends UnitSpec {
+final case class PcipalSessionId(
+    value: String
+)
 
-  "de/serialize TaxTypes" in {
-
-    val statusTypes = List(
-      "complete" -> StatusTypes.complete,
-      "failed" -> StatusTypes.failed
-    )
-
-    statusTypes.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
-    }
-  }
+object PcipalSessionId {
+  implicit val format: Format[PcipalSessionId] = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
+  implicit val pciPalIdBinder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
 }
 

@@ -19,7 +19,8 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments}
+import model.pcipal.ChargeRefNotificationPciPalRequest
+import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments, UpdateRequest}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -74,6 +75,45 @@ class TpsController @Inject() (actions:              Actions,
     } yield {
       Ok
     }
+  }
+
+  def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction.async(parse.json[UpdateRequest]) { implicit request =>
+    Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    for {
+      record <- tpsRepo.getPayment(request.body.tpsId)
+      newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
+      _ <- tpsRepo.upsert(request.body.tpsId, newRecord)
+    } yield {
+      Ok
+    }
+  }
+
+  def updateWithPcipalData(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+    Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    for {
+      a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
+      _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
+    } yield {
+      Ok
+    }
+
+  }
+
+  private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest): TpsPayments = {
+    Logger.debug("updateTpsPayments")
+    val remainder = tpsPayments.payments.filterNot(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
+    val update = tpsPayments.payments.filter(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
+
+    val tpsPaymentsListNew = update.headOption match {
+      case Some(singleUpdate) => {
+        val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
+        remainder.::(updated)
+      }
+      case None => throw new RuntimeException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
+    }
+
+    tpsPayments.copy(payments = tpsPaymentsListNew)
+
   }
 
 }

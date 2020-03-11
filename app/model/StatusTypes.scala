@@ -27,7 +27,7 @@ import scala.collection.immutable
 object StatusType {
   implicit val format: Format[StatusType] = EnumFormat(StatusTypes)
   implicit val pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[StatusType] = valueClassBinder(_.toString)
+  implicit val statusBinder: PathBindable[StatusType] = valueClassBinder(_.toString)
 
 }
 
@@ -38,16 +38,10 @@ object StatusTypes extends Enum[StatusType] {
 
   def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
-  case object sent extends StatusType {
-  }
-
   case object complete extends StatusType {
   }
 
   case object failed extends StatusType {
-  }
-
-  case object initial extends StatusType {
   }
 
   def values: immutable.IndexedSeq[StatusType] = findValues
