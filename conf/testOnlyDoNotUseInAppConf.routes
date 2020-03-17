@@ -13,5 +13,6 @@
 ->         /                          prod.Routes
 
 
-GET         /tps-payments-backend/test-only/remove-test-data    controllers.TestController.removeTestData()
-GET         /tps-payments-backend/test-only/find-by-reference/:ref    controllers.TestController.findByReference(ref: String)
+GET         /tps-payments-backend/test-only/remove-test-data        controllers.TestController.removeTestData()
+GET         /tps-payments-backend/test-only/find-by-reference/:ref  controllers.TestController.findByReference(ref: String)
+POST        /tps-payments-backend/test-only/store                   controllers.TestController.storeTpsPayments()
