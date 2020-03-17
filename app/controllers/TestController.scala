@@ -17,6 +17,7 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
+import model.{PaymentItemId, TpsPaymentItem, TpsPayments}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
@@ -43,6 +44,16 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(impl
       result <- tpsRepo.findByReferenceForTest(ref)
     ) yield (Ok(Json.toJson(result)))
 
+  }
+
+  def storeTpsPayments(): Action[TpsPayments] = Action.async(parse.json[TpsPayments]) { implicit request =>
+
+    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
+    for {
+      _ <- tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments))
+    } yield {
+      Ok(Json.toJson(request.body._id))
+    }
   }
 
 }
