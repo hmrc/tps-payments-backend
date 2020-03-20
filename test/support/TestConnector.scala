@@ -17,7 +17,7 @@
 package support
 
 import javax.inject.{Inject, Singleton}
-import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
+import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import model.{TpsId, TpsPayments, UpdateRequest}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -45,7 +45,7 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def updateWithSessionId(id: TpsId, pId: PcipalSessionId)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.PATCH[UpdateRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/update-with-pid", UpdateRequest(id, pId), headers)
 
-  def updateTpsPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.PATCH[ChargeRefNotificationPciPalRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/update-with-pcipal-data", chargeRefNotificationPciPalRequest, headers)
+  def updateTpsPayments(chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+    httpClient.PATCH[ChargeRefNotificationPcipalRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/update-with-pcipal-data", chargeRefNotificationPciPalRequest, headers)
 
 }

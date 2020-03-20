@@ -19,7 +19,7 @@ package controllers
 import auth.{Actions, UnhappyPathResponses}
 import config.AppConfig
 import javax.inject.{Inject, Singleton}
-import model.pcipal.ChargeRefNotificationPciPalRequest
+import model.pcipal.ChargeRefNotificationPcipalRequest
 import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments, UpdateRequest}
 import play.api.Logger
 import play.api.libs.json.Json
@@ -88,7 +88,7 @@ class TpsController @Inject() (actions:              Actions,
     }
   }
 
-  def updateWithPcipalData(): Action[ChargeRefNotificationPciPalRequest] = Action.async(parse.json[ChargeRefNotificationPciPalRequest]) { implicit request =>
+  def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
@@ -99,7 +99,7 @@ class TpsController @Inject() (actions:              Actions,
 
   }
 
-  private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest): TpsPayments = {
+  private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
     Logger.debug("updateTpsPayments")
     val remainder = tpsPayments.payments.filterNot(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
     val update = tpsPayments.payments.filter(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
