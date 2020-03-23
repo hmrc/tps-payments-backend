@@ -16,7 +16,7 @@
 
 package model
 
-import model.pcipal.ChargeRefNotificationPciPalRequest
+import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.Json
 import support.{TpsData, UnitSpec}
 
@@ -27,7 +27,7 @@ class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
   }
 
   "from json" in {
-    TpsData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPciPalRequest] shouldBe TpsData.chargeRefNotificationPciPalRequest
+    TpsData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TpsData.chargeRefNotificationPciPalRequest
   }
 
 }

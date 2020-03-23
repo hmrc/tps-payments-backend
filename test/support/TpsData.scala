@@ -19,7 +19,7 @@ package support
 import java.time.LocalDateTime
 
 import model._
-import model.pcipal.{ChargeRefNotificationPciPalRequest, PcipalSessionId}
+import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
@@ -34,7 +34,7 @@ object TpsData {
   val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, TaxTypes.CDSX, reference, created, Some(2000), "AR", None)
   val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
 
-  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPciPalRequest = ChargeRefNotificationPciPalRequest(
+  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     TaxTypes.CDSX,
     reference,
     1.92,
