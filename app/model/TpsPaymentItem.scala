@@ -22,15 +22,17 @@ import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
 
 case class TpsPaymentItem(
-    paymentItemId: Option[PaymentItemId]                      = None,
-    amount:        BigDecimal,
-    taxType:       TaxType,
-    reference:     String,
-    updated:       LocalDateTime                              = LocalDateTime.now(),
-    period:        Option[Int],
-    customerName:  String,
-    pcipalData:    Option[ChargeRefNotificationPcipalRequest] = None)
+    paymentItemId:       Option[PaymentItemId]                      = None,
+    amount:              BigDecimal,
+    headOfDutyIndicator: HeadOfDutyIndicator,
+    reference:           String,
+    updated:             LocalDateTime                              = LocalDateTime.now(),
+    period:              Option[Int],
+    customerName:        String,
+    chargeReference:     Option[String]                             = None,
+    pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None)
 
 object TpsPaymentItem {
   implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
+
 }
