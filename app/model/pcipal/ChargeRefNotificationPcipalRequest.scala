@@ -29,7 +29,7 @@ final case class ChargeRefNotificationPcipalRequest(
     PCIPalSessionId:      PcipalSessionId,
     TransactionReference: String,
     paymentItemId:        PaymentItemId,
-    ChargeReference:      Option[String]      = None
+    ChargeReference:      String              = ""
 )
 
 object ChargeRefNotificationPcipalRequest {

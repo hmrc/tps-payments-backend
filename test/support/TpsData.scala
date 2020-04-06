@@ -57,7 +57,8 @@ object TpsData {
             "Status": "${StatusTypes.complete.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${transReference}",
-            "paymentItemId": "${paymentId.value}"
+            "paymentItemId": "${paymentId.value}",
+            "ChargeReference" : ""
       }""".stripMargin)
 
   //language=JSON
