@@ -25,7 +25,7 @@ class Actions @Inject() (
     authoriseAction: AuthenticatedAction,
     actionBuilder:   DefaultActionBuilder)(implicit ec: ExecutionContext) {
 
-  def strideAuthenticateAction() = {
+  def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = {
     actionBuilder andThen authoriseAction
   }
 }

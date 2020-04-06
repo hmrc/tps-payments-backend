@@ -42,7 +42,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(impl
 
     for (
       result <- tpsRepo.findByReferenceForTest(ref)
-    ) yield (Ok(Json.toJson(result)))
+    ) yield Ok(Json.toJson(result))
 
   }
 

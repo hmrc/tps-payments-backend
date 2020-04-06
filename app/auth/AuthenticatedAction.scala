@@ -17,7 +17,6 @@
 package auth
 
 import config.AppConfig
-import controllers.TpsController
 import javax.inject._
 import play.api.Logger
 import play.api.mvc._
@@ -42,15 +41,13 @@ class AuthenticatedAction @Inject() (
     af.authorised(AuthProviders(PrivilegedApplication)).retrieve(allEnrolments) {
       case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
         block(request)
-      case e => {
+      case _ =>
         Logger.warn(s"user logged in with no credentials")
         Future successful badResponses.unauthorised
-      }
     }.recover {
-      case _: NoActiveSession => {
+      case _: NoActiveSession =>
         Logger.warn(s"no active session")
         badResponses.notLoggedIn
-      }
       case e: AuthorisationException =>
         Logger.debug(s"Unauthorised because of ${e.reason}, $e")
         badResponses.unauthorised
