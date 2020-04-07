@@ -29,6 +29,6 @@ class AppConfig @Inject() (
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
   val strideRole: String = config.get[String]("stride.role")
-  val runModeEnvironment = environment
-  val runTimeConfig = config
+  val runModeEnvironment: Environment = environment
+  val runTimeConfig: Configuration = config
 }

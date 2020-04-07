@@ -16,11 +16,11 @@
 
 package model.pcipal
 
-import model.{PaymentItemId, StatusType, TaxType}
+import model.{PaymentItemId, StatusType, HeadOfDutyIndicator}
 import play.api.libs.json.{Json, OFormat}
 
 final case class ChargeRefNotificationPcipalRequest(
-    HoD:                  TaxType,
+    HoD:                  HeadOfDutyIndicator,
     TaxReference:         String,
     Amount:               BigDecimal,
     Commission:           BigDecimal,
@@ -28,7 +28,8 @@ final case class ChargeRefNotificationPcipalRequest(
     Status:               StatusType,
     PCIPalSessionId:      PcipalSessionId,
     TransactionReference: String,
-    paymentItemId:        PaymentItemId
+    paymentItemId:        PaymentItemId,
+    ChargeReference:      String              = ""
 )
 
 object ChargeRefNotificationPcipalRequest {

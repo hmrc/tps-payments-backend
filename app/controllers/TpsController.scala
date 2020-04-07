@@ -40,7 +40,7 @@ class TpsController @Inject() (actions:              Actions,
     executionContext: ExecutionContext
 ) extends BackendController(cc) {
 
-  def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction.async(parse.json[TpsPayments]) { implicit request =>
+  def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
 
     val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
     for {
@@ -50,8 +50,8 @@ class TpsController @Inject() (actions:              Actions,
     }
   }
 
-  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction.async { implicit request =>
-    Logger.debug(s"findTpsPayments received vrn ${id}")
+  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
+    Logger.debug(s"findTpsPayments received vrn $id")
     for {
       data <- tpsRepo.findPayment(id)
     } yield {
@@ -63,21 +63,21 @@ class TpsController @Inject() (actions:              Actions,
     }
   }
 
-  def getId(): Action[AnyContent] = actions.strideAuthenticateAction.async { implicit request =>
+  def getId: Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
     Logger.debug(s"getId")
     Future.successful(Ok(Json.toJson(TpsId.fresh)))
   }
 
-  def delete(tpsId: TpsId) = actions.strideAuthenticateAction.async { implicit request =>
+  def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
     Logger.debug(s"delete, id= ${tpsId.value}")
     for {
-      del <- tpsRepo.removeById(tpsId)
+      _ <- tpsRepo.removeById(tpsId)
     } yield {
       Ok
     }
   }
 
-  def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction.async(parse.json[UpdateRequest]) { implicit request =>
+  def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
     Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       record <- tpsRepo.getPayment(request.body.tpsId)
@@ -101,14 +101,13 @@ class TpsController @Inject() (actions:              Actions,
 
   private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
     Logger.debug("updateTpsPayments")
-    val remainder = tpsPayments.payments.filterNot(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
-    val update = tpsPayments.payments.filter(f => f.paymentItemId == Some(chargeRefNotificationPciPalRequest.paymentItemId))
+    val remainder = tpsPayments.payments.filterNot(f => f.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
+    val update = tpsPayments.payments.filter(f => f.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
 
     val tpsPaymentsListNew = update.headOption match {
-      case Some(singleUpdate) => {
+      case Some(singleUpdate) =>
         val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
         remainder.::(updated)
-      }
       case None => throw new RuntimeException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
     }
 

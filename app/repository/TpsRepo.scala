@@ -19,7 +19,6 @@ package repository
 import javax.inject.{Inject, Singleton}
 import model.pcipal.PcipalSessionId
 import model.{TpsId, TpsPayments}
-import play.api.Logger
 import play.api.libs.json.Json
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.WriteResult
@@ -45,10 +44,10 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
   def getPayment(tpsId: TpsId): Future[TpsPayments] = {
     for {
       tpsPaymentsOption <- findById(tpsId)
-    } yield (tpsPaymentsOption match {
+    } yield tpsPaymentsOption match {
       case Some(tpsPayment) => tpsPayment
       case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
-    })
+    }
   }
 
   def findByPcipalSessionId(pcipalSessionId: PcipalSessionId): Future[TpsPayments] = {

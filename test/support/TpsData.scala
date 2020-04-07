@@ -31,11 +31,11 @@ object TpsData {
   val reference = "JE231111B"
   val pid = "123"
   val transReference = "51e267d84f91"
-  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, TaxTypes.CDSX, reference, created, Some(2000), "AR", None)
+  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, reference, created, Some(2000), "AR", "")
   val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-    TaxTypes.CDSX,
+    HeadOfDutyIndicators.B,
     reference,
     1.92,
     1.23,
@@ -43,13 +43,14 @@ object TpsData {
     StatusTypes.complete,
     pciPalSessionId,
     transReference,
-    paymentId
+    paymentId,
+    ""
   )
 
   //language=JSON
   val chargeRefNotificationPciPalRequestJson = Json.parse(
     s"""{
-            "HoD": "CDSX",
+            "HoD": "B",
             "TaxReference": "${reference}",
             "Amount": 1.92,
             "Commission": 1.23,
@@ -57,7 +58,8 @@ object TpsData {
             "Status": "${StatusTypes.complete.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "${transReference}",
-            "paymentItemId": "${paymentId.value}"
+            "paymentItemId": "${paymentId.value}",
+            "ChargeReference" : ""
       }""".stripMargin)
 
   //language=JSON
@@ -71,11 +73,12 @@ object TpsData {
         {
          "paymentItemId" : "${paymentId.value}",
         "amount": 1.92,
-        "taxType": "CDSX",
+        "headOfDutyIndicator": "B",
         "reference": "${reference}",
         "updated": "${created}",
          "period": 2000,
-         "customerName" : "AR"
+         "customerName" : "AR",
+         "chargeReference" : ""
         }
         ]
         }

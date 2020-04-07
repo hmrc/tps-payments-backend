@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package auth
+package model
 
-import com.google.inject.Inject
-import play.api.mvc._
+import play.api.libs.json.{JsString, Json}
+import support.UnitSpec
 
-import scala.concurrent.ExecutionContext
+class HeadOfDutyIndicatorsSpec extends UnitSpec {
 
-class Actions @Inject() (
-    authoriseAction: AuthenticatedAction,
-    actionBuilder:   DefaultActionBuilder)(implicit ec: ExecutionContext) {
+  "de/serialize headOfDutyIndicators" in {
 
-  def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = {
-    actionBuilder andThen authoriseAction
+    val headOfDutyIndicators = List(
+      "B" -> HeadOfDutyIndicators.B
+    )
+
+    headOfDutyIndicators.foreach { tt =>
+      val jsValue = Json.toJson(tt._2)
+      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
+      jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize $tt"
+    }
   }
 }
+
