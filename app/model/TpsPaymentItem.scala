@@ -29,7 +29,7 @@ case class TpsPaymentItem(
     updated:             LocalDateTime                              = LocalDateTime.now(),
     period:              Option[Int],
     customerName:        String,
-    chargeReference:     Option[String]                             = None,
+    chargeReference:     String                                     = "",
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None)
 
 object TpsPaymentItem {
