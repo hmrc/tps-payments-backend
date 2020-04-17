@@ -25,12 +25,19 @@ case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId]                      = None,
     amount:              BigDecimal,
     headOfDutyIndicator: HeadOfDutyIndicator,
-    reference:           String,
+    referencePart1:      String,
+    referencePart2:      Option[String],
+    referencePart3:      Option[String],
     updated:             LocalDateTime                              = LocalDateTime.now(),
     period:              Option[Int],
     customerName:        String,
     chargeReference:     String                                     = "",
-    pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None)
+    pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None) {
+
+  def getReference: String = {
+    referencePart1 + referencePart2.getOrElse("") + referencePart3.getOrElse("")
+  }
+}
 
 object TpsPaymentItem {
   implicit val format: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
