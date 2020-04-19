@@ -33,7 +33,9 @@ object TpsData {
   val reference3 = "P800"
   val pid = "123"
   val transReference = "51e267d84f91"
-  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, reference, Some(reference2), Some(reference3), created, Some(2000), "AR", "")
+
+  val tpspaymentItemP800: PaymentSpecificDataP800 = PaymentSpecificDataP800(reference, reference2, reference3, 2000)
+  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, created, "AR", "", None, tpspaymentItemP800)
   val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
@@ -76,13 +78,15 @@ object TpsData {
          "paymentItemId" : "${paymentId.value}",
         "amount": 1.92,
         "headOfDutyIndicator": "B",
-        "referencePart1": "${reference}",
-        "referencePart2": "${reference2}",
-        "referencePart3": "${reference3}",
         "updated": "${created}",
-         "period": 2000,
          "customerName" : "AR",
-         "chargeReference" : ""
+         "chargeReference" : "",
+         "paymentSpecificData" : {
+            "referencePart1": "${reference}",
+            "referencePart2": "${reference2}",
+            "referencePart3": "${reference3}",
+            "period": 2000
+         }
         }
         ]
         }
