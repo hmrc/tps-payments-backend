@@ -81,9 +81,9 @@ object TpsData {
          "customerName" : "AR",
          "chargeReference" : "",
          "paymentSpecificData" : {
-            "referencePart1": "$reference",
-            "referencePart2": "$reference2",
-            "referencePart3": "$reference3",
+            "ninoPart1": "$reference",
+            "ninoPart2": "$reference2",
+            "taxTypeScreenValue": "$reference3",
             "period": 2000
          }
         }

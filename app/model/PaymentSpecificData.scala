@@ -17,18 +17,18 @@
 package model
 import play.api.libs.json._
 
-trait PaymentSpecificData {
+sealed trait PaymentSpecificData {
   def getReference: String
 }
 
-case class PaymentSpecificDataP800(
-    referencePart1: String,
-    referencePart2: String,
-    referencePart3: String,
-    period:         Int
+final case class PaymentSpecificDataP800(
+    ninoPart1:          String,
+    ninoPart2:          String,
+    taxTypeScreenValue: String,
+    period:             Int
 ) extends PaymentSpecificData {
   def getReference: String = {
-    s"$referencePart1$referencePart2$referencePart3"
+    s"$ninoPart1$ninoPart2$taxTypeScreenValue"
   }
 }
 
@@ -40,12 +40,6 @@ object PaymentSpecificDataP800 {
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case psd: PaymentSpecificDataP800 => PaymentSpecificDataP800.format.writes(psd)
-    case _                            => throw new RuntimeException("Unsupported write")
-  }
-
-  implicit val read: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case psd: PaymentSpecificDataP800 => PaymentSpecificDataP800.format.reads(psd)
-    case _                            => throw new RuntimeException("Unsupported reads")
   }
 
 }
