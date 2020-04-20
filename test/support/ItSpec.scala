@@ -33,15 +33,12 @@ package support
  */
 
 import com.google.inject.AbstractModule
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.htmlunit.HtmlUnitDriver
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterEach, FreeSpecLike, Matchers}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.mvc.{AnyContentAsEmpty, Request, Result}
-import play.api.test.{CSRFTokenHelper, FakeRequest}
+import play.api.mvc.Result
 import play.api.{Application, Configuration, Environment}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -63,9 +60,9 @@ trait ItSpec
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  lazy val servicesConfig = fakeApplication.injector.instanceOf[ServicesConfig]
-  lazy val config = fakeApplication.injector.instanceOf[Configuration]
-  lazy val env = fakeApplication.injector.instanceOf[Environment]
+  lazy val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
+  lazy val config: Configuration = fakeApplication().injector.instanceOf[Configuration]
+  lazy val env: Environment = fakeApplication().injector.instanceOf[Environment]
   lazy val overridingsModule: AbstractModule = new AbstractModule {
 
     override def configure(): Unit = ()
@@ -73,28 +70,28 @@ trait ItSpec
   }
   val baseUrl: String = s"http://localhost:$WireMockSupport.port"
 
-  override implicit val patienceConfig = PatienceConfig(
+  override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(3, Seconds)),
     interval = scaled(Span(300, Millis)))
 
-  implicit val emptyHC = HeaderCarrier()
+  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
   val webdriverUr: String = s"http://localhost:$port"
-  val connector = injector.instanceOf[TestConnector]
+  val connector: TestConnector = injector.instanceOf[TestConnector]
 
-  def httpClient = fakeApplication().injector.instanceOf[HttpClient]
+  def httpClient: HttpClient = fakeApplication().injector.instanceOf[HttpClient]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
     .configure(configMap).build()
 
-  def configMap = Map[String, Any](
+  def configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
     "microservice.services.auth.port" -> WireMockSupport.port
   )
 
   def injector: Injector = fakeApplication().injector
 
-  def status(of: Result) = of.header.status
+  def status(of: Result): Int = of.header.status
 
 }
 

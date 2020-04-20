@@ -17,7 +17,7 @@
 package model
 
 import play.api.libs.json.{JsString, Json}
-import support.{RichMatchers, UnitSpec}
+import support.UnitSpec
 
 class StatusTypesSpec extends UnitSpec {
 

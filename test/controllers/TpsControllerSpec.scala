@@ -25,7 +25,7 @@ import support.{AuthWireMockResponses, ItSpec, TestConnector, TpsData}
 
 class TpsControllerSpec extends ItSpec {
 
-  val repo = injector.instanceOf[TpsRepo]
+  val repo: TpsRepo = injector.instanceOf[TpsRepo]
   val testConnector = injector.instanceOf[TestConnector]
 
   override def beforeEach(): Unit = {

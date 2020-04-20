@@ -24,14 +24,18 @@ import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
 
-  val created = LocalDateTime.parse("2020-01-20T11:56:46")
-  val id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
-  val paymentId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
-  val pciPalSessionId = PcipalSessionId("48c978bb")
-  val reference = "JE231111B"
+  val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
+  val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val paymentId: PaymentItemId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
+  val reference = "JE231111"
+  val reference2 = "B"
+  val reference3 = "P800"
   val pid = "123"
   val transReference = "51e267d84f91"
-  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, reference, created, Some(2000), "AR", "")
+
+  val tpspaymentItemP800: PaymentSpecificDataP800 = PaymentSpecificDataP800(reference, reference2, reference3, 2000)
+  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, created, "AR", "", None, tpspaymentItemP800)
   val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
@@ -43,21 +47,20 @@ object TpsData {
     StatusTypes.complete,
     pciPalSessionId,
     transReference,
-    paymentId,
-    ""
+    paymentId
   )
 
   //language=JSON
-  val chargeRefNotificationPciPalRequestJson = Json.parse(
+  val chargeRefNotificationPciPalRequestJson: JsValue = Json.parse(
     s"""{
             "HoD": "B",
-            "TaxReference": "${reference}",
+            "TaxReference": "$reference",
             "Amount": 1.92,
             "Commission": 1.23,
             "CardType": "VISA",
             "Status": "${StatusTypes.complete.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
-            "TransactionReference": "${transReference}",
+            "TransactionReference": "$transReference",
             "paymentItemId": "${paymentId.value}",
             "ChargeReference" : ""
       }""".stripMargin)
@@ -66,19 +69,23 @@ object TpsData {
   val tpsPaymentsJson: JsValue = Json.parse(
     s"""{
         "_id" : "${id.value}",
-        "pid" : "${pid}",
+        "pid" : "$pid",
         "pciPalSessionId" : "${pciPalSessionId.value}",
-        "created":  "${created}",
+        "created":  "$created",
        "payments": [
         {
          "paymentItemId" : "${paymentId.value}",
         "amount": 1.92,
         "headOfDutyIndicator": "B",
-        "reference": "${reference}",
-        "updated": "${created}",
-         "period": 2000,
+        "updated": "$created",
          "customerName" : "AR",
-         "chargeReference" : ""
+         "chargeReference" : "",
+         "paymentSpecificData" : {
+            "ninoPart1": "$reference",
+            "ninoPart2": "$reference2",
+            "taxTypeScreenValue": "$reference3",
+            "period": 2000
+         }
         }
         ]
         }
