@@ -28,7 +28,7 @@ final case class PaymentSpecificDataP800(
     period:             Int
 ) extends PaymentSpecificData {
   def getReference: String = {
-    s"$ninoPart1$ninoPart2$taxTypeScreenValue"
+    s"$ninoPart1$ninoPart2$taxTypeScreenValue$period"
   }
 }
 
