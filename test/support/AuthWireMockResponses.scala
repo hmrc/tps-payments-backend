@@ -17,7 +17,6 @@
 package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.github.tomakehurst.wiremock.http.{HttpHeader, HttpHeaders}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
 object AuthWireMockResponses {
@@ -28,7 +27,7 @@ object AuthWireMockResponses {
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
-        .withHeader("WWW-Authenticate", s"""MDTP detail="${expectedDetail}"""")
+        .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
       )
     )
   }

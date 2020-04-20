@@ -22,7 +22,7 @@ import support.{ItSpec, TpsData}
 
 class TpsRepoSpec extends ItSpec {
 
-  val repo = injector.instanceOf[TpsRepo]
+  val repo: TpsRepo = injector.instanceOf[TpsRepo]
 
   override def beforeEach(): Unit = {
     super.beforeEach()

@@ -59,16 +59,16 @@ object TpsPaymentItem {
     (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
     (__ \ "paymentSpecificData").read[Psd]
 
-  )((a, b, hod, d, e, f, g, h) => TpsPaymentItem(a, b, hod, d, e, f, g, h))
+  )((pid, amnt, hod, updt, cn, cr, pd, psd) => TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd))
 
-  private val newReads: Reads[TpsPaymentItem] = for {
+  private val readHod: Reads[TpsPaymentItem] = for {
     headOfDutyIndicator <- (__ \ "headOfDutyIndicator").read[HeadOfDutyIndicator]
     payment <- headOfDutyIndicator match {
       case HeadOfDutyIndicators.B => typedReads[PaymentSpecificDataP800]
     }
   } yield payment
 
-  private val reads: Reads[TpsPaymentItem] = newReads
+  private val reads: Reads[TpsPaymentItem] = readHod
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 

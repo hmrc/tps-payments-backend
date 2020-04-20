@@ -33,8 +33,8 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(impl
   def removeTestData(): Action[AnyContent] = Action.async { implicit request =>
 
     for (
-      result <- tpsRepo.removeByReferenceForTest(possibleReferences.toList)
-    ) yield (Ok("Test data removed"))
+      _ <- tpsRepo.removeByReferenceForTest(possibleReferences.toList)
+    ) yield Ok("Test data removed")
 
   }
 
