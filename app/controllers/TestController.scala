@@ -25,11 +25,13 @@ import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
+import uk.gov.hmrc.play.bootstrap.HttpClientModule
+
 @Singleton
 class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  val possibleReferences = Seq("TT999991C", "TT999992C", "TT999993C", "TT999994C",
-    "TT999995C", "TT999996C", "TT999997C", "TT999998C", "TT999999C")
+  val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
+    "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
   def removeTestData(): Action[AnyContent] = Action.async { implicit request =>
 
     for (

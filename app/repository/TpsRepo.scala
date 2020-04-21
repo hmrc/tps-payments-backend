@@ -36,6 +36,10 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
       key     = Seq("created" -> IndexType.Ascending),
       name    = Some("createdIdx"),
       options = BSONDocument("expireAfterSeconds" -> config.expireMongo.toSeconds)
+    ),
+    Index(
+      key  = Seq("pciPalSessionId" -> IndexType.Ascending),
+      name = Some("pciPalSessionId")
     )
   )
 
@@ -67,10 +71,10 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
   }
 
   def removeByReferenceForTest(references: List[String]): Future[WriteResult] = {
-    remove("payments.reference" -> Json.obj("$in" -> Json.toJson(references)))
+    remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> Json.toJson(references)))
   }
 
   def findByReferenceForTest(reference: String): Future[List[TpsPayments]] = {
-    find("payments.reference" -> reference)
+    find("payments.paymentSpecificData.ninoPart1" -> reference)
   }
 }
