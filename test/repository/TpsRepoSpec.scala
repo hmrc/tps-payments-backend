@@ -37,7 +37,7 @@ class TpsRepoSpec extends ItSpec {
 
     val remove = repo.drop.futureValue
     val ensure = repo.ensureIndexes.futureValue
-    repo.collection.indexesManager.list().futureValue.size shouldBe 2
+    repo.collection.indexesManager.list().futureValue.size shouldBe 3
   }
 
   "insert a record" in {

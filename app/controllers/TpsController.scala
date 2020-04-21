@@ -90,12 +90,12 @@ class TpsController @Inject() (actions:              Actions,
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
-    for {
+    val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
-    } yield {
-      Ok
-    }
+    } yield (Ok)
+
+    f.recover { case e: RuntimeException if (e.getMessage.contains("Could not find paymentItemId") || e.getMessage.contains("Could not find pcipalSessionId")) => BadRequest(e.getMessage) }
 
   }
 
