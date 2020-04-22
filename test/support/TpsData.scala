@@ -44,7 +44,7 @@ object TpsData {
     1.92,
     1.23,
     "VISA",
-    StatusTypes.complete,
+    StatusTypes.validated,
     pciPalSessionId,
     transReference,
     paymentId
@@ -58,7 +58,7 @@ object TpsData {
             "Amount": 1.92,
             "Commission": 1.23,
             "CardType": "VISA",
-            "Status": "${StatusTypes.complete.toString}",
+            "Status": "${StatusTypes.validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "$transReference",
             "paymentItemId": "${paymentId.value}",
