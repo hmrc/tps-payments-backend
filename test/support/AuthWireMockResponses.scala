@@ -54,7 +54,7 @@ object AuthWireMockResponses {
         .withBody(
           //language=JSON
           s"""
-                    {"allEnrolments":[{"key":"tps_payments","identifiers":[],"state":"activated"}]}
+                    {"allEnrolments":[{"key":"digital_tps_payment_taker_call_handler","identifiers":[],"state":"activated"}]}
        """.stripMargin)))
 
   }
