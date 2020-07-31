@@ -18,16 +18,13 @@ package support
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
 
 trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach {
   self: Suite =>
 
-  implicit val wireMockServer: WireMockServer = new WireMockServer(WireMockConfiguration.wireMockConfig().port(WireMockSupport.port))
-  val wireMockHost = "localhost"
-
-  val wireMockBaseUrlAsString = s"http://$wireMockHost:$WireMockSupport.port"
+  private val wireMockServer: WireMockServer = new WireMockServer(wireMockConfig().port(WireMockSupport.port))
 
   WireMock.configureFor(WireMockSupport.port)
 

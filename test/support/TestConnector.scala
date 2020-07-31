@@ -21,14 +21,14 @@ import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import model.{TpsId, TpsPayments, UpdateRequest}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
 
-  val port = 19001
-  val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
+  private val port = 19001
+  private val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
   def store(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Future[TpsId] =
     httpClient.POST[TpsPayments, TpsId](s"http://localhost:$port/tps-payments-backend/store", tpsPayments, headers)

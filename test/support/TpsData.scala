@@ -18,25 +18,39 @@ package support
 
 import java.time.LocalDateTime
 
+import model.StatusTypes.validated
 import model._
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
+  private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
+  private val paymentId: PaymentItemId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  private val reference = "JE231111"
+  private val reference2 = "B"
+  private val reference3 = "P800"
+  private val pid = "123"
+  private val transReference = "51e267d84f91"
 
-  val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
-  val paymentId: PaymentItemId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
-  val reference = "JE231111"
-  val reference2 = "B"
-  val reference3 = "P800"
-  val pid = "123"
-  val transReference = "51e267d84f91"
 
-  val tpspaymentItemP800: PaymentSpecificDataP800 = PaymentSpecificDataP800(reference, reference2, reference3, 2000)
-  val tpsPayment: TpsPaymentItem = TpsPaymentItem(Some(paymentId), 1.92, HeadOfDutyIndicators.B, created, "AR", "", None, tpspaymentItemP800)
-  val tpsPayments: TpsPayments = TpsPayments(id, pid, Some(pciPalSessionId), created, List(tpsPayment))
+  val tpsPayments: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000))))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -44,7 +58,7 @@ object TpsData {
     1.92,
     1.23,
     "VISA",
-    StatusTypes.validated,
+    validated,
     pciPalSessionId,
     transReference,
     paymentId
@@ -58,7 +72,7 @@ object TpsData {
             "Amount": 1.92,
             "Commission": 1.23,
             "CardType": "VISA",
-            "Status": "${StatusTypes.validated.toString}",
+            "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "$transReference",
             "paymentItemId": "${paymentId.value}",
@@ -68,28 +82,28 @@ object TpsData {
   //language=JSON
   val tpsPaymentsJson: JsValue = Json.parse(
     s"""{
-        "_id" : "${id.value}",
-        "pid" : "$pid",
-        "pciPalSessionId" : "${pciPalSessionId.value}",
-        "created":  "$created",
-       "payments": [
-        {
-         "paymentItemId" : "${paymentId.value}",
-        "amount": 1.92,
-        "headOfDutyIndicator": "B",
-        "updated": "$created",
-         "customerName" : "AR",
-         "chargeReference" : "",
-         "paymentSpecificData" : {
-            "ninoPart1": "$reference",
-            "ninoPart2": "$reference2",
-            "taxTypeScreenValue": "$reference3",
-            "period": 2000
-         }
-        }
-        ]
+          "_id" : "${id.value}",
+          "pid" : "$pid",
+          "pciPalSessionId" : "${pciPalSessionId.value}",
+          "created":  "$created",
+          "payments": [
+            {
+              "paymentItemId" : "${paymentId.value}",
+              "amount": 1.92,
+              "headOfDutyIndicator": "B",
+              "updated": "$created",
+              "customerName" : "AR",
+              "chargeReference" : "",
+              "paymentSpecificData" :
+              {
+                "ninoPart1": "$reference",
+                "ninoPart2": "$reference2",
+                "taxTypeScreenValue": "$reference3",
+                "period": 2000
+              }
+            }
+          ]
         }
      """.stripMargin
   )
-
 }

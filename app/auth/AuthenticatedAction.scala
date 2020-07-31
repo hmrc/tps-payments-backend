@@ -16,6 +16,7 @@
 
 package auth
 
+import auth.UnhappyPathResponses.{notLoggedIn, unauthorised}
 import config.AppConfig
 import javax.inject._
 import play.api.Logger
@@ -29,28 +30,26 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedAction @Inject() (
-    af:           AuthorisedFunctions,
-    badResponses: UnhappyPathResponses,
-    cc:           MessagesControllerComponents,
-    appConfig:    AppConfig)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
+    af:        AuthorisedFunctions,
+    cc:        MessagesControllerComponents,
+    appConfig: AppConfig)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
-    implicit val r: Request[A] = request
 
     af.authorised(AuthProviders(PrivilegedApplication)).retrieve(allEnrolments) {
       case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
         block(request)
       case _ =>
         Logger.warn(s"user logged in with no credentials")
-        Future successful badResponses.unauthorised
+        Future successful unauthorised
     }.recover {
       case _: NoActiveSession =>
         Logger.warn(s"no active session")
-        badResponses.notLoggedIn
+        notLoggedIn
       case e: AuthorisationException =>
         Logger.debug(s"Unauthorised because of ${e.reason}, $e")
-        badResponses.unauthorised
+        unauthorised
     }
 
   }

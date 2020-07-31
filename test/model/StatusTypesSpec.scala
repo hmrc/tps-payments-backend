@@ -16,7 +16,9 @@
 
 package model
 
-import play.api.libs.json.{JsString, Json}
+import model.StatusTypes.{failed, validated}
+import play.api.libs.json.JsString
+import play.api.libs.json.Json.toJson
 import support.UnitSpec
 
 class StatusTypesSpec extends UnitSpec {
@@ -24,12 +26,12 @@ class StatusTypesSpec extends UnitSpec {
   "de/serialize TaxTypes" in {
 
     val statusTypes = List(
-      "validated" -> StatusTypes.validated,
-      "failed" -> StatusTypes.failed
+      "validated" -> validated,
+      "failed" -> failed
     )
 
     statusTypes.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
+      val jsValue = toJson(tt._2)
       jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
       jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
     }

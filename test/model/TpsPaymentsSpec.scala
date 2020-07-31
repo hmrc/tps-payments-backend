@@ -32,16 +32,17 @@ package model
  * limitations under the License.
  */
 
-import play.api.libs.json.Json
-import support.{TpsData, UnitSpec}
+import play.api.libs.json.Json.toJson
+import support.TpsData.{tpsPayments, tpsPaymentsJson}
+import support.UnitSpec
 
 class TpsPaymentsSpec extends UnitSpec {
 
   "to json" in {
-    Json.toJson(TpsData.tpsPayments) shouldBe TpsData.tpsPaymentsJson
+    toJson(tpsPayments) shouldBe tpsPaymentsJson
   }
 
   "from json" in {
-    TpsData.tpsPaymentsJson.as[TpsPayments] shouldBe TpsData.tpsPayments
+    tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
   }
 }

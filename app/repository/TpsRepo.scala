@@ -18,8 +18,9 @@ package repository
 
 import javax.inject.{Inject, Singleton}
 import model.pcipal.PcipalSessionId
-import model.{TpsId, TpsPayments}
+import model.{IdNotFoundException, TpsId, TpsPayments}
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.api.indexes._
@@ -45,36 +46,22 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
-  def getPayment(tpsId: TpsId): Future[TpsPayments] = {
-    for {
-      tpsPaymentsOption <- findById(tpsId)
-    } yield tpsPaymentsOption match {
-      case Some(tpsPayment) => tpsPayment
-      case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
-    }
+  def getPayment(tpsId: TpsId): Future[TpsPayments] = findById(tpsId).map {
+    case Some(tpsPayment) => tpsPayment
+    case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
   }
 
-  def findByPcipalSessionId(pcipalSessionId: PcipalSessionId): Future[TpsPayments] = {
-    for {
-      tpsPayments <- find("pciPalSessionId" -> pcipalSessionId.value)
-    } yield {
-      if (tpsPayments.nonEmpty && (tpsPayments.size == 1))
-        tpsPayments(0)
+  def findByPcipalSessionId(id: PcipalSessionId): Future[TpsPayments] =
+    find("pciPalSessionId" -> id.value).map { payments =>
+      if (payments.size > 1)
+        throw new RuntimeException(s"Found ${payments.size} records with id ${id.value}")
       else
-        throw new RuntimeException(
-          if (tpsPayments.nonEmpty) s"Found more than one record with id ${pcipalSessionId.value}, size was ${tpsPayments.size}"
-          else s"Could not find pcipalSessionId: ${pcipalSessionId.value}"
-        )
-
+        payments.headOption.getOrElse(throw new IdNotFoundException(s"Could not find pcipalSessionId: ${id.value}"))
     }
 
-  }
+  def removeByReferenceForTest(references: List[String]): Future[WriteResult] =
+    remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> toJson(references)))
 
-  def removeByReferenceForTest(references: List[String]): Future[WriteResult] = {
-    remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> Json.toJson(references)))
-  }
-
-  def findByReferenceForTest(reference: String): Future[List[TpsPayments]] = {
+  def findByReferenceForTest(reference: String): Future[List[TpsPayments]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
-  }
 }

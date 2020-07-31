@@ -21,28 +21,19 @@ import reactivemongo.api.commands.UpdateWriteResult
 import support.{ItSpec, TpsData}
 
 class TpsRepoSpec extends ItSpec {
-
-  val repo: TpsRepo = injector.instanceOf[TpsRepo]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    val remove = repo.removeAll().futureValue
-  }
-
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
   }
 
   "ensure indexes are created" in {
-
-    val remove = repo.drop.futureValue
-    val ensure = repo.ensureIndexes.futureValue
+    repo.drop.futureValue
+    repo.ensureIndexes.futureValue
     repo.collection.indexesManager.list().futureValue.size shouldBe 3
   }
 
   "insert a record" in {
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
-    upserted.n shouldBe 1
+    val result: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
+    result.n shouldBe 1
   }
 
   private def collectionSize: Int = {
