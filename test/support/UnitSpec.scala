@@ -16,11 +16,9 @@
 
 package support
 
-import org.scalatest.FreeSpecLike
+import org.scalatest.{AppendedClues, FreeSpecLike, Matchers}
 
 /**
  * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
  */
-trait UnitSpec
-  extends FreeSpecLike
-  with RichMatchers
+trait UnitSpec extends FreeSpecLike with Matchers with AppendedClues

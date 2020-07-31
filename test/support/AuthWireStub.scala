@@ -19,20 +19,18 @@ package support
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
-object AuthWireMockResponses {
-
+object AuthWireStub {
   val expectedDetail = "SessionRecordNotFound"
 
-  def notAuthorised: StubMapping = {
+  def notAuthorised: StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
         .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
       )
     )
-  }
 
-  def authorised(authProvider: String, strideUserId: String): StubMapping = {
+  def authorised(): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .withRequestBody(
         equalToJson(
@@ -42,7 +40,7 @@ object AuthWireMockResponses {
                "authorise": [
                  {
                    "authProviders": [
-                     "$authProvider"
+                     "PrivilegedApplication"
                    ]
                  }
                ],
@@ -57,15 +55,12 @@ object AuthWireMockResponses {
                     {"allEnrolments":[{"key":"digital_tps_payment_taker_call_handler","identifiers":[],"state":"activated"}]}
        """.stripMargin)))
 
-  }
-
-  def failsWith(error: String): StubMapping = {
+  def failsWith(error: String): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
         .withHeader("WWW-Authenticate", s"""MDTP detail="$error"""")
       )
     )
-  }
 
 }

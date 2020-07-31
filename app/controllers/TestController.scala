@@ -18,44 +18,32 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 import model.{PaymentItemId, TpsPaymentItem, TpsPayments}
-import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
-import uk.gov.hmrc.play.bootstrap.HttpClientModule
-
 @Singleton
 class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
     "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
+
   def removeTestData(): Action[AnyContent] = Action.async { implicit request =>
-
-    for (
-      _ <- tpsRepo.removeByReferenceForTest(possibleReferences.toList)
-    ) yield Ok("Test data removed")
-
+    tpsRepo.removeByReferenceForTest(possibleReferences.toList).map(_ => Ok("Test data removed"))
   }
 
   def findByReference(ref: String): Action[AnyContent] = Action.async { implicit request =>
-
-    for (
-      result <- tpsRepo.findByReferenceForTest(ref)
-    ) yield Ok(Json.toJson(result))
-
+    tpsRepo.findByReferenceForTest(ref).map(result => Ok(toJson(result)))
   }
 
   def storeTpsPayments(): Action[TpsPayments] = Action.async(parse.json[TpsPayments]) { implicit request =>
-
     val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
-    for {
-      _ <- tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments))
-    } yield {
-      Ok(Json.toJson(request.body._id))
+
+    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments)).map { _ =>
+      Ok(toJson(request.body._id))
     }
   }
-
 }

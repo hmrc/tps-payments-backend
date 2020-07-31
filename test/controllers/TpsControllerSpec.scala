@@ -19,103 +19,90 @@ package controllers
 import model.PaymentItemId
 import model.pcipal.PcipalSessionId
 import play.api.http.Status
-import reactivemongo.api.commands.UpdateWriteResult
-import repository.TpsRepo
-import support.{AuthWireMockResponses, ItSpec, TestConnector, TpsData}
+import support.TpsData.{chargeRefNotificationPciPalRequest, id, tpsPayments}
+import support.{AuthWireStub, ItSpec, TestConnector, TpsData}
 
-class TpsControllerSpec extends ItSpec {
-
-  val repo: TpsRepo = injector.instanceOf[TpsRepo]
-  val testConnector = injector.instanceOf[TestConnector]
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    val remove = repo.removeAll().futureValue
-  }
+class TpsControllerSpec extends ItSpec with Status {
+  private lazy val connector = injector.instanceOf[TestConnector]
 
   "store data when authorised" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val result = testConnector.store(TpsData.tpsPayments).futureValue
-    result shouldBe TpsData.id
+    AuthWireStub.authorised()
+    val result = connector.store(tpsPayments).futureValue
+    result shouldBe id
   }
 
   "store data and delete when authorised" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val result = testConnector.store(TpsData.tpsPayments).futureValue
-    result shouldBe TpsData.id
-    val resultDelete = testConnector.delete(TpsData.id).futureValue
-    resultDelete.status shouldBe Status.OK
+    AuthWireStub.authorised()
+    val result = connector.store(tpsPayments).futureValue
+    result shouldBe id
+    val resultDelete = connector.delete(id).futureValue
+    resultDelete.status shouldBe OK
 
   }
   "getId" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val result = testConnector.getId.futureValue
-    result.status shouldBe Status.OK
+    AuthWireStub.authorised()
+    val result = connector.getId.futureValue
+    result.status shouldBe OK
   }
 
   "Not authorised should get an exception" in {
-    AuthWireMockResponses.notAuthorised
-    an[Exception] should be thrownBy testConnector.store(TpsData.tpsPayments).futureValue
+    AuthWireStub.notAuthorised
+    an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
   }
 
   "Insufficient Enrolments should get an exception" in {
-    AuthWireMockResponses.failsWith("InsufficientEnrolments")
-    an[Exception] should be thrownBy testConnector.store(TpsData.tpsPayments).futureValue
+    AuthWireStub.failsWith("InsufficientEnrolments")
+    an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
   }
 
   "Check that TpsData can be found" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
-    upserted.n shouldBe 1
-    val result = testConnector.find(TpsData.id).futureValue
-    result shouldBe TpsData.tpsPayments
+    AuthWireStub.authorised()
+    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    val result = connector.find(id).futureValue
+    result shouldBe tpsPayments
   }
 
   "Check that TpsData cannot be found" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val result = testConnector.find(TpsData.id).failed.futureValue
-    result.getMessage should include(s"No payments found for id ${TpsData.id.value}")
+    AuthWireStub.authorised()
+    val result = connector.find(id).failed.futureValue
+    result.getMessage should include(s"No payments found for id ${id.value}")
   }
 
   "Check that TpsData can be updated with pcipal-sessionId" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments.copy(pciPalSessionId = None)).futureValue
-    upserted.n shouldBe 1
-    val result = testConnector.find(TpsData.id).futureValue
-    result shouldBe TpsData.tpsPayments.copy(pciPalSessionId = None)
+    AuthWireStub.authorised()
+    repo.upsert(id, tpsPayments.copy(pciPalSessionId = None)).futureValue.n shouldBe 1
+    val result = connector.find(id).futureValue
+    result shouldBe tpsPayments.copy(pciPalSessionId = None)
     result.pciPalSessionId shouldBe None
-    val updated = testConnector.updateWithSessionId(TpsData.id, TpsData.pciPalSessionId).futureValue
-    val result2 = testConnector.find(TpsData.id).futureValue
+    connector.updateWithSessionId(id, TpsData.pciPalSessionId).futureValue
+    val result2 = connector.find(id).futureValue
     result2.pciPalSessionId shouldBe Some(TpsData.pciPalSessionId)
 
   }
 
   "update with pci-pal data" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
-    upserted.n shouldBe 1
-    val pciPaledUpdated = testConnector.updateTpsPayments(TpsData.chargeRefNotificationPciPalRequest).futureValue
-    pciPaledUpdated.status shouldBe Status.OK
-    val result = testConnector.find(TpsData.id).futureValue
-    result.payments(0).pcipalData match {
-      case Some(x) => x shouldBe TpsData.chargeRefNotificationPciPalRequest
+    AuthWireStub.authorised()
+    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPciPalRequest).futureValue
+    pciPaledUpdated.status shouldBe OK
+    val result = connector.find(id).futureValue
+    result.payments.head.pcipalData match {
+      case Some(x) => x shouldBe chargeRefNotificationPciPalRequest
       case None    => throw new RuntimeException("Pcipal data missing")
     }
   }
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
-    upserted.n shouldBe 1
-    val error = testConnector.updateTpsPayments(TpsData.chargeRefNotificationPciPalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).failed.futureValue
+    AuthWireStub.authorised()
+    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    val error = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).failed.futureValue
     error.getMessage should include ("Could not find pcipalSessionId: new")
   }
 
   "get an exception if paymentItemId not found and trying to do an update" in {
-    AuthWireMockResponses.authorised("PrivilegedApplication", "userId")
-    val upserted: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
-    upserted.n shouldBe 1
-    val error = testConnector.updateTpsPayments(TpsData.chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).failed.futureValue
+    AuthWireStub.authorised()
+    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    val error = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).failed.futureValue
     error.getMessage should include ("Could not find paymentItemId: New")
   }
 

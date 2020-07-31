@@ -33,16 +33,16 @@ package support
  */
 
 import com.google.inject.AbstractModule
+import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterEach, FreeSpecLike, Matchers}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import play.api.Application
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
-import play.api.{Application, Configuration, Environment}
+import repository.TpsRepo
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 
@@ -52,46 +52,41 @@ import scala.concurrent.ExecutionContext
 
 trait ItSpec
   extends FreeSpecLike
-  with RichMatchers
+  with ScalaFutures
   with BeforeAndAfterEach
   with GuiceOneServerPerTest
   with WireMockSupport
   with Matchers {
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-
-  lazy val servicesConfig: ServicesConfig = fakeApplication().injector.instanceOf[ServicesConfig]
-  lazy val config: Configuration = fakeApplication().injector.instanceOf[Configuration]
-  lazy val env: Environment = fakeApplication().injector.instanceOf[Environment]
-  lazy val overridingsModule: AbstractModule = new AbstractModule {
-
-    override def configure(): Unit = ()
-
-  }
-  val baseUrl: String = s"http://localhost:$WireMockSupport.port"
+  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(3, Seconds)),
     interval = scaled(Span(300, Millis)))
 
-  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
-  val webdriverUr: String = s"http://localhost:$port"
-  val connector: TestConnector = injector.instanceOf[TestConnector]
+  private val module: AbstractModule = new AbstractModule {
+    override def configure(): Unit = ()
+  }
 
-  def httpClient: HttpClient = fakeApplication().injector.instanceOf[HttpClient]
-
-  override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(overridingsModule)))
-    .configure(configMap).build()
-
-  def configMap: Map[String, Any] = Map[String, Any](
+  private val configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
     "microservice.services.auth.port" -> WireMockSupport.port
   )
 
-  def injector: Injector = fakeApplication().injector
+  lazy val injector: Injector = fakeApplication().injector
+  lazy val repo: TpsRepo = injector.instanceOf[TpsRepo]
+
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
+    .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
+    .configure(configMap).build()
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    repo.removeAll().futureValue
+    ()
+  }
 
   def status(of: Result): Int = of.header.status
-
 }
 

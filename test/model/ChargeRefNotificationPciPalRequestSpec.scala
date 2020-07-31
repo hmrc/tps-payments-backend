@@ -17,13 +17,13 @@
 package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import support.{TpsData, UnitSpec}
 
 class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
   "to json" in {
-    Json.toJson(TpsData.chargeRefNotificationPciPalRequest) shouldBe TpsData.chargeRefNotificationPciPalRequestJson
+    toJson(TpsData.chargeRefNotificationPciPalRequest) shouldBe TpsData.chargeRefNotificationPciPalRequestJson
   }
 
   "from json" in {

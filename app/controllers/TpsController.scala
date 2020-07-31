@@ -16,13 +16,12 @@
 
 package controllers
 
-import auth.{Actions, UnhappyPathResponses}
-import config.AppConfig
+import auth.Actions
 import javax.inject.{Inject, Singleton}
+import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPayments, UpdateRequest}
 import play.api.Logger
-import play.api.libs.json.Json
+import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
 import uk.gov.hmrc.play.bootstrap.controller.BackendController
@@ -30,51 +29,35 @@ import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsController @Inject() (actions:              Actions,
-                               cc:                   ControllerComponents,
-                               tpsRepo:              TpsRepo,
-                               appConfig:            AppConfig,
-                               unhappyPathResponses: UnhappyPathResponses
-)(
-    implicit
-    executionContext: ExecutionContext
-) extends BackendController(cc) {
+class TpsController @Inject() (actions: Actions,
+                               cc:      ControllerComponents,
+                               tpsRepo: TpsRepo)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
+    val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
 
-    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
-    for {
-      _ <- tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments))
-    } yield {
-      Ok(Json.toJson(request.body._id))
+    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments)).map { _ =>
+      Ok(toJson(request.body._id))
     }
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
     Logger.debug(s"findTpsPayments received vrn $id")
-    for {
-      data <- tpsRepo.findPayment(id)
-    } yield {
-      data match {
-        case Some(x) => Ok(Json.toJson(x))
-        case None    => NotFound(s"No payments found for id ${id.value}")
-      }
 
+    tpsRepo.findPayment(id).map {
+      case Some(x) => Ok(toJson(x))
+      case None    => NotFound(s"No payments found for id ${id.value}")
     }
   }
 
   def getId: Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
     Logger.debug(s"getId")
-    Future.successful(Ok(Json.toJson(TpsId.fresh)))
+    Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
   def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
     Logger.debug(s"delete, id= ${tpsId.value}")
-    for {
-      _ <- tpsRepo.removeById(tpsId)
-    } yield {
-      Ok
-    }
+    tpsRepo.removeById(tpsId).map(_ => Ok)
   }
 
   def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
@@ -90,13 +73,15 @@ class TpsController @Inject() (actions:              Actions,
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
-    } yield (Ok)
+    } yield Ok
 
-    f.recover { case e: RuntimeException if (e.getMessage.contains("Could not find paymentItemId") || e.getMessage.contains("Could not find pcipalSessionId")) => BadRequest(e.getMessage) }
-
+    f.recover {
+      case e: IdNotFoundException => BadRequest(e.getMessage)
+    }
   }
 
   private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
@@ -108,11 +93,9 @@ class TpsController @Inject() (actions:              Actions,
       case Some(singleUpdate) =>
         val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
         remainder.::(updated)
-      case None => throw new RuntimeException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
+      case None => throw new IdNotFoundException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
     }
 
     tpsPayments.copy(payments = tpsPaymentsListNew)
-
   }
-
 }
