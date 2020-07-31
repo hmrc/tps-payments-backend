@@ -19,18 +19,16 @@ package repository
 import play.api.libs.json._
 import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.api.commands.UpdateWriteResult
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
 abstract class Repo[A, ID](
     collectionName:         String,
-    reactiveMongoComponent: ReactiveMongoComponent)(implicit manifest: Manifest[A],
-                                                    mid:              Manifest[ID],
-                                                    domainFormat:     OFormat[A],
-                                                    idFormat:         Format[ID],
-                                                    executionContext: ExecutionContext)
+    reactiveMongoComponent: ReactiveMongoComponent)
+  (implicit domainFormat: OFormat[A],
+   idFormat:         Format[ID],
+   executionContext: ExecutionContext)
   extends ReactiveRepository[A, ID](
     collectionName,
     reactiveMongoComponent.mongoConnector.db,
@@ -44,7 +42,7 @@ abstract class Repo[A, ID](
   /**
    * Update or Insert (UpSert)
    */
-  def upsert(id: ID, a: A)(implicit hc: HeaderCarrier): Future[UpdateWriteResult] = collection.update(ordered = false).one(
+  def upsert(id: ID, a: A): Future[UpdateWriteResult] = collection.update(ordered = false).one(
     _id(id),
     a,
     upsert = true

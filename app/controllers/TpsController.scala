@@ -41,7 +41,7 @@ class TpsController @Inject() (actions: Actions,
     }
   }
 
-  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
+  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     Logger.debug(s"findTpsPayments received vrn $id")
 
     tpsRepo.findPayment(id).map {
@@ -50,12 +50,12 @@ class TpsController @Inject() (actions: Actions,
     }
   }
 
-  def getId: Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
+  def getId: Action[AnyContent] = actions.strideAuthenticateAction().async {
     Logger.debug(s"getId")
     Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
-  def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async { implicit request =>
+  def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     Logger.debug(s"delete, id= ${tpsId.value}")
     tpsRepo.removeById(tpsId).map(_ => Ok)
   }

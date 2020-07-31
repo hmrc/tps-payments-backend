@@ -19,20 +19,24 @@ package controllers
 import model.PaymentItemId
 import model.pcipal.PcipalSessionId
 import play.api.http.Status
+import support.AuthStub._
 import support.TpsData.{chargeRefNotificationPciPalRequest, id, tpsPayments}
-import support.{AuthWireStub, ItSpec, TestConnector, TpsData}
+import support.{ItSpec, TestConnector, TpsData}
+import uk.gov.hmrc.http.HeaderCarrier
 
 class TpsControllerSpec extends ItSpec with Status {
+  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+
   private lazy val connector = injector.instanceOf[TestConnector]
 
   "store data when authorised" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     val result = connector.store(tpsPayments).futureValue
     result shouldBe id
   }
 
   "store data and delete when authorised" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     val result = connector.store(tpsPayments).futureValue
     result shouldBe id
     val resultDelete = connector.delete(id).futureValue
@@ -40,36 +44,36 @@ class TpsControllerSpec extends ItSpec with Status {
 
   }
   "getId" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     val result = connector.getId.futureValue
     result.status shouldBe OK
   }
 
   "Not authorised should get an exception" in {
-    AuthWireStub.notAuthorised
+    givenTheUserIsNotAuthenticated()
     an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
   }
 
   "Insufficient Enrolments should get an exception" in {
-    AuthWireStub.failsWith("InsufficientEnrolments")
+    givenTheUserIsNotAuthorised("InsufficientEnrolments")
     an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
   }
 
   "Check that TpsData can be found" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments
   }
 
   "Check that TpsData cannot be found" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     val result = connector.find(id).failed.futureValue
     result.getMessage should include(s"No payments found for id ${id.value}")
   }
 
   "Check that TpsData can be updated with pcipal-sessionId" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments.copy(pciPalSessionId = None)).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments.copy(pciPalSessionId = None)
@@ -81,7 +85,7 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "update with pci-pal data" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
     val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPciPalRequest).futureValue
     pciPaledUpdated.status shouldBe OK
@@ -93,17 +97,18 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
-    val error = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).failed.futureValue
-    error.getMessage should include ("Could not find pcipalSessionId: new")
+    val response = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
+    response.status shouldBe 400
+    response.body should include("Could not find pcipalSessionId: new")
   }
 
   "get an exception if paymentItemId not found and trying to do an update" in {
-    AuthWireStub.authorised()
+    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
-    val error = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).failed.futureValue
-    error.getMessage should include ("Could not find paymentItemId: New")
+    val response = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
+    response.status shouldBe 400
+    response.body should include("Could not find paymentItemId: New")
   }
-
 }

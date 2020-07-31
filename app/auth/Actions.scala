@@ -19,13 +19,6 @@ package auth
 import com.google.inject.Inject
 import play.api.mvc._
 
-import scala.concurrent.ExecutionContext
-
-class Actions @Inject() (
-    authoriseAction: AuthenticatedAction,
-    actionBuilder:   DefaultActionBuilder)(implicit ec: ExecutionContext) {
-
-  def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = {
-    actionBuilder andThen authoriseAction
-  }
+class Actions @Inject() (authoriseAction: AuthenticatedAction, actionBuilder: DefaultActionBuilder) {
+  def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = actionBuilder andThen authoriseAction
 }

@@ -16,15 +16,10 @@
 
 package auth
 
-import javax.inject.Singleton
-import play.api.mvc.{Request, Result}
+import play.api.mvc.Result
 import play.api.mvc.Results.Unauthorized
 
-@Singleton
-class UnhappyPathResponses {
-
-  def unauthorised(implicit request: Request[_]): Result = Unauthorized("You do not have access to this service")
-
-  def notLoggedIn(implicit request: Request[_]): Result = Unauthorized("You are not logged in")
-
+object UnhappyPathResponses {
+  val unauthorised: Result = Unauthorized("You do not have access to this service")
+  val notLoggedIn: Result = Unauthorized("You are not logged in")
 }

@@ -42,7 +42,6 @@ import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
 import repository.TpsRepo
-import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
 
@@ -59,7 +58,6 @@ trait ItSpec
   with Matchers {
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
-  implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
     timeout  = scaled(Span(3, Seconds)),

@@ -31,11 +31,11 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(impl
   val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
     "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
 
-  def removeTestData(): Action[AnyContent] = Action.async { implicit request =>
+  def removeTestData(): Action[AnyContent] = Action.async {
     tpsRepo.removeByReferenceForTest(possibleReferences.toList).map(_ => Ok("Test data removed"))
   }
 
-  def findByReference(ref: String): Action[AnyContent] = Action.async { implicit request =>
+  def findByReference(ref: String): Action[AnyContent] = Action.async {
     tpsRepo.findByReferenceForTest(ref).map(result => Ok(toJson(result)))
   }
 

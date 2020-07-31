@@ -21,7 +21,7 @@ import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import model.{TpsId, TpsPayments, UpdateRequest}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

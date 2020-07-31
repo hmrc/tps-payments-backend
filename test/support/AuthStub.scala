@@ -19,10 +19,10 @@ package support
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 
-object AuthWireStub {
-  val expectedDetail = "SessionRecordNotFound"
+object AuthStub {
+  private val expectedDetail = "SessionRecordNotFound"
 
-  def notAuthorised: StubMapping =
+  def givenTheUserIsNotAuthenticated(): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
@@ -30,7 +30,7 @@ object AuthWireStub {
       )
     )
 
-  def authorised(): StubMapping =
+  def givenTheUserIsAuthenticatedAndAuthorised(): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .withRequestBody(
         equalToJson(
@@ -55,7 +55,7 @@ object AuthWireStub {
                     {"allEnrolments":[{"key":"digital_tps_payment_taker_call_handler","identifiers":[],"state":"activated"}]}
        """.stripMargin)))
 
-  def failsWith(error: String): StubMapping =
+  def givenTheUserIsNotAuthorised(error: String): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)
