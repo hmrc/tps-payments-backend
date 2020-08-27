@@ -32,6 +32,22 @@ object TpsData {
   private val pid = "123"
   private val transReference = "51e267d84f91"
 
+  val tpsPaymentRequest: TpsPaymentRequest = TpsPaymentRequest(
+    pid      = "pid",
+    payments = Seq[TpsPaymentRequestItem](
+      TpsPaymentRequestItem(
+        chargeReference  = "chargeReference",
+        customerName     = "customerName",
+        amount           = BigDecimal("100.00"),
+        taxRegimeDisplay = "taxRegimeDisplay",
+        taxType          = "MIB"
+      )
+    )
+  )
+
+  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments
+  val mibCreated: String = mibPayments.created.toString
+
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
 
@@ -50,7 +66,8 @@ object TpsData {
           "AR",
           "",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000))))
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          "P800")))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -80,7 +97,7 @@ object TpsData {
       }""".stripMargin)
 
   //language=JSON
-  val tpsPaymentsJson: JsValue = Json.parse(
+  val tpsPaymentsJsonWithoutTaxType: JsValue = Json.parse(
     s"""{
           "_id" : "${id.value}",
           "pid" : "$pid",
@@ -104,6 +121,55 @@ object TpsData {
             }
           ]
         }
-     """.stripMargin
-  )
+     """.stripMargin)
+
+  //language=JSON
+  val tpsPaymentsJson: JsValue = Json.parse(
+    s"""{
+          "_id" : "${id.value}",
+          "pid" : "$pid",
+          "pciPalSessionId" : "${pciPalSessionId.value}",
+          "created":  "$created",
+          "payments": [
+            {
+              "paymentItemId" : "${paymentId.value}",
+              "amount": 1.92,
+              "headOfDutyIndicator": "B",
+              "updated": "$created",
+              "customerName" : "AR",
+              "taxType": "P800",
+              "chargeReference" : "",
+              "paymentSpecificData" :
+              {
+                "ninoPart1": "$reference",
+                "ninoPart2": "$reference2",
+                "taxTypeScreenValue": "$reference3",
+                "period": 2000
+              }
+            }
+          ]
+        }
+     """.stripMargin)
+
+  //language=JSON
+  val mibPaymentsJson: JsValue = Json.parse(
+    s"""{
+          "_id": "${mibPayments._id.value}",
+          "pid": "pid",
+          "created": "$mibCreated",
+          "payments": [
+            {
+              "paymentSpecificData": {
+                "chargeReference": "chargeReference"
+              },
+              "amount": 100,
+              "chargeReference": "chargeReference",
+              "headOfDutyIndicator": "B",
+              "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
+              "updated": "$mibCreated",
+              "customerName": "customerName",
+              "taxType": "MIB"
+            }
+          ]
+        }""".stripMargin)
 }

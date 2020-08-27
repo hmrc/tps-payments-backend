@@ -33,6 +33,14 @@ class TpsController @Inject() (actions: Actions,
                                cc:      ControllerComponents,
                                tpsRepo: TpsRepo)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
+  val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
+    val tpsPayments = request.body.tpsPayments
+
+    tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
+      Ok(toJson(tpsPayments._id))
+    }
+  }
+
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
 

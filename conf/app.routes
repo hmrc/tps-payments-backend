@@ -1,4 +1,5 @@
 # microservice specific routes
+POST       /tps-payments                                            controllers.TpsController.createTpsPayments()
 POST       /store                                                   controllers.TpsController.storeTpsPayments()
 GET        /find/id/:id                                             controllers.TpsController.findTpsPayments(id: TpsId)
 GET        /get-id                                                  controllers.TpsController.getId()
