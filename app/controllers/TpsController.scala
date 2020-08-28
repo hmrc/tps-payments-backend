@@ -39,7 +39,7 @@ class TpsController @Inject() (actions: Actions,
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
 
     tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
-      Ok(toJson(tpsPayments._id))
+      Created(toJson(tpsPayments._id))
     }
   }
 
