@@ -46,8 +46,7 @@ object TpsData {
     )
   )
 
-  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments
-  val mibCreated: String = mibPayments.created.toString
+  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
@@ -185,7 +184,7 @@ object TpsData {
     s"""{
           "_id": "${mibPayments._id.value}",
           "pid": "pid",
-          "created": "$mibCreated",
+          "created": "$created",
           "payments": [
             {
               "paymentSpecificData": {
@@ -195,7 +194,7 @@ object TpsData {
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
               "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
-              "updated": "$mibCreated",
+              "updated": "$created",
               "customerName": "customerName",
               "taxType": "MIB"
             }

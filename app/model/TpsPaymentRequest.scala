@@ -30,9 +30,7 @@ object TpsPaymentRequestItem {
 }
 
 case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem]) {
-  val tpsPayments: TpsPayments = {
-    val now = LocalDateTime.now()
-
+  def tpsPayments(now: LocalDateTime): TpsPayments = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(
         paymentItemId       = Some(PaymentItemId.fresh),
