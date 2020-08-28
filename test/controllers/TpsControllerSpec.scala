@@ -20,14 +20,23 @@ import model.PaymentItemId
 import model.pcipal.PcipalSessionId
 import play.api.http.Status
 import support.AuthStub._
-import support.TpsData.{chargeRefNotificationPciPalRequest, id, tpsPayments}
-import support.{ItSpec, TestConnector, TpsData}
+import support.TpsData._
+import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class TpsControllerSpec extends ItSpec with Status {
   private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   private lazy val connector = injector.instanceOf[TestConnector]
+
+  "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+
+    val id = connector.tpsPayments(tpsPaymentRequest).futureValue
+    val payment = connector.find(id).futureValue
+
+    payment.payments.head.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.head.chargeReference
+  }
 
   "store data when authorised" in {
     givenTheUserIsAuthenticatedAndAuthorised()
@@ -78,9 +87,9 @@ class TpsControllerSpec extends ItSpec with Status {
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments.copy(pciPalSessionId = None)
     result.pciPalSessionId shouldBe None
-    connector.updateWithSessionId(id, TpsData.pciPalSessionId).futureValue
+    connector.updateWithSessionId(id, pciPalSessionId).futureValue
     val result2 = connector.find(id).futureValue
-    result2.pciPalSessionId shouldBe Some(TpsData.pciPalSessionId)
+    result2.pciPalSessionId shouldBe Some(pciPalSessionId)
 
   }
 

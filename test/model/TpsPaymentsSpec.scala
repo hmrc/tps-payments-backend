@@ -33,16 +33,21 @@ package model
  */
 
 import play.api.libs.json.Json.toJson
-import support.TpsData.{tpsPayments, tpsPaymentsJson}
+import support.TpsData._
 import support.UnitSpec
 
 class TpsPaymentsSpec extends UnitSpec {
-
   "to json" in {
     toJson(tpsPayments) shouldBe tpsPaymentsJson
+    toJson(mibPayments) shouldBe mibPaymentsJson
   }
 
-  "from json" in {
+  "from json should de-serialise a TpsPayments object with a tax type" in {
     tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
+    mibPaymentsJson.as[TpsPayments] shouldBe mibPayments
+  }
+
+  "from json should de-serialise json without a tax type and default to P800, e.g. for historical persisted records" in {
+    tpsPaymentsJsonWithoutTaxType.as[TpsPayments] shouldBe tpsPayments
   }
 }

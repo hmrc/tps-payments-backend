@@ -18,10 +18,11 @@ package support
 
 import javax.inject.{Inject, Singleton}
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
-import model.{TpsId, TpsPayments, UpdateRequest}
+import model.{TpsId, TpsPaymentRequest, TpsPayments, UpdateRequest}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
-import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
+
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -29,6 +30,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   private val port = 19001
   private val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
+
+  def tpsPayments(launchRequest: TpsPaymentRequest)(implicit hc: HeaderCarrier): Future[TpsId] =
+    httpClient.POST[TpsPaymentRequest, TpsId](s"http://localhost:$port/tps-payments-backend/tps-payments", launchRequest, headers)
 
   def store(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Future[TpsId] =
     httpClient.POST[TpsPayments, TpsId](s"http://localhost:$port/tps-payments-backend/store", tpsPayments, headers)

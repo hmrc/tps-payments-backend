@@ -34,12 +34,26 @@ final case class PaymentSpecificDataP800(
 
 object PaymentSpecificDataP800 {
   implicit val format: OFormat[PaymentSpecificDataP800] = Json.format[PaymentSpecificDataP800]
+}
 
+final case class SimplePaymentSpecificData(chargeReference: String) extends PaymentSpecificData {
+  override def getReference: String = chargeReference
+}
+
+object SimplePaymentSpecificData {
+  implicit val format: OFormat[SimplePaymentSpecificData] = Json.format[SimplePaymentSpecificData]
 }
 
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
-    case psd: PaymentSpecificDataP800 => PaymentSpecificDataP800.format.writes(psd)
+    case p800: PaymentSpecificDataP800     => PaymentSpecificDataP800.format.writes(p800)
+    case simple: SimplePaymentSpecificData => SimplePaymentSpecificData.format.writes(simple)
   }
 
+  implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
+    case json: JsObject if json.keys == Set("chargeReference") =>
+      JsSuccess(json.as[SimplePaymentSpecificData])
+    case json: JsObject if json.keys == Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period") =>
+      JsSuccess(json.as[PaymentSpecificDataP800])
+  }
 }

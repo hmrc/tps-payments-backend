@@ -18,7 +18,8 @@ package repository
 
 import play.api.libs.json.Json
 import reactivemongo.api.commands.UpdateWriteResult
-import support.{ItSpec, TpsData}
+import support.ItSpec
+import support.TpsData._
 
 class TpsRepoSpec extends ItSpec {
   "Count should be 0 with empty repo" in {
@@ -31,13 +32,21 @@ class TpsRepoSpec extends ItSpec {
     repo.collection.indexesManager.list().futureValue.size shouldBe 3
   }
 
-  "insert a record" in {
-    val result: UpdateWriteResult = repo.upsert(TpsData.id, TpsData.tpsPayments).futureValue
+  "insert and find a record" in {
+    val result: UpdateWriteResult = repo.upsert(id, tpsPayments).futureValue
+    repo.findPayment(id).futureValue shouldBe Some(tpsPayments)
+    result.n shouldBe 1
+  }
+
+  "insert and find a mib tps payment" in {
+    mibPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
+
+    val result: UpdateWriteResult = repo.upsert(mibPayments._id, mibPayments).futureValue
+    repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
     result.n shouldBe 1
   }
 
   private def collectionSize: Int = {
     repo.count(Json.obj()).futureValue
   }
-
 }

@@ -18,9 +18,23 @@ package model
 
 import java.time.LocalDateTime
 
+import enumeratum._
+import model.TaxType.P800
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+import scala.collection.immutable
+
+sealed trait TaxType extends EnumEntry {
+}
+
+object TaxType extends PlayEnum[TaxType] {
+  val values: immutable.IndexedSeq[TaxType] = findValues
+
+  case object P800 extends TaxType
+  case object MIB extends TaxType
+}
 
 case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
@@ -30,7 +44,9 @@ case class TpsPaymentItem(
     customerName:        String,
     chargeReference:     String                                     = "",
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
-    paymentSpecificData: PaymentSpecificData)
+    paymentSpecificData: PaymentSpecificData,
+    taxType:             TaxType) {
+}
 
 object TpsPaymentItem {
 
@@ -42,33 +58,27 @@ object TpsPaymentItem {
         s"updated" -> tpsPaymentItem.updated,
         s"customerName" -> tpsPaymentItem.customerName,
         s"chargeReference" -> tpsPaymentItem.chargeReference,
-        s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData
+        s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData,
+        s"taxType" -> tpsPaymentItem.taxType.toString
       )
         ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
         ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
     )
   }
 
-  private def typedReads[Psd <: PaymentSpecificData: Reads]: Reads[TpsPaymentItem] = (
-    (__ \ "paymentItemId").readNullable[PaymentItemId] and
-    (__ \ "amount").read[BigDecimal] and
-    (__ \ "headOfDutyIndicator").read[HeadOfDutyIndicator] and
-    (__ \ "updated").read[LocalDateTime] and
-    (__ \ "customerName").read[String] and
-    (__ \ "chargeReference").read[String] and
-    (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
-    (__ \ "paymentSpecificData").read[Psd]
-
-  )((pid, amnt, hod, updt, cn, cr, pd, psd) => TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd))
-
-  private val readHod: Reads[TpsPaymentItem] = for {
-    headOfDutyIndicator <- (__ \ "headOfDutyIndicator").read[HeadOfDutyIndicator]
-    payment <- headOfDutyIndicator match {
-      case HeadOfDutyIndicators.B => typedReads[PaymentSpecificDataP800]
-    }
-  } yield payment
-
-  private val reads: Reads[TpsPaymentItem] = readHod
+  private val reads: Reads[TpsPaymentItem] =
+    (
+      (__ \ "paymentItemId").readNullable[PaymentItemId] and
+      (__ \ "amount").read[BigDecimal] and
+      (__ \ "headOfDutyIndicator").read[HeadOfDutyIndicator] and
+      (__ \ "updated").read[LocalDateTime] and
+      (__ \ "customerName").read[String] and
+      (__ \ "chargeReference").read[String] and
+      (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
+      (__ \ "paymentSpecificData").read[PaymentSpecificData] and
+      (__ \ "taxType").readWithDefault[String](P800.toString)
+    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType) =>
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxType.namesToValuesMap(taxType)))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 

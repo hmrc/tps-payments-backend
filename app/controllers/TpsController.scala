@@ -16,6 +16,8 @@
 
 package controllers
 
+import java.time.LocalDateTime
+
 import auth.Actions
 import javax.inject.{Inject, Singleton}
 import model._
@@ -32,6 +34,14 @@ import scala.concurrent.{ExecutionContext, Future}
 class TpsController @Inject() (actions: Actions,
                                cc:      ControllerComponents,
                                tpsRepo: TpsRepo)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+
+  val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
+    val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
+
+    tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
+      Ok(toJson(tpsPayments._id))
+    }
+  }
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
