@@ -19,6 +19,7 @@ package support
 import java.time.LocalDateTime
 
 import model.StatusTypes.validated
+import model.TaxType._
 import model._
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import play.api.libs.json.{JsValue, Json}
@@ -40,7 +41,7 @@ object TpsData {
         customerName     = "customerName",
         amount           = BigDecimal("100.00"),
         taxRegimeDisplay = "taxRegimeDisplay",
-        taxType          = "MIB"
+        taxType          = MIB
       )
     )
   )
@@ -67,7 +68,7 @@ object TpsData {
           "",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          "P800")))
+          P800)))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -122,6 +123,34 @@ object TpsData {
           ]
         }
      """.stripMargin)
+
+  val paymentRequestJson: JsValue = Json.parse(
+    """{
+        "pid": "pid",
+        "payments": [
+          {
+            "chargeReference": "chargeReference",
+            "customerName": "customerName",
+            "amount": 100,
+            "taxRegimeDisplay": "taxRegimeDisplay",
+            "taxType": "MIB"
+          }
+        ]
+      } """.stripMargin)
+
+  val invalidPaymentRequestJson: JsValue = Json.parse(
+    """{
+        "pid": "pid",
+        "payments": [
+          {
+            "chargeReference": "chargeReference",
+            "customerName": "customerName",
+            "amount": 100,
+            "taxRegimeDisplay": "taxRegimeDisplay",
+            "taxType": "UNKNOWN"
+          }
+        ]
+      } """.stripMargin)
 
   //language=JSON
   val tpsPaymentsJson: JsValue = Json.parse(

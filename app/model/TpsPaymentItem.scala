@@ -18,9 +18,23 @@ package model
 
 import java.time.LocalDateTime
 
+import enumeratum._
+import model.TaxType.P800
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import play.api.libs.json._
 import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+import scala.collection.immutable
+
+sealed trait TaxType extends EnumEntry {
+}
+
+object TaxType extends PlayEnum[TaxType] {
+  val values: immutable.IndexedSeq[TaxType] = findValues
+
+  case object P800 extends TaxType
+  case object MIB extends TaxType
+}
 
 case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
@@ -31,7 +45,7 @@ case class TpsPaymentItem(
     chargeReference:     String                                     = "",
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
     paymentSpecificData: PaymentSpecificData,
-    taxType:             String) {
+    taxType:             TaxType) {
 }
 
 object TpsPaymentItem {
@@ -45,7 +59,7 @@ object TpsPaymentItem {
         s"customerName" -> tpsPaymentItem.customerName,
         s"chargeReference" -> tpsPaymentItem.chargeReference,
         s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData,
-        s"taxType" -> tpsPaymentItem.taxType
+        s"taxType" -> tpsPaymentItem.taxType.toString
       )
         ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
         ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
@@ -62,8 +76,9 @@ object TpsPaymentItem {
       (__ \ "chargeReference").read[String] and
       (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
-      (__ \ "taxType").readWithDefault[String]("P800")
-    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType) => TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, taxType))
+      (__ \ "taxType").readWithDefault[String](P800.toString)
+    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType) =>
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxType.namesToValuesMap(taxType)))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 

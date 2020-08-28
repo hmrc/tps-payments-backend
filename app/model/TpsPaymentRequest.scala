@@ -23,7 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.Option.empty
 
-case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: String)
+case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType)
 
 object TpsPaymentRequestItem {
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
