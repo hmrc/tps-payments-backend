@@ -120,4 +120,11 @@ class TpsControllerSpec extends ItSpec with Status {
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")
   }
+
+  "find a tps payment item by id" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    val paymentItem = connector.paymentItem(paymentItemId).futureValue
+    paymentItem.paymentItemId shouldBe Some(paymentItemId)
+  }
 }
