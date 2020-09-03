@@ -18,7 +18,7 @@ package repository
 
 import javax.inject.{Inject, Singleton}
 import model.pcipal.PcipalSessionId
-import model.{IdNotFoundException, TpsId, TpsPayments}
+import model._
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.modules.reactivemongo.ReactiveMongoComponent
@@ -45,6 +45,16 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
   )
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
+
+  def findPaymentItem(id: PaymentItemId): Future[Option[TpsPaymentItem]] =
+    find("payments.paymentItemId" -> Some(id)).map { payments =>
+      val paymentItems = payments.flatMap { payment =>
+        payment.payments.filter(_.paymentItemId.contains(id))
+      }
+
+      if (paymentItems.size > 1) throw new RuntimeException(s"Multiple payment items with id ${id.value}")
+      else paymentItems.headOption
+    }
 
   def getPayment(tpsId: TpsId): Future[TpsPayments] = findById(tpsId).map {
     case Some(tpsPayment) => tpsPayment

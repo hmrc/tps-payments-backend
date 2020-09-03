@@ -65,6 +65,15 @@ class TpsController @Inject() (actions: Actions,
     Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
+  def getTaxType(id: PaymentItemId): Action[AnyContent] = actions.strideAuthenticateAction().async {
+    Logger.debug(s"getPaymentItem ${id.value}")
+
+    tpsRepo.findPaymentItem(id).map {
+      case Some(paymentItem) => Ok(toJson(paymentItem.taxType))
+      case None              => NotFound(s"No payment item found for id ${id.value}")
+    }
+  }
+
   def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     Logger.debug(s"delete, id= ${tpsId.value}")
     tpsRepo.removeById(tpsId).map(_ => Ok)

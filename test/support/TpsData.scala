@@ -26,7 +26,6 @@ import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
   private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
-  private val paymentId: PaymentItemId = PaymentItemId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   private val reference = "JE231111"
   private val reference2 = "B"
   private val reference3 = "P800"
@@ -50,6 +49,7 @@ object TpsData {
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
+  val paymentItemId: PaymentItemId = PaymentItemId("paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91")
 
   val tpsPayments: TpsPayments =
     TpsPayments(
@@ -59,7 +59,7 @@ object TpsData {
       created,
       List(
         TpsPaymentItem(
-          Some(paymentId),
+          Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
           created,
@@ -78,7 +78,7 @@ object TpsData {
     validated,
     pciPalSessionId,
     transReference,
-    paymentId
+    paymentItemId
   )
 
   //language=JSON
@@ -92,7 +92,7 @@ object TpsData {
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "$transReference",
-            "paymentItemId": "${paymentId.value}",
+            "paymentItemId": "${paymentItemId.value}",
             "ChargeReference" : ""
       }""".stripMargin)
 
@@ -105,7 +105,7 @@ object TpsData {
           "created":  "$created",
           "payments": [
             {
-              "paymentItemId" : "${paymentId.value}",
+              "paymentItemId" : "${paymentItemId.value}",
               "amount": 1.92,
               "headOfDutyIndicator": "B",
               "updated": "$created",
@@ -160,7 +160,7 @@ object TpsData {
           "created":  "$created",
           "payments": [
             {
-              "paymentItemId" : "${paymentId.value}",
+              "paymentItemId" : "${paymentItemId.value}",
               "amount": 1.92,
               "headOfDutyIndicator": "B",
               "updated": "$created",

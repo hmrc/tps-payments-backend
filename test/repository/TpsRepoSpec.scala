@@ -46,6 +46,12 @@ class TpsRepoSpec extends ItSpec {
     result.n shouldBe 1
   }
 
+  "findPaymentItem should optionally find the matching payment item" in {
+    repo.findPaymentItem(paymentItemId).futureValue shouldBe None
+    repo.upsert(id, tpsPayments).futureValue
+    repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.head)
+  }
+
   private def collectionSize: Int = {
     repo.count(Json.obj()).futureValue
   }
