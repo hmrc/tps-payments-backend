@@ -3,7 +3,7 @@ POST       /tps-payments                                            controllers.
 POST       /store                                                   controllers.TpsController.storeTpsPayments()
 GET        /find/id/:id                                             controllers.TpsController.findTpsPayments(id: TpsId)
 GET        /get-id                                                  controllers.TpsController.getId()
-GET        /payment-items/:id                                       controllers.TpsController.getPaymentItem(id: PaymentItemId)
+GET        /payment-items/:id/tax-type                              controllers.TpsController.getTaxType(id: PaymentItemId)
 DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
 PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId
 PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData

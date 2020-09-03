@@ -16,7 +16,6 @@
 
 package repository
 
-import model.TpsId
 import play.api.libs.json.Json
 import reactivemongo.api.commands.UpdateWriteResult
 import support.ItSpec
@@ -51,18 +50,6 @@ class TpsRepoSpec extends ItSpec {
     repo.findPaymentItem(paymentItemId).futureValue shouldBe None
     repo.upsert(id, tpsPayments).futureValue
     repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.head)
-  }
-
-  "findPaymentItem should fail if there are duplicate payment item ids" in {
-    val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
-    val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
-
-    repo.upsert(id, tpsPayments).futureValue
-    repo.upsert(tpsIdForDuplicate, paymentWithDuplicatePaymentItemId).futureValue
-
-    intercept[RuntimeException] {
-      repo.findPaymentItem(paymentItemId).futureValue
-    }.getMessage.contains(s"Multiple payment items with id ${paymentItemId.value}")
   }
 
   private def collectionSize: Int = {

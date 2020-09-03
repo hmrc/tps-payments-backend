@@ -16,8 +16,9 @@
 
 package controllers
 
-import model.PaymentItemId
+import model.TaxType.P800
 import model.pcipal.PcipalSessionId
+import model.{PaymentItemId, TpsId}
 import play.api.http.Status
 import support.AuthStub._
 import support.TpsData._
@@ -121,10 +122,31 @@ class TpsControllerSpec extends ItSpec with Status {
     response.body should include("Could not find paymentItemId: New")
   }
 
-  "find a tps payment item by id" in {
+  "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
-    val paymentItem = connector.paymentItem(paymentItemId).futureValue
-    paymentItem.paymentItemId shouldBe Some(paymentItemId)
+    connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe P800
+  }
+
+  "getTaxType should return 404 when the tps payment item id is not found" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+
+    intercept[Exception] {
+      connector.getPaymentItemTaxType(paymentItemId).futureValue
+    }.getMessage.contains("404") shouldBe true
+  }
+
+  "getTaxType should return 500 when a duplicate id is found" in {
+    val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
+    val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
+
+    givenTheUserIsAuthenticatedAndAuthorised()
+
+    repo.upsert(id, tpsPayments).futureValue
+    repo.upsert(tpsIdForDuplicate, paymentWithDuplicatePaymentItemId).futureValue
+
+    intercept[Exception] {
+      connector.getPaymentItemTaxType(paymentItemId).futureValue
+    }.getMessage.contains("500") shouldBe true
   }
 }

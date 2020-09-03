@@ -18,7 +18,7 @@ package support
 
 import javax.inject.{Inject, Singleton}
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
-import model.{PaymentItemId, TpsId, TpsPaymentItem, TpsPaymentRequest, TpsPayments, UpdateRequest}
+import model._
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.http.HttpClient
@@ -40,8 +40,8 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def find(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
     httpClient.GET[TpsPayments](s"http://localhost:$port/tps-payments-backend/find/id/${id.value}", headers)
 
-  def paymentItem(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TpsPaymentItem] =
-    httpClient.GET[TpsPaymentItem](s"http://localhost:$port/tps-payments-backend/payment-items/${id.value}", headers)
+  def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
+    httpClient.GET[TaxType](s"http://localhost:$port/tps-payments-backend/payment-items/${id.value}/tax-type", headers)
 
   def getId(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET[HttpResponse](s"http://localhost:$port/tps-payments-backend/get-id", headers)
