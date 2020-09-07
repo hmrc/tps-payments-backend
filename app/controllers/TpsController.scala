@@ -65,7 +65,7 @@ class TpsController @Inject() (actions: Actions,
     Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
-  def getTaxType(id: PaymentItemId): Action[AnyContent] = actions.strideAuthenticateAction().async {
+  def getTaxType(id: PaymentItemId): Action[AnyContent] = Action.async {
     Logger.debug(s"getPaymentItem ${id.value}")
 
     tpsRepo.findPaymentItem(id).map {
