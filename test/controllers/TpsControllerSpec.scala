@@ -123,14 +123,11 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
     connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe P800
   }
 
   "getTaxType should return 404 when the tps payment item id is not found" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-
     intercept[Exception] {
       connector.getPaymentItemTaxType(paymentItemId).futureValue
     }.getMessage.contains("404") shouldBe true
@@ -139,8 +136,6 @@ class TpsControllerSpec extends ItSpec with Status {
   "getTaxType should return 500 when a duplicate id is found" in {
     val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
-
-    givenTheUserIsAuthenticatedAndAuthorised()
 
     repo.upsert(id, tpsPayments).futureValue
     repo.upsert(tpsIdForDuplicate, paymentWithDuplicatePaymentItemId).futureValue
