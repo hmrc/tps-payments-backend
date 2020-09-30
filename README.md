@@ -1,7 +1,7 @@
 
 # tps-payments-backend
 
-This is a placeholder README.md for a new repository
+https://confluence.tools.tax.service.gov.uk/display/OPS/TPS+Payments+Backend
 
 ### License
 
