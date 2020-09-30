@@ -6,15 +6,7 @@ import wartremover.{Wart, wartremoverErrors, wartremoverExcluded}
 
 val appName = "tps-payments-backend"
 
-val akkaVersion     = "2.5.23"
-val akkaHttpVersion = "10.0.15"
-
-dependencyOverrides += "com.typesafe.akka" %% "akka-stream"    % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-protobuf"  % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-slf4j"     % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-actor"     % akkaVersion
-dependencyOverrides += "com.typesafe.akka" %% "akka-http-core" % akkaHttpVersion
-
+scalaVersion := "2.12.12"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
@@ -26,7 +18,6 @@ lazy val microservice = Project(appName, file("."))
     routesGenerator                  :=  InjectedRoutesGenerator,
     evictionWarningOptions in update :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
-  .settings(scalaVersion := "2.12.11")
   .settings(majorVersion := 1)
   .settings(ScalariformSettings())
   .settings(ScoverageSettings())
@@ -51,6 +42,7 @@ lazy val microservice = Project(appName, file("."))
     ))
   .settings(
     scalacOptions ++= Seq(
+      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
       "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
       "-Yno-adapted-args",
