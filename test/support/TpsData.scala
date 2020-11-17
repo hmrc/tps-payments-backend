@@ -33,8 +33,8 @@ object TpsData {
   private val transReference = "51e267d84f91"
 
   val tpsPaymentRequest: TpsPaymentRequest = TpsPaymentRequest(
-    pid      = "pid",
-    payments = Seq[TpsPaymentRequestItem](
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
         chargeReference  = "chargeReference",
         customerName     = "customerName",
@@ -42,7 +42,8 @@ object TpsData {
         taxRegimeDisplay = "taxRegimeDisplay",
         taxType          = MIB
       )
-    )
+    ),
+    navigation = Navigation("back", "reset", "finish", "callback")
   )
 
   val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
@@ -134,7 +135,13 @@ object TpsData {
             "taxRegimeDisplay": "taxRegimeDisplay",
             "taxType": "MIB"
           }
-        ]
+          ],
+          "navigation": {
+              "back" : "back",
+              "reset" : "reset",
+              "finish" : "finish",
+              "callback" : "callback"
+            }
       } """.stripMargin)
 
   val invalidPaymentRequestJson: JsValue = Json.parse(
@@ -198,6 +205,12 @@ object TpsData {
               "customerName": "customerName",
               "taxType": "MIB"
             }
-          ]
+          ],
+          "navigation": {
+              "back" : "back",
+              "reset" : "reset",
+              "finish" : "finish",
+              "callback" : "callback"
+            }
         }""".stripMargin)
 }

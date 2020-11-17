@@ -29,7 +29,7 @@ object TpsPaymentRequestItem {
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
 }
 
-case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem]) {
+case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem], navigation: Navigation) {
   def tpsPayments(now: LocalDateTime): TpsPayments = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(
@@ -41,10 +41,11 @@ case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem]) 
         chargeReference     = p.chargeReference,
         pcipalData          = empty[ChargeRefNotificationPcipalRequest],
         paymentSpecificData = SimplePaymentSpecificData(p.chargeReference),
-        taxType             = p.taxType)
+        taxType             = p.taxType
+      )
     }.toList
 
-    TpsPayments(_id      = TpsId.fresh, pid = pid, created = now, payments = tpsPayments)
+    TpsPayments(_id        = TpsId.fresh, pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
   }
 }
 
