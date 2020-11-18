@@ -34,6 +34,7 @@ object TaxType extends PlayEnum[TaxType] {
 
   case object P800 extends TaxType
   case object MIB extends TaxType
+  case object PNGR extends TaxType
 }
 
 case class TpsPaymentItem(

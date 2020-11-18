@@ -16,20 +16,11 @@
 
 package model
 
-import java.time.LocalDateTime
-
-import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
 
-case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         LocalDateTime           = LocalDateTime.now(),
-    payments:        List[TpsPaymentItem],
-    navigation:      Option[Navigation]      = None
-)
+case class Navigation(back: String, reset: String, finish: String, callback: String)
 
-object TpsPayments {
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+object Navigation {
+  implicit val format: OFormat[Navigation] = Json.format[Navigation]
 }
+
