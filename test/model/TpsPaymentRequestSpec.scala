@@ -30,6 +30,14 @@ class TpsPaymentRequestSpec extends UnitSpec {
     paymentRequestJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequest
   }
 
+  "to json should serialise to json pngr" in {
+    toJson(tpsPaymentRequestPngr) shouldBe paymentRequestPngrJson
+  }
+
+  "from json should de-serialise from json pngr" in {
+    paymentRequestPngrJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestPngr
+  }
+
   "from json should error for an invalid tax type" in {
     intercept[JsResultException] {
       invalidPaymentRequestJson.as[TpsPaymentRequest]

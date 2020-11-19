@@ -36,11 +36,27 @@ object TpsData {
     pid        = "pid",
     payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference  = "chargeReference",
-        customerName     = "customerName",
-        amount           = BigDecimal("100.00"),
-        taxRegimeDisplay = "taxRegimeDisplay",
-        taxType          = MIB
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "taxRegimeDisplay",
+        taxType             = MIB,
+        paymentSpecificData = SimplePaymentSpecificData("chargeReference")
+      )
+    ),
+    navigation = Navigation("back", "reset", "finish", "callback")
+  )
+
+  val tpsPaymentRequestPngr: TpsPaymentRequest = TpsPaymentRequest(
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
+      TpsPaymentRequestItem(
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "PNGR",
+        taxType             = PNGR,
+        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -133,7 +149,36 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "MIB"
+            "taxType": "MIB",
+            "paymentSpecificData":{
+              "chargeReference":"chargeReference"
+            }
+          }
+          ],
+          "navigation": {
+              "back" : "back",
+              "reset" : "reset",
+              "finish" : "finish",
+              "callback" : "callback"
+            }
+      } """.stripMargin)
+
+  val paymentRequestPngrJson: JsValue = Json.parse(
+    """{
+        "pid": "pid",
+        "payments": [
+          {
+            "chargeReference": "chargeReference",
+            "customerName": "customerName",
+            "amount": 100,
+            "taxRegimeDisplay": "PNGR",
+            "taxType": "PNGR",
+            "paymentSpecificData":{
+              "chargeReference":"chargeReference",
+              "vat": 1,
+              "customs": 2,
+              "excise": 3
+            }
           }
           ],
           "navigation": {
