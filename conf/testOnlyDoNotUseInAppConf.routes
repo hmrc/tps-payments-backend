@@ -16,3 +16,4 @@
 GET         /tps-payments-backend/test-only/remove-test-data        controllers.TestController.removeTestData()
 GET         /tps-payments-backend/test-only/find-by-reference/:ref  controllers.TestController.findByReference(ref: String)
 POST        /tps-payments-backend/test-only/store                   controllers.TestController.storeTpsPayments()
+POST        /tps-payments-backend/test-only/create                   controllers.TestController.createTpsPayments()

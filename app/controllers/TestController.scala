@@ -16,8 +16,11 @@
 
 package controllers
 
+import java.time.LocalDateTime
+
 import javax.inject.{Inject, Singleton}
-import model.{PaymentItemId, TpsPaymentItem, TpsPayments}
+import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, TpsPayments}
+import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
@@ -44,6 +47,14 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(impl
 
     tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
+    }
+  }
+
+  def createTpsPayments: Action[TpsPaymentRequest] = Action.async(parse.json[TpsPaymentRequest]) { implicit request =>
+    val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
+
+    tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
+      Created(toJson(tpsPayments._id))
     }
   }
 }
