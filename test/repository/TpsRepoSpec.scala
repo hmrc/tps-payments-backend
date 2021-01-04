@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,11 +38,11 @@ class TpsRepoSpec extends ItSpec {
     result.n shouldBe 1
   }
 
-  "insert and find a mib tps payment" in {
-    mibPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
+  "insert and find a mods tps payment" in {
+    modsPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
 
-    val result: UpdateWriteResult = repo.upsert(mibPayments._id, mibPayments).futureValue
-    repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
+    val result: UpdateWriteResult = repo.upsert(modsPayments._id, modsPayments).futureValue
+    repo.findPayment(modsPayments._id).futureValue shouldBe Some(modsPayments)
     result.n shouldBe 1
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ object TpsData {
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = MIB,
+        taxType             = MODS,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference")
       )
     ),
@@ -62,7 +62,22 @@ object TpsData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
+  val tpsPaymentRequestMods: TpsPaymentRequest = TpsPaymentRequest(
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
+      TpsPaymentRequestItem(
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "MODS",
+        taxType             = MODS,
+        paymentSpecificData = ModsSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
+      )
+    ),
+    navigation = Navigation("back", "reset", "finish", "callback")
+  )
+
+  val modsPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
@@ -149,7 +164,7 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "MIB",
+            "taxType": "MODS",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             }
@@ -178,6 +193,31 @@ object TpsData {
               "vat": 1,
               "customs": 2,
               "excise": 3
+            }
+          }
+          ],
+          "navigation": {
+              "back" : "back",
+              "reset" : "reset",
+              "finish" : "finish",
+              "callback" : "callback"
+            }
+      } """.stripMargin)
+
+  val paymentRequestModsJson: JsValue = Json.parse(
+    """{
+        "pid": "pid",
+        "payments": [
+          {
+            "chargeReference": "chargeReference",
+            "customerName": "customerName",
+            "amount": 100,
+            "taxRegimeDisplay": "MODS",
+            "taxType": "MODS",
+            "paymentSpecificData":{
+              "chargeReference":"chargeReference",
+              "vat": 1,
+              "customs": 2
             }
           }
           ],
@@ -232,9 +272,9 @@ object TpsData {
      """.stripMargin)
 
   //language=JSON
-  val mibPaymentsJson: JsValue = Json.parse(
+  val modsPaymentsJson: JsValue = Json.parse(
     s"""{
-          "_id": "${mibPayments._id.value}",
+          "_id": "${modsPayments._id.value}",
           "pid": "pid",
           "created": "$created",
           "payments": [
@@ -245,10 +285,10 @@ object TpsData {
               "amount": 100,
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
-              "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
+              "paymentItemId": "${modsPayments.payments.head.paymentItemId.get.value}",
               "updated": "$created",
               "customerName": "customerName",
-              "taxType": "MIB"
+              "taxType": "MODS"
             }
           ],
           "navigation": {

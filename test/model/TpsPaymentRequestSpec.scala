@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,14 @@ class TpsPaymentRequestSpec extends UnitSpec {
 
   "from json should de-serialise from json pngr" in {
     paymentRequestPngrJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestPngr
+  }
+
+  "to json should serialise to json mods" in {
+    toJson(tpsPaymentRequestMods) shouldBe paymentRequestModsJson
+  }
+
+  "from json should de-serialise from json mods" in {
+    paymentRequestModsJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestMods
   }
 
   "from json should error for an invalid tax type" in {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,12 @@ import support.UnitSpec
 class TpsPaymentsSpec extends UnitSpec {
   "to json" in {
     toJson(tpsPayments) shouldBe tpsPaymentsJson
-    toJson(mibPayments) shouldBe mibPaymentsJson
+    toJson(modsPayments) shouldBe modsPaymentsJson
   }
 
   "from json should de-serialise a TpsPayments object with a tax type" in {
     tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
-    mibPaymentsJson.as[TpsPayments] shouldBe mibPayments
+    modsPaymentsJson.as[TpsPayments] shouldBe modsPayments
   }
 
   "from json should de-serialise json without a tax type and default to P800, e.g. for historical persisted records" in {

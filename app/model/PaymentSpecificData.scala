@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,11 +55,24 @@ object PngrSpecificData {
   implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 }
 
+final case class ModsSpecificData(chargeReference: String,
+                                  vat:             BigDecimal,
+                                  customs:         BigDecimal
+) extends PaymentSpecificData {
+  override def getReference: String = chargeReference
+  // should we add methods to get vat and customs? Will need to be used by recon, if so put them here. If not delete this comment
+}
+
+object ModsSpecificData {
+  implicit val format: OFormat[ModsSpecificData] = Json.format[ModsSpecificData]
+}
+
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case p800: PaymentSpecificDataP800     => PaymentSpecificDataP800.format.writes(p800)
     case simple: SimplePaymentSpecificData => SimplePaymentSpecificData.format.writes(simple)
     case pngr: PngrSpecificData            => PngrSpecificData.format.writes(pngr)
+    case mods: ModsSpecificData            => ModsSpecificData.format.writes(mods)
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
@@ -69,5 +82,7 @@ object PaymentSpecificData {
       JsSuccess(json.as[PaymentSpecificDataP800])
     case json: JsObject if json.keys == Set("chargeReference", "vat", "customs", "excise") =>
       JsSuccess(json.as[PngrSpecificData])
+    case json: JsObject if json.keys == Set("chargeReference", "vat", "customs") =>
+      JsSuccess(json.as[ModsSpecificData])
   }
 }
