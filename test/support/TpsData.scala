@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,21 @@ object TpsData {
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
+      )
+    ),
+    navigation = Navigation("back", "reset", "finish", "callback")
+  )
+
+  val tpsPaymentRequestMib: TpsPaymentRequest = TpsPaymentRequest(
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
+      TpsPaymentRequestItem(
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "MIB",
+        taxType             = MIB,
+        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -178,6 +193,31 @@ object TpsData {
               "vat": 1,
               "customs": 2,
               "excise": 3
+            }
+          }
+          ],
+          "navigation": {
+              "back" : "back",
+              "reset" : "reset",
+              "finish" : "finish",
+              "callback" : "callback"
+            }
+      } """.stripMargin)
+
+  val paymentRequestMibJson: JsValue = Json.parse(
+    """{
+        "pid": "pid",
+        "payments": [
+          {
+            "chargeReference": "chargeReference",
+            "customerName": "customerName",
+            "amount": 100,
+            "taxRegimeDisplay": "MIB",
+            "taxType": "MIB",
+            "paymentSpecificData":{
+              "chargeReference":"chargeReference",
+              "vat": 1,
+              "customs": 2
             }
           }
           ],
