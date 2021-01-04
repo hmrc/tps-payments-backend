@@ -38,11 +38,11 @@ class TpsRepoSpec extends ItSpec {
     result.n shouldBe 1
   }
 
-  "insert and find a mods tps payment" in {
-    modsPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
+  "insert and find an mib tps payment" in {
+    mibPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
 
-    val result: UpdateWriteResult = repo.upsert(modsPayments._id, modsPayments).futureValue
-    repo.findPayment(modsPayments._id).futureValue shouldBe Some(modsPayments)
+    val result: UpdateWriteResult = repo.upsert(mibPayments._id, mibPayments).futureValue
+    repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
     result.n shouldBe 1
   }
 

@@ -38,12 +38,12 @@ class TpsPaymentRequestSpec extends UnitSpec {
     paymentRequestPngrJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestPngr
   }
 
-  "to json should serialise to json mods" in {
-    toJson(tpsPaymentRequestMods) shouldBe paymentRequestModsJson
+  "to json should serialise to json mib" in {
+    toJson(tpsPaymentRequestMib) shouldBe paymentRequestMibJson
   }
 
-  "from json should de-serialise from json mods" in {
-    paymentRequestModsJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestMods
+  "from json should de-serialise from json mib" in {
+    paymentRequestMibJson.as[TpsPaymentRequest] shouldBe tpsPaymentRequestMib
   }
 
   "from json should error for an invalid tax type" in {

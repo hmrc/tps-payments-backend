@@ -40,7 +40,7 @@ object TpsData {
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = MODS,
+        taxType             = MIB,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference")
       )
     ),
@@ -62,22 +62,22 @@ object TpsData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val tpsPaymentRequestMods: TpsPaymentRequest = TpsPaymentRequest(
+  val tpsPaymentRequestMib: TpsPaymentRequest = TpsPaymentRequest(
     pid        = "pid",
     payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
         chargeReference     = "chargeReference",
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
-        taxRegimeDisplay    = "MODS",
-        taxType             = MODS,
-        paymentSpecificData = ModsSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
+        taxRegimeDisplay    = "MIB",
+        taxType             = MIB,
+        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val modsPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
+  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
@@ -164,7 +164,7 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "MODS",
+            "taxType": "MIB",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             }
@@ -204,7 +204,7 @@ object TpsData {
             }
       } """.stripMargin)
 
-  val paymentRequestModsJson: JsValue = Json.parse(
+  val paymentRequestMibJson: JsValue = Json.parse(
     """{
         "pid": "pid",
         "payments": [
@@ -212,8 +212,8 @@ object TpsData {
             "chargeReference": "chargeReference",
             "customerName": "customerName",
             "amount": 100,
-            "taxRegimeDisplay": "MODS",
-            "taxType": "MODS",
+            "taxRegimeDisplay": "MIB",
+            "taxType": "MIB",
             "paymentSpecificData":{
               "chargeReference":"chargeReference",
               "vat": 1,
@@ -272,9 +272,9 @@ object TpsData {
      """.stripMargin)
 
   //language=JSON
-  val modsPaymentsJson: JsValue = Json.parse(
+  val mibPaymentsJson: JsValue = Json.parse(
     s"""{
-          "_id": "${modsPayments._id.value}",
+          "_id": "${mibPayments._id.value}",
           "pid": "pid",
           "created": "$created",
           "payments": [
@@ -285,10 +285,10 @@ object TpsData {
               "amount": 100,
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
-              "paymentItemId": "${modsPayments.payments.head.paymentItemId.get.value}",
+              "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
               "updated": "$created",
               "customerName": "customerName",
-              "taxType": "MODS"
+              "taxType": "MIB"
             }
           ],
           "navigation": {

@@ -33,7 +33,7 @@ object TaxType extends PlayEnum[TaxType] {
   val values: immutable.IndexedSeq[TaxType] = findValues
 
   case object P800 extends TaxType
-  case object MODS extends TaxType
+  case object MIB extends TaxType
   case object PNGR extends TaxType
 }
 

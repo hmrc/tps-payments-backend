@@ -39,12 +39,12 @@ import support.UnitSpec
 class TpsPaymentsSpec extends UnitSpec {
   "to json" in {
     toJson(tpsPayments) shouldBe tpsPaymentsJson
-    toJson(modsPayments) shouldBe modsPaymentsJson
+    toJson(mibPayments) shouldBe mibPaymentsJson
   }
 
   "from json should de-serialise a TpsPayments object with a tax type" in {
     tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
-    modsPaymentsJson.as[TpsPayments] shouldBe modsPayments
+    mibPaymentsJson.as[TpsPayments] shouldBe mibPayments
   }
 
   "from json should de-serialise json without a tax type and default to P800, e.g. for historical persisted records" in {

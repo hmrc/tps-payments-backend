@@ -55,16 +55,16 @@ object PngrSpecificData {
   implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 }
 
-final case class ModsSpecificData(chargeReference: String,
-                                  vat:             BigDecimal,
-                                  customs:         BigDecimal
+final case class MibSpecificData(chargeReference: String,
+                                 vat:             BigDecimal,
+                                 customs:         BigDecimal
 ) extends PaymentSpecificData {
   override def getReference: String = chargeReference
   // should we add methods to get vat and customs? Will need to be used by recon, if so put them here. If not delete this comment
 }
 
-object ModsSpecificData {
-  implicit val format: OFormat[ModsSpecificData] = Json.format[ModsSpecificData]
+object MibSpecificData {
+  implicit val format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
 }
 
 object PaymentSpecificData {
@@ -72,7 +72,7 @@ object PaymentSpecificData {
     case p800: PaymentSpecificDataP800     => PaymentSpecificDataP800.format.writes(p800)
     case simple: SimplePaymentSpecificData => SimplePaymentSpecificData.format.writes(simple)
     case pngr: PngrSpecificData            => PngrSpecificData.format.writes(pngr)
-    case mods: ModsSpecificData            => ModsSpecificData.format.writes(mods)
+    case mib: MibSpecificData            => MibSpecificData.format.writes(mib)
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
@@ -83,6 +83,6 @@ object PaymentSpecificData {
     case json: JsObject if json.keys == Set("chargeReference", "vat", "customs", "excise") =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if json.keys == Set("chargeReference", "vat", "customs") =>
-      JsSuccess(json.as[ModsSpecificData])
+      JsSuccess(json.as[MibSpecificData])
   }
 }
