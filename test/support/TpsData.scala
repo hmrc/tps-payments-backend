@@ -33,14 +33,14 @@ object TpsData {
   private val transReference = "51e267d84f91"
 
   val tpsPaymentRequest: TpsPaymentRequest = TpsPaymentRequest(
-    pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
+    pid = "pid",
+    payments = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference     = "chargeReference",
-        customerName        = "customerName",
-        amount              = BigDecimal("100.00"),
-        taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = MIB,
+        chargeReference = "chargeReference",
+        customerName = "customerName",
+        amount = BigDecimal("100.00"),
+        taxRegimeDisplay = "taxRegimeDisplay",
+        taxType = MIB,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference")
       )
     ),
@@ -48,14 +48,14 @@ object TpsData {
   )
 
   val tpsPaymentRequestPngr: TpsPaymentRequest = TpsPaymentRequest(
-    pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
+    pid = "pid",
+    payments = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference     = "chargeReference",
-        customerName        = "customerName",
-        amount              = BigDecimal("100.00"),
-        taxRegimeDisplay    = "PNGR",
-        taxType             = PNGR,
+        chargeReference = "chargeReference",
+        customerName = "customerName",
+        amount = BigDecimal("100.00"),
+        taxRegimeDisplay = "PNGR",
+        taxType = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
       )
     ),
@@ -63,14 +63,14 @@ object TpsData {
   )
 
   val tpsPaymentRequestMib: TpsPaymentRequest = TpsPaymentRequest(
-    pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
+    pid = "pid",
+    payments = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference     = "chargeReference",
-        customerName        = "customerName",
-        amount              = BigDecimal("100.00"),
-        taxRegimeDisplay    = "MIB",
-        taxType             = MIB,
+        chargeReference = "chargeReference",
+        customerName = "customerName",
+        amount = BigDecimal("100.00"),
+        taxRegimeDisplay = "MIB",
+        taxType = MIB,
         paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
       )
     ),
@@ -82,6 +82,11 @@ object TpsData {
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
   val paymentItemId: PaymentItemId = PaymentItemId("paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+
+  val modsRef: String = "XMIB12345678"
+  val modsLookupChargeRefs: List[String] = List(modsRef)
+  val modsVatAmount = 123
+  val modsCustomsAmount = 123
 
   val tpsPayments: TpsPayments =
     TpsPayments(
@@ -100,6 +105,27 @@ object TpsData {
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800)))
+
+  val modsTpsPayments: TpsPayments = TpsPayments(
+    _id = id,
+    pid = pid,
+    pciPalSessionId = Some(pciPalSessionId),
+    created = created,
+    payments = List(
+      TpsPaymentItem(
+        paymentItemId = Some(paymentItemId),
+        amount = 1.92,
+        headOfDutyIndicator = HeadOfDutyIndicators.B,
+        updated = created,
+        customerName = "Bob Ross",
+        chargeReference = modsRef,
+        pcipalData = None,
+        paymentSpecificData = MibSpecificData(
+          chargeReference = modsRef,
+          vat = modsVatAmount,
+          customs = modsCustomsAmount
+        ),
+        taxType = MIB)))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -298,4 +324,18 @@ object TpsData {
               "callback" : "callback"
             }
         }""".stripMargin)
+
+  //language=JSON
+  val modsReconLookupJson:JsValue = Json.parse(
+    s"""
+       [
+           {
+               "chargeReference": "$modsRef",
+               "vat": 123,
+               "customs": 123
+           }
+       ]""".stripMargin
+  )
+
+  val modsReconLookup: List[MibSpecificData] = List(MibSpecificData(chargeReference = modsRef, vat = modsVatAmount, customs = modsCustomsAmount))
 }
