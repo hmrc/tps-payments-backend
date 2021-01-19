@@ -7,3 +7,5 @@ GET        /payment-items/:id/tax-type                              controllers.
 DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
 PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId
 PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData
+
+POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments

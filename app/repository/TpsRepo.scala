@@ -74,4 +74,17 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
 
   def findByReferenceForTest(reference: String): Future[List[TpsPayments]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
+
+  def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] = {
+    find("payments.chargeReference" -> Json.obj("$in" -> toJson(modsReferences)))
+      .map { listOfPayments =>
+        listOfPayments
+          .flatMap { tpsPayments =>
+            tpsPayments.payments.filter(_.taxType == TaxType.MIB)
+              .map { tpsPaymentItem =>
+                tpsPaymentItem.paymentSpecificData
+              }
+          }
+      }
+  }
 }

@@ -72,7 +72,7 @@ object PaymentSpecificData {
     case p800: PaymentSpecificDataP800     => PaymentSpecificDataP800.format.writes(p800)
     case simple: SimplePaymentSpecificData => SimplePaymentSpecificData.format.writes(simple)
     case pngr: PngrSpecificData            => PngrSpecificData.format.writes(pngr)
-    case mib: MibSpecificData            => MibSpecificData.format.writes(mib)
+    case mib: MibSpecificData              => MibSpecificData.format.writes(mib)
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {

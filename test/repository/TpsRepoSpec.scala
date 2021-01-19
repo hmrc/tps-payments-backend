@@ -52,6 +52,12 @@ class TpsRepoSpec extends ItSpec {
     repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.head)
   }
 
+  "surfaceModsDataForRecon should find matching mods payments" in {
+    repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe List.empty
+    repo.upsert(id, modsTpsPayments).futureValue
+    repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe modsReconLookup
+  }
+
   private def collectionSize: Int = {
     repo.count(Json.obj()).futureValue
   }
