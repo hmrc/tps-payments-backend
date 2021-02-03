@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 
-import com.google.inject.{AbstractModule, Provides, Singleton}
-import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+import com.google.inject.AbstractModule
 
 class Module extends AbstractModule {
-
-  @Provides
-  @Singleton
-  def authorisedFunctions(ac: AuthConnector): AuthorisedFunctions = new AuthorisedFunctions {
-    override def authConnector: AuthConnector = ac
-  }
 
   override def configure(): Unit = ()
 }

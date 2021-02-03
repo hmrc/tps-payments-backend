@@ -18,24 +18,9 @@ package model
 
 import java.time.LocalDateTime
 
-import enumeratum._
-import model.TaxType.P800
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-
-import scala.collection.immutable
-
-sealed trait TaxType extends EnumEntry {
-}
-
-object TaxType extends PlayEnum[TaxType] {
-  val values: immutable.IndexedSeq[TaxType] = findValues
-
-  case object P800 extends TaxType
-  case object MIB extends TaxType
-  case object PNGR extends TaxType
-}
 
 case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
@@ -77,9 +62,9 @@ object TpsPaymentItem {
       (__ \ "chargeReference").read[String] and
       (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
-      (__ \ "taxType").readWithDefault[String](P800.toString)
+      (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString)
     ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType) =>
-        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxType.namesToValuesMap(taxType)))
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType)))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 

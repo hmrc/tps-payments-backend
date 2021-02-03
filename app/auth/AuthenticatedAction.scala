@@ -30,9 +30,15 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedAction @Inject() (
-    af:        AuthorisedFunctions,
-    cc:        MessagesControllerComponents,
-    appConfig: AppConfig)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
+    cc:            MessagesControllerComponents,
+    appConfig:     AppConfig,
+    val connector: AuthConnector)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
+
+  private val af: AuthorisedFunctions = new AuthorisedFunctions {
+    override def authConnector: AuthConnector = connector
+  }
+
+  val logger: Logger = Logger(this.getClass)
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
@@ -41,14 +47,14 @@ class AuthenticatedAction @Inject() (
       case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
         block(request)
       case _ =>
-        Logger.warn(s"user logged in with no credentials")
+        logger.warn(s"user logged in with no credentials")
         Future successful unauthorised
     }.recover {
       case _: NoActiveSession =>
-        Logger.warn(s"no active session")
+        logger.warn(s"no active session")
         notLoggedIn
       case e: AuthorisationException =>
-        Logger.debug(s"Unauthorised because of ${e.reason}, $e")
+        logger.debug(s"Unauthorised because of ${e.reason}, $e")
         unauthorised
     }
 

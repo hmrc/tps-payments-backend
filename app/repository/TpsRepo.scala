@@ -80,7 +80,7 @@ final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, c
       .map { listOfPayments =>
         listOfPayments
           .flatMap { tpsPayments =>
-            tpsPayments.payments.filter(_.taxType == TaxType.MIB)
+            tpsPayments.payments.filter(_.taxType == TaxTypes.MIB)
               .map { tpsPaymentItem =>
                 tpsPaymentItem.paymentSpecificData
               }

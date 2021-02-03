@@ -34,9 +34,9 @@ package support
 
 import com.google.inject.AbstractModule
 import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterEach, FreeSpecLike, Matchers}
-import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import org.scalatestplus.play.guice.{GuiceOneServerPerSuite, GuiceOneServerPerTest}
 import play.api.Application
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
@@ -50,12 +50,10 @@ import scala.concurrent.ExecutionContext
  */
 
 trait ItSpec
-  extends FreeSpecLike
-  with ScalaFutures
-  with BeforeAndAfterEach
-  with GuiceOneServerPerTest
+  extends AnyFreeSpecLike
+  with RichMatchers
   with WireMockSupport
-  with Matchers {
+  with GuiceOneServerPerSuite {
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 

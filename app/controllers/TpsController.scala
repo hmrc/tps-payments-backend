@@ -26,7 +26,7 @@ import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -34,6 +34,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class TpsController @Inject() (actions: Actions,
                                cc:      ControllerComponents,
                                tpsRepo: TpsRepo)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+
+  val logger: Logger = Logger(this.getClass)
 
   val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
@@ -52,7 +54,7 @@ class TpsController @Inject() (actions: Actions,
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    Logger.debug(s"findTpsPayments received vrn $id")
+    logger.debug(s"findTpsPayments received vrn $id")
 
     tpsRepo.findPayment(id).map {
       case Some(x) => Ok(toJson(x))
@@ -61,12 +63,12 @@ class TpsController @Inject() (actions: Actions,
   }
 
   def getId: Action[AnyContent] = actions.strideAuthenticateAction().async {
-    Logger.debug(s"getId")
+    logger.debug(s"getId")
     Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
   def getTaxType(id: PaymentItemId): Action[AnyContent] = Action.async {
-    Logger.debug(s"getPaymentItem ${id.value}")
+    logger.debug(s"getPaymentItem ${id.value}")
 
     tpsRepo.findPaymentItem(id).map {
       case Some(paymentItem) => Ok(toJson(paymentItem.taxType))
@@ -75,12 +77,12 @@ class TpsController @Inject() (actions: Actions,
   }
 
   def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    Logger.debug(s"delete, id= ${tpsId.value}")
+    logger.debug(s"delete, id= ${tpsId.value}")
     tpsRepo.removeById(tpsId).map(_ => Ok)
   }
 
   def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
-    Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       record <- tpsRepo.getPayment(request.body.tpsId)
       newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
@@ -91,7 +93,7 @@ class TpsController @Inject() (actions: Actions,
   }
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    Logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
@@ -104,7 +106,7 @@ class TpsController @Inject() (actions: Actions,
   }
 
   private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
-    Logger.debug("updateTpsPayments")
+    logger.debug("updateTpsPayments")
     val remainder = tpsPayments.payments.filterNot(f => f.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
     val update = tpsPayments.payments.filter(f => f.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
 

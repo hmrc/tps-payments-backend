@@ -19,7 +19,7 @@ package support
 import java.time.LocalDateTime
 
 import model.StatusTypes.validated
-import model.TaxType._
+import model.TaxTypes._
 import model._
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import play.api.libs.json.{JsValue, Json}
@@ -33,14 +33,14 @@ object TpsData {
   private val transReference = "51e267d84f91"
 
   val tpsPaymentRequest: TpsPaymentRequest = TpsPaymentRequest(
-    pid = "pid",
-    payments = Seq[TpsPaymentRequestItem](
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference = "chargeReference",
-        customerName = "customerName",
-        amount = BigDecimal("100.00"),
-        taxRegimeDisplay = "taxRegimeDisplay",
-        taxType = MIB,
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "taxRegimeDisplay",
+        taxType             = MIB,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference")
       )
     ),
@@ -48,14 +48,14 @@ object TpsData {
   )
 
   val tpsPaymentRequestPngr: TpsPaymentRequest = TpsPaymentRequest(
-    pid = "pid",
-    payments = Seq[TpsPaymentRequestItem](
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference = "chargeReference",
-        customerName = "customerName",
-        amount = BigDecimal("100.00"),
-        taxRegimeDisplay = "PNGR",
-        taxType = PNGR,
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "PNGR",
+        taxType             = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
       )
     ),
@@ -63,14 +63,14 @@ object TpsData {
   )
 
   val tpsPaymentRequestMib: TpsPaymentRequest = TpsPaymentRequest(
-    pid = "pid",
-    payments = Seq[TpsPaymentRequestItem](
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
       TpsPaymentRequestItem(
-        chargeReference = "chargeReference",
-        customerName = "customerName",
-        amount = BigDecimal("100.00"),
-        taxRegimeDisplay = "MIB",
-        taxType = MIB,
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = "MIB",
+        taxType             = MIB,
         paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
       )
     ),
@@ -107,25 +107,25 @@ object TpsData {
           P800)))
 
   val modsTpsPayments: TpsPayments = TpsPayments(
-    _id = id,
-    pid = pid,
+    _id             = id,
+    pid             = pid,
     pciPalSessionId = Some(pciPalSessionId),
-    created = created,
-    payments = List(
+    created         = created,
+    payments        = List(
       TpsPaymentItem(
-        paymentItemId = Some(paymentItemId),
-        amount = 1.92,
+        paymentItemId       = Some(paymentItemId),
+        amount              = 1.92,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
-        updated = created,
-        customerName = "Bob Ross",
-        chargeReference = modsRef,
-        pcipalData = None,
+        updated             = created,
+        customerName        = "Bob Ross",
+        chargeReference     = modsRef,
+        pcipalData          = None,
         paymentSpecificData = MibSpecificData(
           chargeReference = modsRef,
-          vat = modsVatAmount,
-          customs = modsCustomsAmount
+          vat             = modsVatAmount,
+          customs         = modsCustomsAmount
         ),
-        taxType = MIB)))
+        taxType             = MIB)))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -326,7 +326,7 @@ object TpsData {
         }""".stripMargin)
 
   //language=JSON
-  val modsReconLookupJson:JsValue = Json.parse(
+  val modsReconLookupJson: JsValue = Json.parse(
     s"""
        [
            {
