@@ -49,6 +49,7 @@ class TpsPaymentRequestSpec extends UnitSpec {
   "from json should error for an invalid tax type" in {
     intercept[JsResultException] {
       invalidPaymentRequestJson.as[TpsPaymentRequest]
-    }.getMessage.contains("validenumvalue") shouldBe true
+    }.getMessage.contains("Unknown TaxTypes") shouldBe true
   }
+
 }

@@ -20,11 +20,10 @@ import java.time.LocalDateTime
 
 import javax.inject.{Inject, Singleton}
 import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, TpsPayments}
-import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 

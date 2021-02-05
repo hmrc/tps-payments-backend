@@ -16,9 +16,8 @@
 
 package controllers
 
-import model.TaxType.P800
 import model.pcipal.PcipalSessionId
-import model.{PaymentItemId, TpsId}
+import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
 import support.TpsData._
@@ -26,9 +25,9 @@ import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class TpsControllerSpec extends ItSpec with Status {
-  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   private lazy val connector = injector.instanceOf[TestConnector]
+  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
     givenTheUserIsAuthenticatedAndAuthorised()
@@ -124,7 +123,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
-    connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe P800
+    connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.P800
   }
 
   "getTaxType should return 404 when the tps payment item id is not found" in {

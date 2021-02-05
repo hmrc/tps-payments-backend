@@ -22,7 +22,7 @@ import model._
 import recon.FindRPaymentSpecificDataRequest
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -58,6 +58,5 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def findModsPayments(findRPaymentSpecificDataRequest: FindRPaymentSpecificDataRequest)(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.POST[FindRPaymentSpecificDataRequest, HttpResponse](s"http://localhost:$port/tps-payments-backend/payments-recon/find-mods-data", findRPaymentSpecificDataRequest, headers)
-
 
 }
