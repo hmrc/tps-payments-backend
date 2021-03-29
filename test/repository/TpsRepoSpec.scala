@@ -54,7 +54,7 @@ class TpsRepoSpec extends ItSpec {
 
   "surfaceModsDataForRecon should find matching mods payments" in {
     repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe List.empty
-    repo.upsert(id, modsTpsPayments).futureValue
+    repo.upsert(id, modsTpsPaymentsNoAmendmentReference).futureValue
     repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe modsReconLookup
   }
 

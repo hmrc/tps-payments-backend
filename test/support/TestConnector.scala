@@ -21,6 +21,7 @@ import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import model._
 import recon.FindRPaymentSpecificDataRequest
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, readRaw}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 import uk.gov.hmrc.http.HttpClient
 
@@ -43,6 +44,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
 
   def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
     httpClient.GET[TaxType](s"http://localhost:$port/tps-payments-backend/payment-items/${id.value}/tax-type", headers)
+
+  def getModsPaymentItemAmendmentReference(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[Option[Int]] =
+    httpClient.GET[Option[Int]](s"http://localhost:$port/tps-payments-backend/payment-items/${id.value}/mods-amendment-ref", headers)
 
   def getId(implicit hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.GET[HttpResponse](s"http://localhost:$port/tps-payments-backend/get-id", headers)

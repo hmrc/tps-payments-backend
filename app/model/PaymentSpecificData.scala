@@ -55,12 +55,13 @@ object PngrSpecificData {
   implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 }
 
-final case class MibSpecificData(chargeReference: String,
-                                 vat:             BigDecimal,
-                                 customs:         BigDecimal
+final case class MibSpecificData(chargeReference:    String,
+                                 vat:                BigDecimal,
+                                 customs:            BigDecimal,
+                                 amendmentReference: Option[Int] = None
 ) extends PaymentSpecificData {
   override def getReference: String = chargeReference
-  // should we add methods to get vat and customs? Will need to be used by recon, if so put them here. If not delete this comment
+  def getAmendmentReference: Option[Int] = amendmentReference
 }
 
 object MibSpecificData {
@@ -76,13 +77,20 @@ object PaymentSpecificData {
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case json: JsObject if json.keys == Set("chargeReference") =>
+    case json: JsObject if json.keys == jsonKeysSimplePaymentSpecificData =>
       JsSuccess(json.as[SimplePaymentSpecificData])
-    case json: JsObject if json.keys == Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period") =>
+    case json: JsObject if json.keys == jsonKeysPaymentSpecificDataP800 =>
       JsSuccess(json.as[PaymentSpecificDataP800])
-    case json: JsObject if json.keys == Set("chargeReference", "vat", "customs", "excise") =>
+    case json: JsObject if json.keys == jsonKeysPngrSpecificData =>
       JsSuccess(json.as[PngrSpecificData])
-    case json: JsObject if json.keys == Set("chargeReference", "vat", "customs") =>
+    case json: JsObject if (json.keys == jsonKeysMibSpecificDataVariant1) || (json.keys == jsonKeysMibSpecificDataVariant2) =>
       JsSuccess(json.as[MibSpecificData])
   }
+
+  val jsonKeysSimplePaymentSpecificData = Set("chargeReference")
+  val jsonKeysPaymentSpecificDataP800 = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
+  val jsonKeysPngrSpecificData = Set("chargeReference", "vat", "customs", "excise")
+  val jsonKeysMibSpecificDataVariant1 = Set("chargeReference", "vat", "customs")
+  val jsonKeysMibSpecificDataVariant2 = Set("chargeReference", "vat", "customs", "amendmentReference")
+
 }

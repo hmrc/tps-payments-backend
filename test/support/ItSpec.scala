@@ -58,7 +58,7 @@ trait ItSpec
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(3, Seconds)),
+    timeout  = scaled(Span(5, Seconds)),
     interval = scaled(Span(300, Millis)))
 
   private val module: AbstractModule = new AbstractModule {
