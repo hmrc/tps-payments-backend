@@ -106,7 +106,7 @@ object TpsData {
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800)))
 
-  val modsTpsPayments: TpsPayments = TpsPayments(
+  val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
     pid             = pid,
     pciPalSessionId = Some(pciPalSessionId),
@@ -121,9 +121,32 @@ object TpsData {
         chargeReference     = modsRef,
         pcipalData          = None,
         paymentSpecificData = MibSpecificData(
-          chargeReference = modsRef,
-          vat             = modsVatAmount,
-          customs         = modsCustomsAmount
+          chargeReference    = modsRef,
+          vat                = modsVatAmount,
+          customs            = modsCustomsAmount,
+          amendmentReference = None
+        ),
+        taxType             = MIB)))
+
+  val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
+    _id             = id,
+    pid             = pid,
+    pciPalSessionId = Some(pciPalSessionId),
+    created         = created,
+    payments        = List(
+      TpsPaymentItem(
+        paymentItemId       = Some(paymentItemId),
+        amount              = 1.92,
+        headOfDutyIndicator = HeadOfDutyIndicators.B,
+        updated             = created,
+        customerName        = "Bob Ross",
+        chargeReference     = modsRef,
+        pcipalData          = None,
+        paymentSpecificData = MibSpecificData(
+          chargeReference    = modsRef,
+          vat                = modsVatAmount,
+          customs            = modsCustomsAmount,
+          amendmentReference = Some(1)
         ),
         taxType             = MIB)))
 

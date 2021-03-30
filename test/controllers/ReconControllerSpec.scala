@@ -29,7 +29,7 @@ class ReconControllerSpec extends ItSpec with Status {
   private lazy val connector = injector.instanceOf[TestConnector]
 
   "Recon connector should surface mods info correctly when they exist" in {
-    repo.upsert(id, modsTpsPayments).futureValue
+    repo.upsert(id, modsTpsPaymentsNoAmendmentReference).futureValue
     connector.findModsPayments(FindRPaymentSpecificDataRequest(modsLookupChargeRefs)).futureValue.body shouldBe modsReconLookupJson.toString()
   }
 
