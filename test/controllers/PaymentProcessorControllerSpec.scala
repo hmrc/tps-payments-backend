@@ -28,14 +28,14 @@ class PaymentProcessorControllerSpec extends ItSpec with Status {
 
   private lazy val connector = injector.instanceOf[TestConnector]
 
-  "getModsAmendmentRef should return the amendment reference when there is one" in {
+  "getModsAmendmentRef should return the amendment reference in the ModsPaymentCallBackRequest when there is one" in {
     repo.upsert(id, modsTpsPaymentsWithAnAmendmentReference).futureValue.n shouldBe 1
-    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe Some(1)
+    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithAmendmentRef
   }
 
-  "getModsAmendmentRef should return None when there's no amendment reference" in {
+  "getModsAmendmentRef should return None for amendment reference in the ModsPaymentCallBackRequest when isn't one" in {
     repo.upsert(id, modsTpsPaymentsNoAmendmentReference).futureValue.n shouldBe 1
-    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe None
+    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
 
   "getModsAmendmentRef should return 500 when a duplicate id is found" in {

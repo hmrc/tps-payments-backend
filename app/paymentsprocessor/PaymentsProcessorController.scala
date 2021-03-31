@@ -34,14 +34,10 @@ class PaymentsProcessorController @Inject() (
   private[PaymentsProcessorController] val logger: Logger = Logger(this.getClass)
 
   def findModsSpecificData(paymentItemId: PaymentItemId): Action[AnyContent] = Action.async { implicit request =>
-    val amendmentReference = for {
-      amendmentReference: Option[Int] <- paymentsProcessorService.findModsPaymentsByReference(paymentItemId)
-      _ = logger.debug("Response to /payment-items/:id/mods-amendment-ref call: " + amendmentReference.toString)
-    } yield amendmentReference
-    amendmentReference.map {
-      case Some(x) => Ok(Json.toJson(x))
-      case None    => NotFound(s"No amendmentReference for ${paymentItemId.value}")
-    }
+    for {
+      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <- paymentsProcessorService.findModsPaymentsByReference(paymentItemId)
+      _ = logger.debug("Response to /payment-items/:id/mods-amendment-ref call: " + modsPaymentCallBackRequest.toString)
+    } yield Ok(Json.toJson(modsPaymentCallBackRequest))
   }
 
 }
