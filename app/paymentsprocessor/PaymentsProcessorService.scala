@@ -26,14 +26,14 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentsProcessorService @Inject() (repo: TpsRepo)(implicit executionContext: ExecutionContext) {
 
-  def findModsPaymentsByReference(paymentItemId: PaymentItemId)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+  def findModsPaymentsByReference(paymentItemId: PaymentItemId)(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
     repo.findPaymentItem(paymentItemId).map {
       case Some(paymentItem) =>
         paymentItem.paymentSpecificData match {
-          case paymentItem: MibSpecificData => paymentItem.amendmentReference
+          case paymentItem: MibSpecificData => ModsPaymentCallBackRequest(paymentItem.chargeReference, paymentItem.amendmentReference)
           case _                            => throw new RuntimeException(s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?")
         }
-      case None => None
+      case None => throw new RuntimeException(s"No payment specific data for id [ ${paymentItemId.value} ]")
     }
   }
 

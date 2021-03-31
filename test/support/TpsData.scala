@@ -17,11 +17,11 @@
 package support
 
 import java.time.LocalDateTime
-
 import model.StatusTypes.validated
 import model.TaxTypes._
 import model._
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
 object TpsData {
@@ -361,4 +361,7 @@ object TpsData {
   )
 
   val modsReconLookup: List[MibSpecificData] = List(MibSpecificData(chargeReference = modsRef, vat = modsVatAmount, customs = modsCustomsAmount))
+
+  val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", Some(1))
+  val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", None)
 }
