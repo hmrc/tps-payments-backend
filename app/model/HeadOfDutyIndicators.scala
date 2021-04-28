@@ -38,8 +38,7 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
 
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
-  case object B extends HeadOfDutyIndicator {
-  }
+  case object B extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 

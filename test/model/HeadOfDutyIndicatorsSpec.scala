@@ -18,17 +18,18 @@ package model
 
 import play.api.libs.json.{JsString, Json}
 import support.UnitSpec
+import model.HeadOfDutyIndicators._
 
 class HeadOfDutyIndicatorsSpec extends UnitSpec {
 
   "de/serialize headOfDutyIndicators" in {
 
     val headOfDutyIndicators = List(
-      "B" -> HeadOfDutyIndicators.B
+      "B" -> B
     )
 
     headOfDutyIndicators.foreach { tt =>
-      val jsValue = Json.toJson(tt._2)
+      val jsValue = Json.toJson(tt._2.toString)
       jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
       jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize $tt"
     }
