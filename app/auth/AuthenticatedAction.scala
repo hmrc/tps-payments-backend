@@ -41,7 +41,7 @@ class AuthenticatedAction @Inject() (
   val logger: Logger = Logger(this.getClass)
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     af.authorised(AuthProviders(PrivilegedApplication)).retrieve(allEnrolments) {
       case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
