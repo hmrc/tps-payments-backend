@@ -2,7 +2,8 @@ import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, integrationTestSettings, scalaSettings}
 import uk.gov.hmrc.SbtArtifactory
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import wartremover.{Wart, wartremoverErrors, wartremoverExcluded}
+import wartremover.Wart
+import wartremover.WartRemover.autoImport.wartremoverErrors
 
 val appName = "tps-payments-backend"
 
