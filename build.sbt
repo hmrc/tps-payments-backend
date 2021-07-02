@@ -36,7 +36,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(integrationTestSettings())
   .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(resolvers += Resolver.jcenterRepo)
+  .settings(scalacOptions in Compile -= "utf8")
   .settings(
     routesImport ++= Seq(
       "model._"
