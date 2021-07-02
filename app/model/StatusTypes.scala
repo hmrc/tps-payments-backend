@@ -31,18 +31,16 @@ object StatusType {
 
 }
 
-sealed abstract class StatusType extends EnumEntry {
-}
+sealed abstract class StatusType extends EnumEntry
 
 object StatusTypes extends Enum[StatusType] {
 
+  val values: immutable.IndexedSeq[StatusType] = findValues
+
   def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
-  case object validated extends StatusType {
-  }
+  case object validated extends StatusType
 
-  case object failed extends StatusType {
-  }
+  case object failed extends StatusType
 
-  def values: immutable.IndexedSeq[StatusType] = findValues
 }
