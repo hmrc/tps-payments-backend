@@ -28,19 +28,16 @@ object HeadOfDutyIndicator {
   implicit val format: Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
   implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
   implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator] = valueClassBinder(_.toString)
-
 }
 
-sealed abstract class HeadOfDutyIndicator extends EnumEntry {
-}
+sealed abstract class HeadOfDutyIndicator extends EnumEntry
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
 
+  val values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
+
   def forCode(code: String): Option[HeadOfDutyIndicator] = values.find(_.toString == code)
 
-  case object B extends HeadOfDutyIndicator {
-  }
-
-  def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
+  case object B extends HeadOfDutyIndicator
 
 }

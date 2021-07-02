@@ -33,14 +33,15 @@ package support
  */
 
 import com.google.inject.AbstractModule
-import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.guice.{GuiceOneServerPerSuite, GuiceOneServerPerTest}
-import play.api.Application
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
+import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.{Application, Mode}
+import play.core.server.ServerConfig
 import repository.TpsRepo
 
 import scala.concurrent.ExecutionContext
@@ -53,7 +54,9 @@ trait ItSpec
   extends AnyFreeSpecLike
   with RichMatchers
   with WireMockSupport
-  with GuiceOneServerPerSuite {
+  with GuiceOneServerPerSuite { self =>
+
+  val testServerPort = 19001
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
@@ -84,5 +87,15 @@ trait ItSpec
   }
 
   def status(of: Result): Int = of.header.status
+
+  override implicit protected lazy val runningServer: RunningServer =
+    TestServerFactory.start(app)
+
+  object TestServerFactory extends DefaultTestServerFactory {
+    override protected def serverConfig(app: Application): ServerConfig = {
+      val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
+      sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
+    }
+  }
 }
 

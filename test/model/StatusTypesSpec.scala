@@ -21,11 +21,13 @@ import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
 import support.UnitSpec
 
+import scala.collection.immutable
+
 class StatusTypesSpec extends UnitSpec {
 
   "de/serialize TaxTypes" in {
 
-    val statusTypes = List(
+    val statusTypes: immutable.Seq[(String, StatusType)] = List(
       "validated" -> validated,
       "failed" -> failed
     )
