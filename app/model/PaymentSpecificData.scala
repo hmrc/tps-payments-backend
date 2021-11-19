@@ -77,6 +77,15 @@ object ChildBenefitSpecificData {
   implicit val format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
 }
 
+final case class SaSpecificData(
+    saReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = saReference
+}
+object SaSpecificData {
+  implicit val format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
+}
+
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case p800: PaymentSpecificDataP800                      => PaymentSpecificDataP800.format.writes(p800)
@@ -84,6 +93,7 @@ object PaymentSpecificData {
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
     case childBenefitSpecificData: ChildBenefitSpecificData => ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
+    case sa: SaSpecificData                                 => SaSpecificData.format.writes(sa)
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
@@ -97,6 +107,8 @@ object PaymentSpecificData {
       JsSuccess(json.as[MibSpecificData])
     case json: JsObject if json.keys == jsonKeysChildBenefit =>
       JsSuccess(json.as[ChildBenefitSpecificData])
+    case json: JsObject if json.keys == jsonKeysSa =>
+      JsSuccess(json.as[SaSpecificData])
   }
 
   val jsonKeysSimplePaymentSpecificData = Set("chargeReference")
@@ -105,5 +117,6 @@ object PaymentSpecificData {
   val jsonKeysMibSpecificDataVariant1 = Set("chargeReference", "vat", "customs")
   val jsonKeysMibSpecificDataVariant2 = Set("chargeReference", "vat", "customs", "amendmentReference")
   val jsonKeysChildBenefit = Set("childBenefitYReference")
+  val jsonKeysSa = Set("saReference")
 
 }
