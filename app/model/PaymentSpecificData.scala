@@ -120,6 +120,7 @@ final case class NtcSpecificData(
  }
  object NtcSpecificData {
    implicit val format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
+ }  
 
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
