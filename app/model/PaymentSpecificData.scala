@@ -77,6 +77,33 @@ object ChildBenefitSpecificData {
   implicit val format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
 }
 
+final case class SaSpecificData(
+    saReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = saReference
+}
+object SaSpecificData {
+  implicit val format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
+}
+
+final case class SdltSpecificData(
+    sdltReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = sdltReference
+}
+object SdltSpecificData {
+  implicit val format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
+}
+
+final case class SafeSpecificData(
+    safeReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = safeReference
+}
+object SafeSpecificData {
+  implicit val format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
+}
+
 final case class NtcSpecificData(
     ntcReference: String
 ) extends PaymentSpecificData {
@@ -84,7 +111,6 @@ final case class NtcSpecificData(
 }
 object NtcSpecificData {
   implicit val format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
-}
 
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
@@ -93,6 +119,9 @@ object PaymentSpecificData {
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
     case childBenefitSpecificData: ChildBenefitSpecificData => ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
+    case sa: SaSpecificData                                 => SaSpecificData.format.writes(sa)
+    case sdltSpecificData: SdltSpecificData                 => SdltSpecificData.format.writes(sdltSpecificData)
+    case safeSpecificData: SafeSpecificData                 => SafeSpecificData.format.writes(safeSpecificData)
     case ntcSpecificData: NtcSpecificData                   => NtcSpecificData.format.writes(ntcSpecificData)
   }
 
@@ -107,6 +136,12 @@ object PaymentSpecificData {
       JsSuccess(json.as[MibSpecificData])
     case json: JsObject if json.keys == jsonKeysChildBenefit =>
       JsSuccess(json.as[ChildBenefitSpecificData])
+    case json: JsObject if json.keys == jsonKeysSa =>
+      JsSuccess(json.as[SaSpecificData])
+    case json: JsObject if json.keys == jsonKeysSdlt =>
+       JsSuccess(json.as[SdltSpecificData])
+    case json: JsObject if json.keys == jsonKeysSafe =>
+      JsSuccess(json.as[SafeSpecificData])
     case json: JsObject if json.keys == jsonKeysNtc =>
       JsSuccess(json.as[NtcSpecificData])
   }
@@ -117,6 +152,8 @@ object PaymentSpecificData {
   val jsonKeysMibSpecificDataVariant1 = Set("chargeReference", "vat", "customs")
   val jsonKeysMibSpecificDataVariant2 = Set("chargeReference", "vat", "customs", "amendmentReference")
   val jsonKeysChildBenefit = Set("childBenefitYReference")
+  val jsonKeysSa = Set("saReference")
+  val jsonKeysSdlt = Set("sdltReference")
+  val jsonKeysSafe = Set("safeReference")
   val jsonKeysNtc = Set("ntcReference")
-
 }
