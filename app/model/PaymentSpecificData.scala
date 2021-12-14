@@ -124,13 +124,22 @@ object NtcSpecificData {
 
 final case class PayeSpecificData(
     payeReference: String,
-    taxAmount:     Option[BigDecimal],
-    nicAmount:     Option[BigDecimal]
+    taxAmount:     BigDecimal,
+    nicAmount:     BigDecimal
 ) extends PaymentSpecificData {
   override def getReference: String = payeReference
 }
 object PayeSpecificData {
   implicit val format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
+}
+
+final case class NpsSpecificData(
+    npsReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = npsReference
+}
+object NpsSpecificData {
+  implicit val format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
 }
 
 object PaymentSpecificData {
@@ -146,6 +155,7 @@ object PaymentSpecificData {
     case cotaxSpecificData: CotaxSpecificData               => CotaxSpecificData.format.writes(cotaxSpecificData)
     case ntcSpecificData: NtcSpecificData                   => NtcSpecificData.format.writes(ntcSpecificData)
     case payeSpecificData: PayeSpecificData                 => PayeSpecificData.format.writes(payeSpecificData)
+    case npsSpecificData: NpsSpecificData                   => NpsSpecificData.format.writes(npsSpecificData)
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
@@ -169,8 +179,10 @@ object PaymentSpecificData {
       JsSuccess(json.as[CotaxSpecificData])
     case json: JsObject if json.keys == jsonKeysNtc =>
       JsSuccess(json.as[NtcSpecificData])
-    case json: JsObject if (json.keys == jsonKeysPayeVariant1) || (json.keys == jsonKeysPayeVariant2) || (json.keys == jsonKeysPayeVariant3) =>
+    case json: JsObject if json.keys == jsonKeysPaye =>
       JsSuccess(json.as[PayeSpecificData])
+    case json: JsObject if (json.keys == jsonKeysNpsVariant1) || (json.keys == jsonKeysNpsVariant2) =>
+      JsSuccess(json.as[NpsSpecificData])
   }
 
   val jsonKeysSimplePaymentSpecificData = Set("chargeReference")
@@ -184,8 +196,8 @@ object PaymentSpecificData {
   val jsonKeysSafe = Set("safeReference")
   val jsonKeysCotax = Set("cotaxReference")
   val jsonKeysNtc = Set("ntcReference")
-  val jsonKeysPayeVariant1 = Set("payeReference", "taxAmount")
-  val jsonKeysPayeVariant2 = Set("payeReference", "nicAmount")
-  val jsonKeysPayeVariant3 = Set("payeReference", "taxAmount", "nicAmount")
+  val jsonKeysPaye = Set("payeReference", "taxAmount", "nicAmount")
+  val jsonKeysNpsVariant1 = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
+  val jsonKeysNpsVariant2 = Set("npsReference", "npsReference", "periodStartDate", "periodEndDate", "npsType")
 
 }

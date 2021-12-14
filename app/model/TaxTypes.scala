@@ -46,6 +46,7 @@ object TaxTypes extends Enum[TaxType] {
   case object Cotax extends TaxType
   case object Ntc extends TaxType
   case object Paye extends TaxType
+  case object Nps extends TaxType
 
   override def values: immutable.IndexedSeq[TaxType] = findValues
 
