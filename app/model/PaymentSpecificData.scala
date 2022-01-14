@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,7 +149,7 @@ object NpsSpecificData {
 final case class VatSpecificData(
     vatReference:    String,
     periodReference: String,
-    remittanceType:  Option[String]
+    remittanceType:  String
 ) extends PaymentSpecificData {
   override def getReference: String = vatReference
 }
@@ -199,7 +199,7 @@ object PaymentSpecificData {
       JsSuccess(json.as[PayeSpecificData])
     case json: JsObject if json.keys == jsonKeysNps =>
       JsSuccess(json.as[NpsSpecificData])
-    case json: JsObject if (json.keys == jsonKeysVatVariant1 || json.keys == jsonKeysVatVariant2) =>
+    case json: JsObject if json.keys == jsonKeysVat =>
       JsSuccess(json.as[VatSpecificData])
   }
 
@@ -216,7 +216,5 @@ object PaymentSpecificData {
   val jsonKeysNtc = Set("ntcReference")
   val jsonKeysPaye = Set("payeReference", "taxAmount", "nicAmount")
   val jsonKeysNps = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
-  val jsonKeysVatVariant1 = Set("vatReference", "periodReference")
-  val jsonKeysVatVariant2 = Set("vatReference", "periodReference", "remittanceType")
-
+  val jsonKeysVat = Set("vatReference", "periodReference", "remittanceType")
 }
