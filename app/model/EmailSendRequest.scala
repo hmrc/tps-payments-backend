@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package recon
+package model
 
-import javax.inject.{Inject, Singleton}
-import model.PaymentSpecificData
-import repository.TpsRepo
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.libs.json.{Json, OFormat}
 
-import scala.concurrent.{ExecutionContext, Future}
+final case class EmailSendRequest(to: Seq[String], templateId: String, parameters: Map[String, String], force: Boolean = false)
 
-@Singleton
-class ReconService @Inject() (repo: TpsRepo)(implicit executionContext: ExecutionContext) {
-
-  def findModsPaymentsByReference(listOfReferencesToFind: List[String])(implicit hc: HeaderCarrier): Future[List[PaymentSpecificData]] = {
-    repo.surfaceModsDataForRecon(listOfReferencesToFind)
-  }
+object EmailSendRequest {
+  implicit val format: OFormat[EmailSendRequest] = Json.format[EmailSendRequest]
 }

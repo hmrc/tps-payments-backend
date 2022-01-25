@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = MIB,
-        paymentSpecificData = SimplePaymentSpecificData("chargeReference")
+        paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -56,7 +57,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
-        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
+        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -71,7 +73,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "MIB",
         taxType             = MIB,
-        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
+        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00")),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -104,7 +107,8 @@ object TpsData {
           "",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800)))
+          P800,
+          "test@email.com")))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -126,7 +130,8 @@ object TpsData {
           customs            = modsCustomsAmount,
           amendmentReference = None
         ),
-        taxType             = MIB)))
+        taxType             = MIB,
+        email               = "test@email.com")))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -148,7 +153,8 @@ object TpsData {
           customs            = modsCustomsAmount,
           amendmentReference = Some(1)
         ),
-        taxType             = MIB)))
+        taxType             = MIB,
+        email               = "email")))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.Option.empty
 
-case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData)
+case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: String)
 
 object TpsPaymentRequestItem {
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
@@ -41,7 +41,8 @@ case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem], 
         chargeReference     = p.chargeReference,
         pcipalData          = empty[ChargeRefNotificationPcipalRequest],
         paymentSpecificData = p.paymentSpecificData,
-        taxType             = p.taxType
+        taxType             = p.taxType,
+        email               = p.email
       )
     }.toList
 
