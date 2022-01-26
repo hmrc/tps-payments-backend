@@ -26,6 +26,7 @@ class AppConfig @Inject() (
     servicesConfig: ServicesConfig,
     environment:    Environment) {
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
+  val emailServiceUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"  
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
   val strideRole: String = config.get[String]("stride.role")
