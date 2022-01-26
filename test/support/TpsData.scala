@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = MIB,
-        paymentSpecificData = SimplePaymentSpecificData("chargeReference")
+        paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -56,7 +57,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
-        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00"))
+        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -71,7 +73,8 @@ object TpsData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "MIB",
         taxType             = MIB,
-        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"))
+        paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00")),
+        email               = "email"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -104,7 +107,8 @@ object TpsData {
           "",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800)))
+          P800,
+          "test@email.com")))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -126,7 +130,8 @@ object TpsData {
           customs            = modsCustomsAmount,
           amendmentReference = None
         ),
-        taxType             = MIB)))
+        taxType             = MIB,
+        email               = "test@email.com")))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -148,7 +153,8 @@ object TpsData {
           customs            = modsCustomsAmount,
           amendmentReference = Some(1)
         ),
-        taxType             = MIB)))
+        taxType             = MIB,
+        email               = "email")))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -198,7 +204,8 @@ object TpsData {
                 "ninoPart2": "$reference2",
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
-              }
+              },
+              "email": "test@email.com"
             }
           ]
         }
@@ -216,7 +223,8 @@ object TpsData {
             "taxType": "MIB",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -242,7 +250,8 @@ object TpsData {
               "vat": 1,
               "customs": 2,
               "excise": 3
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -267,7 +276,8 @@ object TpsData {
               "chargeReference":"chargeReference",
               "vat": 1,
               "customs": 2
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -287,7 +297,8 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "UNKNOWN"
+            "taxType": "UNKNOWN",
+            "email": "email"
           }
         ]
       } """.stripMargin)
@@ -314,7 +325,8 @@ object TpsData {
                 "ninoPart2": "$reference2",
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
-              }
+              },
+              "email": "test@email.com"
             }
           ]
         }
@@ -337,7 +349,8 @@ object TpsData {
               "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
               "updated": "$created",
               "customerName": "customerName",
-              "taxType": "MIB"
+              "taxType": "MIB",
+              "email": "email"
             }
           ],
           "navigation": {
