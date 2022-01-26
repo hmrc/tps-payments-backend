@@ -126,14 +126,12 @@ class TpsController @Inject() (actions: Actions,
   
   private def sendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
      tpsPayments.payments.map{ nextPaymentItem =>
-       if(!nextPaymentItem.email.equals("")){
        emailConnector.sendEmail(
          languageCode     = "en",
          email            = nextPaymentItem.email,
          displayTaxType   = nextPaymentItem.taxType.toString,
          paymentReference = nextPaymentItem.paymentSpecificData.getReference,
          amountPaid       = nextPaymentItem.amount)
-     }
      }
      ()
    }
