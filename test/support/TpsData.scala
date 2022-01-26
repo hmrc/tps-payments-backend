@@ -204,7 +204,8 @@ object TpsData {
                 "ninoPart2": "$reference2",
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
-              }
+              },
+              "email": "test@email.com"
             }
           ]
         }
@@ -222,7 +223,8 @@ object TpsData {
             "taxType": "MIB",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -248,7 +250,8 @@ object TpsData {
               "vat": 1,
               "customs": 2,
               "excise": 3
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -273,7 +276,8 @@ object TpsData {
               "chargeReference":"chargeReference",
               "vat": 1,
               "customs": 2
-            }
+            },
+            "email": "email"
           }
           ],
           "navigation": {
@@ -293,7 +297,8 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "UNKNOWN"
+            "taxType": "UNKNOWN",
+            "email": "email"
           }
         ]
       } """.stripMargin)
@@ -320,7 +325,8 @@ object TpsData {
                 "ninoPart2": "$reference2",
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
-              }
+              },
+              "email": "test@email.com"
             }
           ]
         }
@@ -343,7 +349,8 @@ object TpsData {
               "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
               "updated": "$created",
               "customerName": "customerName",
-              "taxType": "MIB"
+              "taxType": "MIB",
+              "email": "email"
             }
           ],
           "navigation": {
