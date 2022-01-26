@@ -19,6 +19,7 @@ package controllers
 import java.time.LocalDateTime
 
 import auth.Actions
+import connectors.EmailConnector
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
@@ -26,6 +27,7 @@ import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsRepo
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -33,7 +35,8 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TpsController @Inject() (actions: Actions,
                                cc:      ControllerComponents,
-                               tpsRepo: TpsRepo)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+                               tpsRepo: TpsRepo,
+                               emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
 
@@ -97,6 +100,7 @@ class TpsController @Inject() (actions: Actions,
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
+      _ = sendEmails(a)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
     } yield Ok
 
@@ -119,4 +123,16 @@ class TpsController @Inject() (actions: Actions,
 
     tpsPayments.copy(payments = tpsPaymentsListNew)
   }
+  
+  private def sendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
+     tpsPayments.payments.map{ nextPaymentItem =>
+       emailConnector.sendEmail(
+         languageCode     = "en",
+         email            = nextPaymentItem.email,
+         displayTaxType   = nextPaymentItem.taxType.toString,
+         paymentReference = nextPaymentItem.paymentSpecificData.getReference,
+         amountPaid       = nextPaymentItem.amount)
+     }
+     ()
+   }
 }
