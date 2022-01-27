@@ -31,7 +31,8 @@ case class TpsPaymentItem(
     chargeReference:     String                                     = "",
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
     paymentSpecificData: PaymentSpecificData,
-    taxType:             TaxType) {
+    taxType:             TaxType,
+    email:               String) {
 }
 
 object TpsPaymentItem {
@@ -45,7 +46,8 @@ object TpsPaymentItem {
         s"customerName" -> tpsPaymentItem.customerName,
         s"chargeReference" -> tpsPaymentItem.chargeReference,
         s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData,
-        s"taxType" -> tpsPaymentItem.taxType.toString
+        s"taxType" -> tpsPaymentItem.taxType.toString,
+        s"email" -> tpsPaymentItem.email
       )
         ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
         ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
@@ -62,9 +64,10 @@ object TpsPaymentItem {
       (__ \ "chargeReference").read[String] and
       (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
-      (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString)
-    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType) =>
-        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType)))
+      (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString) and
+      (__ \ "email").read[String]
+     ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email) =>
+         TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 
