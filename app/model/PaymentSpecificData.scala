@@ -148,7 +148,6 @@ object NpsSpecificData {
 
 final case class VatSpecificData(
     vatReference:    String,
-    periodReference: String,
     remittanceType:  String
 ) extends PaymentSpecificData {
   override def getReference: String = vatReference
@@ -216,5 +215,5 @@ object PaymentSpecificData {
   val jsonKeysNtc = Set("ntcReference")
   val jsonKeysPaye = Set("payeReference", "taxAmount", "nicAmount")
   val jsonKeysNps = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
-  val jsonKeysVat = Set("vatReference", "periodReference", "remittanceType")
+  val jsonKeysVat = Set("vatReference", "remittanceType")
 }
