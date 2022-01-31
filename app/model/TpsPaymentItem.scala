@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,8 +66,8 @@ object TpsPaymentItem {
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
       (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString) and
       (__ \ "email").read[String]
-     ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email) =>
-         TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email))
+    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email) =>
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 

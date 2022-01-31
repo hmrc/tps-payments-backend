@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class AppConfig @Inject() (
     servicesConfig: ServicesConfig,
     environment:    Environment) {
   val authBaseUrl: String = servicesConfig.baseUrl("auth")
-  val emailServiceUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"  
+  val emailServiceUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
   val strideRole: String = config.get[String]("stride.role")
