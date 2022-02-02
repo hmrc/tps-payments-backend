@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package services
-
-import akka.Done
-import model.Utr.{AllGood, Denied, Utr, Utrs, VerifyUtrStatus}
-import play.api.cache._
-
-import scala.concurrent.duration._
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
-
-@Singleton
-class UtrValidatorService @Inject() (
-    utrCache: AsyncCacheApi
-)(implicit executionContext: ExecutionContext) {
-
-  def bulkInsertUtrs(utrs: Utrs): Future[Unit] = Future.successful(utrs.utrs.foreach(addUtrToCache))
-
-  def verifyUtr(utr: Utr): Future[VerifyUtrStatus] = utrCache
-    .get[VerifyUtrStatus](utr.value)
-    .map(_.getOrElse(AllGood))
-
-  def addUtrToCache(utr: Utr): Future[Done] = utrCache.set(utr.value, Denied, Duration.Inf)
-
-  def invalidateCache: Future[Done] = utrCache.removeAll()
-}
+//package services
+//
+//import akka.Done
+//import model.Utr.{AllGood, Denied, Utr, Utrs, VerifyUtrStatus}
+//import play.api.cache._
+//
+//import scala.concurrent.duration._
+//import javax.inject.{Inject, Singleton}
+//import scala.concurrent.{ExecutionContext, Future}
+//
+//@Singleton
+//class UtrValidatorService @Inject() (
+//    utrCache: AsyncCacheApi
+//)(implicit executionContext: ExecutionContext) {
+//
+//  def bulkInsertUtrs(utrs: Utrs): Future[Unit] = Future.successful(utrs.utrs.foreach(addUtrToCache))
+//
+//  def verifyUtr(utr: Utr): Future[VerifyUtrStatus] = utrCache
+//    .get[VerifyUtrStatus](utr.value)
+//    .map(_.getOrElse(AllGood))
+//
+//  def addUtrToCache(utr: Utr): Future[Done] = utrCache.set(utr.value, Denied, Duration.Inf)
+//
+//  def invalidateCache: Future[Done] = utrCache.removeAll()
+//}

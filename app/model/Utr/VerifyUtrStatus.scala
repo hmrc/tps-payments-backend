@@ -21,10 +21,12 @@ import play.api.libs.json.{Json, OFormat}
 sealed trait VerifyUtrStatus
 case object Denied extends VerifyUtrStatus
 case object AllGood extends VerifyUtrStatus
+case object MissingFile extends VerifyUtrStatus
 
 object VerifyUtrStatus {
   implicit val formatDenied: OFormat[Denied.type] = Json.format[Denied.type]
   implicit val formatAllGood: OFormat[AllGood.type] = Json.format[AllGood.type]
+  implicit val formatMissingFile: OFormat[MissingFile.type] = Json.format[MissingFile.type]
   implicit val format: OFormat[VerifyUtrStatus] = Json.format[VerifyUtrStatus]
 
 }

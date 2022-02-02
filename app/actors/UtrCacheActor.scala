@@ -1,46 +1,42 @@
+/*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package actors
 
 import akka.actor.{Actor, ActorRef, Props}
-import model.Utr.{Utr, UtrFileId, Utrs}
-import play.api.Logger
+import model.Utr.{AllGood, Denied, Utr, Utrs}
 
 object UtrCacheActor {
-  def props():Props = Props(new UtrCacheActor())
+  def props(): Props = Props(new UtrCacheActor())
 
-  case class BulkInsertUtrs(utrs:Utrs)
-  case object LoadLatestUtrFile
-  case class VerifyUtr(utr:Utr)
-  case class RefreshCacheWith
+  case class VerifyUtrTo(utr: Utr, replyTo: ActorRef)
+  case class RefreshCache(utrs: Utrs)
 }
-
-class UtrCacheActor () extends Actor {
+@SuppressWarnings(Array("org.wartremover.warts.Any", "org.wartremover.warts.Recursion"))
+class UtrCacheActor() extends Actor {
   import UtrCacheActor._
 
-  override def preStart(): Unit = {
-    self ! InitializeCache
-    super.preStart()
+  def receive: Receive = handleVerifications(cache = Utrs(Set.empty[Utr]))
+
+  def handleVerifications(cache: Utrs): Receive = {
+    case VerifyUtrTo(utr: Utr, replyTo) =>
+      val verifyResult = if (cache.utrs.contains(utr)) Denied else AllGood
+      replyTo ! verifyResult
+    case RefreshCache(utrs) =>
+      context.become(handleVerifications(utrs))
   }
 
-  def receive: Receive =waitForInitialLoad
-
-  def waitForInitialLoad:Receive = {
-    case LoadLatestUtrs =>
-      logger.info(s"Proxy got TCPSocketConnected and switch to handle messages")
-      context.become(handleWSMessage)
-    case TCPSocketConnectionFailed =>
-      logger.info(s"Proxy got TCPSocketConnectionFailed and stopping")
-      context.stop(self)
-    case TCPSocketUnexpectedMessage =>
-      logger.info(s"Proxy got TCPSocketUnexpectedMessage and stopping")
-      context.stop(self)
-    case x =>
-      logger.info(s"Proxy during opening TCPSocket got unknown message: $x and stopping")
-      context.stop(self)
-  }
-
-  def cacheReady(cache:Set[String], utrFileId: UtrFileId):Receive = {
-    case
-  }
-
-  private lazy val logger = Logger(UtrCacheActor.getClass)
 }

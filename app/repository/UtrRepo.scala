@@ -30,9 +30,9 @@ final class UtrRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent)(i
 
   def findUtrFile(utrFileId: UtrFileId): Future[Option[EncryptedUtrFile]] = findById(utrFileId)
 
-  def getUrtFile(utrFileId: UtrFileId): Future[EncryptedUtrFile] = findById(utrFileId).map {
+  def getUtrFile(utrFileId: UtrFileId): Future[EncryptedUtrFile] = findById(utrFileId).map {
     case Some(utrFile) => utrFile
-    case None          => throw new RuntimeException(s"Utr File with id ${utrFileId.value} not found")
+    case None          => throw new RuntimeException(s"Utr File with id ${utrFileId.value} not found. Please upload")
   }
 
   def upsertFile(data: EncryptedUtrFile): Future[UpdateWriteResult] = upsert(UtrFileId(data.inserted), data)
@@ -41,7 +41,12 @@ final class UtrRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent)(i
 
   def removeAllFiles: Future[WriteResult] = removeAll()
 
-  def getLatestUtrFileId: Future[Option[UtrFileId]] = findAll().map(_.map(_.inserted).safeMax.map(UtrFileId(_)))
+  def findLatestUtrFileId: Future[Option[UtrFileId]] = findAll().map(_.map(_.inserted).safeMax.map(UtrFileId(_)))
+
+  def getLatestUtrFileId: Future[UtrFileId] = findLatestUtrFileId.map {
+    case Some(utrFileId) => utrFileId
+    case None            => throw new RuntimeException(s"Can not find UTR fileId in database. Please upload")
+  }
 
   def getAllUtrFileIds: Future[List[UtrFileId]] = findAll().map(_.map(_.inserted).map(UtrFileId(_)))
 

@@ -31,34 +31,59 @@ class UtrFileService @Inject() (
     csvParser: CsvParser)(implicit ec: ExecutionContext) {
   //TODO Error handling
   def insertUtrFile(decryptedUtrFile: DecryptedUtrFile) = {
-    logger.info(s"UtrFileService->insertUtrFile  data:${crypto.encrypt(decryptedUtrFile.decryptedFileContents)}")
     utrRepo.upsertFile(EncryptedUtrFile(crypto.encrypt(decryptedUtrFile.decryptedFileContents)))
   }
 
   def removeObsoleteFiles: Future[Unit] = {
-    logger.info(s"UtrFileService->removeObsoleteFiles ")
+    //    logger.info(s"UtrFileService->removeObsoleteFiles ")
     for {
-      maybeLatestUtrFileId <- utrRepo.getLatestUtrFileId
+      latestUtrFileId <- utrRepo.getLatestUtrFileId
       allUtrFileIdList <- utrRepo.getAllUtrFileIds
     } yield {
-      maybeLatestUtrFileId match {
-        case Some(latestUtrFileId) =>
-          allUtrFileIdList
-            .filter(_ != latestUtrFileId)
-            .foreach(utrRepo.removeUrtFile)
-        case None =>
-      }
+      allUtrFileIdList
+        .filter(_ != latestUtrFileId)
+        .foreach(utrRepo.removeUrtFile)
     }
   }
 
-  def getLatestFile = {
-    logger.info(s"UtrFileService.getLatestFile ")
-    utrRepo.getLatestUtrFileId.flatMap {
-      case Some(latestUtrFileId) => getUtrFileById(latestUtrFileId)
-      case None =>
-        logger.error("Failed to retrieve UTR file from database")
-        throw new RuntimeException(s"Failed to retrieve UTR file from database")
+  def getLatestUtrsFromDB = {
+    for {
+      latestUtrFileId <- utrRepo.getLatestUtrFileId
+      decryptedUtrFile <- getUtrFileById(latestUtrFileId)
+      utrs <- parseAndValidateDecryptedUtrFile(decryptedUtrFile)
+    } yield (utrs)
+  }
+
+  def findUtrsByFileId(utrFileId: UtrFileId) = {
+    findUtrFileById(utrFileId).map(_.flatMap{ decryptedUtrFile =>
+      parseAndValidateDecryptedUtrFileOption(decryptedUtrFile)
+    })
+  }
+
+  def getLatestUtrFileId = utrRepo.getLatestUtrFileId
+
+  def findLatestUtrFileId = utrRepo.findLatestUtrFileId
+
+  def parseAndValidateDecryptedUtrFileOption(decryptedUtrFile: DecryptedUtrFile): Option[Utrs] = {
+    val utrs = Utrs(csvParser.parse(decryptedUtrFile.decryptedFileContents).toSet)
+    if (!validateUtrs(utrs)) None
+    else Some(utrs)
+  }
+
+  def parseAndValidateDecryptedUtrFile(decryptedUtrFile: DecryptedUtrFile): Future[Utrs] = {
+    Future.successful{
+      val utrs = Utrs(csvParser.parse(decryptedUtrFile.decryptedFileContents).toSet)
+      if (!validateUtrs(utrs)) throw new RuntimeException("File upload failed on validation")
+      else utrs
     }
+  }
+
+  def findUtrFileById(utrFileId: UtrFileId): Future[Option[DecryptedUtrFile]] = {
+    utrRepo
+      .findUtrFile(utrFileId)
+      .map(_.flatMap(x => crypto.decrypt(x.encryptedFileContents).toOption)
+        .map(DecryptedUtrFile(_))
+      )
   }
 
   def getUtrFileById(utrFileId: UtrFileId): Future[DecryptedUtrFile] = {
@@ -69,9 +94,8 @@ class UtrFileService @Inject() (
         .getOrElse(throw new RuntimeException(s"Failed to retrieve file for date: ${utrFileId.value}")))
   }
 
-  def parseDecryptedUtrFile(decryptedUtrFile: DecryptedUtrFile): Future[Utrs] = {
-    Future.successful(Utrs(csvParser.parse(decryptedUtrFile.decryptedFileContents).toSet))
-  }
+  //TODO WG - confirm validation rules for UTR, we need to do same validations as FrontEnd ?? Now just dummy validation
+  private def validateUtrs(utrs: Utrs): Boolean = utrs.utrs.forall(_.value.length > 0)
 
   val logger: Logger = Logger(this.getClass)
 }
