@@ -16,19 +16,23 @@
 
 package controllers
 
-import java.time.LocalDateTime
+import akka.util.ByteString
 
+import java.time.LocalDateTime
 import auth.Actions
 import connectors.EmailConnector
+import model.Utr.{AllGood, DecryptedUtrFile, Denied, Utr, VerifyUtrRequest}
+
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.TpsRepo
+import repository.{TpsRepo}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import services.{UtrFileService, UtrValidatorService}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,9 +40,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class TpsController @Inject() (actions:        Actions,
                                cc:             ControllerComponents,
                                tpsRepo:        TpsRepo,
-                               emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+                               emailConnector: EmailConnector,
+                               utrService:     UtrValidatorService,
+                               utrFileService: UtrFileService
+)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
+  onStart()
 
   val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
@@ -107,6 +115,38 @@ class TpsController @Inject() (actions:        Actions,
     f.recover {
       case e: IdNotFoundException => BadRequest(e.getMessage)
     }
+  }
+
+  def verifyUtr(): Action[VerifyUtrRequest] = Action.async(parse.json[VerifyUtrRequest]) { implicit request =>
+    val utr: Utr = request.body.utr
+    logger.info(s"verifyUtr received request ${utr}")
+    utrService.verifyUtr(utr).map {
+      case Denied  => Forbidden //TODO WG - or BadRequest ??
+      case AllGood => Ok
+    }
+  }
+
+  def uploadDeniedUtrs(): Action[ByteString] = Action.async(parse.byteString) { implicit request =>
+    val decryptedFile = DecryptedUtrFile(request.body.utf8String)
+
+    logger.debug(s"uploadDeniedUtrs for  data: ${decryptedFile.decryptedFileContents} ")
+    for {
+      _ <- utrFileService.insertUtrFile(decryptedFile)
+      utrs <- utrFileService.parseDecryptedUtrFile(decryptedFile)
+      _ <- utrService.invalidateCache
+      _ <- utrService.bulkInsertUtrs(utrs)
+      _ <- utrFileService.removeObsoleteFiles
+    } yield Ok
+
+  }
+
+  private def onStart() = {
+    for {
+      latestDecryptedFile <- utrFileService.getLatestFile
+      utrs <- utrFileService.parseDecryptedUtrFile(latestDecryptedFile)
+      _ <- utrService.invalidateCache
+      _ <- utrService.bulkInsertUtrs(utrs)
+    } yield ()
   }
 
   private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
