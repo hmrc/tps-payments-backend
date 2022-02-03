@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, Provides, Singleton}
+
+import java.time.{Clock, ZoneId}
 
 class Module extends AbstractModule {
 
   override def configure(): Unit = ()
+
+  @Provides
+  @Singleton
+  def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 }

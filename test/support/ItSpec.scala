@@ -43,6 +43,7 @@ import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import repository.TpsRepo
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 
@@ -57,6 +58,7 @@ trait ItSpec
   with GuiceOneServerPerSuite { self =>
 
   val testServerPort = 19001
+
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 

@@ -16,49 +16,29 @@
 
 package controllers
 
-import actors.{UtrCacheActor, UtrCacheCommandActor}
-import actors.UtrCacheCommandActor.VerifyUtr
-import akka.actor.ActorSystem
-import akka.pattern.ask
-import akka.util.{ByteString, Timeout}
-
 import java.time.LocalDateTime
+
 import auth.Actions
 import connectors.EmailConnector
-import model.Utr.{AllGood, DecryptedUtrFile, Denied, MissingFile, Utr, VerifyUtrRequest, VerifyUtrStatus}
-
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.{TpsRepo}
+import repository.TpsRepo
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import services.UtrFileService
-import scala.language.postfixOps
 
-import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TpsController @Inject() (actions:        Actions,
                                cc:             ControllerComponents,
                                tpsRepo:        TpsRepo,
-                               emailConnector: EmailConnector,
-                               utrFileService: UtrFileService
-)(implicit executionContext: ExecutionContext, system: ActorSystem) extends BackendController(cc) {
+                               emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
-
-  implicit val timeout: Timeout = Timeout(20 seconds)
-
-  //TODO Inject actor
-  val utrCacheActor = system.actorOf(UtrCacheActor.props())
-  val utrCacheCommandActor = system.actorOf(UtrCacheCommandActor.props(utrCacheActor, utrFileService))
-
-  //  onStart()
 
   val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
@@ -127,29 +107,6 @@ class TpsController @Inject() (actions:        Actions,
     f.recover {
       case e: IdNotFoundException => BadRequest(e.getMessage)
     }
-  }
-
-  def verifyUtr(): Action[VerifyUtrRequest] = Action.async(parse.json[VerifyUtrRequest]) { implicit request =>
-    val utr: Utr = request.body.utr
-    logger.info("verifyUtr UTR request received")
-    (utrCacheCommandActor ? VerifyUtr(utr)).mapTo[VerifyUtrStatus].map {
-      case AllGood     => Ok
-      case Denied      => Forbidden
-      case MissingFile => InternalServerError("UTR file is missing, please upload")
-    }
-  }
-
-  def uploadDeniedUtrs(): Action[ByteString] = Action.async(parse.byteString) { implicit request =>
-    val decryptedFile = DecryptedUtrFile(request.body.utf8String)
-
-    logger.info("upload UTR file request received")
-
-    for {
-      _ <- utrFileService.parseAndValidateDecryptedUtrFile(decryptedFile)
-      _ <- utrFileService.insertUtrFile(decryptedFile)
-      _ <- utrFileService.removeObsoleteFiles //TODO check if we want that or want to delete
-    } yield Ok
-
   }
 
   private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {

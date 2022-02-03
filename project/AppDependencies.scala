@@ -8,8 +8,7 @@ object AppDependencies {
     "uk.gov.hmrc"  %% "simple-reactivemongo"      % "8.0.0-play-28",
     "uk.gov.hmrc"  %% "bootstrap-backend-play-28" % "5.4.0",
     "com.beachape" %% "enumeratum"                % "1.7.0",
-    "org.apache.commons"  % "commons-csv"        % "1.8",
-    caffeine
+    "com.lightbend.akka" %% "akka-stream-alpakka-csv" % "2.0.1"
   )
 
 

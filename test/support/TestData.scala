@@ -16,6 +16,8 @@
 
 package support
 
+import deniedutrs.model._
+
 import java.time.LocalDateTime
 import model.StatusTypes.validated
 import model.TaxTypes._
@@ -24,7 +26,7 @@ import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
-object TpsData {
+object TestData {
   private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
   private val reference = "JE231111"
   private val reference2 = "B"
@@ -377,4 +379,38 @@ object TpsData {
 
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", None)
+
+  val utr1 = Utr("utr1")
+  val utr2 = Utr("utr2")
+  val utr3 = Utr("utr3")
+  val utr4 = Utr("utr4")
+  val utr5 = Utr("utr5")
+
+  val csvFile1: String =
+    s"""${utr1.value}
+        |${utr2.value}
+        |${utr3.value}
+        |""".stripMargin
+
+  val csvFile2: String =
+    s"""${utr2.value}
+        |${utr3.value}
+        |${utr4.value}
+        |${utr5.value}
+        |""".stripMargin
+
+  val deniedUtrs1 = DeniedUtrs(
+    _id      = DeniedUtrsId("denied-utrs-id-123"),
+    utrs     = List(utr1, utr2, utr3),
+    inserted = LocalDateTime.parse("2022-02-04T10:00:24.371")
+  )
+
+  val deniedUtrs2 = DeniedUtrs(
+    _id      = DeniedUtrsId("denied-utrs-id-123"),
+    utrs     = List(utr2, utr3, utr4),
+    inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
+  )
+
+  val verifyUtrRequest = VerifyUtrRequest(utr1)
+
 }

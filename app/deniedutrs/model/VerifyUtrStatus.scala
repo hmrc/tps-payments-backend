@@ -14,29 +14,28 @@
  * limitations under the License.
  */
 
-package model
+package deniedutrs.model
 
-import model.StatusTypes.{failed, validated}
-import play.api.libs.json.JsString
-import play.api.libs.json.Json.toJson
-import support.UnitSpec
+import enumeratum.{Enum, EnumEntry}
+import play.api.libs.json.Format
+import util.EnumFormat
 
 import scala.collection.immutable
 
-class StatusTypesSpec extends UnitSpec {
+sealed abstract class VerifyUtrStatus extends EnumEntry
 
-  "de/serialize TaxTypes" in {
+object VerifyUtrStatuses extends Enum[VerifyUtrStatus] {
 
-    val statusTypes: immutable.Seq[(String, StatusType)] = List(
-      "validated" -> validated,
-      "failed" -> failed
-    )
+  case object UtrDenied extends VerifyUtrStatus
+  case object UtrPermitted extends VerifyUtrStatus
+  case object MissingInformation extends VerifyUtrStatus
 
-    statusTypes.foreach { tt =>
-      val jsValue = toJson(tt._2)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
-    }
-  }
+  override def values: immutable.IndexedSeq[VerifyUtrStatus] = findValues
 }
 
+object VerifyUtrStatus {
+  implicit val format: Format[VerifyUtrStatus] = Format(
+    EnumFormat(VerifyUtrStatuses),
+    EnumFormat(VerifyUtrStatuses)
+  )
+}

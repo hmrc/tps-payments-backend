@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import model.pcipal.PcipalSessionId
 import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
-import support.TpsData._
+import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 

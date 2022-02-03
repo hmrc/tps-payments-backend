@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs.model
 
+import model.Utr
 import play.api.libs.json.{Json, OFormat}
 
-case class VerifyUtrRequest(utr: Utr)
+final case class VerifyUtrRequest(utr: Utr)
 
 object VerifyUtrRequest {
   implicit val format: OFormat[VerifyUtrRequest] = Json.format[VerifyUtrRequest]

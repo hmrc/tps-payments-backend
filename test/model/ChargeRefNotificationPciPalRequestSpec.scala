@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,16 @@ package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.Json.toJson
-import support.{TpsData, UnitSpec}
+import support.{TestData, UnitSpec}
 
 class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
   "to json" in {
-    toJson(TpsData.chargeRefNotificationPciPalRequest) shouldBe TpsData.chargeRefNotificationPciPalRequestJson
+    toJson(TestData.chargeRefNotificationPciPalRequest) shouldBe TestData.chargeRefNotificationPciPalRequestJson
   }
 
   "from json" in {
-    TpsData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TpsData.chargeRefNotificationPciPalRequest
+    TestData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPciPalRequest
   }
 
 }

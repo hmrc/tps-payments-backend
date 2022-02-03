@@ -14,14 +14,27 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs.model
 
+import model.Utr
 import play.api.libs.json.{Json, OFormat}
 
-case class EncryptedUtrFile(
-    encryptedFileContents: String,
-    inserted:              Long   = System.currentTimeMillis())
+import java.time.LocalDateTime
 
-object EncryptedUtrFile {
-  implicit val format: OFormat[EncryptedUtrFile] = Json.format[EncryptedUtrFile]
+/**
+ * This entity represents list of denied utrs.
+ * We store it in mongo.
+ */
+final case class DeniedUtrs(
+    _id:      DeniedUtrsId,
+    utrs:     List[Utr],
+    inserted: LocalDateTime
+) {
+
+  private lazy val utrsSet = utrs.toSet
+  def containsUtr(utr: Utr): Boolean = utrsSet.contains(utr)
+}
+
+object DeniedUtrs {
+  implicit val format: OFormat[DeniedUtrs] = Json.format[DeniedUtrs]
 }

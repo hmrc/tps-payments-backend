@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-package model.Utr
+package model
 
+import play.api.libs.json.{Format, Json, OFormat}
 import play.api.libs.functional.syntax._
-import play.api.libs.json.Format
-import reactivemongo.bson.BSONObjectID
 
-import java.time.LocalDate
+final case class Utr(value: String)
 
-final case class UtrFileId(value: Long)
+object Utr {
+  implicit val format: Format[Utr] = implicitly[Format[String]].inmap(Utr(_), _.value)
 
-object UtrFileId {
-  implicit val format: Format[UtrFileId] = implicitly[Format[Long]].inmap(UtrFileId(_), _.value)
+  def canonicalizeUtr(utr: Utr): Utr = {
+    val trimmed = utr.value.trim
+    val lowercased = trimmed.toUpperCase()
+    val withoutK = dropK(lowercased)
+    utr.copy(value = s"${withoutK}K")
+  }
 
+  private def dropK(utrString: String) = {
+    if (utrString.toLowerCase().startsWith("k")) {
+      utrString.drop(1)
+    } else if (utrString.toLowerCase().endsWith("k")) {
+      utrString.dropRight(1)
+    } else utrString
+  }
 }

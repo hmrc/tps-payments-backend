@@ -14,11 +14,17 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs.model
 
-import play.api.libs.json.{Json, OFormat}
+import java.time.LocalDateTime
+import play.api.libs.json._
 
-case class VerifyUtrResponse(status: VerifyUtrStatus)
-object VerifyUtrResponse {
-  implicit val format: OFormat[VerifyUtrResponse] = Json.format[VerifyUtrResponse]
+final case class UploadDeniedUtrsResponse(
+    _id:      DeniedUtrsId,
+    inserted: LocalDateTime,
+    size:     Long
+)
+
+object UploadDeniedUtrsResponse {
+  implicit val format: OFormat[UploadDeniedUtrsResponse] = Json.format[UploadDeniedUtrsResponse]
 }

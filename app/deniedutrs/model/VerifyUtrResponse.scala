@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs.model
 
 import play.api.libs.json.{Json, OFormat}
 
-case class DecryptedUtrFile(decryptedFileContents: String)
+final case class VerifyUtrResponse(status: VerifyUtrStatus)
 
-object DecryptedUtrFile {
-  implicit val format: OFormat[DecryptedUtrFile] = Json.format[DecryptedUtrFile]
-
+object VerifyUtrResponse {
+  implicit val format: OFormat[VerifyUtrResponse] = Json.format[VerifyUtrResponse]
 }

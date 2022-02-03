@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package util
-import model.Utr.Utr
-import org.apache.commons.csv.{CSVFormat, CSVParser, CSVRecord}
-import play.api.Logger
+package deniedutrs.model
 
-import scala.collection.JavaConverters._
+import play.api.libs.functional.syntax._
+import play.api.libs.json.Format
 
-class CsvParser {
-  def parse(s: String): Seq[Utr] = {
+final case class DeniedUtrsId(value: String)
 
-    val lines = CSVParser.parse(s, CSVFormat.DEFAULT).getRecords.asScala
-    val utrs = lines.filter(isLineValid).map(cols => Utr(cols.get(0).trim))
-
-    if (utrs.length == lines.length) utrs
-    else throw new RuntimeException("File parsing Failed")
-
-  }
-  private def isLineValid(line: CSVRecord) = {
-    line.size() == 1
-  }
-  val logger: Logger = Logger(this.getClass)
+object DeniedUtrsId {
+  implicit val format: Format[DeniedUtrsId] = implicitly[Format[String]].inmap(DeniedUtrsId(_), _.value)
 }

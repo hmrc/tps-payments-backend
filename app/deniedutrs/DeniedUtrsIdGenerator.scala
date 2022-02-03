@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs
 
-import play.api.libs.json.{Json, OFormat}
+import model.DeniedUtrsId
+import reactivemongo.bson.BSONObjectID
 
-sealed trait VerifyUtrStatus
-case object Denied extends VerifyUtrStatus
-case object AllGood extends VerifyUtrStatus
-case object MissingFile extends VerifyUtrStatus
+import javax.inject.Singleton
 
-object VerifyUtrStatus {
-  implicit val formatDenied: OFormat[Denied.type] = Json.format[Denied.type]
-  implicit val formatAllGood: OFormat[AllGood.type] = Json.format[AllGood.type]
-  implicit val formatMissingFile: OFormat[MissingFile.type] = Json.format[MissingFile.type]
-  implicit val format: OFormat[VerifyUtrStatus] = Json.format[VerifyUtrStatus]
-
+@Singleton
+class DeniedUtrsIdGenerator {
+  def nextId(): DeniedUtrsId = DeniedUtrsId(BSONObjectID.generate.stringify)
 }
-

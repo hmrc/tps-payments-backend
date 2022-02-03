@@ -14,6 +14,29 @@
  * limitations under the License.
  */
 
-package model.Utr
+package deniedutrs.model
 
-case class Utrs(utrs: Set[Utr])
+import play.api.libs.json.Json
+import support.{TestData, UnitSpec}
+
+class DeniedUtrsSpec extends UnitSpec {
+
+  "json serialization/deserialization" in {
+    val deniedUtrs = TestData.deniedUtrs1
+
+    val deniedUtrsJson = Json.parse(
+      //language=JSON
+      """
+        {
+          "_id" : "denied-utrs-id-123",
+          "utrs" : ["utr1","utr2","utr3"],
+          "inserted" : "2022-02-04T10:00:24.371"
+        }
+        """
+    )
+
+    Json.toJson(deniedUtrs) shouldBe deniedUtrsJson
+    deniedUtrsJson.as[DeniedUtrs] shouldBe deniedUtrs
+  }
+
+}

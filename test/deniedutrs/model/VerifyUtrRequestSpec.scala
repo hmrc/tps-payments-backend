@@ -14,29 +14,25 @@
  * limitations under the License.
  */
 
-package model
+package deniedutrs.model
 
-import model.StatusTypes.{failed, validated}
-import play.api.libs.json.JsString
-import play.api.libs.json.Json.toJson
-import support.UnitSpec
+import play.api.libs.json.Json
+import support.{TestData, UnitSpec}
 
-import scala.collection.immutable
+class VerifyUtrRequestSpec extends UnitSpec {
 
-class StatusTypesSpec extends UnitSpec {
+  "json serialization/deserialization" in {
+    val verifyUtrRequest = TestData.verifyUtrRequest
 
-  "de/serialize TaxTypes" in {
+    val verifyUtrRequestJson = Json.parse(
+      //language=JSON
+      """
+         {
+          "utr": "utr1"
+          }
+        """)
 
-    val statusTypes: immutable.Seq[(String, StatusType)] = List(
-      "validated" -> validated,
-      "failed" -> failed
-    )
-
-    statusTypes.foreach { tt =>
-      val jsValue = toJson(tt._2)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize $tt"
-    }
+    Json.toJson(verifyUtrRequest) shouldBe verifyUtrRequestJson
+    verifyUtrRequestJson.as[VerifyUtrRequest] shouldBe verifyUtrRequest
   }
 }
-
