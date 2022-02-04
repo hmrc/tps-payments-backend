@@ -13,5 +13,5 @@ GET        /payment-items/:id/mods-amendment-ref                    paymentsproc
 POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments
 
 # Denied Utrs:
-POST       /verify-utr                                              deniedutrs.DeniedUtrsController.verifyUtr()
+POST       /verify-utrs                                             deniedutrs.DeniedUtrsController.verifyUtrs()
 POST       /upload-denied-utrs                                      deniedutrs.DeniedUtrsController.uploadDeniedUtrs()

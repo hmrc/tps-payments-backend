@@ -71,9 +71,9 @@ class DeniedUtrsSpec extends ItSpec {
   private def verifyUtrs(utrs: Utr*): Future[VerifyUtrResponse] = {
     val utrsSet = utrs.toSet
     implicit val dummyHc = HeaderCarrier()
-    val url = baseUrl + "/verify-utr"
-    val request = VerifyUtrRequest(utrsSet)
-    httpClient.POST[VerifyUtrRequest, VerifyUtrResponse](url, request)
+    val url = baseUrl + "/verify-utrs"
+    val request = VerifyUtrsRequest(utrsSet)
+    httpClient.POST[VerifyUtrsRequest, VerifyUtrResponse](url, request)
   }
 
 }

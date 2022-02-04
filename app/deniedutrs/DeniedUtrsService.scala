@@ -36,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class DeniedUtrsService @Inject()(
-                                   deniedUtrsRepo: DeniedUtrsRepo,
-                                   crypto: Crypto,
-                                   deniedUtrsIdGenerator: DeniedUtrsIdGenerator,
-                                   clock: Clock)(implicit ec: ExecutionContext, materializer: Materializer) {
+class DeniedUtrsService @Inject() (
+    deniedUtrsRepo:        DeniedUtrsRepo,
+    crypto:                Crypto,
+    deniedUtrsIdGenerator: DeniedUtrsIdGenerator,
+    clock:                 Clock)(implicit ec: ExecutionContext, materializer: Materializer) {
 
   /**
    * Upserts object into mongo. It makes sure utrs are encrypted before storing in mongo.
@@ -94,8 +94,8 @@ class DeniedUtrsService @Inject()(
       .mapMaterializedValue(encryptedUtrsF => encryptedUtrsF
         .map(encryptedUtrs =>
           DeniedUtrs(
-            _id = deniedUtrsIdGenerator.nextId(),
-            utrs = encryptedUtrs,
+            _id      = deniedUtrsIdGenerator.nextId(),
+            utrs     = encryptedUtrs,
             inserted = LocalDateTime.now(clock))
         )
       )

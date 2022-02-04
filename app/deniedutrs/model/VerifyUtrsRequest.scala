@@ -19,9 +19,9 @@ package deniedutrs.model
 import model.Utr
 import play.api.libs.json.{Json, OFormat}
 
-final case class VerifyUtrRequest(utrs: Set[Utr])
+final case class VerifyUtrsRequest(utrs: Set[Utr])
 
-object VerifyUtrRequest {
-  implicit val format: OFormat[VerifyUtrRequest] = Json.format[VerifyUtrRequest]
+object VerifyUtrsRequest {
+  implicit val format: OFormat[VerifyUtrsRequest] = Json.format[VerifyUtrsRequest]
 
 }

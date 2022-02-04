@@ -19,7 +19,7 @@ package deniedutrs.model
 import play.api.libs.json.Json
 import support.{TestData, UnitSpec}
 
-class VerifyUtrRequestSpec extends UnitSpec {
+class VerifyUtrsRequestSpec extends UnitSpec {
 
   "json serialization/deserialization" in {
     val verifyUtrRequest = TestData.verifyUtrRequest
@@ -33,6 +33,6 @@ class VerifyUtrRequestSpec extends UnitSpec {
         """)
 
     Json.toJson(verifyUtrRequest) shouldBe verifyUtrRequestJson
-    verifyUtrRequestJson.as[VerifyUtrRequest] shouldBe verifyUtrRequest
+    verifyUtrRequestJson.as[VerifyUtrsRequest] shouldBe verifyUtrRequest
   }
 }

@@ -64,7 +64,7 @@ class DeniedUtrsController @Inject() (
       .map((_: IOResult) => Right(path))
   }
 
-  def verifyUtr(): Action[VerifyUtrRequest] = Action.async(parse.json[VerifyUtrRequest]) { implicit request =>
+  def verifyUtrs(): Action[VerifyUtrsRequest] = Action.async(parse.json[VerifyUtrsRequest]) { implicit request =>
 
     val utrs: Set[Utr] = request.body.utrs.map(Utr.canonicalizeUtr)
 
