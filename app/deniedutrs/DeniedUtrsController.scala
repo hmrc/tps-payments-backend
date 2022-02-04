@@ -66,10 +66,11 @@ class DeniedUtrsController @Inject() (
 
   def verifyUtr(): Action[VerifyUtrRequest] = Action.async(parse.json[VerifyUtrRequest]) { implicit request =>
 
-    val utr: Utr = Utr.canonicalizeUtr(request.body.utr)
+    val utrs: Set[Utr] = request.body.utrs.map(Utr.canonicalizeUtr)
+
     for {
       _ <- deniedUtrsService.updateCacheIfNeeded()
-      verifyUtrStatus = deniedUtrsService.verifyUtr(utr)
+      verifyUtrStatus = deniedUtrsService.verifyUtrs(utrs)
     } yield Ok(Json.toJson(VerifyUtrResponse(verifyUtrStatus)))
   }
 

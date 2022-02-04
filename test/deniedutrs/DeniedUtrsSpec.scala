@@ -2,6 +2,7 @@ package deniedutrs
 
 import _root_.model.Utr
 import deniedutrs.model._
+import support.TestData._
 import support.{ItSpec, TestData}
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
@@ -10,33 +11,46 @@ import scala.concurrent.Future
 
 class DeniedUtrsSpec extends ItSpec {
 
-  "upload and verify utr scenario" in {
+  "upload denied utrs" in {
+    val uploadResult1: UploadDeniedUtrsResponse = uploadDeniedUtrs(csvFile1).futureValue
+    uploadResult1.size shouldBe 3
+    val uploadResult2: UploadDeniedUtrsResponse = uploadDeniedUtrs(csvFile2).futureValue
+    uploadResult2.size shouldBe 4
+
+    uploadResult2.inserted isAfter uploadResult1.inserted shouldBe true withClue "second upload is newer"
+
+  }
+
+  "verify utrs" in {
     dropDb() withClue "given emtpy database"
 
     withClue("there is no information whether an utr is denied") {
-      verifyUtr(TestData.utr1).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
-      verifyUtr(TestData.utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
-      verifyUtr(TestData.utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
-      verifyUtr(TestData.utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
+      verifyUtrs().futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
+      verifyUtrs(utr1, utr2, utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
+      verifyUtrs(utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
+      verifyUtrs(utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
+      verifyUtrs(utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.MissingInformation)
     }
 
-
     withClue("after uploading csv with denied utrs some utrs should be denied") {
-      uploadDeniedUtrs(TestData.csvFile1).futureValue.size shouldBe 3
-
-      verifyUtr(TestData.utr1).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
-      verifyUtr(TestData.utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
-      verifyUtr(TestData.utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
-      verifyUtr(TestData.utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrPermitted)
+      uploadDeniedUtrs(csvFile1).futureValue.size shouldBe 3
+      verifyUtrs().futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrPermitted)
+      verifyUtrs(utr1, utr2, utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrPermitted)
+      verifyUtrs(utr1, utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied) withClue "one permitted one denied"
     }
 
     withClue("after uploading the second csv with denied utrs some other utrs should be denied") {
 
-      uploadDeniedUtrs(TestData.csvFile2).futureValue.size shouldBe 4
-      verifyUtr(TestData.utr1).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrPermitted)
-      verifyUtr(TestData.utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
-      verifyUtr(TestData.utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
-      verifyUtr(TestData.utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      uploadDeniedUtrs(csvFile2).futureValue.size shouldBe 4
+      verifyUtrs(utr1).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrPermitted)
+      verifyUtrs(utr2).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr3).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied)
+      verifyUtrs(utr1, utr4).futureValue shouldBe VerifyUtrResponse(VerifyUtrStatuses.UtrDenied) withClue "one permitted one denied"
+
     }
   }
 
@@ -54,10 +68,11 @@ class DeniedUtrsSpec extends ItSpec {
     httpClient.POSTString[UploadDeniedUtrsResponse](url, deniedUtrsCsv)
   }
 
-  private def verifyUtr(utr: Utr): Future[VerifyUtrResponse] = {
+  private def verifyUtrs(utrs: Utr*): Future[VerifyUtrResponse] = {
+    val utrsSet = utrs.toSet
     implicit val dummyHc = HeaderCarrier()
     val url = baseUrl + "/verify-utr"
-    val request = VerifyUtrRequest(utr)
+    val request = VerifyUtrRequest(utrsSet)
     httpClient.POST[VerifyUtrRequest, VerifyUtrResponse](url, request)
   }
 

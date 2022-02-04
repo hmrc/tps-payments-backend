@@ -23,6 +23,7 @@ import akka.stream.scaladsl.{FileIO, Keep, Sink}
 import akka.util.ByteString
 import model._
 import _root_.model.Utr
+import deniedutrs.model.VerifyUtrStatuses._
 import play.api.Logger
 import play.api.libs.json.Json
 import util.Crypto
@@ -35,11 +36,11 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
 @Singleton
-class DeniedUtrsService @Inject() (
-    deniedUtrsRepo:        DeniedUtrsRepo,
-    crypto:                Crypto,
-    deniedUtrsIdGenerator: DeniedUtrsIdGenerator,
-    clock:                 Clock)(implicit ec: ExecutionContext, materializer: Materializer) {
+class DeniedUtrsService @Inject()(
+                                   deniedUtrsRepo: DeniedUtrsRepo,
+                                   crypto: Crypto,
+                                   deniedUtrsIdGenerator: DeniedUtrsIdGenerator,
+                                   clock: Clock)(implicit ec: ExecutionContext, materializer: Materializer) {
 
   /**
    * Upserts object into mongo. It makes sure utrs are encrypted before storing in mongo.
@@ -93,8 +94,8 @@ class DeniedUtrsService @Inject() (
       .mapMaterializedValue(encryptedUtrsF => encryptedUtrsF
         .map(encryptedUtrs =>
           DeniedUtrs(
-            _id      = deniedUtrsIdGenerator.nextId(),
-            utrs     = encryptedUtrs,
+            _id = deniedUtrsIdGenerator.nextId(),
+            utrs = encryptedUtrs,
             inserted = LocalDateTime.now(clock))
         )
       )
@@ -113,14 +114,12 @@ class DeniedUtrsService @Inject() (
 
   private val cachedDeniedUtrs = new AtomicReference[Option[DeniedUtrs]](None)
 
-  def verifyUtr(utr: Utr): VerifyUtrStatus = {
+  def verifyUtrs(utrs: Set[Utr]): VerifyUtrStatus = {
     cachedDeniedUtrs.get() match {
       case Some(cache) =>
-        if (cache.containsUtr(utr))
-          VerifyUtrStatuses.UtrDenied
-        else
-          VerifyUtrStatuses.UtrPermitted
-      case None => VerifyUtrStatuses.MissingInformation
+        val anyDenied = utrs.exists(cache.containsUtr)
+        if (anyDenied) UtrDenied else UtrPermitted
+      case None => MissingInformation
     }
   }
 

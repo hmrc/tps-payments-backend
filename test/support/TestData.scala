@@ -411,6 +411,6 @@ object TestData {
     inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
   )
 
-  val verifyUtrRequest = VerifyUtrRequest(utr1)
+  val verifyUtrRequest = VerifyUtrRequest(Set(utr1))
 
 }
