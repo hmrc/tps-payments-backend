@@ -100,7 +100,7 @@ class TpsController @Inject() (actions: Actions,
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
-      _ =  sendEmails(a)
+      _ = maybeSendEmails(a)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
     } yield Ok
 
@@ -124,15 +124,20 @@ class TpsController @Inject() (actions: Actions,
     tpsPayments.copy(payments = tpsPaymentsListNew)
   }
   
-  private def sendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-     tpsPayments.payments.map{ nextPaymentItem =>
-       emailConnector.sendEmail(
-         languageCode     = "en",
-         email            = nextPaymentItem.email,
-         displayTaxType   = nextPaymentItem.taxType.toString,
-         paymentReference = nextPaymentItem.paymentSpecificData.getReference,
-         amountPaid       = nextPaymentItem.amount)
-     }
+  private def maybeSendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
+     logger.debug("maybeSendEmails")
+     tpsPayments.payments.find(p => p.email.nonEmpty)
+       .fold(())(tpsPaymentItem => sendEmail(tpsPaymentItem))
+     ()
+   }
+   //Purely exists to avoid 'discard non-unit value' compiler error
+   private def sendEmail(tpsPaymentItem: TpsPaymentItem)(implicit hc: HeaderCarrier): Unit = {
+     emailConnector.sendEmail(
+       languageCode     = tpsPaymentItem.languageCode.getOrElse(throw new RuntimeException("maybeSendEmails error: no language code was present")),
+       email            = tpsPaymentItem.email.getOrElse(throw new RuntimeException("maybeSendEmails error: email should be present but isn't")),
+       displayTaxType   = tpsPaymentItem.taxType.toString,
+       paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
+       amountPaid       = tpsPaymentItem.amount)
      ()
    }
 }
