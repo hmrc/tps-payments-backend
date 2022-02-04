@@ -40,9 +40,10 @@ object TpsData {
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = MIB,
+        taxType             = Sa,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
-        email               = "email"
+        email               = Some("test@email.com"),
+        languageCode        = Some("en")
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -58,7 +59,8 @@ object TpsData {
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
-        email               = "email"
+        email               = None,
+        languageCode        = None
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -74,13 +76,14 @@ object TpsData {
         taxRegimeDisplay    = "MIB",
         taxType             = MIB,
         paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00")),
-        email               = "email"
+        email               = None,
+        languageCode        = None
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val mibPayments: TpsPayments = tpsPaymentRequest.tpsPayments(created)
+  val mibPayments: TpsPayments = tpsPaymentRequestMib.tpsPayments(created)
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
@@ -108,7 +111,8 @@ object TpsData {
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
-          "test@email.com")))
+          Some("test@email.com"),
+          Some("en"))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -131,7 +135,8 @@ object TpsData {
           amendmentReference = None
         ),
         taxType             = MIB,
-        email               = "test@email.com")))
+        email               = None,
+        languageCode        = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -154,7 +159,8 @@ object TpsData {
           amendmentReference = Some(1)
         ),
         taxType             = MIB,
-        email               = "email")))
+        email               = None,
+        languageCode        = None)))
 
   val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HeadOfDutyIndicators.B,
@@ -205,7 +211,8 @@ object TpsData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com"
+              "email": "test@email.com",
+              "languageCode": "en"
             }
           ]
         }
@@ -220,11 +227,12 @@ object TpsData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "MIB",
+            "taxType": "Sa",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             },
-            "email": "email"
+            "email": "test@email.com",
+            "languageCode": "en"
           }
           ],
           "navigation": {
@@ -250,8 +258,7 @@ object TpsData {
               "vat": 1,
               "customs": 2,
               "excise": 3
-            },
-            "email": "email"
+            }
           }
           ],
           "navigation": {
@@ -276,8 +283,7 @@ object TpsData {
               "chargeReference":"chargeReference",
               "vat": 1,
               "customs": 2
-            },
-            "email": "email"
+            }
           }
           ],
           "navigation": {
@@ -326,7 +332,8 @@ object TpsData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com"
+              "email": "test@email.com",
+              "languageCode": "en"
             }
           ]
         }
@@ -341,7 +348,9 @@ object TpsData {
           "payments": [
             {
               "paymentSpecificData": {
-                "chargeReference": "chargeReference"
+                "chargeReference": "chargeReference",
+                "vat": 1,
+                "customs": 2
               },
               "amount": 100,
               "chargeReference": "chargeReference",
@@ -349,8 +358,7 @@ object TpsData {
               "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
               "updated": "$created",
               "customerName": "customerName",
-              "taxType": "MIB",
-              "email": "email"
+              "taxType": "MIB"
             }
           ],
           "navigation": {

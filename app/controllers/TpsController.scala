@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,9 +33,9 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsController @Inject() (actions: Actions,
-                               cc:      ControllerComponents,
-                               tpsRepo: TpsRepo,
+class TpsController @Inject() (actions:        Actions,
+                               cc:             ControllerComponents,
+                               tpsRepo:        TpsRepo,
                                emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
@@ -100,7 +100,7 @@ class TpsController @Inject() (actions: Actions,
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
-      _ =  sendEmails(a)
+      _ = maybeSendEmails(a)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
     } yield Ok
 
@@ -123,16 +123,21 @@ class TpsController @Inject() (actions: Actions,
 
     tpsPayments.copy(payments = tpsPaymentsListNew)
   }
-  
-  private def sendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-     tpsPayments.payments.map{ nextPaymentItem =>
-       emailConnector.sendEmail(
-         languageCode     = "en",
-         email            = nextPaymentItem.email,
-         displayTaxType   = nextPaymentItem.taxType.toString,
-         paymentReference = nextPaymentItem.paymentSpecificData.getReference,
-         amountPaid       = nextPaymentItem.amount)
-     }
-     ()
-   }
+
+  private def maybeSendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
+    logger.debug("maybeSendEmails")
+    tpsPayments.payments.find(p => p.email.nonEmpty)
+      .fold(())(tpsPaymentItem => sendEmail(tpsPaymentItem))
+    ()
+  }
+  //Purely exists to avoid 'discard non-unit value' compiler error
+  private def sendEmail(tpsPaymentItem: TpsPaymentItem)(implicit hc: HeaderCarrier): Unit = {
+    emailConnector.sendEmail(
+      languageCode     = tpsPaymentItem.languageCode.getOrElse(throw new RuntimeException("maybeSendEmails error: no language code was present")),
+      email            = tpsPaymentItem.email.getOrElse(throw new RuntimeException("maybeSendEmails error: email should be present but isn't")),
+      displayTaxType   = tpsPaymentItem.taxType.toString,
+      paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
+      amountPaid       = tpsPaymentItem.amount)
+    ()
+  }
 }
