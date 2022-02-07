@@ -69,8 +69,8 @@ object TpsPaymentItem {
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
       (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString) and
       (__ \ "email").readNullable[String] and
-      (__ \ "languageCode").readNullable[String]) 
-    ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email, languageCode) =>
+      (__ \ "languageCode").readNullable[String]
+    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email, languageCode) =>
       TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email, languageCode))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
