@@ -149,5 +149,8 @@ class DeniedUtrsService @Inject() (
     logger.info(s"DeniedUtrs cache updated [size:${deniedUtrs.utrs.size}] [inserted:${deniedUtrs.inserted}] [$latestId]")
   }
 
+  def dropDb(): Future[Boolean] = {
+    deniedUtrsRepo.drop
+  }
   lazy val logger: Logger = Logger(this.getClass)
 }
