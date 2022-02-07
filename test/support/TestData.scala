@@ -61,7 +61,8 @@ object TestData {
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
-        email               = "email"
+        email               = "email",
+        languageCode.       = "en"
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
