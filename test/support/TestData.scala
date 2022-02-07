@@ -113,7 +113,7 @@ object TestData {
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("test@email.com"),
-          Some("en")))))))
+          Some("en"))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
