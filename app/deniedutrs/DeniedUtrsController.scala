@@ -74,5 +74,11 @@ class DeniedUtrsController @Inject() (
     } yield Ok(Json.toJson(VerifyUtrResponse(verifyUtrStatus)))
   }
 
+  def dropDb(): Action[AnyContent] = Action.async { implicit request =>
+    for {
+      result <- deniedUtrsService.dropDb()
+    } yield Ok(Json.obj("denied-utrs-collection-dropped" -> result))
+  }
+
   private lazy val logger: Logger = Logger(this.getClass)
 }
