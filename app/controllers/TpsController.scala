@@ -138,6 +138,6 @@ class TpsController @Inject() (actions:        Actions,
         displayTaxType   = tpsPaymentItem.taxType.toString,
         paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
         amountPaid       = tpsPaymentItem.amount)
-      
+      ()
     }
 }
