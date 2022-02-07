@@ -28,7 +28,7 @@ class VerifyUtrsRequestSpec extends UnitSpec {
       //language=JSON
       """
          {
-          "utr": ["utr1"]
+          "utrs": ["utr1"]
           }
         """)
 
