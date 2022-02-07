@@ -33,7 +33,7 @@ case class TpsPaymentItem(
     paymentSpecificData: PaymentSpecificData,
     taxType:             TaxType,
     email:               Option[String],
-    languageCode:        Option[String])) {
+    languageCode:        Option[String]) {
 }
 
 object TpsPaymentItem {
@@ -47,8 +47,7 @@ object TpsPaymentItem {
         s"customerName" -> tpsPaymentItem.customerName,
         s"chargeReference" -> tpsPaymentItem.chargeReference,
         s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData,
-        s"taxType" -> tpsPaymentItem.taxType.toString,
-        s"email" -> tpsPaymentItem.email
+        s"taxType" -> tpsPaymentItem.taxType.toString
       )
         ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
         ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
@@ -71,7 +70,7 @@ object TpsPaymentItem {
       (__ \ "email").readNullable[String] and
       (__ \ "languageCode").readNullable[String]
     ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email, languageCode) =>
-      TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email, languageCode))
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email, languageCode))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
 
