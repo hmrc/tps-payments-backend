@@ -11,3 +11,7 @@ PATCH      /update-with-pcipal-data                                 controllers.
 GET        /payment-items/:id/mods-amendment-ref                    paymentsprocessor.PaymentsProcessorController.findModsSpecificData(id: PaymentItemId)
 
 POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments
+
+# Denied Utrs:
+POST       /verify-utrs                                             deniedutrs.DeniedUtrsController.verifyUtrs()
+POST       /upload-denied-utrs                                      deniedutrs.DeniedUtrsController.uploadDeniedUtrs()

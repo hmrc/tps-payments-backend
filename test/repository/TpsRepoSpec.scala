@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package repository
 import play.api.libs.json.Json
 import reactivemongo.api.commands.UpdateWriteResult
 import support.ItSpec
-import support.TpsData._
+import support.TestData._
 
 class TpsRepoSpec extends ItSpec {
   "Count should be 0 with empty repo" in {

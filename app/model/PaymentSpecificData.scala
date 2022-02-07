@@ -147,8 +147,8 @@ object NpsSpecificData {
 }
 
 final case class VatSpecificData(
-    vatReference:    String,
-    remittanceType:  String
+    vatReference:   String,
+    remittanceType: String
 ) extends PaymentSpecificData {
   override def getReference: String = vatReference
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, Provides, Singleton}
+
+import java.time.{Clock, ZoneId}
 
 class Module extends AbstractModule {
 
   override def configure(): Unit = ()
+
+  @Provides
+  @Singleton
+  def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 }
