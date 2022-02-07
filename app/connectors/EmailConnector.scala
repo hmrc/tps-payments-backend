@@ -31,12 +31,11 @@ final class EmailConnector @Inject() (
 )(implicit ec: ExecutionContext) {
 
   def sendEmail(languageCode: String, email: String, displayTaxType: String, paymentReference: String, amountPaid: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    val isWelsh = languageCode == "cy"
     http.POST[EmailSendRequest, Unit](
       appConfig.emailServiceUrl,
       EmailSendRequest(
         Seq(email),
-        if (isWelsh) "open_banking_payment_successful_cy" else "open_banking_payment_successful",
+        if (languageCode.equals("cy")) "open_banking_payment_successful_cy" else "open_banking_payment_successful",
         parameters = Map(
           "taxType" -> displayTaxType,
           "reference" -> paymentReference,
