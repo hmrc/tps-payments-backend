@@ -109,11 +109,31 @@ object TestData {
           HeadOfDutyIndicators.B,
           created,
           "AR",
-          "",
+          "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("test@email.com"),
+          Some("en"))))
+  
+  val tpsPaymentsWithEncryptedEmail: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          Some("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ=="),
           Some("en"))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
@@ -205,7 +225,7 @@ object TestData {
               "headOfDutyIndicator": "B",
               "updated": "$created",
               "customerName" : "AR",
-              "chargeReference" : "",
+              "chargeReference" : "12345",
               "paymentSpecificData" :
               {
                 "ninoPart1": "$reference",
@@ -326,7 +346,7 @@ object TestData {
               "updated": "$created",
               "customerName" : "AR",
               "taxType": "P800",
-              "chargeReference" : "",
+              "chargeReference" : "12345",
               "paymentSpecificData" :
               {
                 "ninoPart1": "$reference",
@@ -371,6 +391,8 @@ object TestData {
             }
         }""".stripMargin)
 
+  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionNumber":"12345"}]"""
+  
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(
     s"""
