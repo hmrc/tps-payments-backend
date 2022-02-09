@@ -17,8 +17,10 @@
 package connectors
 
 import config.AppConfig
+
 import javax.inject.{Inject, Singleton}
 import model.EmailSendRequest
+import repository.Crypto
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -30,16 +32,16 @@ final class EmailConnector @Inject() (
     appConfig: AppConfig
 )(implicit ec: ExecutionContext) {
 
-  def sendEmail(languageCode: String, email: String, displayTaxType: String, paymentReference: String, amountPaid: BigDecimal)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def sendEmail(languageCode: String, emailAddress: String, totalAmountPaid: String, transactionReference: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     http.POST[EmailSendRequest, Unit](
       appConfig.emailServiceUrl,
       EmailSendRequest(
-        Seq(email),
-        if (languageCode.equals("cy")) "open_banking_payment_successful_cy" else "open_banking_payment_successful",
+        Seq(emailAddress),
+        if (languageCode.equals("cy")) "telephone_payments_service_cy" else "telephone_payments_service",
         parameters = Map(
-          "taxType" -> displayTaxType,
-          "reference" -> paymentReference,
-          "amountPaid" -> amountPaid.toString
+          "transactionReference" -> transactionReference,
+          "totalAmountPaid" -> totalAmountPaid,
+          "tpsPaymentItemsForEmail" -> tpsPaymentItemsForEmail
         )
       )
     )
