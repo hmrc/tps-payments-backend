@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package model
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json, OFormat}
+import play.api.libs.functional.syntax._
 
-final case class VerifyUtrResponse(status: VerifyUtrStatus)
+final case class Reference(value: String)
 
-object VerifyUtrResponse {
-  implicit val format: OFormat[VerifyUtrResponse] = Json.format[VerifyUtrResponse]
+object Reference {
+  implicit val format: Format[Reference] = implicitly[Format[String]].inmap(Reference(_), _.value)
 }

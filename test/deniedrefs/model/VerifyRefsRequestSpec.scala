@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs.model
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Format
+import play.api.libs.json.Json
+import support.{TestData, UnitSpec}
 
-final case class DeniedUtrsId(value: String)
+class VerifyRefsRequestSpec extends UnitSpec {
 
-object DeniedUtrsId {
-  implicit val format: Format[DeniedUtrsId] = implicitly[Format[String]].inmap(DeniedUtrsId(_), _.value)
+  "json serialization/deserialization" in {
+    val verifyRefRequest = TestData.verifyRefRequest
+
+    val verifyRefRequestJson = Json.parse(
+      //language=JSON
+      """
+         {
+          "refs": ["ref1"]
+          }
+        """)
+
+    Json.toJson(verifyRefRequest) shouldBe verifyRefRequestJson
+    verifyRefRequestJson.as[VerifyRefsRequest] shouldBe verifyRefRequest
+  }
 }

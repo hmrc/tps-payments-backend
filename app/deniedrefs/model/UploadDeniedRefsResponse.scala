@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package deniedutrs
+package deniedrefs.model
 
-import model.DeniedUtrsId
-import reactivemongo.bson.BSONObjectID
+import java.time.LocalDateTime
+import play.api.libs.json._
 
-import javax.inject.Singleton
+final case class UploadDeniedRefsResponse(
+    _id:      DeniedRefsId,
+    inserted: LocalDateTime,
+    size:     Long
+)
 
-@Singleton
-class DeniedUtrsIdGenerator {
-  def nextId(): DeniedUtrsId = DeniedUtrsId(BSONObjectID.generate.stringify)
+object UploadDeniedRefsResponse {
+  implicit val format: OFormat[UploadDeniedRefsResponse] = Json.format[UploadDeniedRefsResponse]
 }
