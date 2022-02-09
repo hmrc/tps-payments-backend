@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs.model
 
-import model.Utr
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.Json
+import support.{TestData, UnitSpec}
 
-import java.time.LocalDateTime
+class DeniedRefsSpec extends UnitSpec {
 
-/**
- * This entity represents list of denied utrs.
- * We store it in mongo.
- */
-final case class DeniedUtrs(
-    _id:      DeniedUtrsId,
-    utrs:     List[Utr],
-    inserted: LocalDateTime
-) {
+  "json serialization/deserialization" in {
+    val deniedRefs = TestData.deniedRefs1
 
-  private lazy val utrsSet = utrs.toSet
-  def containsUtr(utr: Utr): Boolean = utrsSet.contains(utr)
-}
+    val deniedRefsJson = Json.parse(
+      //language=JSON
+      """
+        {
+          "_id" : "denied-refs-id-123",
+          "refs" : ["ref1","ref2","ref3"],
+          "inserted" : "2022-02-04T10:00:24.371"
+        }
+        """
+    )
 
-object DeniedUtrs {
-  implicit val format: OFormat[DeniedUtrs] = Json.format[DeniedUtrs]
+    Json.toJson(deniedRefs) shouldBe deniedRefsJson
+    deniedRefsJson.as[DeniedRefs] shouldBe deniedRefs
+  }
+
 }

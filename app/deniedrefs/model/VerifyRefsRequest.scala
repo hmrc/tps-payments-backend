@@ -14,29 +14,14 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs.model
 
-import play.api.libs.json.Json
-import support.{TestData, UnitSpec}
+import model.Reference
+import play.api.libs.json.{Json, OFormat}
 
-class DeniedUtrsSpec extends UnitSpec {
+final case class VerifyRefsRequest(refs: Set[Reference])
 
-  "json serialization/deserialization" in {
-    val deniedUtrs = TestData.deniedUtrs1
-
-    val deniedUtrsJson = Json.parse(
-      //language=JSON
-      """
-        {
-          "_id" : "denied-utrs-id-123",
-          "utrs" : ["utr1","utr2","utr3"],
-          "inserted" : "2022-02-04T10:00:24.371"
-        }
-        """
-    )
-
-    Json.toJson(deniedUtrs) shouldBe deniedUtrsJson
-    deniedUtrsJson.as[DeniedUtrs] shouldBe deniedUtrs
-  }
+object VerifyRefsRequest {
+  implicit val format: OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]
 
 }

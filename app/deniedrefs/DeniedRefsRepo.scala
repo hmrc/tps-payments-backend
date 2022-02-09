@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package deniedutrs
+package deniedrefs
 
-import model.{DeniedUtrs, DeniedUtrsId}
-import _root_.model.Utr
+import model.{DeniedRefs, DeniedRefsId}
+import _root_.model.Reference
 import play.api.libs.json.{Json, Reads}
 import play.modules.reactivemongo.ReactiveMongoComponent
 import play.api.libs.json._
@@ -30,14 +30,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-final class DeniedUtrsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-  extends Repo[DeniedUtrs, DeniedUtrsId]("denied-utrs", reactiveMongoComponent) {
+final class DeniedRefsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent)(implicit ec: ExecutionContext)
+  extends Repo[DeniedRefs, DeniedRefsId]("denied-refs", reactiveMongoComponent) {
 
-  def upsert(deniedUtrs: DeniedUtrs): Future[WriteResult] = upsert(deniedUtrs._id, deniedUtrs)
+  def upsert(deniedRefs: DeniedRefs): Future[WriteResult] = upsert(deniedRefs._id, deniedRefs)
 
-  private val deniedUtrsReads: Reads[DeniedUtrsId] = (__ \ "_id").read[DeniedUtrsId]
+  private val deniedRefsReads: Reads[DeniedRefsId] = (__ \ "_id").read[DeniedRefsId]
 
-  def findLatestDeniedUtrsId(): Future[Option[DeniedUtrsId]] = {
+  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = {
     val projection = Json.obj("_id" -> 1) //a projection so we don't pull whole document for performance reasons
     collection
       .find(
@@ -45,7 +45,7 @@ final class DeniedUtrsRepo @Inject() (reactiveMongoComponent: ReactiveMongoCompo
         projection = Some(projection)
       )
       .sort(Json.obj(inserted -> -1))
-      .one[DeniedUtrsId](ReadPreference.primaryPreferred)(deniedUtrsReads, implicitly)
+      .one[DeniedRefsId](ReadPreference.primaryPreferred)(deniedRefsReads, implicitly)
   }
 
   override def indexes: Seq[Index] = Seq(

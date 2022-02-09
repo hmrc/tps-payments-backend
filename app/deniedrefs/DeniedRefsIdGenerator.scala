@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs
 
-import play.api.libs.json.Json
-import support.{TestData, UnitSpec}
+import model.DeniedRefsId
+import reactivemongo.bson.BSONObjectID
 
-class VerifyUtrsRequestSpec extends UnitSpec {
+import javax.inject.Singleton
 
-  "json serialization/deserialization" in {
-    val verifyUtrRequest = TestData.verifyUtrRequest
-
-    val verifyUtrRequestJson = Json.parse(
-      //language=JSON
-      """
-         {
-          "utrs": ["utr1"]
-          }
-        """)
-
-    Json.toJson(verifyUtrRequest) shouldBe verifyUtrRequestJson
-    verifyUtrRequestJson.as[VerifyUtrsRequest] shouldBe verifyUtrRequest
-  }
+@Singleton
+class DeniedRefsIdGenerator {
+  def nextId(): DeniedRefsId = DeniedRefsId(BSONObjectID.generate.stringify)
 }

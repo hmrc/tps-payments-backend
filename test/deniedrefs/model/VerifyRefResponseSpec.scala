@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs.model
 
 import play.api.libs.json.{JsString, JsValue, Json}
 import support.{TestData, UnitSpec}
 
-class VerifyUtrResponseSpec extends UnitSpec {
+class VerifyRefResponseSpec extends UnitSpec {
 
   "json serialization/deserialization" - {
 
     val testCases = List(
-      ("""{"status": "UtrDenied"}""", VerifyUtrResponse(status = VerifyUtrStatuses.UtrDenied)),
-      ("""{"status": "UtrPermitted"}""", VerifyUtrResponse(status = VerifyUtrStatuses.UtrPermitted)),
-      ("""{"status": "MissingInformation"}""", VerifyUtrResponse(status = VerifyUtrStatuses.MissingInformation))
+      ("""{"status": "RefDenied"}""", VerifyRefResponse(status = VerifyRefStatuses.RefDenied)),
+      ("""{"status": "RefPermitted"}""", VerifyRefResponse(status = VerifyRefStatuses.RefPermitted)),
+      ("""{"status": "MissingInformation"}""", VerifyRefResponse(status = VerifyRefStatuses.MissingInformation))
     )
 
     testCases.foreach { tc =>
       s"test for ${tc._2}" in {
         val json: JsValue = Json.parse(tc._1)
-        val verifyUtrResponse: VerifyUtrResponse = tc._2
-        json.as[VerifyUtrResponse] shouldBe verifyUtrResponse
-        Json.toJson(verifyUtrResponse) shouldBe json
+        val verifyRefResponse: VerifyRefResponse = tc._2
+        json.as[VerifyRefResponse] shouldBe verifyRefResponse
+        Json.toJson(verifyRefResponse) shouldBe json
       }
     }
   }

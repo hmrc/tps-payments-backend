@@ -16,7 +16,7 @@
 
 package support
 
-import deniedutrs.model._
+import deniedrefs.model._
 
 import java.time.LocalDateTime
 import model.StatusTypes.validated
@@ -86,7 +86,7 @@ object TestData {
   )
 
   val mibPayments: TpsPayments = tpsPaymentRequestMib.tpsPayments(created)
-  
+
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
   val paymentItemId: PaymentItemId = PaymentItemId("paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91")
@@ -388,37 +388,37 @@ object TestData {
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", None)
 
-  val utr1 = Utr("utr1")
-  val utr2 = Utr("utr2")
-  val utr3 = Utr("utr3")
-  val utr4 = Utr("utr4")
-  val utr5 = Utr("utr5")
+  val ref1 = Reference("ref1")
+  val ref2 = Reference("ref2")
+  val ref3 = Reference("ref3")
+  val ref4 = Reference("ref4")
+  val ref5 = Reference("ref5")
 
   val csvFile1: String =
-    s"""${utr1.value}
-        |${utr2.value}
-        |${utr3.value}
+    s"""${ref1.value}
+        |${ref2.value}
+        |${ref3.value}
         |""".stripMargin
 
   val csvFile2: String =
-    s"""${utr2.value}
-        |${utr3.value}
-        |${utr4.value}
-        |${utr5.value}
+    s"""${ref2.value}
+        |${ref3.value}
+        |${ref4.value}
+        |${ref5.value}
         |""".stripMargin
 
-  val deniedUtrs1 = DeniedUtrs(
-    _id      = DeniedUtrsId("denied-utrs-id-123"),
-    utrs     = List(utr1, utr2, utr3),
+  val deniedRefs1 = DeniedRefs(
+    _id      = DeniedRefsId("denied-refs-id-123"),
+    refs     = List(ref1, ref2, ref3),
     inserted = LocalDateTime.parse("2022-02-04T10:00:24.371")
   )
 
-  val deniedUtrs2 = DeniedUtrs(
-    _id      = DeniedUtrsId("denied-utrs-id-123"),
-    utrs     = List(utr2, utr3, utr4),
+  val deniedRefs2 = DeniedRefs(
+    _id      = DeniedRefsId("denied-refs-id-123"),
+    refs     = List(ref2, ref3, ref4),
     inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
   )
 
-  val verifyUtrRequest = VerifyUtrsRequest(Set(utr1))
+  val verifyRefRequest = VerifyRefsRequest(Set(ref1))
 
 }

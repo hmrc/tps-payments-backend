@@ -14,28 +14,13 @@
  * limitations under the License.
  */
 
-package model
+package deniedrefs.model
 
-import play.api.libs.json.{Format, Json, OFormat}
 import play.api.libs.functional.syntax._
+import play.api.libs.json.Format
 
-final case class Utr(value: String)
+final case class DeniedRefsId(value: String)
 
-object Utr {
-  implicit val format: Format[Utr] = implicitly[Format[String]].inmap(Utr(_), _.value)
-
-  def canonicalizeUtr(utr: Utr): Utr = {
-    val trimmed = utr.value.trim
-    val lowercased = trimmed.toUpperCase()
-    val withoutK = dropK(lowercased)
-    utr.copy(value = s"${withoutK}K")
-  }
-
-  private def dropK(utrString: String) = {
-    if (utrString.toLowerCase().startsWith("k")) {
-      utrString.drop(1)
-    } else if (utrString.toLowerCase().endsWith("k")) {
-      utrString.dropRight(1)
-    } else utrString
-  }
+object DeniedRefsId {
+  implicit val format: Format[DeniedRefsId] = implicitly[Format[String]].inmap(DeniedRefsId(_), _.value)
 }

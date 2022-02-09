@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package deniedutrs.model
+package deniedrefs.model
 
 import enumeratum.{Enum, EnumEntry}
 import play.api.libs.json.Format
@@ -22,20 +22,20 @@ import util.EnumFormat
 
 import scala.collection.immutable
 
-sealed abstract class VerifyUtrStatus extends EnumEntry
+sealed abstract class VerifyRefStatus extends EnumEntry
 
-object VerifyUtrStatuses extends Enum[VerifyUtrStatus] {
+object VerifyRefStatuses extends Enum[VerifyRefStatus] {
 
-  case object UtrDenied extends VerifyUtrStatus
-  case object UtrPermitted extends VerifyUtrStatus
-  case object MissingInformation extends VerifyUtrStatus
+  case object RefDenied extends VerifyRefStatus
+  case object RefPermitted extends VerifyRefStatus
+  case object MissingInformation extends VerifyRefStatus
 
-  override def values: immutable.IndexedSeq[VerifyUtrStatus] = findValues
+  override def values: immutable.IndexedSeq[VerifyRefStatus] = findValues
 }
 
-object VerifyUtrStatus {
-  implicit val format: Format[VerifyUtrStatus] = Format(
-    EnumFormat(VerifyUtrStatuses),
-    EnumFormat(VerifyUtrStatuses)
+object VerifyRefStatus {
+  implicit val format: Format[VerifyRefStatus] = Format(
+    EnumFormat(VerifyRefStatuses),
+    EnumFormat(VerifyRefStatuses)
   )
 }

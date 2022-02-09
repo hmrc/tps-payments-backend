@@ -125,19 +125,19 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   private def maybeSendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-      logger.debug("maybeSendEmails")
-      tpsPayments.payments.find(p => p.email.nonEmpty)
-        .fold(())(tpsPaymentItem => sendEmail(tpsPaymentItem))
-      ()
-    }
+    logger.debug("maybeSendEmails")
+    tpsPayments.payments.find(p => p.email.nonEmpty)
+      .fold(())(tpsPaymentItem => sendEmail(tpsPaymentItem))
+    ()
+  }
   //Purely exists to avoid 'discard non-unit value' compiler error
   private def sendEmail(tpsPaymentItem: TpsPaymentItem)(implicit hc: HeaderCarrier): Unit = {
-      emailConnector.sendEmail(
-        languageCode     = tpsPaymentItem.languageCode.getOrElse(throw new RuntimeException("maybeSendEmails error: no language code was present")),
-        email            = tpsPaymentItem.email.getOrElse(throw new RuntimeException("maybeSendEmails error: email should be present but isn't")),
-        displayTaxType   = tpsPaymentItem.taxType.toString,
-        paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
-        amountPaid       = tpsPaymentItem.amount)
-      ()
-    }
+    emailConnector.sendEmail(
+      languageCode     = tpsPaymentItem.languageCode.getOrElse(throw new RuntimeException("maybeSendEmails error: no language code was present")),
+      email            = tpsPaymentItem.email.getOrElse(throw new RuntimeException("maybeSendEmails error: email should be present but isn't")),
+      displayTaxType   = tpsPaymentItem.taxType.toString,
+      paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
+      amountPaid       = tpsPaymentItem.amount)
+    ()
+  }
 }

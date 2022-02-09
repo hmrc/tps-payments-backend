@@ -19,4 +19,4 @@ POST        /tps-payments-backend/test-only/store                   controllers.
 POST        /tps-payments-backend/test-only/create                   controllers.TestController.createTpsPayments()
 
 # Denied Utrs:
-DELETE        /tps-payments-backend/test-only/drop-denied-utrs-collection      deniedutrs.DeniedUtrsController.dropDb()
+DELETE        /tps-payments-backend/test-only/drop-denied-refs-collection      deniedrefs.DeniedRefsController.dropDb()
