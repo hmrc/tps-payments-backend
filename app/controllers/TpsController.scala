@@ -108,7 +108,7 @@ class TpsController @Inject() (actions:        Actions,
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
-      _ = maybeSendEmails(a, request.body.Status)
+      _ = maybeSendEmail(a, request.body.Status)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
     } yield Ok
 
