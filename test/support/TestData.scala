@@ -115,7 +115,7 @@ object TestData {
           P800,
           Some("test@email.com"),
           Some("en"))))
-  
+
   val tpsPaymentsWithEncryptedEmail: TpsPayments =
     TpsPayments(
       id,
@@ -392,7 +392,7 @@ object TestData {
         }""".stripMargin)
 
   val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionNumber":"12345"}]"""
-  
+
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(
     s"""

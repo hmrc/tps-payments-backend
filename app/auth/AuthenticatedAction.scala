@@ -18,12 +18,13 @@ package auth
 
 import auth.UnhappyPathResponses.{notLoggedIn, unauthorised}
 import config.AppConfig
+
 import javax.inject._
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.allEnrolments
+import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
@@ -43,13 +44,10 @@ class AuthenticatedAction @Inject() (
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    af.authorised(AuthProviders(PrivilegedApplication)).retrieve(allEnrolments) {
-      case allEnrols if allEnrols.enrolments.map(_.key).contains(appConfig.strideRole) =>
-        block(request)
-      case _ =>
-        logger.warn(s"user logged in with no credentials")
-        Future successful unauthorised
-    }.recover {
+    val enrolments: Set[Predicate] = appConfig.strideRoles.map(Enrolment.apply)
+    val stridePredicate: Predicate = enrolments.reduceOption(_ or _).getOrElse(EmptyPredicate)
+
+    af.authorised(stridePredicate and AuthProviders(PrivilegedApplication))(block(request)).recover {
       case _: NoActiveSession =>
         logger.warn(s"no active session")
         notLoggedIn

@@ -35,18 +35,32 @@ object AuthStub {
       .withRequestBody(
         equalToJson(
           //language=JSON
-          s"""
-             {
-               "authorise": [
-                 {
-                   "authProviders": [
-                     "PrivilegedApplication"
-                   ]
-                 }
-               ],
-             "retrieve" : [ "allEnrolments" ]
-             }
-           """.stripMargin, true, true))
+          """
+              {
+                "authorise": [
+                  {
+                    "$or": [
+                      {
+                        "enrolment": "digital_tps_payment_taker_call_handler",
+                        "identifiers": [],
+                        "state": "Activated"
+                      },
+                      {
+                        "enrolment": "tps_payment_taker_call_handler",
+                        "identifiers": [],
+                        "state": "Activated"
+                      }
+                    ]
+                  },
+                  {
+                    "authProviders": [
+                      "PrivilegedApplication"
+                    ]
+                  }
+                ],
+                "retrieve": []
+              }
+           """, true, true))
       .willReturn(aResponse()
         .withStatus(200)
         .withBody(
