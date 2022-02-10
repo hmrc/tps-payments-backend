@@ -37,7 +37,7 @@ final class EmailConnector @Inject() (
       appConfig.emailServiceUrl,
       EmailSendRequest(
         Seq(emailAddress),
-        if (languageCode.equals("cy")) "telephone_payments_service_cy" else "telephone_payments_service",
+        "telephone_payments_service",
         parameters = Map(
           "transactionReference" -> transactionReference,
           "totalAmountPaid" -> totalAmountPaid,
