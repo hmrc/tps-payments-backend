@@ -146,7 +146,7 @@ class TpsControllerSpec extends ItSpec with Status {
       connector.getPaymentItemTaxType(paymentItemId).futureValue
     }.getMessage.contains("500") shouldBe true
   }
-  
+
   "should parse TpsPaymentItems for email correctly" in {
     controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
   }
