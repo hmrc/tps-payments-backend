@@ -18,13 +18,13 @@ package recon
 
 import javax.inject.{Inject, Singleton}
 import model.PaymentSpecificData
-import repository.TpsRepo
+import repository.TpsPaymentsRepo
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReconService @Inject() (repo: TpsRepo)(implicit executionContext: ExecutionContext) {
+class ReconService @Inject() (repo: TpsPaymentsRepo)(implicit executionContext: ExecutionContext) {
 
   def findModsPaymentsByReference(listOfReferencesToFind: List[String])(implicit hc: HeaderCarrier): Future[List[PaymentSpecificData]] = {
     repo.surfaceModsDataForRecon(listOfReferencesToFind)

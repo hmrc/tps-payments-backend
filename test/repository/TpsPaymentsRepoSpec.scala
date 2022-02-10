@@ -21,7 +21,7 @@ import reactivemongo.api.commands.UpdateWriteResult
 import support.ItSpec
 import support.TestData._
 
-class TpsRepoSpec extends ItSpec {
+class TpsPaymentsRepoSpec extends ItSpec {
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
   }

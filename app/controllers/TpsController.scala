@@ -27,7 +27,7 @@ import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.JsArray
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.{Crypto, TpsRepo}
+import repository.{Crypto, TpsPaymentsRepo}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.util.{Failure, Success}
@@ -37,7 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class TpsController @Inject() (actions:        Actions,
                                cc:             ControllerComponents,
-                               tpsRepo:        TpsRepo,
+                               tpsRepo:        TpsPaymentsRepo,
                                emailConnector: EmailConnector,
                                crypto:         Crypto)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
@@ -53,7 +53,7 @@ class TpsController @Inject() (actions:        Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
-    
+
     val updatedPaymentsWithEncryptedEmails = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
       case Some(email) => tpsPaymentItem.copy(email = Some(crypto.encrypt(email)))
       case _           => tpsPaymentItem

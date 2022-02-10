@@ -22,13 +22,13 @@ import javax.inject.{Inject, Singleton}
 import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, TpsPayments}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.TpsRepo
+import repository.TpsPaymentsRepo
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
+class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
     "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")

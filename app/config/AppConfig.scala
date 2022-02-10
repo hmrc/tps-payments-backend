@@ -29,7 +29,13 @@ class AppConfig @Inject() (
   val emailServiceUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"
   val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
   val graphiteHost: String = config.get[String]("microservice.metrics.graphite.host")
-  val strideRole: String = config.get[String]("stride.role")
+
+  val strideRoles: Set[String] = {
+    val roles = config.get[Seq[String]]("stride.roles").toSet
+    require(roles.nonEmpty, "Invalid configuration for 'stride.roles' - empty list")
+    roles
+  }
+
   val runModeEnvironment: Environment = environment
   val runTimeConfig: Configuration = config
 }

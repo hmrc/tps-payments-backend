@@ -29,7 +29,7 @@ import reactivemongo.bson.BSONDocument
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-final class TpsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, config: RepoConfig)(implicit ec: ExecutionContext)
+final class TpsPaymentsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, config: RepoConfig)(implicit ec: ExecutionContext)
   extends Repo[TpsPayments, TpsId]("tps-payments", reactiveMongoComponent) {
 
   override def indexes: Seq[Index] = Seq(
