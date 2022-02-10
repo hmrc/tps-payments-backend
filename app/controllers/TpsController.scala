@@ -25,10 +25,12 @@ import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
+import play.api.libs.json.JsArray
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.TpsRepo
+import repository.{Crypto, TpsRepo}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import scala.util.{Failure, Success}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -36,7 +38,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class TpsController @Inject() (actions:        Actions,
                                cc:             ControllerComponents,
                                tpsRepo:        TpsRepo,
-                               emailConnector: EmailConnector)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+                               emailConnector: EmailConnector,
+                               crypto:         Crypto)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
 
@@ -50,8 +53,13 @@ class TpsController @Inject() (actions:        Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
+    
+    val updatedPaymentsWithEncryptedEmails = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
+      case Some(email) => tpsPaymentItem.copy(email = Some(crypto.encrypt(email)))
+      case _           => tpsPaymentItem
+    })
 
-    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments)).map { _ =>
+    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
       Ok(toJson(request.body._id))
     }
   }
@@ -100,7 +108,7 @@ class TpsController @Inject() (actions:        Actions,
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
-      _ = maybeSendEmails(a)
+      _ = maybeSendEmail(a, request.body.Status)
       _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
     } yield Ok
 
@@ -124,20 +132,44 @@ class TpsController @Inject() (actions:        Actions,
     tpsPayments.copy(payments = tpsPaymentsListNew)
   }
 
-  private def maybeSendEmails(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-    logger.debug("maybeSendEmails")
-    tpsPayments.payments.find(p => p.email.nonEmpty)
-      .fold(())(tpsPaymentItem => sendEmail(tpsPaymentItem))
+  private def maybeSendEmail(tpsPayments: TpsPayments, status: model.StatusType)(implicit hc: HeaderCarrier): Unit = {
+    logger.debug("maybeSendEmail")
+    val tuple = (tpsPayments.payments.find(paymentItem => paymentItem.email.nonEmpty), status)
+    tuple match {
+      case (Some(paymentItemWithEmail), StatusTypes.validated) => sendEmail(
+        tpsPayments,
+        paymentItemWithEmail.languageCode.getOrElse("en"),
+        paymentItemWithEmail.email.getOrElse(throw new RuntimeException("maybeSendEmail error: email should be present but isn't")))
+      case _ => ()
+    }
+  }
+
+  private def sendEmail(tpsPayments: TpsPayments, languageCode: String, emailAddress: String)(implicit hc: HeaderCarrier): Unit = {
+    logger.debug("sendEmail")
+
+    emailConnector.sendEmail(
+      languageCode            = languageCode,
+      emailAddress            = decryptEmail(emailAddress),
+      totalAmountPaid         = tpsPayments.payments.map(tpsPaymentItem => tpsPaymentItem.amount).sum.toString,
+      transactionReference    = tpsPayments._id.value,
+      tpsPaymentItemsForEmail = parseTpsPaymentsItemsForEmail(tpsPayments).toString
+    )
     ()
   }
-  //Purely exists to avoid 'discard non-unit value' compiler error
-  private def sendEmail(tpsPaymentItem: TpsPaymentItem)(implicit hc: HeaderCarrier): Unit = {
-    emailConnector.sendEmail(
-      languageCode     = tpsPaymentItem.languageCode.getOrElse(throw new RuntimeException("maybeSendEmails error: no language code was present")),
-      email            = tpsPaymentItem.email.getOrElse(throw new RuntimeException("maybeSendEmails error: email should be present but isn't")),
-      displayTaxType   = tpsPaymentItem.taxType.toString,
-      paymentReference = tpsPaymentItem.paymentSpecificData.getReference,
-      amountPaid       = tpsPaymentItem.amount)
-    ()
+
+  def parseTpsPaymentsItemsForEmail(tpsPayments: TpsPayments): JsArray = {
+    JsArray(tpsPayments.payments.map(nextPaymentItem =>
+      toJson(TpsPaymentItemForEmail(
+        taxType           = nextPaymentItem.taxType.toString,
+        amount            = nextPaymentItem.amount.toString,
+        transactionNumber = nextPaymentItem.chargeReference)
+      )))
+  }
+
+  private def decryptFailureException(ex: Throwable, field: String) = throw new RuntimeException(s"Failed to decrypt field $field due to exception ${ex.getMessage}")
+
+  private def decryptEmail(email: String): String = crypto.decrypt(email) match {
+    case Failure(ex)    => decryptFailureException(ex, "email")
+    case Success(value) => value
   }
 }

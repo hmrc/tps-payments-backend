@@ -20,6 +20,7 @@ import model.pcipal.PcipalSessionId
 import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
+import repository.Crypto
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -27,6 +28,8 @@ import uk.gov.hmrc.http.HeaderCarrier
 class TpsControllerSpec extends ItSpec with Status {
 
   private lazy val connector = injector.instanceOf[TestConnector]
+  private lazy val controller = injector.instanceOf[TpsController]
+  private lazy val crypto = injector.instanceOf[Crypto]
   private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
@@ -95,7 +98,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "update with pci-pal data" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
     val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPciPalRequest).futureValue
     pciPaledUpdated.status shouldBe OK
     val result = connector.find(id).futureValue
@@ -115,7 +118,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "get an exception if paymentItemId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
     val response = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")
@@ -142,5 +145,17 @@ class TpsControllerSpec extends ItSpec with Status {
     intercept[Exception] {
       connector.getPaymentItemTaxType(paymentItemId).futureValue
     }.getMessage.contains("500") shouldBe true
+  }
+  
+  "should parse TpsPaymentItems for email correctly" in {
+    controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
+  }
+
+  "should decrypt email successfully" in {
+    crypto.decrypt("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ==").toOption.getOrElse("") shouldBe "test@email.com"
+  }
+
+  "should decrypt email unsuccessfully if code is wrong" in {
+    crypto.decrypt("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQVefB7vkeRvCQ==").toOption.getOrElse("fail") shouldBe "fail"
   }
 }
