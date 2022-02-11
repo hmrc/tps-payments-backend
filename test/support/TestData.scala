@@ -391,7 +391,7 @@ object TestData {
             }
         }""".stripMargin)
 
-  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionNumber":"12345"}]"""
+  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionNumber":"paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91"}]"""
 
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(
