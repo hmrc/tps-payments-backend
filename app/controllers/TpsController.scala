@@ -150,7 +150,7 @@ class TpsController @Inject() (actions:        Actions,
     emailConnector.sendEmail(
       languageCode            = languageCode,
       emailAddress            = decryptEmail(emailAddress),
-      totalAmountPaid         = tpsPayments.payments.map(tpsPaymentItem => tpsPaymentItem.amount).sum.toString,
+      totalAmountPaid         = tpsPayments.payments.map(tpsPaymentItem => tpsPaymentItem.amount).sum.setScale(2).toString,
       transactionReference    = tpsPayments._id.value,
       tpsPaymentItemsForEmail = parseTpsPaymentsItemsForEmail(tpsPayments).toString
     )
