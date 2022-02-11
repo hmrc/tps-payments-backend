@@ -133,7 +133,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   private def maybeSendEmail(tpsPayments: TpsPayments, status: model.StatusType)(implicit hc: HeaderCarrier): Unit = {
-    logger.debug("maybeSendEmail")
+    logger.info("maybeSendEmail")
     val tuple = (tpsPayments.payments.find(paymentItem => paymentItem.email.nonEmpty), status)
     tuple match {
       case (Some(paymentItemWithEmail), StatusTypes.validated) => sendEmail(
@@ -145,7 +145,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   private def sendEmail(tpsPayments: TpsPayments, languageCode: String, emailAddress: String)(implicit hc: HeaderCarrier): Unit = {
-    logger.debug("sendEmail")
+    logger.info("sendEmail")
 
     emailConnector.sendEmail(
       languageCode            = languageCode,
