@@ -93,7 +93,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
-    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.info(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       record <- tpsRepo.getPayment(request.body.tpsId)
       newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
@@ -104,7 +104,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.info(s"updateWithPcipalSessionId, update= ${request.body.toString}")
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
