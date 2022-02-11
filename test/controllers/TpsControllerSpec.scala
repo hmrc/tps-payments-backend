@@ -147,9 +147,9 @@ class TpsControllerSpec extends ItSpec with Status {
     }.getMessage.contains("500") shouldBe true
   }
 
-  "should parse TpsPaymentItems for email correctly" in {
-    controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
-  }
+//   "should parse TpsPaymentItems for email correctly" in {
+//     controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
+//   }
 
   "should decrypt email successfully" in {
     crypto.decrypt("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ==").toOption.getOrElse("") shouldBe "test@email.com"
