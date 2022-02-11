@@ -162,8 +162,8 @@ class TpsController @Inject() (actions:        Actions,
       toJson(TpsPaymentItemForEmail(
         taxType           = getTaxTypeString(nextPaymentItem.taxType),
         amount            = nextPaymentItem.amount.setScale(2).toString,
-        transactionNumber = nextPaymentItem.chargeReference)
-      )))
+        transactionNumber = nextPaymentItem.paymentItemId.fold("n/a")(paymentItemId => paymentItemId.value)
+      ))))
   }
   
   private def getTaxTypeString(taxType: TaxType): String = taxType match {
