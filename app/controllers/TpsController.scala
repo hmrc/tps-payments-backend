@@ -160,10 +160,23 @@ class TpsController @Inject() (actions:        Actions,
   def parseTpsPaymentsItemsForEmail(tpsPayments: TpsPayments): JsArray = {
     JsArray(tpsPayments.payments.map(nextPaymentItem =>
       toJson(TpsPaymentItemForEmail(
-        taxType           = nextPaymentItem.taxType.toString,
-        amount            = nextPaymentItem.amount.toString,
+        taxType           = getTaxTypeString(nextPaymentItem.taxType),
+        amount            = nextPaymentItem.amount.setScale(2).toString,
         transactionNumber = nextPaymentItem.chargeReference)
       )))
+  }
+  
+  private def getTaxTypeString(taxType: TaxType): String = taxType match {
+    case TaxTypes.ChildBenefitsRepayments => "Child Benefits repayments"
+    case TaxTypes.Sa                      => "Self Assessment"
+    case TaxTypes.Sdlt                    => "Stamp Duty Land Tax"
+    case TaxTypes.Safe                    => "SAFE"
+    case TaxTypes.Cotax                   => "Corporation Tax"
+    case TaxTypes.Ntc                     => "Tax credit repayments"
+    case TaxTypes.Paye                    => "PAYE"
+    case TaxTypes.Nps                     => "NPS"
+    case TaxTypes.Vat                     => "VAT"
+    case _                                => taxType.toString
   }
 
   private def decryptFailureException(ex: Throwable, field: String) = throw new RuntimeException(s"Failed to decrypt field $field due to exception ${ex.getMessage}")
