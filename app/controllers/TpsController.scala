@@ -79,11 +79,15 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def getTaxType(id: PaymentItemId): Action[AnyContent] = Action.async {
-    logger.debug(s"getPaymentItem ${id.value}")
+    logger.info(s"getPaymentItem ${id.value}")
 
     tpsRepo.findPaymentItem(id).map {
-      case Some(paymentItem) => Ok(toJson(paymentItem.taxType))
-      case None              => NotFound(s"No payment item found for id ${id.value}")
+      case Some(paymentItem) =>
+        logger.info("taxType found:" + paymentItem.taxType.toString)
+        Ok(toJson(paymentItem.taxType))
+      case None              =>
+        logger.info("taxType not found")
+        NotFound(s"No payment item found for id ${id.value}")
     }
   }
 
