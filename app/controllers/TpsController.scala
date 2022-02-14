@@ -104,7 +104,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    logger.info(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.info(s"updateWithPcipalData, update= ${request.body.toString}")
 
     val f = for {
       a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
