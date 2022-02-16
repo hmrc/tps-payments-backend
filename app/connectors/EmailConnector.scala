@@ -20,7 +20,6 @@ import config.AppConfig
 
 import javax.inject.{Inject, Singleton}
 import model.EmailSendRequest
-import repository.Crypto
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
@@ -32,7 +31,7 @@ final class EmailConnector @Inject() (
     appConfig: AppConfig
 )(implicit ec: ExecutionContext) {
 
-  def sendEmail(languageCode: String, emailAddress: String, totalAmountPaid: String, transactionReference: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def sendEmail(emailAddress: String, totalAmountPaid: String, transactionReference: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     http.POST[EmailSendRequest, Unit](
       appConfig.emailServiceUrl,
       EmailSendRequest(
