@@ -150,6 +150,8 @@ class TpsController @Inject() (actions:        Actions,
 
   private def sendEmail(tpsPayments: TpsPayments, languageCode: String, emailAddress: String)(implicit hc: HeaderCarrier): Unit = {
     logger.info("sendEmail")
+    logger.info(s"languageCode:$languageCode, emailAddressEncrypt:$emailAddress, emailAddress:${decryptEmail(emailAddress)}, totalAmountpaid${tpsPayments.payments.map(tpsPaymentItem => tpsPaymentItem.amount).sum.setScale(2).toString}, transactionReference: ${tpsPayments._id.value}, tpsPaymentItemsForEmail: ${parseTpsPaymentsItemsForEmail(tpsPayments).toString}")
+    
 
     emailConnector.sendEmail(
       languageCode            = languageCode,
