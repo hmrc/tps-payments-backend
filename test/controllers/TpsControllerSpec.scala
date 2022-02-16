@@ -152,21 +152,21 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "should decrypt email successfully" in {
-    crypto.decryptEmail("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==") shouldBe "test@email.com"
+    emailCrypto.decryptEmail("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==") shouldBe "test@email.com"
   }
 
   "should encrypt email successfully" in {
-    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("test@email.com")
-    crypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
+    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("test@email.com")
+    emailCrypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
   }
 
   "should not encrypt email if empty" in {
-    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("")
+    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("")
     encryptedEmail shouldBe ""
   }
 
   "should not encrypt email if email is already encrypted" in {
-    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
-    crypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
+    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
+    emailCrypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
   }
 }
