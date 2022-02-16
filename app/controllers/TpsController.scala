@@ -168,7 +168,6 @@ class TpsController @Inject() (actions:        Actions,
     tpsPayments.payments.forall(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.nonEmpty)
   }
 
-
   def parseTpsPaymentsItemsForEmail(tpsPayments: TpsPayments): JsArray = {
     JsArray(tpsPayments.payments.map(nextPaymentItem =>
       toJson(TpsPaymentItemForEmail(
