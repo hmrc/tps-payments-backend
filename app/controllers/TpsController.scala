@@ -55,7 +55,7 @@ class TpsController @Inject() (actions:        Actions,
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
 
     val updatedPaymentsWithEncryptedEmails = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
-      case Some(email) => tpsPaymentItem.copy(email = Some(crypto.encrypt(email)))
+      case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
       case _           => tpsPaymentItem
     })
 
