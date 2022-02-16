@@ -20,7 +20,7 @@ import model.pcipal.PcipalSessionId
 import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
-import repository.Crypto
+import repository.EmailCrypto
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,7 +29,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   private lazy val connector = injector.instanceOf[TestConnector]
   private lazy val controller = injector.instanceOf[TpsController]
-  private lazy val crypto = injector.instanceOf[Crypto]
+  private lazy val emailCrypto = injector.instanceOf[EmailCrypto]
   private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
@@ -147,15 +147,26 @@ class TpsControllerSpec extends ItSpec with Status {
     }.getMessage.contains("500") shouldBe true
   }
 
-//   "should parse TpsPaymentItems for email correctly" in {
-//     controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
-//   }
-
-  "should decrypt email successfully" in {
-    crypto.decrypt("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ==").toOption.getOrElse("") shouldBe "test@email.com"
+  "should parse TpsPaymentItems for email correctly" in {
+    controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
   }
 
-  "should decrypt email unsuccessfully if code is wrong" in {
-    crypto.decrypt("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQVefB7vkeRvCQ==").toOption.getOrElse("fail") shouldBe "fail"
+  "should decrypt email successfully" in {
+    crypto.decryptEmail("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==") shouldBe "test@email.com"
+  }
+
+  "should encrypt email successfully" in {
+    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("test@email.com")
+    crypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
+  }
+
+  "should not encrypt email if empty" in {
+    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("")
+    encryptedEmail shouldBe ""
+  }
+
+  "should not encrypt email if email is already encrypted" in {
+    val encryptedEmail = crypto.encryptEmailIfNotAlreadyEncrypted("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
+    crypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
   }
 }
