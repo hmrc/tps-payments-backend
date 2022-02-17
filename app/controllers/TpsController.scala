@@ -111,9 +111,10 @@ class TpsController @Inject() (actions:        Actions,
     logger.info(s"updateWithPcipalData, update= ${request.body.toString}")
 
     val f = for {
-      a <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
-      _ <- tpsRepo.upsert(a._id, updateTpsPayments(a, request.body))
-      _ = maybeSendEmail(a)
+      existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
+      updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
+      _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
+      _ = maybeSendEmail(updatedTpsPayments)
     } yield Ok
 
     f.recover {
