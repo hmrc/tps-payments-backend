@@ -179,8 +179,8 @@ class TpsController @Inject() (actions:        Actions,
       toJson(TpsPaymentItemForEmail(
         taxType           = getTaxTypeString(nextPaymentItem.taxType),
         amount            = parseBigDecimalToString(nextPaymentItem.amount),
-        transactionFee    = nextPaymentItem.pcipalData.fold("Unknown")(pciPalData => parseBigDecimalToString(pciPalData.Commission)),
-        transactionNumber = nextPaymentItem.paymentItemId.fold("Unknown")(paymentItemId => paymentItemId.value)
+        transactionFee    = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
+        transactionNumber = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
       )))).toString
   }
   
