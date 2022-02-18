@@ -99,11 +99,11 @@ class TpsControllerSpec extends ItSpec with Status {
   "update with pci-pal data" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
-    val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPciPalRequest).futureValue
+    val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPaledUpdated.status shouldBe OK
     val result = connector.find(id).futureValue
     result.payments.head.pcipalData match {
-      case Some(x) => x shouldBe chargeRefNotificationPciPalRequest
+      case Some(x) => x shouldBe chargeRefNotificationPcipalRequest
       case None    => throw new RuntimeException("Pcipal data missing")
     }
   }
@@ -111,7 +111,7 @@ class TpsControllerSpec extends ItSpec with Status {
   "get an exception if pcipalSessionId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
-    val response = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
+    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find pcipalSessionId: new")
   }
@@ -119,7 +119,7 @@ class TpsControllerSpec extends ItSpec with Status {
   "get an exception if paymentItemId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
-    val response = connector.updateTpsPayments(chargeRefNotificationPciPalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
+    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PaymentItemId = PaymentItemId("New"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")
   }
@@ -148,7 +148,7 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "should parse TpsPaymentItems for email correctly" in {
-    controller.parseTpsPaymentsItemsForEmail(tpsPayments).toString shouldBe tpsItemsForEmail
+    controller.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.payments) shouldBe tpsItemsForEmail
   }
 
   "should decrypt email successfully" in {
