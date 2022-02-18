@@ -21,7 +21,7 @@ import play.api.libs.json.{Json, OWrites}
 case class TpsPaymentItemForEmail(taxType:           String,
                                   amount:            String,
                                   transactionFee:    String,
-                                  transactionNumber: String,
+                                  transactionNumber: String
                                  )
 
 object TpsPaymentItemForEmail {
