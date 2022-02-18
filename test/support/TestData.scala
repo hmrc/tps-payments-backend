@@ -96,6 +96,21 @@ object TestData {
   val modsVatAmount = 123
   val modsCustomsAmount = 123
 
+  val chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    HoD                  = HeadOfDutyIndicators.B,
+    TaxReference         = reference,
+    Amount               = 1.92,
+    Commission           = 1.23,
+    CardType             = "VISA",
+    Status               = validated,
+    PCIPalSessionId      = pciPalSessionId,
+    TransactionReference = transReference,
+    PaymentItemId        = paymentItemId,
+    ChargeReference      = "chargeReference",
+    ReferenceNumber      = "3000000001",
+    CardLast4            = "0123"
+  )
+
   val tpsPayments: TpsPayments =
     TpsPayments(
       id,
@@ -111,6 +126,26 @@ object TestData {
           "AR",
           "12345",
           None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          Some("test@email.com"),
+          Some("en"))))
+
+  val tpsPaymentsWithPcipalData: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          Some(chargeRefNotificationPcipalRequest),
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("test@email.com"),
@@ -184,18 +219,6 @@ object TestData {
         email               = None,
         languageCode        = None)))
 
-  val chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-    HeadOfDutyIndicators.B,
-    reference,
-    1.92,
-    1.23,
-    "VISA",
-    validated,
-    pciPalSessionId,
-    transReference,
-    paymentItemId
-  )
-
   //language=JSON
   val chargeRefNotificationPciPalRequestJson: JsValue = Json.parse(
     s"""{
@@ -207,8 +230,10 @@ object TestData {
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "$transReference",
-            "paymentItemId": "${paymentItemId.value}",
-            "ChargeReference" : ""
+            "PaymentItemId": "${paymentItemId.value}",
+            "ChargeReference" : "chargeReference",
+            "ReferenceNumber": "3000000001",
+            "CardLast4": "0123"
       }""".stripMargin)
 
   //language=JSON
@@ -391,7 +416,7 @@ object TestData {
             }
         }""".stripMargin)
 
-  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionNumber":"paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91"}]"""
+  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3000000001"}]"""
 
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(
