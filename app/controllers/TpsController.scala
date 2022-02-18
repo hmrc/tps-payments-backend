@@ -198,6 +198,6 @@ class TpsController @Inject() (actions:        Actions,
     case TaxTypes.Paye                    => "PAYE"
     case TaxTypes.Nps                     => "NPS/NIRS"
     case TaxTypes.Vat                     => "VAT"
-    case _                                => throw new RuntimeException("getTaxTypeString Error: Unknown TaxType")
+    case _                                => taxType.toString
   }
 }
