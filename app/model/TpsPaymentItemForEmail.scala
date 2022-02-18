@@ -20,7 +20,9 @@ import play.api.libs.json.{Json, OWrites}
 
 case class TpsPaymentItemForEmail(taxType:           String,
                                   amount:            String,
-                                  transactionNumber: String)
+                                  transactionFee:    String,
+                                  transactionNumber: String,
+                                 )
 
 object TpsPaymentItemForEmail {
   implicit val writes: OWrites[TpsPaymentItemForEmail] = {
@@ -28,6 +30,7 @@ object TpsPaymentItemForEmail {
       Json.obj(
         s"taxType" -> tpsPaymentItemForEmail.taxType,
         s"amount" -> tpsPaymentItemForEmail.amount,
+        s"transactionFee" -> tpsPaymentItemForEmail.transactionFee,
         s"transactionNumber" -> tpsPaymentItemForEmail.transactionNumber
       ))
   }
