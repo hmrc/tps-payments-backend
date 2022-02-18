@@ -31,7 +31,7 @@ final class EmailConnector @Inject() (
     appConfig: AppConfig
 )(implicit ec: ExecutionContext) {
 
-  def sendEmail(emailAddress: String, totalAmountPaid: String, transactionReference: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def sendEmail(emailAddress: String, totalAmountPaid: String, transactionReference: String, cardType: String, cardNumber: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     http.POST[EmailSendRequest, Unit](
       appConfig.emailServiceUrl,
       EmailSendRequest(
@@ -40,6 +40,8 @@ final class EmailConnector @Inject() (
         parameters = Map(
           "transactionReference" -> transactionReference,
           "totalAmountPaid" -> totalAmountPaid,
+          "cardType" -> cardType,
+          "cardNumber" -> cardNumber,
           "tpsPaymentItemsForEmail" -> tpsPaymentItemsForEmail
         )
       )
