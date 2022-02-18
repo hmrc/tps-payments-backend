@@ -95,21 +95,6 @@ object TestData {
   val modsLookupChargeRefs: List[String] = List(modsRef)
   val modsVatAmount = 123
   val modsCustomsAmount = 123
-  
-  val chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-    HoD                  = HeadOfDutyIndicators.B,
-    TaxReference         = "sssss",
-    Amount               = 10,
-    Commission           = 1,
-    CardType             = "Visa",
-    Status               = StatusTypes.validated,
-    PCIPalSessionId      = PcipalSessionId("aaaa"),
-    TransactionReference = "transactionReference",
-    PaymentItemId        = PaymentItemId("aaa"),
-    ChargeReference      = "chargeReference",
-    ReferenceNumber      = "3000000001",
-    CardLast4            = "0123"
-  )
 
   val chargeRefNotificationPcipalRequest: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
     HoD                  = HeadOfDutyIndicators.B,
@@ -141,26 +126,6 @@ object TestData {
           "AR",
           "12345",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          Some("test@email.com"),
-          Some("en"))))
-  
-   val tpsPaymentsWithPcipalData: TpsPayments =
-    TpsPayments(
-      id,
-      pid,
-      Some(pciPalSessionId),
-      created,
-      List(
-        TpsPaymentItem(
-          Some(paymentItemId),
-          1.92,
-          HeadOfDutyIndicators.B,
-          created,
-          "AR",
-          "12345",
-          Some(chargeRefNotificationPcipalRequest),
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("test@email.com"),
