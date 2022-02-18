@@ -23,11 +23,11 @@ import support.{TestData, UnitSpec}
 class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 
   "to json" in {
-    toJson(TestData.chargeRefNotificationPciPalRequest) shouldBe TestData.chargeRefNotificationPciPalRequestJson
+    toJson(TestData.chargeRefNotificationPcipalRequest) shouldBe TestData.chargeRefNotificationPciPalRequestJson
   }
 
   "from json" in {
-    TestData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPciPalRequest
+    TestData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPcipalRequest
   }
 
 }
