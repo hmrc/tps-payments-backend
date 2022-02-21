@@ -119,7 +119,7 @@ class TpsControllerSpec extends ItSpec with Status {
   "get an exception if paymentItemId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
-    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PaymentItemId = PaymentItemId("New"))).futureValue
+    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")
   }
