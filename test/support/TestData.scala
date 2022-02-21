@@ -105,7 +105,7 @@ object TestData {
     Status               = validated,
     PCIPalSessionId      = pciPalSessionId,
     TransactionReference = transReference,
-    PaymentItemId        = paymentItemId,
+    paymentItemId        = paymentItemId,
     ChargeReference      = "chargeReference",
     ReferenceNumber      = "3000000001",
     CardLast4            = "0123"
@@ -230,7 +230,7 @@ object TestData {
             "Status": "${validated.toString}",
             "PCIPalSessionId": "${pciPalSessionId.value}",
             "TransactionReference": "$transReference",
-            "PaymentItemId": "${paymentItemId.value}",
+            "paymentItemId": "${paymentItemId.value}",
             "ChargeReference" : "chargeReference",
             "ReferenceNumber": "3000000001",
             "CardLast4": "0123"
