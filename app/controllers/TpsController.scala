@@ -85,7 +85,7 @@ class TpsController @Inject() (actions:        Actions,
       case Some(paymentItem) =>
         logger.info("taxType found:" + paymentItem.taxType.toString)
         Ok(toJson(paymentItem.taxType))
-      case None              =>
+      case None =>
         logger.info("taxType not found")
         NotFound(s"No payment item found for id ${id.value}")
     }
@@ -114,7 +114,7 @@ class TpsController @Inject() (actions:        Actions,
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
       _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
-      _ = if(tpsPaymentsAreFullyUpdated(updatedTpsPayments)) maybeSendEmail(updatedTpsPayments)
+      _ = if (tpsPaymentsAreFullyUpdated(updatedTpsPayments)) maybeSendEmail(updatedTpsPayments)
     } yield Ok
 
     f.recover {
@@ -136,21 +136,21 @@ class TpsController @Inject() (actions:        Actions,
 
     tpsPayments.copy(payments = tpsPaymentsListNew)
   }
- 
+
   private def maybeSendEmail(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
     logger.info("maybeSendEmail")
-      val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
-        tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData
-          .fold(throw new RuntimeException("maybeSendEmail error: payment status should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
+    val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
+      tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData
+        .fold(throw new RuntimeException("maybeSendEmail error: payment status should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
 
-      if (listOfSuccessfulTpsPaymentItems.isEmpty) ()
-      else {
-        tpsPayments.payments.find(paymentItem => paymentItem.email.nonEmpty) match {
-          case Some(TpsPaymentItem(_, _, _, _, _, _, Some(pcipalData), _, _, Some(email), _)) =>
-            sendEmail(listOfSuccessfulTpsPaymentItems, pcipalData.ReferenceNumber.dropRight(2), email, pcipalData.CardType, pcipalData.CardLast4)
-          case _ => throw new RuntimeException("maybeSendEmail error: data which should be present are missing")
-        }
+    if (listOfSuccessfulTpsPaymentItems.isEmpty) ()
+    else {
+      tpsPayments.payments.find(paymentItem => paymentItem.email.nonEmpty) match {
+        case Some(TpsPaymentItem(_, _, _, _, _, _, Some(pcipalData), _, _, Some(email), _)) =>
+          sendEmail(listOfSuccessfulTpsPaymentItems, pcipalData.ReferenceNumber.dropRight(2), email, pcipalData.CardType, pcipalData.CardLast4)
+        case _ => throw new RuntimeException("maybeSendEmail error: data which should be present are missing")
       }
+    }
   }
 
   private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
@@ -183,11 +183,11 @@ class TpsController @Inject() (actions:        Actions,
         transactionNumber = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
       )))).toString
   }
-  
+
   private def parseBigDecimalToString(bigDecimal: BigDecimal): String = {
     bigDecimal.setScale(2).toString
   }
-  
+
   private def getTaxTypeString(taxType: TaxType): String = taxType match {
     case TaxTypes.ChildBenefitsRepayments => "Child Benefits repayments"
     case TaxTypes.Sa                      => "Self Assessment"

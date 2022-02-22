@@ -29,7 +29,7 @@ class DeniedRefsSpec extends UnitSpec {
       """
         {
           "_id" : "denied-refs-id-123",
-          "refs" : ["ref1","ref2","ref3"],
+          "refs" : ["REF1","REF2","REF3"],
           "inserted" : "2022-02-04T10:00:24.371"
         }
         """
