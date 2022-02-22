@@ -31,6 +31,7 @@ import repository.{EmailCrypto, TpsPaymentsRepo}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.util.{Failure, Success}
+import model.TaxTypes.{MIB, PNGR}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -114,7 +115,7 @@ class TpsController @Inject() (actions:        Actions,
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
       _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
-      _ = if (tpsPaymentsAreFullyUpdated(updatedTpsPayments)) maybeSendEmail(updatedTpsPayments)
+      _ = if (tpsPaymentsAreFullyUpdated(updatedTpsPayments) && isNotMibOrPngr(updatedTpsPayments)) maybeSendEmail(updatedTpsPayments)
     } yield Ok
 
     f.recover {
@@ -172,6 +173,11 @@ class TpsController @Inject() (actions:        Actions,
   private def tpsPaymentsAreFullyUpdated(tpsPayments: TpsPayments): Boolean = {
     logger.info(s"tpsPaymentsAreFullyUpdated: ${tpsPayments.payments.forall(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.nonEmpty)}")
     tpsPayments.payments.forall(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.nonEmpty)
+  }
+  
+  private def isNotMibOrPngr(tpsPayments: TpsPayments): Boolean = {
+    logger.info(s"isNotMibOrPngr")
+    tpsPayments.payments.find(nextPaymentItem => nextPaymentItem.taxType.equals(MIB) || nextPaymentItem.taxType.equals(PNGR)).isEmpty
   }
 
   def parseTpsPaymentsItemsForEmail(tpsPayments: List[TpsPaymentItem]): String = {
