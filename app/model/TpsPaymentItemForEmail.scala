@@ -22,7 +22,7 @@ case class TpsPaymentItemForEmail(taxType:           String,
                                   amount:            String,
                                   transactionFee:    String,
                                   transactionNumber: String
-                                 )
+)
 
 object TpsPaymentItemForEmail {
   implicit val writes: OWrites[TpsPaymentItemForEmail] = {

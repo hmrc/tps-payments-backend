@@ -435,11 +435,11 @@ object TestData {
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", None)
 
-  val ref1 = Reference("ref1")
-  val ref2 = Reference("ref2")
-  val ref3 = Reference("ref3")
-  val ref4 = Reference("ref4")
-  val ref5 = Reference("ref5")
+  val ref1 = Reference("REF1")
+  val ref2 = Reference("REF2")
+  val ref3 = Reference("REF3")
+  val ref4 = Reference("REF4")
+  val ref5 = Reference("REF5")
 
   val csvFile1: String =
     s"""${ref1.value}

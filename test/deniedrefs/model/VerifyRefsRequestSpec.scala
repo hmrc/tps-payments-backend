@@ -28,7 +28,7 @@ class VerifyRefsRequestSpec extends UnitSpec {
       //language=JSON
       """
          {
-          "refs": ["ref1"]
+          "refs": ["REF1"]
           }
         """)
 

@@ -88,7 +88,7 @@ class DeniedRefsService @Inject() (
       .via(CsvParsing.lineScanner())
       .map(_.map(_.decodeString(ByteString.UTF_8)))
       .map(_.headOption)
-      .collect { case Some(ref) => Reference(ref) }
+      .collect { case Some(ref) => Reference(ref.toUpperCase()) }
       .toMat(Sink.collection[Reference, List[Reference]])(Keep.right[Done.type, Future[List[Reference]]])
       .mapMaterializedValue(encryptedRefsF => encryptedRefsF
         .map(encryptedRefs =>
