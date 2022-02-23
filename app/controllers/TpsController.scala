@@ -141,7 +141,7 @@ class TpsController @Inject() (actions:        Actions,
     logger.info("maybeSendEmail")
     val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
       tpsPayments.payments.filter(_.pcipalData
-        .fold(throw new RuntimeException("maybeSendEmail error: payment status should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
+        .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
 
     if (listOfSuccessfulTpsPaymentItems.isEmpty) ()
     else {
