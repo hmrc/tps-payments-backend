@@ -30,7 +30,6 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.{EmailCrypto, TpsPaymentsRepo}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import scala.util.{Failure, Success}
 import model.TaxTypes.{MIB, PNGR}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -115,7 +114,7 @@ class TpsController @Inject() (actions:        Actions,
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
       _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
-      _ = if (tpsPaymentsAreFullyUpdated(updatedTpsPayments) && isNotMibOrPngr(updatedTpsPayments)) maybeSendEmail(updatedTpsPayments)
+      _ = if (weShouldSendEmail(updatedTpsPayments.payments)) maybeSendEmail(updatedTpsPayments)
     } yield Ok
 
     f.recover {
@@ -141,12 +140,12 @@ class TpsController @Inject() (actions:        Actions,
   private def maybeSendEmail(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
     logger.info("maybeSendEmail")
     val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
-      tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData
+      tpsPayments.payments.filter(_.pcipalData
         .fold(throw new RuntimeException("maybeSendEmail error: payment status should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
 
     if (listOfSuccessfulTpsPaymentItems.isEmpty) ()
     else {
-      tpsPayments.payments.find(paymentItem => paymentItem.email.nonEmpty) match {
+      tpsPayments.payments.find(_.email.nonEmpty) match {
         case Some(TpsPaymentItem(_, _, _, _, _, _, Some(pcipalData), _, _, Some(email), _)) =>
           sendEmail(listOfSuccessfulTpsPaymentItems, pcipalData.ReferenceNumber.dropRight(2), email, pcipalData.CardType, pcipalData.CardLast4)
         case _ => throw new RuntimeException("maybeSendEmail error: data which should be present are missing")
@@ -169,15 +168,21 @@ class TpsController @Inject() (actions:        Actions,
     )
     ()
   }
+  
+  private def weShouldSendEmail(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+    tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(tpsPaymentItems) && isNotMibOrPngr(tpsPaymentItems)
+  }
 
-  private def tpsPaymentsAreFullyUpdated(tpsPayments: TpsPayments): Boolean = {
-    logger.info(s"tpsPaymentsAreFullyUpdated: ${tpsPayments.payments.forall(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.nonEmpty)}")
-    tpsPayments.payments.forall(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.nonEmpty)
+  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+    !tpsPaymentItems.exists(_.pcipalData.isEmpty)
   }
   
-  private def isNotMibOrPngr(tpsPayments: TpsPayments): Boolean = {
-    logger.info(s"isNotMibOrPngr")
-    tpsPayments.payments.find(nextPaymentItem => nextPaymentItem.taxType.equals(MIB) || nextPaymentItem.taxType.equals(PNGR)).isEmpty
+  private def emailAddressHasBeenProvided(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+    tpsPaymentItems.exists(_.email.nonEmpty)
+  }
+  
+  private def isNotMibOrPngr(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType.equals(MIB) || nextPaymentItem.taxType.equals(PNGR))
   }
 
   def parseTpsPaymentsItemsForEmail(tpsPayments: List[TpsPaymentItem]): String = {
@@ -204,6 +209,8 @@ class TpsController @Inject() (actions:        Actions,
     case TaxTypes.Paye                    => "PAYE"
     case TaxTypes.Nps                     => "NPS/NIRS"
     case TaxTypes.Vat                     => "VAT"
-    case _                                => taxType.toString
+    case TaxTypes.P800                    => taxType.toString
+    case TaxTypes.MIB                     => taxType.toString
+    case TaxTypes.PNGR                    => taxType.toString
   }
 }
