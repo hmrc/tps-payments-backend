@@ -79,14 +79,14 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def getTaxType(id: PaymentItemId): Action[AnyContent] = Action.async {
-    logger.info(s"getPaymentItem ${id.value}")
+    logger.debug(s"getPaymentItem ${id.value}")
 
     tpsRepo.findPaymentItem(id).map {
       case Some(paymentItem) =>
-        logger.info("taxType found:" + paymentItem.taxType.toString)
+        logger.debug("taxType found:" + paymentItem.taxType.toString)
         Ok(toJson(paymentItem.taxType))
       case None =>
-        logger.info("taxType not found")
+        logger.debug("taxType not found")
         NotFound(s"No payment item found for id ${id.value}")
     }
   }
@@ -97,7 +97,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
-    logger.info(s"updateWithPcipalSessionId, update= ${request.body.toString}")
+    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
     for {
       record <- tpsRepo.getPayment(request.body.tpsId)
       newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
@@ -108,7 +108,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    logger.info(s"updateWithPcipalData, update= ${request.body.toString}")
+    logger.debug(s"updateWithPcipalData, update= ${request.body.toString}")
 
     val f = for {
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
@@ -138,7 +138,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   private def maybeSendEmail(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-    logger.info("maybeSendEmail")
+    logger.debug("maybeSendEmail")
     val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
       tpsPayments.payments.filter(_.pcipalData
         .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
@@ -154,7 +154,7 @@ class TpsController @Inject() (actions:        Actions,
   }
 
   private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
-    logger.info(s"sendEmail emailAddressEncrypt:$emailAddress emailAddress:${emailCrypto.decryptEmail(emailAddress)} " +
+    logger.debug(s"sendEmail emailAddressEncrypt:$emailAddress emailAddress:${emailCrypto.decryptEmail(emailAddress)} " +
       s"totalAmountpaid${tpsPaymentItems.map(tpsPaymentItem => tpsPaymentItem.amount).sum.setScale(2).toString} transactionReference: " +
       s"$transactionReference tpsPaymentItemsForEmail: ${parseTpsPaymentsItemsForEmail(tpsPaymentItems)} cardType: $cardType cardNumber: $cardNumber")
 
