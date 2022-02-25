@@ -155,12 +155,12 @@ class TpsController @Inject() (actions:        Actions,
 
   private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
     logger.debug(s"sendEmail emailAddressEncrypt:$emailAddress emailAddress:${emailCrypto.decryptEmail(emailAddress)} " +
-      s"totalAmountpaid${tpsPaymentItems.map(tpsPaymentItem => tpsPaymentItem.amount).sum.setScale(2).toString} transactionReference: " +
+      s"totalAmountpaid${parseBigDecimalToString(tpsPaymentItems.map(tpsPaymentItem => tpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Amount)).sum)} transactionReference: " +
       s"$transactionReference tpsPaymentItemsForEmail: ${parseTpsPaymentsItemsForEmail(tpsPaymentItems)} cardType: $cardType cardNumber: $cardNumber")
 
     emailConnector.sendEmail(
       emailAddress            = emailCrypto.decryptEmail(emailAddress),
-      totalAmountPaid         = parseBigDecimalToString(tpsPaymentItems.map(tpsPaymentItem => tpsPaymentItem.amount).sum),
+      totalAmountPaid         = parseBigDecimalToString(tpsPaymentItems.map(tpsPaymentItem => tpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Amount)).sum),
       transactionReference    = transactionReference,
       cardType                = cardType,
       cardNumber              = cardNumber,
