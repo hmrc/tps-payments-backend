@@ -36,9 +36,14 @@ final class EmailCrypto(encryptionKeyInBase64: String) {
 
   private def decrypt(s: String): Try[String] = Try(aes.decrypt(Crypted(s)).value)
 
-  def decryptEmail(email: String): String = decrypt(email) match {
-    case Failure(ex)    => decryptFailureException(ex, "email")
-    case Success(value) => value
+  def decryptEmail(email: String): String = {
+    if (email.isEmpty) email
+    else {
+      decrypt(email) match {
+        case Failure(ex)    => decryptFailureException(ex, "email")
+        case Success(value) => value
+      }
+    }
   }
 
   def encryptEmailIfNotAlreadyEncrypted(email: String): String = {
