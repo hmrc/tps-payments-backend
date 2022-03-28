@@ -63,7 +63,7 @@ class TpsController @Inject() (actions:      Actions,
     logger.debug(s"findTpsPayments received vrn $id")
 
     tpsRepo.findPayment(id).map {
-      case Some(x) => Ok(toJson(x))
+      case Some(tpsPayment) => Ok(toJson(tpsPayment.copy(payments = tpsPayment.payments.map(nextPaymentItem => nextPaymentItem.copy(email = Some(emailCrypto.decryptEmail(nextPaymentItem.email.getOrElse(""))))))))
       case None    => NotFound(s"No payments found for id ${id.value}")
     }
   }
