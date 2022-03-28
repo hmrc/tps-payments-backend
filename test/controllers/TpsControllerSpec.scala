@@ -21,15 +21,16 @@ import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
 import repository.EmailCrypto
+import services.EmailService
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class TpsControllerSpec extends ItSpec with Status {
 
-  private lazy val connector = injector.instanceOf[TestConnector]
-  private lazy val controller = injector.instanceOf[TpsController]
-  private lazy val emailCrypto = injector.instanceOf[EmailCrypto]
+  private val connector = injector.instanceOf[TestConnector]
+  private val emailCrypto = injector.instanceOf[EmailCrypto]
+  private val emailService = injector.instanceOf[EmailService]
   private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
@@ -148,7 +149,7 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "should parse TpsPaymentItems for email correctly" in {
-    controller.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.payments) shouldBe tpsItemsForEmail
+    emailService.stringifyTpsPaymentsItemsForEmail(emailService.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.payments)) shouldBe tpsItemsForEmail
   }
 
   "should decrypt email successfully" in {
