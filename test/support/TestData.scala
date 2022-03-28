@@ -44,8 +44,7 @@ object TestData {
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = Sa,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
-        email               = Some("test@email.com"),
-        languageCode        = Some("en")
+        email               = Some("test@email.com")
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -61,8 +60,7 @@ object TestData {
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
         paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
-        email               = None,
-        languageCode        = None
+        email               = None
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -78,8 +76,7 @@ object TestData {
         taxRegimeDisplay    = "MIB",
         taxType             = MIB,
         paymentSpecificData = MibSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00")),
-        email               = None,
-        languageCode        = None
+        email               = None
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -128,8 +125,7 @@ object TestData {
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
-          Some("test@email.com"),
-          Some("en"))))
+          Some("test@email.com"))))
 
   val tpsPaymentsWithPcipalData: TpsPayments =
     TpsPayments(
@@ -148,8 +144,7 @@ object TestData {
           Some(chargeRefNotificationPcipalRequest),
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
-          Some("test@email.com"),
-          Some("en"))))
+          Some("test@email.com"))))
 
   val tpsPaymentsWithEncryptedEmail: TpsPayments =
     TpsPayments(
@@ -168,8 +163,7 @@ object TestData {
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
-          Some("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ=="),
-          Some("en"))))
+          Some("uu5HocTKj0V0Uo2QD4JrHVXqIug3MQOJWL0KYq8kkIPMYLNc5wVefB7vkeRvCQ=="))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -192,8 +186,7 @@ object TestData {
           amendmentReference = None
         ),
         taxType             = MIB,
-        email               = None,
-        languageCode        = None)))
+        email               = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -216,8 +209,7 @@ object TestData {
           amendmentReference = Some(1)
         ),
         taxType             = MIB,
-        email               = None,
-        languageCode        = None)))
+        email               = None)))
 
   //language=JSON
   val chargeRefNotificationPciPalRequestJson: JsValue = Json.parse(
@@ -258,8 +250,7 @@ object TestData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com",
-              "languageCode": "en"
+              "email": "test@email.com"
             }
           ]
         }
@@ -278,8 +269,7 @@ object TestData {
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             },
-            "email": "test@email.com",
-            "languageCode": "en"
+            "email": "test@email.com"
           }
           ],
           "navigation": {
@@ -379,8 +369,7 @@ object TestData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com",
-              "languageCode": "en"
+              "email": "test@email.com"
             }
           ]
         }
