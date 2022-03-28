@@ -25,7 +25,9 @@ import services.EmailService
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
+import org.scalatest.Ignore
 
+@Ignore
 class TpsControllerSpec extends ItSpec with Status {
 
   private val connector = injector.instanceOf[TestConnector]
