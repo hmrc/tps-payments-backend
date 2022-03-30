@@ -44,7 +44,7 @@ object TestData {
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = Sa,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
-        email               = Some("test@email.com")
+        email               = Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -109,6 +109,25 @@ object TestData {
   )
 
   val tpsPayments: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))))
+
+  val tpsPaymentsAfterEmailDecrypted: TpsPayments =
     TpsPayments(
       id,
       pid,
@@ -250,7 +269,7 @@ object TestData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com"
+              "email": "BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="
             }
           ]
         }
@@ -269,7 +288,7 @@ object TestData {
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             },
-            "email": "test@email.com"
+            "email": "BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="
           }
           ],
           "navigation": {
@@ -369,7 +388,7 @@ object TestData {
                 "taxTypeScreenValue": "$reference3",
                 "period": 2000
               },
-              "email": "test@email.com"
+              "email": "BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="
             }
           ]
         }

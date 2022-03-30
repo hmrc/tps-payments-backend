@@ -25,11 +25,8 @@ import services.EmailService
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
-import org.scalatest.Ignore
 
-@Ignore
 class TpsControllerSpec extends ItSpec with Status {
-
   private val connector = injector.instanceOf[TestConnector]
   private val emailCrypto = injector.instanceOf[EmailCrypto]
   private val emailService = injector.instanceOf[EmailService]
@@ -78,7 +75,7 @@ class TpsControllerSpec extends ItSpec with Status {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
-    result shouldBe tpsPayments
+    result shouldBe tpsPaymentsAfterEmailDecrypted
   }
 
   "Check that TpsData cannot be found" in {
@@ -91,12 +88,11 @@ class TpsControllerSpec extends ItSpec with Status {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments.copy(pciPalSessionId = None)).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
-    result shouldBe tpsPayments.copy(pciPalSessionId = None)
+    result shouldBe tpsPaymentsAfterEmailDecrypted.copy(pciPalSessionId = None)
     result.pciPalSessionId shouldBe None
     connector.updateWithSessionId(id, pciPalSessionId).futureValue
     val result2 = connector.find(id).futureValue
     result2.pciPalSessionId shouldBe Some(pciPalSessionId)
-
   }
 
   "update with pci-pal data" in {
