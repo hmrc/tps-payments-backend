@@ -62,7 +62,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
   }
 
   private def weShouldSendEmail(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    isNotMibOrPngr(tpsPaymentItems) || tpsPaymentsAreFullyUpdated(tpsPaymentItems) || emailAddressHasBeenProvided(tpsPaymentItems)
+    isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(tpsPaymentItems)
   }
 
   private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[TpsPaymentItem]): Boolean = tpsPaymentItems.forall(_.pcipalData.nonEmpty)
