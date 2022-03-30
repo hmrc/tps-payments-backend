@@ -75,7 +75,7 @@ class TpsControllerSpec extends ItSpec with Status {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
-    result shouldBe tpsPaymentsAfterEmailDecrypted
+    result shouldBe tpsPayments
   }
 
   "Check that TpsData cannot be found" in {
@@ -88,7 +88,7 @@ class TpsControllerSpec extends ItSpec with Status {
     givenTheUserIsAuthenticatedAndAuthorised()
     repo.upsert(id, tpsPayments.copy(pciPalSessionId = None)).futureValue.n shouldBe 1
     val result = connector.find(id).futureValue
-    result shouldBe tpsPaymentsAfterEmailDecrypted.copy(pciPalSessionId = None)
+    result shouldBe tpsPayments.copy(pciPalSessionId = None)
     result.pciPalSessionId shouldBe None
     connector.updateWithSessionId(id, pciPalSessionId).futureValue
     val result2 = connector.find(id).futureValue
