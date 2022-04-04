@@ -17,29 +17,25 @@
 package controllers
 
 import java.time.LocalDateTime
-
 import auth.Actions
-import connectors.EmailConnector
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
-import play.api.libs.json.JsArray
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.{EmailCrypto, TpsPaymentsRepo}
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import model.TaxTypes.{MIB, PNGR}
+import services.EmailService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsController @Inject() (actions:        Actions,
-                               cc:             ControllerComponents,
-                               tpsRepo:        TpsPaymentsRepo,
-                               emailConnector: EmailConnector,
-                               emailCrypto:    EmailCrypto)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+class TpsController @Inject() (actions:      Actions,
+                               cc:           ControllerComponents,
+                               tpsRepo:      TpsPaymentsRepo,
+                               emailService: EmailService,
+                               emailCrypto:  EmailCrypto)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
 
@@ -53,7 +49,6 @@ class TpsController @Inject() (actions:        Actions,
 
   def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
-
     val updatedPaymentsWithEncryptedEmails = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
       case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
       case _           => tpsPaymentItem
@@ -114,7 +109,7 @@ class TpsController @Inject() (actions:        Actions,
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
       _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
-      _ = if (weShouldSendEmail(updatedTpsPayments.payments)) maybeSendEmail(updatedTpsPayments)
+      _ = emailService.maybeSendEmail(updatedTpsPayments.payments)
     } yield Ok
 
     f.recover {
@@ -126,7 +121,6 @@ class TpsController @Inject() (actions:        Actions,
     logger.debug("updateTpsPayments")
     val remainder: List[TpsPaymentItem] = tpsPayments.payments.filterNot(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
     val update: List[TpsPaymentItem] = tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
-
     val tpsPaymentsListNew = update.headOption match {
       case Some(singleUpdate) =>
         val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
@@ -135,82 +129,5 @@ class TpsController @Inject() (actions:        Actions,
     }
 
     tpsPayments.copy(payments = tpsPaymentsListNew)
-  }
-
-  private def maybeSendEmail(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Unit = {
-    logger.debug("maybeSendEmail")
-    val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
-      tpsPayments.payments.filter(_.pcipalData
-        .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
-
-    if (listOfSuccessfulTpsPaymentItems.isEmpty) ()
-    else {
-      tpsPayments.payments.find(_.email.nonEmpty) match {
-        case Some(TpsPaymentItem(_, _, _, _, _, _, Some(pcipalData), _, _, Some(email), _)) =>
-          sendEmail(listOfSuccessfulTpsPaymentItems, pcipalData.ReferenceNumber.dropRight(2), email, pcipalData.CardType, pcipalData.CardLast4)
-        case _ => throw new RuntimeException("maybeSendEmail error: data which should be present are missing")
-      }
-    }
-  }
-
-  private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
-    
-    val totalCommissionPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
-    val totalAmountPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
-
-    emailConnector.sendEmail(
-      emailAddress            = emailCrypto.decryptEmail(emailAddress),
-      totalAmountPaid         = parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
-      transactionReference    = transactionReference,
-      cardType                = cardType,
-      cardNumber              = cardNumber,
-      tpsPaymentItemsForEmail = parseTpsPaymentsItemsForEmail(tpsPaymentItems)
-    )
-    ()
-  }
-  
-  private def weShouldSendEmail(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(tpsPaymentItems) && isNotMibOrPngr(tpsPaymentItems)
-  }
-
-  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    !tpsPaymentItems.exists(_.pcipalData.isEmpty)
-  }
-  
-  private def emailAddressHasBeenProvided(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    tpsPaymentItems.exists(_.email.nonEmpty)
-  }
-  
-  private def isNotMibOrPngr(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType.equals(MIB) || nextPaymentItem.taxType.equals(PNGR))
-  }
-
-  def parseTpsPaymentsItemsForEmail(tpsPayments: List[TpsPaymentItem]): String = {
-    JsArray(tpsPayments.map(nextPaymentItem =>
-      toJson(TpsPaymentItemForEmail(
-        taxType           = getTaxTypeString(nextPaymentItem.taxType),
-        amount            = parseBigDecimalToString(nextPaymentItem.amount),
-        transactionFee    = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
-        transactionNumber = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
-      )))).toString
-  }
-
-  private def parseBigDecimalToString(bigDecimal: BigDecimal): String = {
-    bigDecimal.setScale(2).toString
-  }
-
-  private def getTaxTypeString(taxType: TaxType): String = taxType match {
-    case TaxTypes.ChildBenefitsRepayments => "Child Benefits repayments"
-    case TaxTypes.Sa                      => "Self Assessment"
-    case TaxTypes.Sdlt                    => "Stamp Duty Land Tax"
-    case TaxTypes.Safe                    => "SAFE"
-    case TaxTypes.Cotax                   => "Corporation Tax"
-    case TaxTypes.Ntc                     => "Tax credit repayments"
-    case TaxTypes.Paye                    => "PAYE"
-    case TaxTypes.Nps                     => "NPS/NIRS"
-    case TaxTypes.Vat                     => "VAT"
-    case TaxTypes.P800                    => taxType.toString
-    case TaxTypes.MIB                     => taxType.toString
-    case TaxTypes.PNGR                    => taxType.toString
   }
 }
