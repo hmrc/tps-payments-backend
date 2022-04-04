@@ -18,15 +18,15 @@ package model
 
 import play.api.libs.json.{Json, OWrites}
 
-case class TpsPaymentItemForEmail(taxType:           String,
-                                  amount:            String,
-                                  transactionFee:    String,
-                                  transactionNumber: String
+case class IndividualPaymentForEmail(taxType:           String,
+                                     amount:            String,
+                                     transactionFee:    String,
+                                     transactionNumber: String
 )
 
-object TpsPaymentItemForEmail {
-  implicit val writes: OWrites[TpsPaymentItemForEmail] = {
-    OWrites[TpsPaymentItemForEmail](tpsPaymentItemForEmail =>
+object IndividualPaymentForEmail {
+  implicit val writes: OWrites[IndividualPaymentForEmail] = {
+    OWrites[IndividualPaymentForEmail](tpsPaymentItemForEmail =>
       Json.obj(
         s"taxType" -> tpsPaymentItemForEmail.taxType,
         s"amount" -> tpsPaymentItemForEmail.amount,
@@ -35,4 +35,3 @@ object TpsPaymentItemForEmail {
       ))
   }
 }
-

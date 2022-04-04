@@ -32,8 +32,7 @@ case class TpsPaymentItem(
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
     paymentSpecificData: PaymentSpecificData,
     taxType:             TaxType,
-    email:               Option[String],
-    languageCode:        Option[String]) {
+    email:               Option[String]) {
 }
 
 object TpsPaymentItem {
@@ -52,7 +51,6 @@ object TpsPaymentItem {
         ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
         ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
         ++ tpsPaymentItem.email.map(email => Json.obj("email" -> email)).getOrElse(Json.obj())
-        ++ tpsPaymentItem.languageCode.map(languageCode => Json.obj("languageCode" -> languageCode)).getOrElse(Json.obj())
     )
   }
 
@@ -67,11 +65,9 @@ object TpsPaymentItem {
       (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
       (__ \ "paymentSpecificData").read[PaymentSpecificData] and
       (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString) and
-      (__ \ "email").readNullable[String] and
-      (__ \ "languageCode").readNullable[String]
-    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email, languageCode) =>
-        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email, languageCode))
+      (__ \ "email").readNullable[String]
+    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email) =>
+        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email))
 
   implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
-
 }
