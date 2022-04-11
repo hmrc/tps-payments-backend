@@ -43,6 +43,9 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   def find(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
     httpClient.GET[TpsPayments](s"http://localhost:$port/tps-payments-backend/find/id/${id.value}", headers)
 
+  def findWithDecryptedEmail(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
+    httpClient.GET[TpsPayments](s"http://localhost:$port/tps-payments-backend/find-with-decrypted-email/id/${id.value}", headers)
+
   def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
     httpClient.GET[TaxType](s"http://localhost:$port/tps-payments-backend/payment-items/${id.value}/tax-type", headers)
 

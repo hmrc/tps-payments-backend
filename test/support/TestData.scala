@@ -159,11 +159,49 @@ object TestData {
           HeadOfDutyIndicators.B,
           created,
           "AR",
-          "",
+          "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))))
+
+  val tpsPaymentsWithoutEmail: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          None)))
+
+  val tpsPaymentsWithEmptyEmail: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,
@@ -432,16 +470,16 @@ object TestData {
 
   val csvFile1: String =
     s"""${ref1.value}
-        |${ref2.value}
-        |${ref3.value}
-        |""".stripMargin
+       |${ref2.value}
+       |${ref3.value}
+       |""".stripMargin
 
   val csvFile2: String =
     s"""${ref2.value}
-        |${ref3.value}
-        |${ref4.value}
-        |${ref5.value}
-        |""".stripMargin
+       |${ref3.value}
+       |${ref4.value}
+       |${ref5.value}
+       |""".stripMargin
 
   val deniedRefs1 = DeniedRefs(
     _id      = DeniedRefsId("denied-refs-id-123"),

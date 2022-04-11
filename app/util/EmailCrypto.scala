@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package repository
+package util
 
 import com.google.inject.{Inject, Singleton}
 import uk.gov.hmrc.crypto.{AesGCMCrypto, _}
@@ -24,8 +24,7 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 final class EmailCrypto(encryptionKeyInBase64: String) {
-
-  private val emailRegex = """(?:[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
+  private val emailRegex = """^[a-zA-Z0-9\.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"""
 
   @Inject
   def this(servicesConfig: ServicesConfig) = this(servicesConfig.getString("crypto.encryption-key"))
@@ -35,6 +34,10 @@ final class EmailCrypto(encryptionKeyInBase64: String) {
   private def encrypt(s: String): String = aes.encrypt(PlainText(s)).value
 
   private def decrypt(s: String): Try[String] = Try(aes.decrypt(Crypted(s)).value)
+
+  def maybeDecryptEmail(maybeEmail: Option[String]): Option[String] = {
+    maybeEmail.fold(maybeEmail)(email => Some(decryptEmail(email)))
+  }
 
   def decryptEmail(email: String): String = {
     if (email.isEmpty) email
