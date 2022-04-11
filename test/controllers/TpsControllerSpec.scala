@@ -20,11 +20,11 @@ import model.pcipal.PcipalSessionId
 import model.{PaymentItemId, TaxTypes, TpsId}
 import play.api.http.Status
 import support.AuthStub._
-import repository.EmailCrypto
 import services.EmailService
 import support.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
+import util.EmailCrypto
 
 class TpsControllerSpec extends ItSpec with Status {
   private val connector = injector.instanceOf[TestConnector]
@@ -81,6 +81,33 @@ class TpsControllerSpec extends ItSpec with Status {
   "Check that TpsData cannot be found" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     val result = connector.find(id).failed.futureValue
+    result.getMessage should include(s"No payments found for id ${id.value}")
+  }
+
+  "Check that TpsData can be found with decrypted email" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
+    val result = connector.findWithDecryptedEmail(id).futureValue
+    result shouldBe tpsPayments
+  }
+
+  "Check that TpsData can be found with no email present when attempting to decrypt" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+    repo.upsert(id, tpsPaymentsWithoutEmail).futureValue.n shouldBe 1
+    val result = connector.findWithDecryptedEmail(id).futureValue
+    result shouldBe tpsPaymentsWithoutEmail
+  }
+
+  "Check that TpsData can be found with blank email when attempting to decrypt" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+    repo.upsert(id, tpsPaymentsWithEmptyEmail).futureValue.n shouldBe 1
+    val result = connector.findWithDecryptedEmail(id).futureValue
+    result shouldBe tpsPaymentsWithEmptyEmail
+  }
+
+  "Check that TpsData cannot be found with decrypted email" in {
+    givenTheUserIsAuthenticatedAndAuthorised()
+    val result = connector.findWithDecryptedEmail(id).failed.futureValue
     result.getMessage should include(s"No payments found for id ${id.value}")
   }
 

@@ -159,11 +159,49 @@ object TestData {
           HeadOfDutyIndicators.B,
           created,
           "AR",
-          "",
+          "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
           Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))))
+
+  val tpsPaymentsWithoutEmail: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          None)))
+
+  val tpsPaymentsWithEmptyEmail: TpsPayments =
+    TpsPayments(
+      id,
+      pid,
+      Some(pciPalSessionId),
+      created,
+      List(
+        TpsPaymentItem(
+          Some(paymentItemId),
+          1.92,
+          HeadOfDutyIndicators.B,
+          created,
+          "AR",
+          "12345",
+          None,
+          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
+          P800,
+          Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
     _id             = id,

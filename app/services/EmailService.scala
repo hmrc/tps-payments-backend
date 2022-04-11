@@ -22,8 +22,8 @@ import model.pcipal.ChargeRefNotificationPcipalRequest
 import model.{IndividualPaymentForEmail, StatusTypes, TaxType, TaxTypes, TpsPaymentItem}
 import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
-import repository.EmailCrypto
 import uk.gov.hmrc.http.HeaderCarrier
+import util.EmailCrypto
 
 import javax.inject.{Inject, Singleton}
 
