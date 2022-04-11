@@ -44,8 +44,7 @@ final class TpsPaymentsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComp
     )
   )
 
-  def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] =
-    findById(tpsId)
+  def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
   def findPaymentItem(id: PaymentItemId): Future[Option[TpsPaymentItem]] =
     find("payments.paymentItemId" -> Some(id)).map { payments =>
