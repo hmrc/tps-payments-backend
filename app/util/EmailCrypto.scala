@@ -35,9 +35,7 @@ final class EmailCrypto(encryptionKeyInBase64: String) {
 
   private def decrypt(s: String): Try[String] = Try(aes.decrypt(Crypted(s)).value)
 
-  def maybeDecryptEmail(maybeEmail: Option[String]): Option[String] = {
-    maybeEmail.fold(maybeEmail)(email => Some(decryptEmail(email)))
-  }
+  def maybeDecryptEmail(maybeEmail: Option[String]): Option[String] = maybeEmail.fold(maybeEmail)(email => Some(decryptEmail(email)))
 
   def decryptEmail(email: String): String = {
     if (email.isEmpty) email
