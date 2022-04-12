@@ -18,15 +18,17 @@ package controllers
 
 import java.time.LocalDateTime
 import auth.Actions
+
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.{EmailCrypto, TpsPaymentsRepo}
+import repository.TpsPaymentsRepo
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import services.EmailService
+import util.EmailCrypto
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -63,8 +65,20 @@ class TpsController @Inject() (actions:      Actions,
     logger.debug(s"findTpsPayments received vrn $id")
 
     tpsRepo.findPayment(id).map {
-      case Some(x) => Ok(toJson(x))
-      case None    => NotFound(s"No payments found for id ${id.value}")
+      case Some(tpsPayments) => Ok(toJson(tpsPayments))
+      case None              => NotFound(s"No payments found for id ${id.value}")
+    }
+  }
+
+  def findTpsPaymentsWithDecryptedEmail(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
+    logger.debug(s"findTpsPaymentsWithDecryptedEmail received vrn $id")
+
+    tpsRepo.findPayment(id).map {
+      case Some(tpsPayments) =>
+        val tpsPaymentItemsWithDecryptedEmail = tpsPayments.payments.map(
+          nextTpsPaymentItem => nextTpsPaymentItem.copy(email = emailCrypto.maybeDecryptEmail(nextTpsPaymentItem.email)))
+        Ok(toJson(tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)))
+      case None => NotFound(s"No payments found for id ${id.value}")
     }
   }
 

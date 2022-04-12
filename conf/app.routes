@@ -2,6 +2,7 @@
 POST       /tps-payments                                            controllers.TpsController.createTpsPayments()
 POST       /store                                                   controllers.TpsController.storeTpsPayments()
 GET        /find/id/:id                                             controllers.TpsController.findTpsPayments(id: TpsId)
+GET        /find-with-decrypted-email/id/:id                        controllers.TpsController.findTpsPaymentsWithDecryptedEmail(id: TpsId)
 GET        /get-id                                                  controllers.TpsController.getId()
 GET        /payment-items/:id/tax-type                              controllers.TpsController.getTaxType(id: PaymentItemId)
 DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
