@@ -97,6 +97,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
     case TaxTypes.Paye                    => "PAYE"
     case TaxTypes.Nps                     => "NPS/NIRS"
     case TaxTypes.Vat                     => "VAT"
+    case TaxTypes.Ppt                     => "Plastic Packaging Tax"
     case TaxTypes.P800                    => taxType.toString
     case TaxTypes.MIB                     => taxType.toString
     case TaxTypes.PNGR                    => taxType.toString

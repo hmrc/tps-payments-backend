@@ -88,6 +88,11 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
    */
   case object K extends HeadOfDutyIndicator
 
+  /**
+   * Hod for Ppt
+   */
+  case object C extends HeadOfDutyIndicator
+
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 
 }
