@@ -18,8 +18,9 @@ package deniedrefs.model
 
 import play.api.libs.functional.syntax._
 import play.api.libs.json.Format
+import repository.Repo.Id
 
-final case class DeniedRefsId(value: String)
+final case class DeniedRefsId(value: String) extends Id
 
 object DeniedRefsId {
   implicit val format: Format[DeniedRefsId] = implicitly[Format[String]].inmap(DeniedRefsId(_), _.value)

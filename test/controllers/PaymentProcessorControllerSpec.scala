@@ -29,12 +29,12 @@ class PaymentProcessorControllerSpec extends ItSpec with Status {
   private lazy val connector = injector.instanceOf[TestConnector]
 
   "getModsAmendmentRef should return the amendment reference in the ModsPaymentCallBackRequest when there is one" in {
-    repo.upsert(id, modsTpsPaymentsWithAnAmendmentReference).futureValue.n shouldBe 1
+    Option(repo.upsert(modsTpsPaymentsWithAnAmendmentReference).futureValue.getUpsertedId).isDefined shouldBe true
     connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithAmendmentRef
   }
 
   "getModsAmendmentRef should return None for amendment reference in the ModsPaymentCallBackRequest when isn't one" in {
-    repo.upsert(id, modsTpsPaymentsNoAmendmentReference).futureValue.n shouldBe 1
+    Option(repo.upsert(modsTpsPaymentsNoAmendmentReference).futureValue.getUpsertedId).isDefined shouldBe true
     connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
 
@@ -42,8 +42,8 @@ class PaymentProcessorControllerSpec extends ItSpec with Status {
     val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(id, tpsPayments).futureValue
-    repo.upsert(tpsIdForDuplicate, paymentWithDuplicatePaymentItemId).futureValue
+    repo.upsert(tpsPayments).futureValue
+    repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue

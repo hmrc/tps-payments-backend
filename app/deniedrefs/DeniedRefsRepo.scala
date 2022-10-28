@@ -16,45 +16,42 @@
 
 package deniedrefs
 
-import model.{DeniedRefs, DeniedRefsId}
-import _root_.model.Reference
-import play.api.libs.json.{Json, Reads}
-import play.modules.reactivemongo.ReactiveMongoComponent
-import play.api.libs.json._
-import reactivemongo.api.ReadPreference
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes.{Index, IndexType}
-import repository.Repo
+import com.mongodb.client.model.Sorts
+import deniedrefs.model.{DeniedRefs, DeniedRefsId}
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
+import repository.{Repo, RepoConfig}
+import uk.gov.hmrc.mongo.MongoComponent
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-final class DeniedRefsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent)(implicit ec: ExecutionContext)
-  extends Repo[DeniedRefs, DeniedRefsId]("denied-refs", reactiveMongoComponent) {
-
-  def upsert(deniedRefs: DeniedRefs): Future[WriteResult] = upsert(deniedRefs._id, deniedRefs)
-
-  private val deniedRefsReads: Reads[DeniedRefsId] = (__ \ "_id").read[DeniedRefsId]
-
-  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = {
-    val projection = Json.obj("_id" -> 1) //a projection so we don't pull whole document for performance reasons
-    collection
-      .find(
-        selector   = Json.obj(),
-        projection = Some(projection)
-      )
-      .sort(Json.obj(inserted -> -1))
-      .one[DeniedRefsId](ReadPreference.primaryPreferred)(deniedRefsReads, implicitly)
-  }
-
-  override def indexes: Seq[Index] = Seq(
-    Index(
-      key    = Seq(inserted -> IndexType.Ascending),
-      name   = Some(inserted),
-      unique = true
+object DeniedRefsRepo {
+  def indexes(): Seq[IndexModel] = Seq(
+    IndexModel(
+      keys         = Indexes.ascending("inserted"),
+      indexOptions = IndexOptions().unique(true).name("inserted")
     )
   )
+}
+
+@Singleton
+final class DeniedRefsRepo @Inject() (
+    mongoComponent: MongoComponent,
+    config:         RepoConfig
+)(implicit ec: ExecutionContext)
+  extends Repo[DeniedRefsId, DeniedRefs](
+    collectionName = "denied-refs",
+    mongoComponent = mongoComponent,
+    indexes        = DeniedRefsRepo.indexes(),
+    extraCodecs    = Seq.empty,
+    replaceIndexes = true
+  ) {
+
+  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = collection
+    .find()
+    .sort(Sorts.descending(inserted))
+    .headOption()
+    .map(_.map(_._id))
 
   private lazy val inserted = "inserted"
 }

@@ -43,7 +43,6 @@ import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import repository.TpsPaymentsRepo
-import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.ExecutionContext
 

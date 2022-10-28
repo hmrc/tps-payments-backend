@@ -16,12 +16,12 @@
 
 package deniedrefs
 
-import model.DeniedRefsId
-import reactivemongo.bson.BSONObjectID
+import deniedrefs.model.DeniedRefsId
+import org.bson.types.ObjectId
 
 import javax.inject.Singleton
 
 @Singleton
 class DeniedRefsIdGenerator {
-  def nextId(): DeniedRefsId = DeniedRefsId(BSONObjectID.generate.stringify)
+  def nextId(): DeniedRefsId = DeniedRefsId(ObjectId.get().toHexString)
 }

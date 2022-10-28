@@ -16,18 +16,17 @@
 
 package model
 import controllers.ValueClassBinder.valueClassBinder
+import org.bson.types.ObjectId
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.PathBindable
-import reactivemongo.bson.BSONObjectID
+import repository.Repo.Id
 
-final case class TpsId(
-    value: String
-)
+final case class TpsId(value: String) extends Id
 
 object TpsId {
   implicit val format: Format[TpsId] = implicitly[Format[String]].inmap(TpsId(_), _.value)
   implicit val journeyIdBinder: PathBindable[TpsId] = valueClassBinder(_.value)
-  def fresh: TpsId = TpsId(BSONObjectID.generate.stringify)
+  def fresh: TpsId = TpsId(ObjectId.get().toHexString)
 }
 
