@@ -73,7 +73,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "Check that TpsData can be found" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments
   }
@@ -86,21 +86,21 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "Check that TpsData can be found with decrypted email" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
     val result = connector.findWithDecryptedEmail(id).futureValue
     result shouldBe tpsPayments
   }
 
   "Check that TpsData can be found with no email present when attempting to decrypt" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPaymentsWithoutEmail).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPaymentsWithoutEmail).futureValue.getUpsertedId).isDefined shouldBe true
     val result = connector.findWithDecryptedEmail(id).futureValue
     result shouldBe tpsPaymentsWithoutEmail
   }
 
   "Check that TpsData can be found with blank email when attempting to decrypt" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPaymentsWithEmptyEmail).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPaymentsWithEmptyEmail).futureValue.getUpsertedId).isDefined shouldBe true
     val result = connector.findWithDecryptedEmail(id).futureValue
     result shouldBe tpsPaymentsWithEmptyEmail
   }
@@ -113,7 +113,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "Check that TpsData can be updated with pcipal-sessionId" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPayments.copy(pciPalSessionId = None)).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPayments.copy(pciPalSessionId = None)).futureValue.getUpsertedId).isDefined shouldBe true
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments.copy(pciPalSessionId = None)
     result.pciPalSessionId shouldBe None
@@ -124,7 +124,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "update with pci-pal data" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
     val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPaledUpdated.status shouldBe OK
     val result = connector.find(id).futureValue
@@ -136,7 +136,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find pcipalSessionId: new")
@@ -144,14 +144,14 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "get an exception if paymentItemId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    repo.upsert(id, tpsPaymentsWithEncryptedEmail).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")
   }
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
-    repo.upsert(id, tpsPayments).futureValue.n shouldBe 1
+    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
     connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.P800
   }
 
@@ -165,8 +165,8 @@ class TpsControllerSpec extends ItSpec with Status {
     val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(id, tpsPayments).futureValue
-    repo.upsert(tpsIdForDuplicate, paymentWithDuplicatePaymentItemId).futureValue
+    repo.upsert(tpsPayments).futureValue
+    repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {
       connector.getPaymentItemTaxType(paymentItemId).futureValue

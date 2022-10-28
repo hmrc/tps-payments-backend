@@ -18,6 +18,7 @@ package deniedrefs.model
 
 import model.Reference
 import play.api.libs.json.{Json, OFormat}
+import repository.Repo.HasId
 
 import java.time.LocalDateTime
 
@@ -29,7 +30,7 @@ final case class DeniedRefs(
     _id:      DeniedRefsId,
     refs:     List[Reference],
     inserted: LocalDateTime
-) {
+) extends HasId[DeniedRefsId] {
 
   private lazy val refsSet = refs.toSet
   def containsRef(reference: Reference): Boolean = refsSet.contains(reference)

@@ -16,8 +16,6 @@
 
 package repository
 
-import play.api.libs.json.Json
-import reactivemongo.api.commands.UpdateWriteResult
 import support.ItSpec
 import support.TestData._
 
@@ -29,36 +27,33 @@ class TpsPaymentsRepoSpec extends ItSpec {
   "ensure indexes are created" in {
     repo.drop.futureValue
     repo.ensureIndexes.futureValue
-    repo.collection.indexesManager.list().futureValue.size shouldBe 3
+    repo.collection.listIndexes().toFuture().futureValue.size shouldBe 3
   }
 
   "insert and find a record" in {
-    val result: UpdateWriteResult = repo.upsert(id, tpsPayments).futureValue
+    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
     repo.findPayment(id).futureValue shouldBe Some(tpsPayments)
-    result.n shouldBe 1
   }
 
   "insert and find an mib tps payment" in {
     mibPayments.payments.head.paymentSpecificData.getReference shouldBe "chargeReference"
-
-    val result: UpdateWriteResult = repo.upsert(mibPayments._id, mibPayments).futureValue
+    Option(repo.upsert(mibPayments).futureValue.getUpsertedId).isDefined shouldBe true
     repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
-    result.n shouldBe 1
   }
 
   "findPaymentItem should optionally find the matching payment item" in {
     repo.findPaymentItem(paymentItemId).futureValue shouldBe None
-    repo.upsert(id, tpsPayments).futureValue
+    repo.upsert(tpsPayments).futureValue
     repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.head)
   }
 
   "surfaceModsDataForRecon should find matching mods payments" in {
     repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe List.empty
-    repo.upsert(id, modsTpsPaymentsNoAmendmentReference).futureValue
+    repo.upsert(modsTpsPaymentsNoAmendmentReference).futureValue
     repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe modsReconLookup
   }
 
-  private def collectionSize: Int = {
-    repo.count(Json.obj()).futureValue
+  private def collectionSize: Long = {
+    repo.countAll().futureValue
   }
 }

@@ -17,9 +17,9 @@
 package model
 
 import java.time.LocalDateTime
-
 import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
+import repository.Repo.HasId
 
 case class TpsPayments(
     _id:             TpsId,
@@ -28,7 +28,7 @@ case class TpsPayments(
     created:         LocalDateTime           = LocalDateTime.now(),
     payments:        List[TpsPaymentItem],
     navigation:      Option[Navigation]      = None
-)
+) extends HasId[TpsId]
 
 object TpsPayments {
   implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]

@@ -16,33 +16,42 @@
 
 package repository
 
-import javax.inject.{Inject, Singleton}
-import model.pcipal.PcipalSessionId
 import model._
+import model.pcipal.PcipalSessionId
+import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.api.commands.WriteResult
-import reactivemongo.api.indexes._
-import reactivemongo.bson.BSONDocument
+import uk.gov.hmrc.mongo.MongoComponent
 
+import java.util.concurrent.TimeUnit
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
-final class TpsPaymentsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComponent, config: RepoConfig)(implicit ec: ExecutionContext)
-  extends Repo[TpsPayments, TpsId]("tps-payments", reactiveMongoComponent) {
-
-  override def indexes: Seq[Index] = Seq(
-    Index(
-      key     = Seq("created" -> IndexType.Ascending),
-      name    = Some("createdIdx"),
-      options = BSONDocument("expireAfterSeconds" -> config.expireMongo.toSeconds)
+object TpsPaymentsRepo {
+  def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
+    IndexModel(
+      keys         = Indexes.ascending("created"),
+      indexOptions = IndexOptions().expireAfter(cacheTtlInSeconds, TimeUnit.SECONDS).name("createdIdx")
     ),
-    Index(
-      key  = Seq("pciPalSessionId" -> IndexType.Ascending),
-      name = Some("pciPalSessionId")
+    IndexModel(
+      keys         = Indexes.ascending("pciPalSessionId"),
+      indexOptions = IndexOptions().name("pciPalSessionId")
     )
   )
+}
+
+@Singleton
+final class TpsPaymentsRepo @Inject() (
+    mongoComponent: MongoComponent,
+    config:         RepoConfig
+)(implicit ec: ExecutionContext)
+  extends Repo[TpsId, TpsPayments](
+    collectionName = "tps-payments",
+    mongoComponent = mongoComponent,
+    indexes        = TpsPaymentsRepo.indexes(config.expireMongo.toSeconds),
+    extraCodecs    = Seq.empty,
+    replaceIndexes = true
+  ) {
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
@@ -69,7 +78,7 @@ final class TpsPaymentsRepo @Inject() (reactiveMongoComponent: ReactiveMongoComp
         payments.headOption.getOrElse(throw new IdNotFoundException(s"Could not find pcipalSessionId: ${id.value}"))
     }
 
-  def removeByReferenceForTest(references: List[String]): Future[WriteResult] =
+  def removeByReferenceForTest(references: List[String]): Future[Long] =
     remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> toJson(references)))
 
   def findByReferenceForTest(reference: String): Future[List[TpsPayments]] =

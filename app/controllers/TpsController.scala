@@ -44,7 +44,7 @@ class TpsController @Inject() (actions:      Actions,
   val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
 
-    tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
+    tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }
@@ -56,7 +56,7 @@ class TpsController @Inject() (actions:      Actions,
       case _           => tpsPaymentItem
     })
 
-    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
+    tpsRepo.upsert(request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
       Ok(toJson(request.body._id))
     }
   }
@@ -110,7 +110,7 @@ class TpsController @Inject() (actions:      Actions,
     for {
       record <- tpsRepo.getPayment(request.body.tpsId)
       newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
-      _ <- tpsRepo.upsert(request.body.tpsId, newRecord)
+      _ <- tpsRepo.upsert(newRecord)
     } yield {
       Ok
     }
@@ -122,7 +122,7 @@ class TpsController @Inject() (actions:      Actions,
     val f = for {
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
-      _ <- tpsRepo.upsert(updatedTpsPayments._id, updatedTpsPayments)
+      _ <- tpsRepo.upsert(updatedTpsPayments)
       _ = emailService.maybeSendEmail(updatedTpsPayments.payments)
     } yield Ok
 

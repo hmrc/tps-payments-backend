@@ -44,7 +44,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRe
   def storeTpsPayments(): Action[TpsPayments] = Action.async(parse.json[TpsPayments]) { implicit request =>
     val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
 
-    tpsRepo.upsert(request.body._id, request.body.copy(payments = updatedPayments)).map { _ =>
+    tpsRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
     }
   }
@@ -52,7 +52,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRe
   def createTpsPayments: Action[TpsPaymentRequest] = Action.async(parse.json[TpsPaymentRequest]) { implicit request =>
     val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
 
-    tpsRepo.upsert(tpsPayments._id, tpsPayments).map { _ =>
+    tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }

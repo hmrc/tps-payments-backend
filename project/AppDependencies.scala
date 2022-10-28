@@ -5,10 +5,10 @@ import sbt._
 object AppDependencies {
 
   val compile = Seq(
-    "uk.gov.hmrc"  %% "simple-reactivemongo"      % "8.0.0-play-28",
-    "uk.gov.hmrc"  %% "bootstrap-backend-play-28" % "5.4.0",
-    "com.beachape" %% "enumeratum"                % "1.7.0",
-    "com.lightbend.akka" %% "akka-stream-alpakka-csv" % "2.0.1"
+    "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"         % "0.73.0",
+    "uk.gov.hmrc"         %% "bootstrap-backend-play-28"  % "5.4.0",
+    "com.beachape"        %% "enumeratum"                 % "1.7.0",
+    "com.lightbend.akka"  %% "akka-stream-alpakka-csv"    % "2.0.1"
   )
 
 
