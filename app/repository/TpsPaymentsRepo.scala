@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ final class TpsPaymentsRepo @Inject() (
   def findByPcipalSessionId(id: PcipalSessionId): Future[TpsPayments] =
     find("pciPalSessionId" -> id.value).map { payments =>
       if (payments.size > 1)
-        throw new RuntimeException(s"Found ${payments.size} records with id ${id.value}")
+        throw new RuntimeException(s"Found ${payments.size.toString} records with id ${id.value}")
       else
         payments.headOption.getOrElse(throw new IdNotFoundException(s"Could not find pcipalSessionId: ${id.value}"))
     }

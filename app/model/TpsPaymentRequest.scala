@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import scala.Option.empty
 case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: Option[String])
 
 object TpsPaymentRequestItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
 }
 
@@ -51,5 +52,6 @@ case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem], 
 }
 
 object TpsPaymentRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[TpsPaymentRequest] = Json.format[TpsPaymentRequest]
 }

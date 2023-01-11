@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,8 +62,7 @@ class TpsController @Inject() (actions:      Actions,
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"findTpsPayments received vrn $id")
-
+    logger.debug(s"findTpsPayments received vrn ${id.value}")
     tpsRepo.findPayment(id).map {
       case Some(tpsPayments) => Ok(toJson(tpsPayments))
       case None              => NotFound(s"No payments found for id ${id.value}")
@@ -71,7 +70,7 @@ class TpsController @Inject() (actions:      Actions,
   }
 
   def findTpsPaymentsWithDecryptedEmail(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"findTpsPaymentsWithDecryptedEmail received vrn $id")
+    logger.debug(s"findTpsPaymentsWithDecryptedEmail received vrn ${id.value}")
 
     tpsRepo.findPayment(id).map {
       case Some(tpsPayments) =>

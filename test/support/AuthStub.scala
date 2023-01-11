@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ package support
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import org.scalatest.concurrent.Eventually
 
-object AuthStub {
+object AuthStub extends Eventually {
   private val expectedDetail = "SessionRecordNotFound"
 
   def givenTheUserIsNotAuthenticated(): StubMapping =
@@ -30,7 +31,7 @@ object AuthStub {
       )
     )
 
-  def givenTheUserIsAuthenticatedAndAuthorised(): StubMapping =
+  def givenTheUserIsAuthenticatedAndAuthorised(): StubMapping = eventually {
     stubFor(post(urlEqualTo("/auth/authorise"))
       .withRequestBody(
         equalToJson(
@@ -68,6 +69,7 @@ object AuthStub {
           s"""
                     {"allEnrolments":[{"key":"digital_tps_payment_taker_call_handler","identifiers":[],"state":"activated"}]}
        """.stripMargin)))
+  }
 
   def givenTheUserIsNotAuthorised(error: String): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))

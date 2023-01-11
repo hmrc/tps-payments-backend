@@ -7,28 +7,29 @@ import wartremover.WartRemover.autoImport.wartremoverExcluded
 
 val appName = "tps-payments-backend"
 
-scalaVersion := "2.12.12"
+scalaVersion := "2.13.8"
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    resolvers                        ++= Seq(Resolver.bintrayRepo("hmrc", "releases"), Resolver.jcenterRepo),
-    libraryDependencies              ++= AppDependencies.compile ++ AppDependencies.test,
+    resolvers                        ++= Seq(Resolver.jcenterRepo),
+    libraryDependencies              ++= AppDependencies.microserviceDependencies,
     retrieveManaged                  :=  true,
     routesGenerator                  :=  InjectedRoutesGenerator,
-    evictionWarningOptions in update :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+    update / evictionWarningOptions  :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
   .settings(majorVersion := 1)
   .settings(ScalariformSettings())
   .settings(ScoverageSettings())
   .settings(WartRemoverSettings.wartRemoverError)
   .settings(WartRemoverSettings.wartRemoverWarning)
-  .settings(wartremoverErrors in(Test, compile) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
+  .settings((Test / compile / wartremoverErrors) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
   .settings(wartremoverExcluded ++=
-    routes.in(Compile).value ++
+    (Compile / routes).value ++
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
+  .settings(SbtUpdatesSettings.sbtUpdatesSettings)
   .settings(publishingSettings: _*)
   .settings(PlayKeys.playDefaultPort := 9125)
   .settings(scalaSettings: _*)
@@ -36,7 +37,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(integrationTestSettings())
   .configs(IntegrationTest)
   .settings(resolvers += Resolver.jcenterRepo)
-  .settings(scalacOptions in Compile -= "utf8")
+  .settings(Compile / scalacOptions -= "utf8")
   .settings(
     routesImport ++= Seq(
       "model._"
@@ -46,14 +47,14 @@ lazy val microservice = Project(appName, file("."))
       "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
       "-Xfatal-warnings",
       "-Xlint:-missing-interpolator,_",
-      "-Yno-adapted-args",
+      "-Xlint:adapted-args",
+      "-Xlint:-byname-implicit",
       "-Ywarn-value-discard",
       "-Ywarn-dead-code",
       "-deprecation",
       "-feature",
       "-unchecked",
       "-language:implicitConversions",
-      "-language:reflectiveCalls",
-      "-Ypartial-unification" //required by cats
+      "-language:reflectiveCalls"
     )
   )

@@ -6,12 +6,12 @@ GET        /find-with-decrypted-email/id/:id                        controllers.
 GET        /get-id                                                  controllers.TpsController.getId()
 GET        /payment-items/:id/tax-type                              controllers.TpsController.getTaxType(id: PaymentItemId)
 DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
-PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId
-PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData
+PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId()
+PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData()
 
 GET        /payment-items/:id/mods-amendment-ref                    paymentsprocessor.PaymentsProcessorController.findModsSpecificData(id: PaymentItemId)
 
-POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments
+POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments()
 
 # Denied Refs:
 POST       /verify-refs                                             deniedrefs.DeniedRefsController.verifyRefs()
