@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,5 +20,6 @@ import com.google.inject.Inject
 import play.api.mvc._
 
 class Actions @Inject() (authoriseAction: AuthenticatedAction, actionBuilder: DefaultActionBuilder) {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = actionBuilder andThen authoriseAction
 }

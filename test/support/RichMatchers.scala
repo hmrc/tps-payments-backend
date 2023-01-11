@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.github.tomakehurst.wiremock.verification.LoggedRequest
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import play.api.libs.json.{JsValue, Json}
-
-import scala.collection.JavaConverters._
 import org.scalatest.matchers.should.Matchers
+
+import scala.jdk.CollectionConverters.IterableHasAsScala
 
 trait RichMatchers
   extends Matchers
@@ -46,13 +46,11 @@ trait RichMatchers
    * Asserts there was only one request made to wire mock.
    * Use it in Connector unit tests.
    */
-  def getRecordedRequest(): LoggedRequest = {
-    val allRecordedRequests = WireMock.getAllServeEvents().asScala.map(_.getRequest)
+  def getRecordedRequest: LoggedRequest = {
+    val allRecordedRequests: List[LoggedRequest] = WireMock.getAllServeEvents.asScala.map(_.getRequest).toList
     allRecordedRequests should have length 1 withClue "there suppose to be only one request recorded"
     allRecordedRequests.head
   }
-
-  def assertThereWasOnlyOneReqeust() = getRecordedRequest()
 
 }
 

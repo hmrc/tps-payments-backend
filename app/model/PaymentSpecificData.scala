@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,12 @@ final case class PaymentSpecificDataP800(
     period:             Int
 ) extends PaymentSpecificData {
   def getReference: String = {
-    s"$ninoPart1$ninoPart2$taxTypeScreenValue$period"
+    s"$ninoPart1$ninoPart2$taxTypeScreenValue${period.toString}"
   }
 }
 
 object PaymentSpecificDataP800 {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PaymentSpecificDataP800] = Json.format[PaymentSpecificDataP800]
 }
 
@@ -52,6 +53,7 @@ final case class PngrSpecificData(chargeReference: String,
 }
 
 object PngrSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 }
 
@@ -65,6 +67,7 @@ final case class MibSpecificData(chargeReference:    String,
 }
 
 object MibSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
 }
 
@@ -74,6 +77,7 @@ final case class ChildBenefitSpecificData(
   override def getReference: String = childBenefitYReference
 }
 object ChildBenefitSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
 }
 
@@ -139,6 +143,7 @@ final case class PayeSpecificData(
   override def getReference: String = payeReference
 }
 object PayeSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
 }
 
@@ -152,6 +157,7 @@ final case class NpsSpecificData(
   override def getReference: String = npsReference
 }
 object NpsSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
 }
 
@@ -162,6 +168,7 @@ final case class VatSpecificData(
   override def getReference: String = vatReference
 }
 object VatSpecificData {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
 }
 
@@ -212,21 +219,22 @@ object PaymentSpecificData {
       JsSuccess(json.as[VatSpecificData])
     case json: JsObject if json.keys == jsonKeysPpt =>
       JsSuccess(json.as[PptSpecificData])
+    case JsObject(_) | JsNumber(_) | JsArray(_) | JsString(_) | JsTrue | JsFalse | JsNull => JsError("Could not read PaymentSpecificData")
   }
 
-  val jsonKeysSimplePaymentSpecificData = Set("chargeReference")
-  val jsonKeysPaymentSpecificDataP800 = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
-  val jsonKeysPngrSpecificData = Set("chargeReference", "vat", "customs", "excise")
-  val jsonKeysMibSpecificDataVariant1 = Set("chargeReference", "vat", "customs")
-  val jsonKeysMibSpecificDataVariant2 = Set("chargeReference", "vat", "customs", "amendmentReference")
-  val jsonKeysChildBenefit = Set("childBenefitYReference")
-  val jsonKeysPpt = Set("pptReference")
-  val jsonKeysSa = Set("saReference")
-  val jsonKeysSdlt = Set("sdltReference")
-  val jsonKeysSafe = Set("safeReference")
-  val jsonKeysCotax = Set("cotaxReference")
-  val jsonKeysNtc = Set("ntcReference")
-  val jsonKeysPaye = Set("payeReference", "taxAmount", "nicAmount")
-  val jsonKeysNps = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
-  val jsonKeysVat = Set("vatReference", "remittanceType")
+  val jsonKeysSimplePaymentSpecificData: Set[String] = Set("chargeReference")
+  val jsonKeysPaymentSpecificDataP800: Set[String] = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
+  val jsonKeysPngrSpecificData: Set[String] = Set("chargeReference", "vat", "customs", "excise")
+  val jsonKeysMibSpecificDataVariant1: Set[String] = Set("chargeReference", "vat", "customs")
+  val jsonKeysMibSpecificDataVariant2: Set[String] = Set("chargeReference", "vat", "customs", "amendmentReference")
+  val jsonKeysChildBenefit: Set[String] = Set("childBenefitYReference")
+  val jsonKeysPpt: Set[String] = Set("pptReference")
+  val jsonKeysSa: Set[String] = Set("saReference")
+  val jsonKeysSdlt: Set[String] = Set("sdltReference")
+  val jsonKeysSafe: Set[String] = Set("safeReference")
+  val jsonKeysCotax: Set[String] = Set("cotaxReference")
+  val jsonKeysNtc: Set[String] = Set("ntcReference")
+  val jsonKeysPaye: Set[String] = Set("payeReference", "taxAmount", "nicAmount")
+  val jsonKeysNps: Set[String] = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
+  val jsonKeysVat: Set[String] = Set("vatReference", "remittanceType")
 }

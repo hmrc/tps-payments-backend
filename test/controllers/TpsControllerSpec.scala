@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,20 @@
 package controllers
 
 import model.pcipal.PcipalSessionId
-import model.{PaymentItemId, TaxTypes, TpsId}
+import model.{PaymentItemId, TaxTypes, TpsId, TpsPayments}
 import play.api.http.Status
 import support.AuthStub._
 import services.EmailService
 import support.TestData._
 import support.{ItSpec, TestConnector}
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 import util.EmailCrypto
 
 class TpsControllerSpec extends ItSpec with Status {
   private val connector = injector.instanceOf[TestConnector]
   private val emailCrypto = injector.instanceOf[EmailCrypto]
   private val emailService = injector.instanceOf[EmailService]
-  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
     givenTheUserIsAuthenticatedAndAuthorised()
@@ -125,9 +125,9 @@ class TpsControllerSpec extends ItSpec with Status {
   "update with pci-pal data" in {
     givenTheUserIsAuthenticatedAndAuthorised()
     Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
-    val pciPaledUpdated = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
-    pciPaledUpdated.status shouldBe OK
-    val result = connector.find(id).futureValue
+    val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
+    pciPalUpdated.status shouldBe OK
+    val result: TpsPayments = connector.find(id).futureValue
     result.payments.head.pcipalData match {
       case Some(x) => x shouldBe chargeRefNotificationPcipalRequest
       case None    => throw new RuntimeException("Pcipal data missing")

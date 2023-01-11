@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ class DeniedRefsService @Inject() (
   def getDeniedRefs(deniedRefsId: DeniedRefsId): Future[DeniedRefs] = {
     deniedRefsRepo
       .findById(deniedRefsId)
-      .map(_.getOrElse(throw new RuntimeException(s"Could not find DeniedRefs by given id [$deniedRefsId]")))
+      .map(_.getOrElse(throw new RuntimeException(s"Could not find DeniedRefs by given id [${deniedRefsId.value}]")))
       .map(decryptDeniedRefs)
   }
 
@@ -71,7 +71,7 @@ class DeniedRefsService @Inject() (
       .map(ref => crypto.decrypt(ref.value))
     val successfullyDecrypted: List[Reference] = decryptionResult.collect { case Success(ref) => Reference(ref) }
     decryptionResult.collect {
-      case Failure(ex) => logger.error(s"Failed to decrypt ref. Has encryption key changed? [${encryptedDeniedRefs._id}] [inserted:${encryptedDeniedRefs.inserted}]", ex)
+      case Failure(ex) => logger.error(s"Failed to decrypt ref. Has encryption key changed? [${encryptedDeniedRefs._id.value}] [inserted:${encryptedDeniedRefs.inserted.toString}]", ex)
     }
     encryptedDeniedRefs.copy(refs = successfullyDecrypted)
   }
@@ -106,9 +106,9 @@ class DeniedRefsService @Inject() (
   private def deleteTempFile(pathToCsv: Path): Unit = Future(Files.deleteIfExists(pathToCsv))
     .onComplete {
       case Success(deleted) =>
-        if (deleted) logger.info(s"Deleted temporary csv file with refs [$pathToCsv]")
-        else logger.warn(s"Could not deleted temporary csv file with refs [$pathToCsv]")
-      case Failure(ex) => logger.warn(s"Could not deleted temporary csv file with refs [$pathToCsv]", ex)
+        if (deleted) logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
+        else logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]")
+      case Failure(ex) => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
     }
 
   private val cachedDeniedRefs = new AtomicReference[Option[DeniedRefs]](None)
@@ -131,25 +131,27 @@ class DeniedRefsService @Inject() (
           logger.info(s"DeniedRefs cache is empty. Missing DeniedRefs in database.")
           Future.successful(())
         case (None, Some(latestId)) =>
-          logger.info(s"DeniedRefs cache is empty. Populating it ... [$latestId]")
+          logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
           updateCache(latestId)
-        case (Some(cached), Some(latestId)) if cached._id == latestId =>
-          logger.debug(s"DeniedRefs cache is up to date [inserted:${cached.inserted}] [$latestId]")
-          Future.successful(())
-        case (Some(cached), Some(latestId)) if cached._id != latestId =>
-          logger.info(s"DeniedRefs cache is invalid. Populating it ... [$latestId]")
-          updateCache(latestId)
+        case (Some(cached), Some(latestId)) =>
+          if (cached._id == latestId) {
+            logger.debug(s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]")
+            Future.successful(())
+          } else {
+            logger.info(s"DeniedRefs cache is invalid. Populating it ... [${latestId.toString}]")
+            updateCache(latestId)
+          }
       }
     } yield ()
   }
 
   private def updateCache(latestId: DeniedRefsId): Future[Unit] = getDeniedRefs(latestId).map { deniedRefs =>
     cachedDeniedRefs.set(Some(deniedRefs))
-    logger.info(s"DeniedRefs cache updated [size:${deniedRefs.refs.size}] [inserted:${deniedRefs.inserted}] [$latestId]")
+    logger.info(s"DeniedRefs cache updated [size:${deniedRefs.refs.size.toString}] [inserted:${deniedRefs.inserted.toString}] [${latestId.toString}]")
   }
 
   def dropDb(): Future[Boolean] = {
-    deniedRefsRepo.drop
+    deniedRefsRepo.drop()
   }
   lazy val logger: Logger = Logger(this.getClass)
 }
