@@ -58,3 +58,4 @@ lazy val microservice = Project(appName, file("."))
       "-language:reflectiveCalls"
     )
   )
+  .settings(dependencyOverrides += "org.scala-lang.modules" % "scala-xml_2.13" % "2.1.0")
