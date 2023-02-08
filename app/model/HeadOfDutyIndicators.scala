@@ -16,32 +16,19 @@
 
 package model
 
-import controllers.ValueClassBinder._
 import enumeratum._
 import util.EnumFormat
 import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
 
+sealed abstract class HeadOfDutyIndicator extends EnumEntry
+
 object HeadOfDutyIndicator {
   implicit val format: Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
-  implicit val pathBinder: QueryStringBindable[HeadOfDutyIndicator] = bindableA(_.toString)
-  implicit val headOfDutyBinder: PathBindable[HeadOfDutyIndicator] = valueClassBinder(_.toString)
-
-}
-
-sealed abstract class HeadOfDutyIndicator extends EnumEntry {
 }
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
-
-  def forCode(code: String): HeadOfDutyIndicator = values.find(_.toString == code) match {
-    case Some(x) => x
-    case None    => throw new RuntimeException(s"Could not find code $code")
-  }
-
-  def forCode(code: HeadOfDutyIndicator): Option[HeadOfDutyIndicator] = values.find(_ == code)
 
   /**
    * Hod for P800 and Child Benefits

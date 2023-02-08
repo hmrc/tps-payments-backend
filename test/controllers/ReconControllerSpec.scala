@@ -18,7 +18,7 @@ package controllers
 
 import play.api.http.Status
 import recon.FindRPaymentSpecificDataRequest
-import support.TestData._
+import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 

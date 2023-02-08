@@ -23,7 +23,7 @@ import play.api.libs.json.{Json, OFormat}
 
 import scala.Option.empty
 
-case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: Option[String])
+final case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: Option[String])
 
 object TpsPaymentRequestItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

@@ -18,7 +18,7 @@ package controllers
 
 import model.TpsId
 import play.api.http.Status
-import support.TestData._
+import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -48,5 +48,18 @@ class PaymentProcessorControllerSpec extends ItSpec with Status {
     intercept[Exception] {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
     }.getMessage.contains("500") shouldBe true
+  }
+
+  "propagate error from findModsPaymentsByReference if payment specific data is not MibSpecificData" in {
+    repo.upsert(tpsPaymentsWithEmptyEmail).futureValue
+    intercept[Exception] {
+      connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
+    }.getMessage should include(s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?")
+  }
+
+  "propagate error from findModsPaymentsByReference if no payment item is found" in {
+    intercept[Exception] {
+      connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
+    }.getMessage should include(s"No payment specific data for id [ ${paymentItemId.value} ]")
   }
 }

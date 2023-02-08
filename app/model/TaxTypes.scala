@@ -17,21 +17,15 @@
 package model
 
 import enumeratum._
-import util.EnumFormat
 import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, QueryStringBindable}
-import controllers.ValueClassBinder.{bindableA, valueClassBinder}
+import util.EnumFormat
 
 import scala.collection.immutable
 
-sealed abstract class TaxType extends EnumEntry {
-}
+sealed abstract class TaxType extends EnumEntry
 
 object TaxType {
   implicit val format: Format[TaxType] = EnumFormat(TaxTypes)
-  implicit val pathBinder: QueryStringBindable[TaxType] = bindableA(_.toString)
-  implicit val taxTypeBinder: PathBindable[TaxType] = valueClassBinder(_.toString)
-
 }
 
 object TaxTypes extends Enum[TaxType] {

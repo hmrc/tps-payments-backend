@@ -16,7 +16,8 @@ object ScoverageSettings {
       ".*Routes.*",
       ".*GuiceInjector",
       ".*DateTimeQueryStringBinder.*", // better covered via wiremock/E2E integration tests
-      ".*Test.*"
+      ".*Test.*",
+      ".*ValueClassBinder.*"
     ).mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 80,  //should be a lot higher but we are where we are
     ScoverageKeys.coverageFailOnMinimum := true,

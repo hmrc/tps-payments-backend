@@ -24,7 +24,16 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec {
   "de/serialize headOfDutyIndicators" in {
 
     val headOfDutyIndicators: List[(String, HeadOfDutyIndicator)] = List(
-      "B" -> HeadOfDutyIndicators.B
+      "B" -> HeadOfDutyIndicators.B,
+      "A" -> HeadOfDutyIndicators.A,
+      "N" -> HeadOfDutyIndicators.N,
+      "M" -> HeadOfDutyIndicators.M,
+      "J" -> HeadOfDutyIndicators.J,
+      "P" -> HeadOfDutyIndicators.P,
+      "V" -> HeadOfDutyIndicators.V,
+      "X" -> HeadOfDutyIndicators.X,
+      "K" -> HeadOfDutyIndicators.K,
+      "C" -> HeadOfDutyIndicators.C
     )
 
     headOfDutyIndicators.foreach { tt =>

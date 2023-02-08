@@ -7,10 +7,10 @@ import wartremover.WartRemover.autoImport.wartremoverExcluded
 
 val appName = "tps-payments-backend"
 
-scalaVersion := "2.13.8"
+scalaVersion := "2.13.10"
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     resolvers                        ++= Seq(Resolver.jcenterRepo),
@@ -30,7 +30,6 @@ lazy val microservice = Project(appName, file("."))
       (baseDirectory.value / "test").get ++
       Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
   .settings(SbtUpdatesSettings.sbtUpdatesSettings)
-  .settings(publishingSettings: _*)
   .settings(PlayKeys.playDefaultPort := 9125)
   .settings(scalaSettings: _*)
   .settings(defaultSettings(): _*)
@@ -58,4 +57,5 @@ lazy val microservice = Project(appName, file("."))
       "-language:reflectiveCalls"
     )
   )
-  .settings(dependencyOverrides += "org.scala-lang.modules" % "scala-xml_2.13" % "2.1.0")
+  .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
+//  .settings(dependencyOverrides += "org.scala-lang.modules" % "scala-xml_2.13" % "2.1.0")
