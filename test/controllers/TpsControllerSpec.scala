@@ -21,7 +21,7 @@ import model.{PaymentItemId, TaxTypes, TpsId, TpsPayments}
 import play.api.http.Status
 import support.AuthStub._
 import services.EmailService
-import support.TestData._
+import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 import util.EmailCrypto
@@ -194,5 +194,15 @@ class TpsControllerSpec extends ItSpec with Status {
   "should not encrypt email if email is already encrypted" in {
     val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
     emailCrypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
+  }
+
+  "should throw error when decrypt fails" in {
+    intercept[Exception] {
+      emailCrypto.decryptEmail("zzzzzzzzzzzzzz==")
+    }.getMessage shouldBe "Failed to decrypt field email due to exception Failed decrypting data"
+  }
+
+  "isEmailNotAlreadyEncrypted should return true when email matches regex" in {
+    emailCrypto.isEmailNotAlreadyEncrypted("bobross@joyofpainting.com") shouldBe true
   }
 }

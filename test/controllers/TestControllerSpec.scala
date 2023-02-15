@@ -14,26 +14,22 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
+package controllers
 
-import play.api.libs.json.Json
-import support.UnitSpec
-import support.testdata.TestData
+import play.api.test.FakeRequest
+import support.ItSpec
 
-class VerifyRefsRequestSpec extends UnitSpec {
+class TestControllerSpec extends ItSpec {
+  private val controller = injector.instanceOf[TestController]
 
-  "json serialization/deserialization" in {
-    val verifyRefRequest = TestData.verifyRefRequest
-
-    val verifyRefRequestJson = Json.parse(
-      //language=JSON
-      """
-         {
-          "refs": ["REF1"]
-          }
-        """)
-
-    Json.toJson(verifyRefRequest) shouldBe verifyRefRequestJson
-    verifyRefRequestJson.as[VerifyRefsRequest] shouldBe verifyRefRequest
+  "removeTestData" in {
+    val result = controller.removeTestData()(FakeRequest()).futureValue
+    status(result) shouldBe 200
   }
+
+  "findByReference" in {
+    val result = controller.findByReference("someref")(FakeRequest()).futureValue
+    status(result) shouldBe 200
+  }
+
 }

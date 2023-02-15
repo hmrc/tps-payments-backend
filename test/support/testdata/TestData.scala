@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package support
+package support.testdata
 
-import deniedrefs.model._
-
-import java.time.LocalDateTime
+import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
 import model.StatusTypes.validated
-import model.TaxTypes._
-import model._
+import model.TaxTypes.{MIB, P800, PNGR, Sa}
 import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import model._
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
+
+import java.time.LocalDateTime
 
 object TestData {
   private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
@@ -82,7 +82,33 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val mibPayments: TpsPayments = tpsPaymentRequestMib.tpsPayments(created)
+  def tpsPaymentRequestGeneric(taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData): TpsPaymentRequest = TpsPaymentRequest(
+    pid        = "pid",
+    payments   = Seq[TpsPaymentRequestItem](
+      TpsPaymentRequestItem(
+        chargeReference     = "chargeReference",
+        customerName        = "customerName",
+        amount              = BigDecimal("100.00"),
+        taxRegimeDisplay    = taxRegimeDisplay,
+        taxType             = taxType,
+        paymentSpecificData = paymentSpecificData,
+        email               = None
+      )
+    ),
+    navigation = Navigation("back", "reset", "finish", "callback")
+  )
+
+  val mibPayments: TpsPayments = tpsPaymentRequestGeneric("MIB", TaxTypes.MIB, MibSpecificData("chargeReference", BigDecimal(1), BigDecimal(2))).tpsPayments(created)
+  val childBenefitPayments: TpsPayments = tpsPaymentRequestGeneric("ChildBenefitsRepayments", TaxTypes.ChildBenefitsRepayments, ChildBenefitSpecificData("childBenefitRef")).tpsPayments(created)
+  val saPayments: TpsPayments = tpsPaymentRequestGeneric("SA", TaxTypes.Sa, SaSpecificData("saRef")).tpsPayments(created)
+  val sdltPayments: TpsPayments = tpsPaymentRequestGeneric("SDLT", TaxTypes.Sdlt, SdltSpecificData("sdltRef")).tpsPayments(created)
+  val safePayments: TpsPayments = tpsPaymentRequestGeneric("SAFE", TaxTypes.Safe, SafeSpecificData("safeRef")).tpsPayments(created)
+  val cotaxPayments: TpsPayments = tpsPaymentRequestGeneric("COTAX", TaxTypes.Cotax, CotaxSpecificData("cotaxRef")).tpsPayments(created)
+  val ntcPayments: TpsPayments = tpsPaymentRequestGeneric("NTC", TaxTypes.Ntc, NtcSpecificData("ntcRef")).tpsPayments(created)
+  val payePayments: TpsPayments = tpsPaymentRequestGeneric("PAYE", TaxTypes.Paye, PayeSpecificData("payeRef", BigDecimal(100), BigDecimal(100))).tpsPayments(created)
+  val npsPayments: TpsPayments = tpsPaymentRequestGeneric("NPS", TaxTypes.Nps, NpsSpecificData("npsRef", "1", "2", "3", BigDecimal(10))).tpsPayments(created)
+  val vatPayments: TpsPayments = tpsPaymentRequestGeneric("VAT", TaxTypes.Vat, VatSpecificData("vatRef", "someRemittanceType")).tpsPayments(created)
+  val pptPayments: TpsPayments = tpsPaymentRequestGeneric("PPT", TaxTypes.Ppt, PptSpecificData("pptRef")).tpsPayments(created)
 
   val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
@@ -414,34 +440,6 @@ object TestData {
      """.stripMargin)
 
   //language=JSON
-  val mibPaymentsJson: JsValue = Json.parse(
-    s"""{
-          "_id": "${mibPayments._id.value}",
-          "pid": "pid",
-          "created": "$created",
-          "payments": [
-            {
-              "paymentSpecificData": {
-                "chargeReference": "chargeReference",
-                "vat": 1,
-                "customs": 2
-              },
-              "amount": 100,
-              "chargeReference": "chargeReference",
-              "headOfDutyIndicator": "B",
-              "paymentItemId": "${mibPayments.payments.head.paymentItemId.get.value}",
-              "updated": "$created",
-              "customerName": "customerName",
-              "taxType": "MIB"
-            }
-          ],
-          "navigation": {
-              "back" : "back",
-              "reset" : "reset",
-              "finish" : "finish",
-              "callback" : "callback"
-            }
-        }""".stripMargin)
 
   val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3000000001"}]"""
 

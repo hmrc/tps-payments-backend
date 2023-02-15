@@ -33,18 +33,40 @@ package model
  */
 
 import play.api.libs.json.Json.toJson
-import support.TestData._
+import play.api.libs.json.{JsResultException, JsString}
 import support.UnitSpec
+import support.testdata.JsonTestData._
+import support.testdata.TestData._
 
 class TpsPaymentsSpec extends UnitSpec {
   "to json" in {
     toJson(tpsPayments) shouldBe tpsPaymentsJson
     toJson(mibPayments) shouldBe mibPaymentsJson
+    toJson(childBenefitPayments) shouldBe childBenefitsPaymentsJson
+    toJson(saPayments) shouldBe saPaymentsJson
+    toJson(sdltPayments) shouldBe sdltPaymentsJson
+    toJson(safePayments) shouldBe safePaymentsJson
+    toJson(cotaxPayments) shouldBe cotaxPaymentsJson
+    toJson(ntcPayments) shouldBe ntcPaymentsJson
+    toJson(payePayments) shouldBe payePaymentsJson
+    toJson(npsPayments) shouldBe npsPaymentsJson
+    toJson(vatPayments) shouldBe vatPaymentsJson
+    toJson(pptPayments) shouldBe pptPaymentsJson
   }
 
   "from json should de-serialise a TpsPayments object with a tax type" in {
     tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
     mibPaymentsJson.as[TpsPayments] shouldBe mibPayments
+    childBenefitsPaymentsJson.as[TpsPayments] shouldBe childBenefitPayments
+    saPaymentsJson.as[TpsPayments] shouldBe saPayments
+    sdltPaymentsJson.as[TpsPayments] shouldBe sdltPayments
+    safePaymentsJson.as[TpsPayments] shouldBe safePayments
+    cotaxPaymentsJson.as[TpsPayments] shouldBe cotaxPayments
+    ntcPaymentsJson.as[TpsPayments] shouldBe ntcPayments
+    payePaymentsJson.as[TpsPayments] shouldBe payePayments
+    npsPaymentsJson.as[TpsPayments] shouldBe npsPayments
+    vatPaymentsJson.as[TpsPayments] shouldBe vatPayments
+    pptPaymentsJson.as[TpsPayments] shouldBe pptPayments
   }
 
   "from json should de-serialise json without a tax type and default to P800, e.g. for historical persisted records" in {

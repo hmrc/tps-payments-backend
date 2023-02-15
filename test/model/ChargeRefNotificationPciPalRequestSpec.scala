@@ -18,7 +18,8 @@ package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.Json.toJson
-import support.{TestData, UnitSpec}
+import support.UnitSpec
+import support.testdata.TestData
 
 class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
 

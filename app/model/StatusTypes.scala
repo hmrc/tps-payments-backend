@@ -16,28 +16,21 @@
 
 package model
 
-import controllers.ValueClassBinder._
 import enumeratum._
 import util.EnumFormat
 import play.api.libs.json.Format
-import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
 
+sealed abstract class StatusType extends EnumEntry
+
 object StatusType {
   implicit val format: Format[StatusType] = EnumFormat(StatusTypes)
-  implicit val pathBinder: QueryStringBindable[StatusType] = bindableA(_.toString)
-  implicit val statusBinder: PathBindable[StatusType] = valueClassBinder(_.toString)
-
 }
-
-sealed abstract class StatusType extends EnumEntry
 
 object StatusTypes extends Enum[StatusType] {
 
   val values: immutable.IndexedSeq[StatusType] = findValues
-
-  def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
   case object validated extends StatusType
 
