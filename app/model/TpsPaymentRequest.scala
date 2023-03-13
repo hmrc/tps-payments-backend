@@ -16,8 +16,7 @@
 
 package model
 
-import java.time.LocalDateTime
-
+import java.time.{Instant}
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
 
@@ -31,7 +30,7 @@ object TpsPaymentRequestItem {
 }
 
 case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem], navigation: Navigation) {
-  def tpsPayments(now: LocalDateTime): TpsPayments = {
+  def tpsPayments(now: Instant): TpsPayments = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(
         paymentItemId       = Some(PaymentItemId.fresh),

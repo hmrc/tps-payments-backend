@@ -19,15 +19,17 @@ package support.testdata
 import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
 import model.StatusTypes.validated
 import model.TaxTypes.{MIB, P800, PNGR, Sa}
-import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import model._
+import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
-import java.time.LocalDateTime
+import java.time.{Instant, LocalDateTime}
 
 object TestData {
-  private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
+  private val createdString: String = "2020-01-20T11:56:46Z"
+  private val createdStringLegacy: String = "2020-01-20T11:56:46"
+  private val created: Instant = Instant.parse(createdString)
   private val reference = "JE231111"
   private val reference2 = "B"
   private val reference3 = "P800"
@@ -292,34 +294,6 @@ object TestData {
             "CardLast4": "0123"
       }""".stripMargin)
 
-  //language=JSON
-  val tpsPaymentsJsonWithoutTaxType: JsValue = Json.parse(
-    s"""{
-          "_id" : "${id.value}",
-          "pid" : "$pid",
-          "pciPalSessionId" : "${pciPalSessionId.value}",
-          "created":  "$created",
-          "payments": [
-            {
-              "paymentItemId" : "${paymentItemId.value}",
-              "amount": 1.92,
-              "headOfDutyIndicator": "B",
-              "updated": "$created",
-              "customerName" : "AR",
-              "chargeReference" : "12345",
-              "paymentSpecificData" :
-              {
-                "ninoPart1": "$reference",
-                "ninoPart2": "$reference2",
-                "taxTypeScreenValue": "$reference3",
-                "period": 2000
-              },
-              "email": "test@email.com"
-            }
-          ]
-        }
-     """.stripMargin)
-
   val paymentRequestJson: JsValue = Json.parse(
     """{
         "pid": "pid",
@@ -416,13 +390,13 @@ object TestData {
           "_id" : "${id.value}",
           "pid" : "$pid",
           "pciPalSessionId" : "${pciPalSessionId.value}",
-          "created":  "$created",
+          "created":  "$createdString",
           "payments": [
             {
               "paymentItemId" : "${paymentItemId.value}",
               "amount": 1.92,
               "headOfDutyIndicator": "B",
-              "updated": "$created",
+              "updated": "$createdString",
               "customerName" : "AR",
               "taxType": "P800",
               "chargeReference" : "12345",
@@ -440,6 +414,66 @@ object TestData {
      """.stripMargin)
 
   //language=JSON
+  val tpsPaymentsMongoJson: JsValue = Json.parse(
+    s"""{
+          "_id" : "${id.value}",
+          "pid" : "$pid",
+          "pciPalSessionId" : "${pciPalSessionId.value}",
+          "created": {
+            "$$date": {
+              "$$numberLong": "1579521406000"
+            }
+          },
+          "payments": [
+            {
+              "paymentItemId" : "${paymentItemId.value}",
+              "amount": 1.92,
+              "headOfDutyIndicator": "B",
+              "updated": "$createdString",
+              "customerName" : "AR",
+              "taxType": "P800",
+              "chargeReference" : "12345",
+              "paymentSpecificData" :
+              {
+                "ninoPart1": "$reference",
+                "ninoPart2": "$reference2",
+                "taxTypeScreenValue": "$reference3",
+                "period": 2000
+              },
+              "email": "test@email.com"
+            }
+          ]
+        }
+     """.stripMargin)
+
+  //language=JSON
+  val tpsPaymentsMongoLegacyJson: JsValue = Json.parse(
+    s"""{
+          "_id" : "${id.value}",
+          "pid" : "$pid",
+          "pciPalSessionId" : "${pciPalSessionId.value}",
+          "created": "$createdStringLegacy",
+          "payments": [
+            {
+              "paymentItemId" : "${paymentItemId.value}",
+              "amount": 1.92,
+              "headOfDutyIndicator": "B",
+              "updated": "$createdString",
+              "customerName" : "AR",
+              "taxType": "P800",
+              "chargeReference" : "12345",
+              "paymentSpecificData" :
+              {
+                "ninoPart1": "$reference",
+                "ninoPart2": "$reference2",
+                "taxTypeScreenValue": "$reference3",
+                "period": 2000
+              },
+              "email": "test@email.com"
+            }
+          ]
+        }
+     """.stripMargin)
 
   val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3000000001"}]"""
 
@@ -492,5 +526,4 @@ object TestData {
   )
 
   val verifyRefRequest = VerifyRefsRequest(Set(ref1))
-
 }

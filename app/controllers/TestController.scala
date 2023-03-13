@@ -16,8 +16,7 @@
 
 package controllers
 
-import java.time.LocalDateTime
-
+import java.time.{Instant}
 import javax.inject.{Inject, Singleton}
 import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, TpsPayments}
 import play.api.libs.json.Json.toJson
@@ -50,7 +49,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRe
   }
 
   def createTpsPayments: Action[TpsPaymentRequest] = Action.async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
+    val tpsPayments = request.body.tpsPayments(Instant.now())
 
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
