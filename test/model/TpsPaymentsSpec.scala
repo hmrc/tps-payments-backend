@@ -33,7 +33,7 @@ package model
  */
 
 import play.api.libs.json.Json.toJson
-import play.api.libs.json.{JsResultException, JsString}
+import repository.TpsPaymentsRepo
 import support.UnitSpec
 import support.testdata.JsonTestData._
 import support.testdata.TestData._
@@ -68,4 +68,17 @@ class TpsPaymentsSpec extends UnitSpec {
     vatPaymentsJson.as[TpsPayments] shouldBe vatPayments
     pptPaymentsJson.as[TpsPayments] shouldBe pptPayments
   }
+
+  "mongo writes" in {
+    TpsPaymentsRepo.formatMongo.writes((tpsPayments)) shouldBe tpsPaymentsMongoJson
+  }
+
+  "mongo reads" in {
+    tpsPaymentsMongoJson.as[TpsPayments](TpsPaymentsRepo.formatMongo) shouldBe tpsPayments
+  }
+
+  "mongo legacy reads" in {
+    tpsPaymentsMongoLegacyJson.as[TpsPayments](TpsPaymentsRepo.formatMongo) shouldBe tpsPayments
+  }
+
 }

@@ -22,12 +22,12 @@ import org.bson.RawBsonDocument
 import org.bson.json.JsonObject
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import org.mongodb.scala.result.UpdateResult
-import play.api.libs.json.{Format, Json, OFormat}
 import play.api.libs.json.Json.toJson
+import play.api.libs.json.{Format, Json, OFormat, Reads}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Instant}
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -54,10 +54,17 @@ object TpsPaymentsRepo {
    */
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val formatMongo: OFormat[TpsPayments] = {
-    implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+
+    //before OPS-9461 "created" was stored as string and in java.time.LocalDateTime format
+    //TODO: Delete this legacy reads in 2024
+    val legacyCreatedReads: Reads[Instant] = Reads.of[String].map(s => LocalDateTime.parse(s) toInstant (ZoneOffset.UTC))
+
+    implicit val instantFormatSupportingLegacyReads: Format[Instant] = Format(
+      MongoJavatimeFormats.instantReads.orElse(legacyCreatedReads),
+      MongoJavatimeFormats.instantWrites
+    )
     Json.format[TpsPayments]
   }
-
 }
 
 @Singleton
