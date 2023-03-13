@@ -16,12 +16,13 @@
 
 package controllers
 
-import java.time.LocalDateTime
+import java.time.{Instant}
 import auth.Actions
 
 import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
+import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -42,7 +43,7 @@ class TpsController @Inject() (actions:      Actions,
   val logger: Logger = Logger(this.getClass)
 
   val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments = request.body.tpsPayments(LocalDateTime.now())
+    val tpsPayments = request.body.tpsPayments(Instant.now())
 
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
@@ -59,6 +60,16 @@ class TpsController @Inject() (actions:      Actions,
     tpsRepo.upsert(request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
       Ok(toJson(request.body._id))
     }
+  }
+
+  def fixDb: Action[AnyContent] = actions.fixDbAction.async{ request =>
+    logger.info("[OPS-9461] fixing db")
+    for {
+      count <- tpsRepo.countAll()
+      updateResult: UpdateResult <- tpsRepo.fixDb
+      fixDbResult: String = s"[OPS-9461] allDocuments=${count.toString}, ${updateResult.toString}"
+      _ = logger.info(fixDbResult)
+    } yield Ok(fixDbResult)
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {

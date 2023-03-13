@@ -20,16 +20,14 @@ import model.TpsPayments
 import play.api.libs.json.{JsValue, Json}
 import support.testdata.TestData._
 
-import java.time.LocalDateTime
-
 object JsonTestData {
-  private val created: LocalDateTime = LocalDateTime.parse("2020-01-20T11:56:46")
+  private val createdString: String = "2020-01-20T11:56:46Z"
 
   private def jsonBuilder(tpsPayments: TpsPayments, paymentSpecificData: String, taxType: String) =
     s"""{
           "_id": "${tpsPayments._id.value}",
           "pid": "pid",
-          "created": "$created",
+          "created": "$createdString",
           "payments": [
             {
               "paymentSpecificData": $paymentSpecificData,
@@ -37,7 +35,7 @@ object JsonTestData {
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
               "paymentItemId": "${tpsPayments.payments.head.paymentItemId.get.value}",
-              "updated": "$created",
+              "updated": "$createdString",
               "customerName": "customerName",
               "taxType": "$taxType"
             }

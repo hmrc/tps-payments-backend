@@ -29,7 +29,7 @@ class TpsPaymentsRepoSpec extends ItSpec {
 
   "ensure indexes are created" in {
     repo.drop().futureValue
-    repo.ensureIndexes.futureValue
+    repo.ensureIndexes().futureValue
     repo.collection.listIndexes().toFuture().futureValue.size shouldBe 3
   }
 

@@ -68,8 +68,4 @@ class TpsPaymentsSpec extends UnitSpec {
     vatPaymentsJson.as[TpsPayments] shouldBe vatPayments
     pptPaymentsJson.as[TpsPayments] shouldBe pptPayments
   }
-
-  "from json should de-serialise json without a tax type and default to P800, e.g. for historical persisted records" in {
-    tpsPaymentsJsonWithoutTaxType.as[TpsPayments] shouldBe tpsPayments
-  }
 }

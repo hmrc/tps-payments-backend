@@ -18,11 +18,16 @@ package repository
 
 import model._
 import model.pcipal.PcipalSessionId
+import org.bson.RawBsonDocument
+import org.bson.json.JsonObject
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import play.api.libs.json.Json
+import org.mongodb.scala.result.UpdateResult
+import play.api.libs.json.{Format, Json, OFormat}
 import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.mongo.MongoComponent
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
+import java.time.{Instant}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +43,21 @@ object TpsPaymentsRepo {
       indexOptions = IndexOptions().name("pciPalSessionId")
     )
   )
+
+  /**
+   * This format stores date time in mongo specific way.
+   * For example: {{{
+   *   "\$date":{"\$numberLong":"2837003631880"}
+   * }}}
+   * Don't change it.
+   * Use https://www.epochconverter.com/ to quickly decode Long to Instant.
+   */
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val formatMongo: OFormat[TpsPayments] = {
+    implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
+    Json.format[TpsPayments]
+  }
+
 }
 
 @Singleton
@@ -50,8 +70,18 @@ final class TpsPaymentsRepo @Inject() (
     mongoComponent = mongoComponent,
     indexes        = TpsPaymentsRepo.indexes(config.expireMongo.toSeconds),
     extraCodecs    = Seq.empty,
-    replaceIndexes = true
-  ) {
+    replaceIndexes = true)(
+    manifest     = implicitly[Manifest[TpsPayments]],
+    domainFormat = TpsPaymentsRepo.formatMongo,
+    //    domainFormat     = TpsPayments.format, //DELETE THIS LINE
+    executionContext = implicitly[ExecutionContext]) {
+
+  //remove it after fix OPS-9461
+  def fixDb: Future[UpdateResult] = collection
+    .updateMany(
+      filter = new JsonObject("""{"created":{"$type":"string"}}"""),
+      update = List(RawBsonDocument.parse("""{ $set: { "created": { $toDate : "$created"} }}"""))
+    ).toFuture()
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 

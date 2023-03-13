@@ -16,8 +16,7 @@
 
 package model
 
-import java.time.LocalDateTime
-
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
@@ -26,7 +25,7 @@ case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
     amount:              BigDecimal,
     headOfDutyIndicator: HeadOfDutyIndicator,
-    updated:             LocalDateTime                              = LocalDateTime.now(),
+    updated:             Instant,
     customerName:        String,
     chargeReference:     String                                     = "",
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
@@ -55,20 +54,5 @@ object TpsPaymentItem {
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  private val reads: Reads[TpsPaymentItem] =
-    (
-      (__ \ "paymentItemId").readNullable[PaymentItemId] and
-      (__ \ "amount").read[BigDecimal] and
-      (__ \ "headOfDutyIndicator").read[HeadOfDutyIndicator] and
-      (__ \ "updated").read[LocalDateTime] and
-      (__ \ "customerName").read[String] and
-      (__ \ "chargeReference").read[String] and
-      (__ \ "pcipalData").readNullable[ChargeRefNotificationPcipalRequest] and
-      (__ \ "paymentSpecificData").read[PaymentSpecificData] and
-      (__ \ "taxType").readWithDefault[String](TaxTypes.P800.toString) and
-      (__ \ "email").readNullable[String]
-    ) ((pid, amnt, hod, updt, cn, cr, pd, psd, taxType, email) =>
-        TpsPaymentItem(pid, amnt, hod, updt, cn, cr, pd, psd, TaxTypes.namesToValuesMap(taxType), email))
-
-  implicit def formats: OFormat[TpsPaymentItem] = OFormat(reads, writes)
+  implicit def formats: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
 }
