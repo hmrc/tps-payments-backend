@@ -19,13 +19,13 @@ package services
 import config.AppConfig
 import connectors.EmailConnector
 import model.TaxTypes.P800
-import model.{HeadOfDutyIndicators, PaymentSpecificDataP800, TaxType, TaxTypes, TpsPaymentItem}
+import model._
 import support.ItSpec
 import support.testdata.TestData.paymentItemId
-import uk.gov.hmrc.http.{HttpClient}
+import uk.gov.hmrc.http.HttpClient
 import util.EmailCrypto
 
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.Instant
 
 class EmailServiceSpec extends ItSpec {
 
@@ -35,7 +35,7 @@ class EmailServiceSpec extends ItSpec {
     val emailConnector = new EmailConnector(app.injector.instanceOf[HttpClient], app.injector.instanceOf[AppConfig])(ec)
     val service = new EmailService(emailCrypto, emailConnector)
 
-    val testTpsPaymentItem = TpsPaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, LocalDateTime.parse("2020-01-20T11:56:46").toInstant(ZoneOffset.UTC), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
+    val testTpsPaymentItem = TpsPaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
 
     "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
       val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
