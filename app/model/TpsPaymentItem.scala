@@ -16,10 +16,10 @@
 
 package model
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
+
+import java.time.Instant
 
 case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
@@ -35,23 +35,6 @@ case class TpsPaymentItem(
 }
 
 object TpsPaymentItem {
-
-  implicit val writes: OWrites[TpsPaymentItem] = {
-    OWrites[TpsPaymentItem](tpsPaymentItem =>
-      Json.obj(
-        s"amount" -> tpsPaymentItem.amount,
-        s"headOfDutyIndicator" -> tpsPaymentItem.headOfDutyIndicator,
-        s"updated" -> tpsPaymentItem.updated,
-        s"customerName" -> tpsPaymentItem.customerName,
-        s"chargeReference" -> tpsPaymentItem.chargeReference,
-        s"paymentSpecificData" -> tpsPaymentItem.paymentSpecificData,
-        s"taxType" -> tpsPaymentItem.taxType.toString
-      )
-        ++ tpsPaymentItem.pcipalData.map(pd => Json.obj("pcipalData" -> pd)).getOrElse(Json.obj())
-        ++ tpsPaymentItem.paymentItemId.map(pid => Json.obj("paymentItemId" -> pid)).getOrElse(Json.obj())
-        ++ tpsPaymentItem.email.map(email => Json.obj("email" -> email)).getOrElse(Json.obj())
-    )
-  }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit def formats: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
