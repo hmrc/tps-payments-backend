@@ -21,9 +21,6 @@ import play.api.mvc._
 
 class Actions @Inject() (authoriseAction: AuthenticatedAction, actionBuilder: DefaultActionBuilder) {
 
-  //remove it after fix OPS-9461
-  def fixDbAction: ActionBuilder[Request, AnyContent] = actionBuilder
-
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = actionBuilder andThen authoriseAction
 }

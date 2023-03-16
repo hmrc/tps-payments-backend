@@ -16,10 +16,10 @@
 
 package model
 
-import java.time.{Instant}
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
 
+import java.time.Instant
 import scala.Option.empty
 
 final case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: Option[String])
@@ -29,7 +29,11 @@ object TpsPaymentRequestItem {
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
 }
 
-case class TpsPaymentRequest(pid: String, payments: Seq[TpsPaymentRequestItem], navigation: Navigation) {
+case class TpsPaymentRequest(
+    pid:        String,
+    payments:   Seq[TpsPaymentRequestItem],
+    navigation: Navigation
+) {
   def tpsPayments(now: Instant): TpsPayments = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(

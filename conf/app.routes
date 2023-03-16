@@ -9,9 +9,6 @@ DELETE     /delete/id/:id                                           controllers.
 PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId()
 PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData()
 
-#remove it after fix OPS-9461
-POST      /fix-db                                                   controllers.TpsController.fixDb
-
 GET        /payment-items/:id/mods-amendment-ref                    paymentsprocessor.PaymentsProcessorController.findModsSpecificData(id: PaymentItemId)
 
 POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments()

@@ -18,10 +18,7 @@ package repository
 
 import model._
 import model.pcipal.PcipalSessionId
-import org.bson.RawBsonDocument
-import org.bson.json.JsonObject
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import org.mongodb.scala.result.UpdateResult
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
 import uk.gov.hmrc.mongo.MongoComponent
@@ -78,17 +75,9 @@ final class TpsPaymentsRepo @Inject() (
     indexes        = TpsPaymentsRepo.indexes(config.expireMongo.toSeconds),
     extraCodecs    = Seq.empty,
     replaceIndexes = true)(
-    manifest     = implicitly[Manifest[TpsPayments]],
-    domainFormat = TpsPaymentsRepo.formatMongo,
-    //    domainFormat     = TpsPayments.format, //DELETE THIS LINE
+    manifest         = implicitly[Manifest[TpsPayments]],
+    domainFormat     = TpsPaymentsRepo.formatMongo,
     executionContext = implicitly[ExecutionContext]) {
-
-  //remove it after fix OPS-9461
-  def fixDb: Future[UpdateResult] = collection
-    .updateMany(
-      filter = new JsonObject("""{"created":{"$type":"string"}}"""),
-      update = List(RawBsonDocument.parse("""{ $set: { "created": { $toDate : "$created"} }}"""))
-    ).toFuture()
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
