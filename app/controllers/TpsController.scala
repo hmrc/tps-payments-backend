@@ -16,21 +16,19 @@
 
 package controllers
 
-import java.time.{Instant}
 import auth.Actions
-
-import javax.inject.{Inject, Singleton}
 import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsPaymentsRepo
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import services.EmailService
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import util.EmailCrypto
 
+import java.time.Instant
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -60,16 +58,6 @@ class TpsController @Inject() (actions:      Actions,
     tpsRepo.upsert(request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
       Ok(toJson(request.body._id))
     }
-  }
-
-  def fixDb: Action[AnyContent] = actions.fixDbAction.async{ request =>
-    logger.info("[OPS-9461] fixing db")
-    for {
-      count <- tpsRepo.countAll()
-      updateResult: UpdateResult <- tpsRepo.fixDb
-      fixDbResult: String = s"[OPS-9461] allDocuments=${count.toString}, ${updateResult.toString}"
-      _ = logger.info(fixDbResult)
-    } yield Ok(fixDbResult)
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
