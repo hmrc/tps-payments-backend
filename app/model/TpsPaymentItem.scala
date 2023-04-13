@@ -27,7 +27,8 @@ case class TpsPaymentItem(
     headOfDutyIndicator: HeadOfDutyIndicator,
     updated:             Instant,
     customerName:        String,
-    chargeReference:     String                                     = "",
+    chargeReference:     String                = "",
+    //this is updated upon receiving notification from PciPal via payments-processor
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
     paymentSpecificData: PaymentSpecificData,
     taxType:             TaxType,

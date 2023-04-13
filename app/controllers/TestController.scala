@@ -16,14 +16,14 @@
 
 package controllers
 
-import java.time.{Instant}
-import javax.inject.{Inject, Singleton}
 import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, TpsPayments}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.TpsPaymentsRepo
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import java.time.Instant
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
@@ -41,7 +41,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRe
   }
 
   def storeTpsPayments(): Action[TpsPayments] = Action.async(parse.json[TpsPayments]) { implicit request =>
-    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
+    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh())))
 
     tpsRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
@@ -49,10 +49,11 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRe
   }
 
   def createTpsPayments: Action[TpsPaymentRequest] = Action.async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments = request.body.tpsPayments(Instant.now())
+    val tpsPayments: TpsPayments = request.body.tpsPayments(Instant.now())
 
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }
+
 }

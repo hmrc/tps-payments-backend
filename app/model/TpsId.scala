@@ -27,6 +27,6 @@ final case class TpsId(value: String) extends Id
 object TpsId {
   implicit val format: Format[TpsId] = implicitly[Format[String]].inmap(TpsId(_), _.value)
   implicit val journeyIdBinder: PathBindable[TpsId] = valueClassBinder(_.value)
-  def fresh: TpsId = TpsId(ObjectId.get().toHexString)
+  def fresh(): TpsId = TpsId(ObjectId.get().toHexString)
 }
 

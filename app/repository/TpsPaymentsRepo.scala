@@ -81,6 +81,7 @@ final class TpsPaymentsRepo @Inject() (
 
   def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
 
+  //TODO: there is missing index on that attribute ,each search results in a full scan which leads to poor performance and DB resources leak
   def findPaymentItem(id: PaymentItemId): Future[Option[TpsPaymentItem]] =
     find("payments.paymentItemId" -> Some(id)).map { payments =>
       val paymentItems = payments.flatMap { payment =>
@@ -96,8 +97,9 @@ final class TpsPaymentsRepo @Inject() (
     case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
   }
 
+  //TODO: there is missing index on that attribute, each search results in full scan...
   def findByPcipalSessionId(id: PcipalSessionId): Future[TpsPayments] =
-    find("pciPalSessionId" -> id.value).map { payments =>
+    find("pcipalSessionLaunchResponse.Id" -> id.value).map { payments =>
       if (payments.size > 1)
         throw new RuntimeException(s"Found ${payments.size.toString} records with id ${id.value}")
       else
@@ -110,6 +112,7 @@ final class TpsPaymentsRepo @Inject() (
   def findByReferenceForTest(reference: String): Future[List[TpsPayments]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
 
+  //TODO: there is missing index on that attribute, each search results in full scan...
   def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] = {
     find("payments.chargeReference" -> Json.obj("$in" -> toJson(modsReferences)))
       .map { listOfPayments =>

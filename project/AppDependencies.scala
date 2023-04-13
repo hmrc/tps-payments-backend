@@ -1,13 +1,10 @@
-import play.core.PlayVersion
-import play.sbt.PlayImport._
-import sbt.Keys.libraryDependencies
-import sbt._
+import sbt.*
 
 object AppDependencies {
 
   lazy val microserviceDependencies: Seq[ModuleID] = {
 
-    val bootstrapVersion = "7.14.0"
+    val bootstrapVersion = "7.15.0"
 
     val compile: Seq[ModuleID] = Seq(
       "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"         % "1.1.0",
