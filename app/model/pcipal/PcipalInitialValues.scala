@@ -16,11 +16,13 @@
 
 package model.pcipal
 
+import model.{HeadOfDutyIndicator, PaymentItemId}
+
 final case class PcipalInitialValues(
     clientId:           String,
     pid:                String,
     accountOfficeId:    String,
-    HODIdentifier:      String,
+    HODIdentifier:      HeadOfDutyIndicator,
     UTRReference:       String,
     name1:              String,
     amount:             String,
@@ -32,7 +34,7 @@ final case class PcipalInitialValues(
     endDate:            Option[String],
     vatPeriodReference: Option[String],
     vatRemittanceType:  Option[String],
-    paymentItemId:      String,
+    paymentItemId:      PaymentItemId,
     chargeReference:    String,
     taxRegimeDisplay:   String,
     reference:          String,

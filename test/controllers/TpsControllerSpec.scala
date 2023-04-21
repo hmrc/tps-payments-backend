@@ -19,8 +19,8 @@ package controllers
 import model.pcipal.PcipalSessionId
 import model.{PaymentItemId, TaxTypes, TpsId, TpsPayments}
 import play.api.http.Status
-import support.AuthStub._
 import services.EmailService
+import support.AuthStub._
 import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
@@ -35,7 +35,7 @@ class TpsControllerSpec extends ItSpec with Status {
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
     givenTheUserIsAuthenticatedAndAuthorised()
 
-    val id = connector.tpsPayments(tpsPaymentRequest).futureValue
+    val id = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
     val payment = connector.find(id).futureValue
 
     payment.payments.head.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.head.chargeReference
@@ -43,37 +43,23 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "store data when authorised" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    val result = connector.store(tpsPayments).futureValue
-    result shouldBe id
-  }
-
-  "store data and delete when authorised" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    val result = connector.store(tpsPayments).futureValue
-    result shouldBe id
-    val resultDelete = connector.delete(id).futureValue
-    resultDelete.status shouldBe OK
-
-  }
-  "getId" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    val result = connector.getId.futureValue
-    result.status shouldBe OK
+    val result = connector.upsert(tpsPayments).futureValue
+    result shouldBe ()
   }
 
   "Not authorised should get an exception" in {
     givenTheUserIsNotAuthenticated()
-    an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
+    an[Exception] should be thrownBy connector.upsert(tpsPayments).futureValue
   }
 
   "Insufficient Enrolments should get an exception" in {
     givenTheUserIsNotAuthorised("InsufficientEnrolments")
-    an[Exception] should be thrownBy connector.store(tpsPayments).futureValue
+    an[Exception] should be thrownBy connector.upsert(tpsPayments).futureValue
   }
 
   "Check that TpsData can be found" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
+    connector.upsert(tpsPayments).futureValue
     val result = connector.find(id).futureValue
     result shouldBe tpsPayments
   }
@@ -84,47 +70,10 @@ class TpsControllerSpec extends ItSpec with Status {
     result.getMessage should include(s"No payments found for id ${id.value}")
   }
 
-  "Check that TpsData can be found with decrypted email" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
-    val result = connector.findWithDecryptedEmail(id).futureValue
-    result shouldBe tpsPayments
-  }
-
-  "Check that TpsData can be found with no email present when attempting to decrypt" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPaymentsWithoutEmail).futureValue.getUpsertedId).isDefined shouldBe true
-    val result = connector.findWithDecryptedEmail(id).futureValue
-    result shouldBe tpsPaymentsWithoutEmail
-  }
-
-  "Check that TpsData can be found with blank email when attempting to decrypt" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPaymentsWithEmptyEmail).futureValue.getUpsertedId).isDefined shouldBe true
-    val result = connector.findWithDecryptedEmail(id).futureValue
-    result shouldBe tpsPaymentsWithEmptyEmail
-  }
-
-  "Check that TpsData cannot be found with decrypted email" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    val result = connector.findWithDecryptedEmail(id).failed.futureValue
-    result.getMessage should include(s"No payments found for id ${id.value}")
-  }
-
-  "Check that TpsData can be updated with pcipal-sessionId" in {
-    givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPayments.copy(pciPalSessionId = None)).futureValue.getUpsertedId).isDefined shouldBe true
-    val result = connector.find(id).futureValue
-    result shouldBe tpsPayments.copy(pciPalSessionId = None)
-    result.pciPalSessionId shouldBe None
-    connector.updateWithSessionId(id, pciPalSessionId).futureValue
-    val result2 = connector.find(id).futureValue
-    result2.pciPalSessionId shouldBe Some(pciPalSessionId)
-  }
-
   "update with pci-pal data" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
+    //    connector.upsert(tpsPaymentsWithEncryptedEmail).futureValue
+    connector.upsert(tpsPaymentsWithPcipalData).futureValue
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK
     val result: TpsPayments = connector.find(id).futureValue
@@ -144,7 +93,7 @@ class TpsControllerSpec extends ItSpec with Status {
 
   "get an exception if paymentItemId not found and trying to do an update" in {
     givenTheUserIsAuthenticatedAndAuthorised()
-    Option(repo.upsert(tpsPaymentsWithEncryptedEmail).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find paymentItemId: New")

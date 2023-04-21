@@ -25,13 +25,14 @@ import java.time.Instant
 case class TpsPayments(
     _id:                         TpsId,
     pid:                         String,
-    pciPalSessionId:             Option[PcipalSessionId]             = None,
     created:                     Instant                             = Instant.now(),
     payments:                    List[TpsPaymentItem],
     navigation:                  Option[Navigation]                  = None,
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
-) extends HasId[TpsId]
+) extends HasId[TpsId] {
+  lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
+}
 
 object TpsPayments {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

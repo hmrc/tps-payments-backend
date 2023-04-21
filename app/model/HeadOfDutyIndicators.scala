@@ -17,8 +17,8 @@
 package model
 
 import enumeratum._
-import util.EnumFormat
 import play.api.libs.json.Format
+import util.EnumFormat
 
 import scala.collection.immutable
 
@@ -81,5 +81,10 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
   case object C extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
+
+  def forCode(code: String): HeadOfDutyIndicator = values.find(_.toString == code) match {
+    case Some(x) => x
+    case None    => throw new RuntimeException(s"Could not find code $code")
+  }
 
 }

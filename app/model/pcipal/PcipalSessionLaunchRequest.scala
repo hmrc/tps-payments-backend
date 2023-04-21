@@ -17,6 +17,7 @@
 package model.pcipal
 
 import model.pcipal.PcipalInitialValues._
+import model.{HeadOfDutyIndicators, PaymentItemId}
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -60,26 +61,26 @@ object PcipalSessionLaunchRequest {
     if (!values.contains(s"${PcipalInitialValues.ClientID}${a.toString}")) acc
     else {
       val newPciPal = PcipalInitialValues(
-        values(s"${PcipalInitialValues.ClientID}${a.toString}"),
-        values(s"${PcipalInitialValues.PID}${a.toString}"),
-        values(s"${PcipalInitialValues.AccountOfficeID}${a.toString}"),
-        values(s"${PcipalInitialValues.HODIdentifier}${a.toString}"),
-        values(s"${PcipalInitialValues.UTRReference}${a.toString}"),
-        values(s"${PcipalInitialValues.Name1}${a.toString}"),
-        values(s"${PcipalInitialValues.Amount}${a.toString}"),
-        values.get(s"${PcipalInitialValues.TaxAmount}${a.toString}"),
-        values.get(s"${PcipalInitialValues.NICAmount}${a.toString}"),
-        values.get(s"${PcipalInitialValues.LNPClass2}${a.toString}"),
-        values.get(s"${PcipalInitialValues.NIRSRate}${a.toString}"),
-        values.get(s"${PcipalInitialValues.StartDate}${a.toString}"),
-        values.get(s"${PcipalInitialValues.EndDate}${a.toString}"),
-        values.get(s"${PcipalInitialValues.VATPeriodReference}${a.toString}"),
-        values.get(s"${PcipalInitialValues.VATRemittanceType}${a.toString}"),
-        values(s"${PcipalInitialValues.PaymentItemID}${a.toString}"),
-        values(s"${PcipalInitialValues.ChargeReference}${a.toString}"),
-        values(s"${PcipalInitialValues.TaxRegimeDisplay}${a.toString}"),
-        values(s"${PcipalInitialValues.ReferenceDisplay}${a.toString}"),
-        a.toString)
+        clientId           = values(s"${PcipalInitialValues.ClientID}${a.toString}"),
+        pid                = values(s"${PcipalInitialValues.PID}${a.toString}"),
+        accountOfficeId    = values(s"${PcipalInitialValues.AccountOfficeID}${a.toString}"),
+        HODIdentifier      = HeadOfDutyIndicators.forCode(values(s"${PcipalInitialValues.HODIdentifier}${a.toString}")),
+        UTRReference       = values(s"${PcipalInitialValues.UTRReference}${a.toString}"),
+        name1              = values(s"${PcipalInitialValues.Name1}${a.toString}"),
+        amount             = values(s"${PcipalInitialValues.Amount}${a.toString}"),
+        taxAmount          = values.get(s"${PcipalInitialValues.TaxAmount}${a.toString}"),
+        nicAmount          = values.get(s"${PcipalInitialValues.NICAmount}${a.toString}"),
+        lnpClass2          = values.get(s"${PcipalInitialValues.LNPClass2}${a.toString}"),
+        nirRate            = values.get(s"${PcipalInitialValues.NIRSRate}${a.toString}"),
+        startDate          = values.get(s"${PcipalInitialValues.StartDate}${a.toString}"),
+        endDate            = values.get(s"${PcipalInitialValues.EndDate}${a.toString}"),
+        vatPeriodReference = values.get(s"${PcipalInitialValues.VATPeriodReference}${a.toString}"),
+        vatRemittanceType  = values.get(s"${PcipalInitialValues.VATRemittanceType}${a.toString}"),
+        paymentItemId      = PaymentItemId(values(s"${PcipalInitialValues.PaymentItemID}${a.toString}")),
+        chargeReference    = values(s"${PcipalInitialValues.ChargeReference}${a.toString}"),
+        taxRegimeDisplay   = values(s"${PcipalInitialValues.TaxRegimeDisplay}${a.toString}"),
+        reference          = values(s"${PcipalInitialValues.ReferenceDisplay}${a.toString}"),
+        increment          = a.toString)
 
       unwrap(values, a + 1, acc :+ newPciPal)
     }
