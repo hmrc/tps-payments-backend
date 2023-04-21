@@ -1,18 +1,29 @@
-# microservice specific routes
-POST       /tps-payments                                            controllers.TpsController.createTpsPayments()
-POST       /store                                                   controllers.TpsController.storeTpsPayments()
-GET        /find/id/:id                                             controllers.TpsController.findTpsPayments(id: TpsId)
-GET        /find-with-decrypted-email/id/:id                        controllers.TpsController.findTpsPaymentsWithDecryptedEmail(id: TpsId)
-GET        /get-id                                                  controllers.TpsController.getId()
-GET        /payment-items/:id/tax-type                              controllers.TpsController.getTaxType(id: PaymentItemId)
-DELETE     /delete/id/:id                                           controllers.TpsController.delete(id: TpsId)
-PATCH      /update-with-pid                                         controllers.TpsController.updateWithPcipalSessionId()
-PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData()
+#see PAS-827 integration with Passangers bc-passengers-stri -frontend https://github.com/hmrc/bc-passengers-stride-frontend/blob/00bb9e24a7c137a8be418c2b714fe021cc4d6c45/app/services/PayApiService.scala#L95
+#see DDCE-1993 integration wtih MIB merchandise-in-baggage-frontend https://github.com/hmrc/merchandise-in-baggage-frontend/blob/0e26b33444e678c2648a61db355c5afd2c5a3b23/app/uk/gov/hmrc/merchandiseinbaggage/connectors/TpsPaymentsBackendConnector.scala#L32
+# TODO: create dedicated, independent endpoints for those µservices calling this endpoint and return next-url instead of tpsId. Once update done on PNGR and MIB remove this endpoint
+# Warn, this endpoint accepts optional email in the body, but clients don't pass this data
+POST       /tps-payments                                            controllers.TpsController.startTpsJourneyMibOrPngr()
 
-GET        /payment-items/:id/mods-amendment-ref                    paymentsprocessor.PaymentsProcessorController.findModsSpecificData(id: PaymentItemId)
-
-POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments()
+#TODO: once tps-payments is renamed to Journey, remove "upsert" part from that URL
+POST       /tps-payments/upsert                                     controllers.TpsController.upsert()
+GET        /tps-payments/:id                                        controllers.TpsController.findTpsPayments(id: TpsId)
 
 # Denied Refs:
 POST       /verify-refs                                             deniedrefs.DeniedRefsController.verifyRefs()
 POST       /upload-denied-refs                                      deniedrefs.DeniedRefsController.uploadDeniedRefs()
+
+#used by payments-processor upon receiving notifcation from PciPal
+#PciPal calls payments-processor, and then it calls below endpoint:
+PATCH      /update-with-pcipal-data                                 controllers.TpsController.updateWithPcipalData()
+
+#used by payments-processor for MIB payments upon receiving notifcation from PciPal
+#see MIBM-55
+GET        /payment-items/:id/tax-type                              controllers.TpsController.getTaxType(id: PaymentItemId)
+
+#used by payments-processor for MIB payments upon receiving notifcation from PciPal
+#see OPS-6111
+GET        /payment-items/:id/mods-amendment-ref                    paymentsprocessor.PaymentsProcessorController.findModsSpecificData(id: PaymentItemId)
+
+#used by payments-reconciliation when reconciling MIB transactions
+#see OPS-5810
+POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments()

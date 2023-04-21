@@ -1,5 +1,6 @@
 import sbt._
 
+
 object AppDependencies {
 
   lazy val microserviceDependencies: Seq[ModuleID] = {

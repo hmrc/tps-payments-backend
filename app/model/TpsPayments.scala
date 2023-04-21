@@ -16,19 +16,23 @@
 
 package model
 
-import java.time.{Instant}
-import model.pcipal.PcipalSessionId
+import model.pcipal.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import play.api.libs.json.{Json, OFormat}
 import repository.Repo.HasId
 
+import java.time.Instant
+
 case class TpsPayments(
-    _id:             TpsId,
-    pid:             String,
-    pciPalSessionId: Option[PcipalSessionId] = None,
-    created:         Instant                 = Instant.now(),
-    payments:        List[TpsPaymentItem],
-    navigation:      Option[Navigation]      = None
-) extends HasId[TpsId]
+    _id:                         TpsId,
+    pid:                         String,
+    created:                     Instant                             = Instant.now(),
+    payments:                    List[TpsPaymentItem],
+    navigation:                  Option[Navigation]                  = None,
+    pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
+    pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
+) extends HasId[TpsId] {
+  lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
+}
 
 object TpsPayments {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

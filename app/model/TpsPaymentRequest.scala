@@ -22,7 +22,14 @@ import play.api.libs.json.{Json, OFormat}
 import java.time.Instant
 import scala.Option.empty
 
-final case class TpsPaymentRequestItem(chargeReference: String, customerName: String, amount: BigDecimal, taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData, email: Option[String])
+final case class TpsPaymentRequestItem(
+    chargeReference:     String,
+    customerName:        String,
+    amount:              BigDecimal,
+    taxRegimeDisplay:    String,
+    taxType:             TaxType,
+    paymentSpecificData: PaymentSpecificData,
+    email:               Option[String])
 
 object TpsPaymentRequestItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
@@ -34,10 +41,11 @@ case class TpsPaymentRequest(
     payments:   Seq[TpsPaymentRequestItem],
     navigation: Navigation
 ) {
+
   def tpsPayments(now: Instant): TpsPayments = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(
-        paymentItemId       = Some(PaymentItemId.fresh),
+        paymentItemId       = Some(PaymentItemId.fresh()),
         amount              = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = now,
@@ -50,7 +58,7 @@ case class TpsPaymentRequest(
       )
     }.toList
 
-    TpsPayments(_id        = TpsId.fresh, pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
+    TpsPayments(_id        = TpsId.fresh(), pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
   }
 }
 

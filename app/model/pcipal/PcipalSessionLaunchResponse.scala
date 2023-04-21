@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package model
-import controllers.ValueClassBinder.valueClassBinder
-import org.bson.types.ObjectId
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import play.api.mvc.PathBindable
+package model.pcipal
 
-final case class PaymentItemId(
-    value: String
-)
+import play.api.libs.json.{Json, OFormat}
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = implicitly[Format[String]].inmap(PaymentItemId(_), _.value)
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-  def fresh(): PaymentItemId = PaymentItemId(ObjectId.get().toHexString)
+final case class PcipalSessionLaunchResponse(Id: PcipalSessionId, LinkId: String)
+
+object PcipalSessionLaunchResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]
 }
 

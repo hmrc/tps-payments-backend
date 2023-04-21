@@ -29,7 +29,7 @@ import util.EmailCrypto
 
 import java.time.Instant
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class TpsController @Inject() (actions:      Actions,
@@ -40,49 +40,44 @@ class TpsController @Inject() (actions:      Actions,
 
   val logger: Logger = Logger(this.getClass)
 
-  val createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments = request.body.tpsPayments(Instant.now())
-
+  def startTpsJourneyMibOrPngr: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
+    val tpsPayments: TpsPayments = encryptEmail(request.body.tpsPayments(Instant.now()))
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }
 
-  def storeTpsPayments(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
-    val updatedPayments = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh)))
-    val updatedPaymentsWithEncryptedEmails = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
-      case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
-      case _           => tpsPaymentItem
-    })
-
-    tpsRepo.upsert(request.body.copy(payments = updatedPaymentsWithEncryptedEmails)).map { _ =>
+  def upsert(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
+    val tpsPayments: TpsPayments = encryptEmail(request.body)
+    tpsRepo.upsert(tpsPayments).map { _ =>
       Ok(toJson(request.body._id))
     }
   }
 
-  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"findTpsPayments received vrn ${id.value}")
-    tpsRepo.findPayment(id).map {
-      case Some(tpsPayments) => Ok(toJson(tpsPayments))
-      case None              => NotFound(s"No payments found for id ${id.value}")
-    }
+  private def encryptEmail(tpsPayments: TpsPayments): TpsPayments = {
+    val paymentItems: List[TpsPaymentItem] = tpsPayments.payments
+    val paymentItemsWithEncryptedEmails: List[TpsPaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
+      case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
+      case _           => tpsPaymentItem
+    })
+    tpsPayments.copy(payments = paymentItemsWithEncryptedEmails)
   }
 
-  def findTpsPaymentsWithDecryptedEmail(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"findTpsPaymentsWithDecryptedEmail received vrn ${id.value}")
-
+  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     tpsRepo.findPayment(id).map {
       case Some(tpsPayments) =>
-        val tpsPaymentItemsWithDecryptedEmail = tpsPayments.payments.map(
-          nextTpsPaymentItem => nextTpsPaymentItem.copy(email = emailCrypto.maybeDecryptEmail(nextTpsPaymentItem.email)))
-        Ok(toJson(tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)))
+        val tpsPaymentItemsWithDecryptedEmail: List[TpsPaymentItem] = tpsPayments
+          .payments
+          .map(nextTpsPaymentItem =>
+            nextTpsPaymentItem.copy(
+              email = emailCrypto.maybeDecryptEmail(nextTpsPaymentItem.email)
+            )
+          )
+
+        val tpsPaymentsWithDecryptedEmails: TpsPayments = tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)
+        Ok(toJson(tpsPaymentsWithDecryptedEmails))
       case None => NotFound(s"No payments found for id ${id.value}")
     }
-  }
-
-  def getId: Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"getId")
-    Future.successful(Ok(toJson(TpsId.fresh)))
   }
 
   def getTaxType(id: PaymentItemId): Action[AnyContent] = Action.async {
@@ -95,22 +90,6 @@ class TpsController @Inject() (actions:      Actions,
       case None =>
         logger.debug("taxType not found")
         NotFound(s"No payment item found for id ${id.value}")
-    }
-  }
-
-  def delete(tpsId: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
-    logger.debug(s"delete, id= ${tpsId.value}")
-    tpsRepo.removeById(tpsId).map(_ => Ok)
-  }
-
-  def updateWithPcipalSessionId(): Action[UpdateRequest] = actions.strideAuthenticateAction().async(parse.json[UpdateRequest]) { implicit request =>
-    logger.debug(s"updateWithPcipalSessionId, update= ${request.body.toString}")
-    for {
-      record <- tpsRepo.getPayment(request.body.tpsId)
-      newRecord = record.copy(pciPalSessionId = Some(request.body.pcipalSessionId))
-      _ <- tpsRepo.upsert(newRecord)
-    } yield {
-      Ok
     }
   }
 

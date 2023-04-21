@@ -16,9 +16,13 @@
 
 package model.pcipal
 
-import model.{PaymentItemId, StatusType, HeadOfDutyIndicator}
+import model.{HeadOfDutyIndicator, PaymentItemId, StatusType}
 import play.api.libs.json.{Json, OFormat}
 
+/**
+ * This represents notification data being sent from PciPal to the payments-processor.
+ * Also named as PciPal data in other places
+ */
 final case class ChargeRefNotificationPcipalRequest(
     HoD:                  HeadOfDutyIndicator,
     TaxReference:         String,
