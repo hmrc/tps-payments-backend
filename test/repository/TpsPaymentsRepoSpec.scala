@@ -45,8 +45,8 @@ class TpsPaymentsRepoSpec extends ItSpec {
   }
 
   "findByPcipalSessionId should throw error when more than one payment found" in {
-    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
-    Option(repo.upsert(tpsPayments.copy(_id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(repo.upsert(tpsPaymentsWithPcipalData.copy(_id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
     intercept[Exception] {
       repo.findByPcipalSessionId(PcipalSessionId("48c978bb")).futureValue
     }.getMessage should include("Found 2 records with id 48c978bb.")

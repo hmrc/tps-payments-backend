@@ -1,9 +1,10 @@
-#see PAS-827 integration with Passangers bc-passengers-stride-frontend https://github.com/hmrc/bc-passengers-stride-frontend/blob/00bb9e24a7c137a8be418c2b714fe021cc4d6c45/app/services/PayApiService.scala#L95
+#see PAS-827 integration with Passangers bc-passengers-stri -frontend https://github.com/hmrc/bc-passengers-stride-frontend/blob/00bb9e24a7c137a8be418c2b714fe021cc4d6c45/app/services/PayApiService.scala#L95
 #see DDCE-1993 integration wtih MIB merchandise-in-baggage-frontend https://github.com/hmrc/merchandise-in-baggage-frontend/blob/0e26b33444e678c2648a61db355c5afd2c5a3b23/app/uk/gov/hmrc/merchandiseinbaggage/connectors/TpsPaymentsBackendConnector.scala#L32
 # TODO: create dedicated, independent endpoints for those µservices calling this endpoint and return next-url instead of tpsId. Once update done on PNGR and MIB remove this endpoint
 # Warn, this endpoint accepts optional email in the body, but clients don't pass this data
-POST       /tps-payments                                            controllers.TpsController.createTpsPayments()
+POST       /tps-payments                                            controllers.TpsController.startTpsJourneyMibOrPngr()
 
+#TODO: once tps-payments is renamed to Journey, remove "upsert" part from that URL
 POST       /tps-payments/upsert                                     controllers.TpsController.upsert()
 GET        /tps-payments/:id                                        controllers.TpsController.findTpsPayments(id: TpsId)
 

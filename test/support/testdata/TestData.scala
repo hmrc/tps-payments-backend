@@ -20,14 +20,14 @@ import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
 import model.StatusTypes.validated
 import model.TaxTypes.{MIB, P800, PNGR, Sa}
 import model._
-import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import model.pcipal._
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
 import java.time.{Instant, LocalDateTime}
 
 object TestData {
-  private val createdString: String = "2020-01-20T11:56:46Z"
+  private val createdString: String = "2040-01-20T11:56:46Z"
   private val createdStringLegacy: String = "2020-01-20T11:56:46"
   private val created: Instant = Instant.parse(createdString)
   private val reference = "JE231111"
@@ -140,7 +140,7 @@ object TestData {
     TpsPayments(
       id,
       pid,
-      Some(pciPalSessionId),
+      //      Some(pciPalSessionId),
       created,
       List(
         TpsPaymentItem(
@@ -155,13 +155,51 @@ object TestData {
           P800,
           Some("test@email.com"))))
 
+  val navigation = Navigation(back     = "back", reset = "reset", finish = "finish", callback = "callback")
+
+  val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
+    FlowId              = 123,
+    InitialValues       = List(
+      PcipalInitialValues(
+        clientId           = "clientId123",
+        pid                = "pid007",
+        accountOfficeId    = "accofficid001",
+        HODIdentifier      = HeadOfDutyIndicators.K,
+        UTRReference       = "1234567895K",
+        name1              = "AR",
+        amount             = "1.92",
+        taxAmount          = None,
+        nicAmount          = None,
+        lnpClass2          = None,
+        nirRate            = None,
+        startDate          = None,
+        endDate            = None,
+        vatPeriodReference = None,
+        vatRemittanceType  = None,
+        paymentItemId      = PaymentItemId("payment-item-id123123"),
+        chargeReference    = "1234567895K",
+        taxRegimeDisplay   = "SA",
+        reference          = "1234567895K",
+        increment          = "1"
+      )
+    ),
+    UTRBlacklistFlag    = "",
+    postcodeFlag        = "",
+    taxRegime           = "SA",
+    TotalTaxAmountToPay = "1.92",
+    callbackUrl         = navigation.callback,
+    backUrl             = navigation.back,
+    resetUrl            = navigation.reset,
+    finishUrl           = navigation.finish
+  )
+
   val tpsPaymentsWithPcipalData: TpsPayments =
     TpsPayments(
-      id,
-      pid,
-      Some(pciPalSessionId),
-      created,
-      List(
+      _id = id,
+      pid = pid,
+      //      Some(pciPalSessionId),
+      created                     = created,
+      payments                    = List(
         TpsPaymentItem(
           Some(paymentItemId),
           1.92,
@@ -172,13 +210,18 @@ object TestData {
           Some(chargeRefNotificationPcipalRequest),
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
           P800,
-          Some("test@email.com"))))
+          Some("test@email.com"))
+      ),
+      navigation                  = Some(navigation),
+      pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
+      pcipalSessionLaunchResponse = Some(PcipalSessionLaunchResponse(Id = pciPalSessionId, "LinkId123"))
+    )
 
   val tpsPaymentsWithEncryptedEmail: TpsPayments =
     TpsPayments(
       id,
       pid,
-      Some(pciPalSessionId),
+      //      Some(pciPalSessionId),
       created,
       List(
         TpsPaymentItem(
@@ -197,7 +240,7 @@ object TestData {
     TpsPayments(
       id,
       pid,
-      Some(pciPalSessionId),
+      //      Some(pciPalSessionId),
       created,
       List(
         TpsPaymentItem(
@@ -216,7 +259,7 @@ object TestData {
     TpsPayments(
       id,
       pid,
-      Some(pciPalSessionId),
+      //      Some(pciPalSessionId),
       created,
       List(
         TpsPaymentItem(
@@ -232,11 +275,11 @@ object TestData {
           Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
-    _id             = id,
-    pid             = pid,
-    pciPalSessionId = Some(pciPalSessionId),
-    created         = created,
-    payments        = List(
+    _id = id,
+    pid = pid,
+    //    pciPalSessionId = Some(pciPalSessionId),
+    created  = created,
+    payments = List(
       TpsPaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,
@@ -255,11 +298,11 @@ object TestData {
         email               = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
-    _id             = id,
-    pid             = pid,
-    pciPalSessionId = Some(pciPalSessionId),
-    created         = created,
-    payments        = List(
+    _id = id,
+    pid = pid,
+    //    pciPalSessionId = Some(pciPalSessionId),
+    created  = created,
+    payments = List(
       TpsPaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,

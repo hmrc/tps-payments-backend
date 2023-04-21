@@ -40,25 +40,27 @@ class TpsController @Inject() (actions:      Actions,
 
   val logger: Logger = Logger(this.getClass)
 
-  def createTpsPayments: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments = request.body.tpsPayments(Instant.now())
-
+  def startTpsJourneyMibOrPngr: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
+    val tpsPayments: TpsPayments = encryptEmail(request.body.tpsPayments(Instant.now()))
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }
 
   def upsert(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
-    val updatedPayments: List[TpsPaymentItem] = request.body.payments
-    val updatedPaymentsWithEncryptedEmails: List[TpsPaymentItem] = updatedPayments.map(tpsPaymentItem => tpsPaymentItem.email match {
-      case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
-      case _           => tpsPaymentItem
-    })
-
-    val tpsPayments = request.body.copy(payments = updatedPaymentsWithEncryptedEmails)
+    val tpsPayments: TpsPayments = encryptEmail(request.body)
     tpsRepo.upsert(tpsPayments).map { _ =>
       Ok(toJson(request.body._id))
     }
+  }
+
+  private def encryptEmail(tpsPayments: TpsPayments): TpsPayments = {
+    val paymentItems: List[TpsPaymentItem] = tpsPayments.payments
+    val paymentItemsWithEncryptedEmails: List[TpsPaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
+      case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
+      case _           => tpsPaymentItem
+    })
+    tpsPayments.copy(payments = paymentItemsWithEncryptedEmails)
   }
 
   def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
