@@ -20,7 +20,7 @@ import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
 import model.StatusTypes.validated
 import model.TaxTypes.{MIB, P800, PNGR, Sa}
 import model._
-import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import model.pcipal._
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
@@ -275,9 +275,8 @@ object TestData {
           Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
-    _id = id,
-    pid = pid,
-    //    pciPalSessionId = Some(pciPalSessionId),
+    _id      = id,
+    pid      = pid,
     created  = created,
     payments = List(
       TpsPaymentItem(
@@ -298,9 +297,8 @@ object TestData {
         email               = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
-    _id = id,
-    pid = pid,
-    //    pciPalSessionId = Some(pciPalSessionId),
+    _id      = id,
+    pid      = pid,
     created  = created,
     payments = List(
       TpsPaymentItem(
