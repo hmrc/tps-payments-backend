@@ -20,7 +20,7 @@ import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
 import model.StatusTypes.validated
 import model.TaxTypes.{MIB, P800, PNGR, Sa}
 import model._
-import model.pcipal._
+import model.pcipal.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 
