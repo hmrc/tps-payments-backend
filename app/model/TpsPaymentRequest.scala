@@ -36,7 +36,7 @@ object TpsPaymentRequestItem {
   implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
 }
 
-case class TpsPaymentRequest(
+final case class TpsPaymentRequest(
     pid:        String,
     payments:   Seq[TpsPaymentRequestItem],
     navigation: Navigation

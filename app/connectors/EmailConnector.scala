@@ -17,12 +17,11 @@
 package connectors
 
 import config.AppConfig
-
-import javax.inject.{Inject, Singleton}
 import model.EmailSendRequest
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -46,6 +45,5 @@ final class EmailConnector @Inject() (
         )
       )
     )
-    Future.successful(())
   }
 }

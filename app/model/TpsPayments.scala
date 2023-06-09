@@ -22,7 +22,7 @@ import repository.Repo.HasId
 
 import java.time.Instant
 
-case class TpsPayments(
+final case class TpsPayments(
     _id:                         TpsId,
     pid:                         String,
     created:                     Instant                             = Instant.now(),

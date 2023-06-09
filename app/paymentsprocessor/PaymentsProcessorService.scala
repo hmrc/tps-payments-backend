@@ -16,9 +16,8 @@
 
 package paymentsprocessor
 
-import model.{MibSpecificData, PaymentItemId, PaymentSpecificData}
+import model.{MibSpecificData, PaymentItemId}
 import repository.TpsPaymentsRepo
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -26,7 +25,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentsProcessorService @Inject() (repo: TpsPaymentsRepo)(implicit executionContext: ExecutionContext) {
 
-  def findModsPaymentsByReference(paymentItemId: PaymentItemId)(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] = {
+  def findModsPaymentsByReference(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] = {
     repo.findPaymentItem(paymentItemId).map {
       case Some(paymentItem) =>
         paymentItem.paymentSpecificData match {

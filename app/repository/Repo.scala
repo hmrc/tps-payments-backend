@@ -95,7 +95,7 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .countDocuments()
     .toFuture()
 
-  def removeAll() = collection
+  def removeAll(): Future[Unit] = collection
     .deleteMany(Filters.empty())
     .toFuture()
     .map(_ => ())

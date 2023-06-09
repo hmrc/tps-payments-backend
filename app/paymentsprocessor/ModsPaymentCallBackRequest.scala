@@ -18,7 +18,7 @@ package paymentsprocessor
 
 import play.api.libs.json._
 
-case class ModsPaymentCallBackRequest(
+final case class ModsPaymentCallBackRequest(
     chargeReference:    String,
     amendmentReference: Option[Int]
 )

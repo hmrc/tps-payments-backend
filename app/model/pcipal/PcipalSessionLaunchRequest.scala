@@ -57,6 +57,7 @@ object PcipalSessionLaunchRequest {
   }
 
   @tailrec
+  @SuppressWarnings(Array("org.wartremover.warts.ListAppend"))
   private def unwrap(values: Map[String, String], a: Int = 1, acc: List[PcipalInitialValues] = List.empty[PcipalInitialValues]): List[PcipalInitialValues] = {
     if (!values.contains(s"${PcipalInitialValues.ClientID}${a.toString}")) acc
     else {

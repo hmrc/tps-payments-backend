@@ -16,16 +16,17 @@
 
 package deniedrefs
 
+import _root_.model.Reference
+import _root_.model.SafeEquals._
 import akka.Done
 import akka.stream.Materializer
 import akka.stream.alpakka.csv.scaladsl.CsvParsing
 import akka.stream.scaladsl.{FileIO, Keep, Sink}
 import akka.util.ByteString
-import model._
-import _root_.model.Reference
 import deniedrefs.model.VerifyRefStatuses._
+import deniedrefs.model._
+import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
-import play.api.libs.json.Json
 import util.Crypto
 
 import java.nio.file.{Files, Path}
@@ -45,7 +46,7 @@ class DeniedRefsService @Inject() (
   /**
    * Upserts object into mongo. It makes sure refs are encrypted before storing in mongo.
    */
-  def upsert(deniedRefs: DeniedRefs) = {
+  def upsert(deniedRefs: DeniedRefs): Future[UpdateResult] = {
     val deniedRefsEncryted = deniedRefs.copy(refs = deniedRefs.refs.map(ref => Reference(crypto.encrypt(ref.value))))
     deniedRefsRepo.upsert(deniedRefsEncryted)
   }
@@ -65,6 +66,7 @@ class DeniedRefsService @Inject() (
       .map(decryptDeniedRefs)
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def decryptDeniedRefs(encryptedDeniedRefs: DeniedRefs): DeniedRefs = {
     val decryptionResult: List[Try[String]] = encryptedDeniedRefs
       .refs
@@ -134,7 +136,7 @@ class DeniedRefsService @Inject() (
           logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
           updateCache(latestId)
         case (Some(cached), Some(latestId)) =>
-          if (cached._id == latestId) {
+          if (cached._id === latestId) {
             logger.debug(s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]")
             Future.successful(())
           } else {

@@ -19,7 +19,7 @@ package paymentsprocessor
 import model.PaymentItemId
 import play.api.libs.json.{Json, OFormat}
 
-case class FindModsPaymentSpecificDataRequest(paymentItemId: PaymentItemId)
+final case class FindModsPaymentSpecificDataRequest(paymentItemId: PaymentItemId)
 
 object FindModsPaymentSpecificDataRequest {
   implicit val format: OFormat[FindModsPaymentSpecificDataRequest] = Json.format[FindModsPaymentSpecificDataRequest]

@@ -29,7 +29,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class TestController @Inject() (cc: ControllerComponents, tpsRepo: TpsPaymentsRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
+  private val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
     "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
 
   def removeTestData(): Action[AnyContent] = Action.async {

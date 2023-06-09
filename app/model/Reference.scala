@@ -16,8 +16,8 @@
 
 package model
 
-import play.api.libs.json.{Format, Json, OFormat}
 import play.api.libs.functional.syntax._
+import play.api.libs.json.Format
 
 final case class Reference(value: String)
 
