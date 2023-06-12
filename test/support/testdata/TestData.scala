@@ -100,19 +100,19 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val mibPayments: TpsPayments = tpsPaymentRequestGeneric("MIB", TaxTypes.MIB, MibSpecificData("chargeReference", BigDecimal(1), BigDecimal(2))).tpsPayments(created)
-  val childBenefitPayments: TpsPayments = tpsPaymentRequestGeneric("ChildBenefitsRepayments", TaxTypes.ChildBenefitsRepayments, ChildBenefitSpecificData("childBenefitRef")).tpsPayments(created)
-  val saPayments: TpsPayments = tpsPaymentRequestGeneric("SA", TaxTypes.Sa, SaSpecificData("saRef")).tpsPayments(created)
-  val sdltPayments: TpsPayments = tpsPaymentRequestGeneric("SDLT", TaxTypes.Sdlt, SdltSpecificData("sdltRef")).tpsPayments(created)
-  val safePayments: TpsPayments = tpsPaymentRequestGeneric("SAFE", TaxTypes.Safe, SafeSpecificData("safeRef")).tpsPayments(created)
-  val cotaxPayments: TpsPayments = tpsPaymentRequestGeneric("COTAX", TaxTypes.Cotax, CotaxSpecificData("cotaxRef")).tpsPayments(created)
-  val ntcPayments: TpsPayments = tpsPaymentRequestGeneric("NTC", TaxTypes.Ntc, NtcSpecificData("ntcRef")).tpsPayments(created)
-  val payePayments: TpsPayments = tpsPaymentRequestGeneric("PAYE", TaxTypes.Paye, PayeSpecificData("payeRef", BigDecimal(100), BigDecimal(100))).tpsPayments(created)
-  val npsPayments: TpsPayments = tpsPaymentRequestGeneric("NPS", TaxTypes.Nps, NpsSpecificData("npsRef", "1", "2", "3", BigDecimal(10))).tpsPayments(created)
-  val vatPayments: TpsPayments = tpsPaymentRequestGeneric("VAT", TaxTypes.Vat, VatSpecificData("vatRef", "someRemittanceType")).tpsPayments(created)
-  val pptPayments: TpsPayments = tpsPaymentRequestGeneric("PPT", TaxTypes.Ppt, PptSpecificData("pptRef")).tpsPayments(created)
+  val mibPayments: Journey = tpsPaymentRequestGeneric("MIB", TaxTypes.MIB, MibSpecificData("chargeReference", BigDecimal(1), BigDecimal(2))).tpsPayments(created)
+  val childBenefitPayments: Journey = tpsPaymentRequestGeneric("ChildBenefitsRepayments", TaxTypes.ChildBenefitsRepayments, ChildBenefitSpecificData("childBenefitRef")).tpsPayments(created)
+  val saPayments: Journey = tpsPaymentRequestGeneric("SA", TaxTypes.Sa, SaSpecificData("saRef")).tpsPayments(created)
+  val sdltPayments: Journey = tpsPaymentRequestGeneric("SDLT", TaxTypes.Sdlt, SdltSpecificData("sdltRef")).tpsPayments(created)
+  val safePayments: Journey = tpsPaymentRequestGeneric("SAFE", TaxTypes.Safe, SafeSpecificData("safeRef")).tpsPayments(created)
+  val cotaxPayments: Journey = tpsPaymentRequestGeneric("COTAX", TaxTypes.Cotax, CotaxSpecificData("cotaxRef")).tpsPayments(created)
+  val ntcPayments: Journey = tpsPaymentRequestGeneric("NTC", TaxTypes.Ntc, NtcSpecificData("ntcRef")).tpsPayments(created)
+  val payePayments: Journey = tpsPaymentRequestGeneric("PAYE", TaxTypes.Paye, PayeSpecificData("payeRef", BigDecimal(100), BigDecimal(100))).tpsPayments(created)
+  val npsPayments: Journey = tpsPaymentRequestGeneric("NPS", TaxTypes.Nps, NpsSpecificData("npsRef", "1", "2", "3", BigDecimal(10))).tpsPayments(created)
+  val vatPayments: Journey = tpsPaymentRequestGeneric("VAT", TaxTypes.Vat, VatSpecificData("vatRef", "someRemittanceType")).tpsPayments(created)
+  val pptPayments: Journey = tpsPaymentRequestGeneric("PPT", TaxTypes.Ppt, PptSpecificData("pptRef")).tpsPayments(created)
 
-  val id: TpsId = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
+  val id: JourneyId = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")
   val paymentItemId: PaymentItemId = PaymentItemId("paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91")
 
@@ -136,8 +136,8 @@ object TestData {
     CardLast4            = "0123"
   )
 
-  val tpsPayments: TpsPayments =
-    TpsPayments(
+  val tpsPayments: Journey =
+    Journey(
       id,
       pid,
       //      Some(pciPalSessionId),
@@ -193,8 +193,8 @@ object TestData {
     finishUrl           = navigation.finish
   )
 
-  val tpsPaymentsWithPcipalData: TpsPayments =
-    TpsPayments(
+  val tpsPaymentsWithPcipalData: Journey =
+    Journey(
       _id = id,
       pid = pid,
       //      Some(pciPalSessionId),
@@ -217,8 +217,8 @@ object TestData {
       pcipalSessionLaunchResponse = Some(PcipalSessionLaunchResponse(Id = pciPalSessionId, "LinkId123"))
     )
 
-  val tpsPaymentsWithEncryptedEmail: TpsPayments =
-    TpsPayments(
+  val tpsPaymentsWithEncryptedEmail: Journey =
+    Journey(
       id,
       pid,
       //      Some(pciPalSessionId),
@@ -236,8 +236,8 @@ object TestData {
           P800,
           Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))))
 
-  val tpsPaymentsWithoutEmail: TpsPayments =
-    TpsPayments(
+  val tpsPaymentsWithoutEmail: Journey =
+    Journey(
       id,
       pid,
       //      Some(pciPalSessionId),
@@ -255,8 +255,8 @@ object TestData {
           P800,
           None)))
 
-  val tpsPaymentsWithEmptyEmail: TpsPayments =
-    TpsPayments(
+  val tpsPaymentsWithEmptyEmail: Journey =
+    Journey(
       id,
       pid,
       //      Some(pciPalSessionId),
@@ -274,7 +274,7 @@ object TestData {
           P800,
           Some(""))))
 
-  val modsTpsPaymentsNoAmendmentReference: TpsPayments = TpsPayments(
+  val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
     _id      = id,
     pid      = pid,
     created  = created,
@@ -296,7 +296,7 @@ object TestData {
         taxType             = MIB,
         email               = None)))
 
-  val modsTpsPaymentsWithAnAmendmentReference: TpsPayments = TpsPayments(
+  val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
     _id      = id,
     pid      = pid,
     created  = created,

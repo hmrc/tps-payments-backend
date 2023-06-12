@@ -17,7 +17,7 @@
 package controllers
 
 import model.pcipal.PcipalSessionId
-import model.{PaymentItemId, TaxTypes, TpsId, TpsPayments}
+import model.{PaymentItemId, TaxTypes, JourneyId, Journey}
 import play.api.http.Status
 import services.EmailService
 import support.AuthStub._
@@ -76,7 +76,7 @@ class TpsControllerSpec extends ItSpec with Status {
     connector.upsert(tpsPaymentsWithPcipalData).futureValue
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK
-    val result: TpsPayments = connector.find(id).futureValue
+    val result: Journey = connector.find(id).futureValue
     result.payments.headOption.value.pcipalData.value shouldBe chargeRefNotificationPcipalRequest
   }
 
@@ -108,7 +108,7 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "getTaxType should return 500 when a duplicate id is found" in {
-    val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
+    val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
 
     repo.upsert(tpsPayments).futureValue

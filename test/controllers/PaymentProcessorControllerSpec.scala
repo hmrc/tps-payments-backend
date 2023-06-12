@@ -16,7 +16,7 @@
 
 package controllers
 
-import model.TpsId
+import model.JourneyId
 import play.api.http.Status
 import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
@@ -39,7 +39,7 @@ class PaymentProcessorControllerSpec extends ItSpec with Status {
   }
 
   "getModsAmendmentRef should return 500 when a duplicate id is found" in {
-    val tpsIdForDuplicate = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
+    val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
 
     repo.upsert(tpsPayments).futureValue

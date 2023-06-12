@@ -32,14 +32,14 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   private val port = 19001
   private val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
-  def startTpsJourneyMibOrPngr(launchRequest: TpsPaymentRequest)(implicit hc: HeaderCarrier): Future[TpsId] =
-    httpClient.POST[TpsPaymentRequest, TpsId](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments", launchRequest, headers)
+  def startTpsJourneyMibOrPngr(launchRequest: TpsPaymentRequest)(implicit hc: HeaderCarrier): Future[JourneyId] =
+    httpClient.POST[TpsPaymentRequest, JourneyId](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments", launchRequest, headers)
 
-  def upsert(tpsPayments: TpsPayments)(implicit hc: HeaderCarrier): Future[Unit] =
-    httpClient.POST[TpsPayments, Unit](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/upsert", tpsPayments, headers)
+  def upsert(tpsPayments: Journey)(implicit hc: HeaderCarrier): Future[Unit] =
+    httpClient.POST[Journey, Unit](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/upsert", tpsPayments, headers)
 
-  def find(id: TpsId)(implicit hc: HeaderCarrier): Future[TpsPayments] =
-    httpClient.GET[TpsPayments](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/${id.value}", headers)
+  def find(id: JourneyId)(implicit hc: HeaderCarrier): Future[Journey] =
+    httpClient.GET[Journey](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/${id.value}", headers)
 
   def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
     httpClient.GET[TaxType](s"http://localhost:${port.toString}/tps-payments-backend/payment-items/${id.value}/tax-type", headers)

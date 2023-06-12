@@ -17,13 +17,13 @@
 package paymentsprocessor
 
 import model.{MibSpecificData, PaymentItemId}
-import repository.TpsPaymentsRepo
+import repository.JourneyRepo
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsProcessorService @Inject() (repo: TpsPaymentsRepo)(implicit executionContext: ExecutionContext) {
+class PaymentsProcessorService @Inject() (repo: JourneyRepo)(implicit executionContext: ExecutionContext) {
 
   def findModsPaymentsByReference(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] = {
     repo.findPaymentItem(paymentItemId).map {

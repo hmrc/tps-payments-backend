@@ -30,7 +30,8 @@ import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object TpsPaymentsRepo {
+object JourneyRepo {
+
   def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
     IndexModel(
       keys         = Indexes.ascending("created"),
@@ -51,7 +52,7 @@ object TpsPaymentsRepo {
    * Use https://www.epochconverter.com/ to quickly decode Long to Instant.
    */
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val formatMongo: OFormat[TpsPayments] = {
+  implicit val formatMongo: OFormat[Journey] = {
 
     //before OPS-9461 "created" was stored as string and in java.time.LocalDateTime format
     //TODO: Delete this legacy reads in 2024
@@ -61,26 +62,26 @@ object TpsPaymentsRepo {
       MongoJavatimeFormats.instantReads.orElse(legacyCreatedReads),
       MongoJavatimeFormats.instantWrites
     )
-    Json.format[TpsPayments]
+    Json.format[Journey]
   }
 }
 
 @Singleton
-final class TpsPaymentsRepo @Inject() (
+final class JourneyRepo @Inject() (
     mongoComponent: MongoComponent,
     config:         RepoConfig
 )(implicit ec: ExecutionContext)
-  extends Repo[TpsId, TpsPayments](
-    collectionName = "tps-payments",
+  extends Repo[JourneyId, Journey](
+    collectionName = "tps-payments", //TODO: at some point address the name of the collection
     mongoComponent = mongoComponent,
-    indexes        = TpsPaymentsRepo.indexes(config.expireMongo.toSeconds),
+    indexes        = JourneyRepo.indexes(config.expireMongo.toSeconds),
     extraCodecs    = Seq.empty,
     replaceIndexes = true)(
-    manifest         = implicitly[Manifest[TpsPayments]],
-    domainFormat     = TpsPaymentsRepo.formatMongo,
+    manifest         = implicitly[Manifest[Journey]],
+    domainFormat     = JourneyRepo.formatMongo,
     executionContext = implicitly[ExecutionContext]) {
 
-  def findPayment(tpsId: TpsId): Future[Option[TpsPayments]] = findById(tpsId)
+  def findPayment(tpsId: JourneyId): Future[Option[Journey]] = findById(tpsId)
 
   //TODO: there is missing index on that attribute ,each search results in a full scan which leads to poor performance and DB resources leak
   def findPaymentItem(id: PaymentItemId): Future[Option[TpsPaymentItem]] =
@@ -93,13 +94,13 @@ final class TpsPaymentsRepo @Inject() (
       else paymentItems.headOption
     }
 
-  def getPayment(tpsId: TpsId): Future[TpsPayments] = findById(tpsId).map {
+  def getPayment(tpsId: JourneyId): Future[Journey] = findById(tpsId).map {
     case Some(tpsPayment) => tpsPayment
     case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
   }
 
   //TODO: there is missing index on that attribute, each search results in full scan...
-  def findByPcipalSessionId(id: PcipalSessionId): Future[TpsPayments] =
+  def findByPcipalSessionId(id: PcipalSessionId): Future[Journey] =
     find("pcipalSessionLaunchResponse.Id" -> id.value).map { payments =>
       if (payments.size > 1)
         throw new RuntimeException(s"Found ${payments.size.toString} records with id ${id.value}")
@@ -110,7 +111,7 @@ final class TpsPaymentsRepo @Inject() (
   def removeByReferenceForTest(references: List[String]): Future[Long] =
     remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> toJson(references)))
 
-  def findByReferenceForTest(reference: String): Future[List[TpsPayments]] =
+  def findByReferenceForTest(reference: String): Future[List[Journey]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
 
   //TODO: there is missing index on that attribute, each search results in full scan...

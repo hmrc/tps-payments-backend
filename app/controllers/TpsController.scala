@@ -22,7 +22,7 @@ import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.TpsPaymentsRepo
+import repository.JourneyRepo
 import services.EmailService
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import util.EmailCrypto
@@ -34,27 +34,27 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class TpsController @Inject() (actions:      Actions,
                                cc:           ControllerComponents,
-                               tpsRepo:      TpsPaymentsRepo,
+                               tpsRepo:      JourneyRepo,
                                emailService: EmailService,
                                emailCrypto:  EmailCrypto)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
   val logger: Logger = Logger(this.getClass)
 
   def startTpsJourneyMibOrPngr: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
-    val tpsPayments: TpsPayments = encryptEmail(request.body.tpsPayments(Instant.now()))
+    val tpsPayments: Journey = encryptEmail(request.body.tpsPayments(Instant.now()))
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))
     }
   }
 
-  def upsert(): Action[TpsPayments] = actions.strideAuthenticateAction().async(parse.json[TpsPayments]) { implicit request =>
-    val tpsPayments: TpsPayments = encryptEmail(request.body)
+  def upsert(): Action[Journey] = actions.strideAuthenticateAction().async(parse.json[Journey]) { implicit request =>
+    val tpsPayments: Journey = encryptEmail(request.body)
     tpsRepo.upsert(tpsPayments).map { _ =>
       Ok(toJson(request.body._id))
     }
   }
 
-  private def encryptEmail(tpsPayments: TpsPayments): TpsPayments = {
+  private def encryptEmail(tpsPayments: Journey): Journey = {
     val paymentItems: List[TpsPaymentItem] = tpsPayments.payments
     val paymentItemsWithEncryptedEmails: List[TpsPaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
       case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
@@ -63,7 +63,7 @@ class TpsController @Inject() (actions:      Actions,
     tpsPayments.copy(payments = paymentItemsWithEncryptedEmails)
   }
 
-  def findTpsPayments(id: TpsId): Action[AnyContent] = actions.strideAuthenticateAction().async {
+  def findTpsPayments(id: JourneyId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     tpsRepo.findPayment(id).map {
       case Some(tpsPayments) =>
         val tpsPaymentItemsWithDecryptedEmail: List[TpsPaymentItem] = tpsPayments
@@ -74,7 +74,7 @@ class TpsController @Inject() (actions:      Actions,
             )
           )
 
-        val tpsPaymentsWithDecryptedEmails: TpsPayments = tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)
+        val tpsPaymentsWithDecryptedEmails: Journey = tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)
         Ok(toJson(tpsPaymentsWithDecryptedEmails))
       case None => NotFound(s"No payments found for id ${id.value}")
     }
@@ -108,7 +108,7 @@ class TpsController @Inject() (actions:      Actions,
     }
   }
 
-  private def updateTpsPayments(tpsPayments: TpsPayments, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): TpsPayments = {
+  private def updateTpsPayments(tpsPayments: Journey, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): Journey = {
     logger.debug("updateTpsPayments")
     val remainder: List[TpsPaymentItem] = tpsPayments.payments.filterNot(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
     val update: List[TpsPaymentItem] = tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))

@@ -42,7 +42,7 @@ import play.api.mvc.Result
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
-import repository.TpsPaymentsRepo
+import repository.JourneyRepo
 
 import scala.concurrent.ExecutionContext
 
@@ -74,7 +74,7 @@ trait ItSpec
   )
 
   lazy val injector: Injector = fakeApplication().injector
-  lazy val repo: TpsPaymentsRepo = injector.instanceOf[TpsPaymentsRepo]
+  lazy val repo: JourneyRepo = injector.instanceOf[JourneyRepo]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))

@@ -19,7 +19,7 @@ package model
 import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
 
-final case class UpdateRequest(tpsId: TpsId, pcipalSessionId: PcipalSessionId)
+final case class UpdateRequest(tpsId: JourneyId, pcipalSessionId: PcipalSessionId)
 
 object UpdateRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

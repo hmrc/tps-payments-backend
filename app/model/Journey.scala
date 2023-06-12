@@ -18,23 +18,23 @@ package model
 
 import model.pcipal.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import play.api.libs.json.{Json, OFormat}
-import repository.Repo.HasId
+import tps.model.repo.HasId
 
 import java.time.Instant
 
-final case class TpsPayments(
-    _id:                         TpsId,
+final case class Journey(
+    _id:                         JourneyId,
     pid:                         String,
-    created:                     Instant                             = Instant.now(),
+    created:                     Instant,
     payments:                    List[TpsPaymentItem],
     navigation:                  Option[Navigation]                  = None,
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
-) extends HasId[TpsId] {
+) extends HasId[JourneyId] {
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
 }
 
-object TpsPayments {
+object Journey {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[TpsPayments] = Json.format[TpsPayments]
+  implicit val format: OFormat[Journey] = Json.format[Journey]
 }

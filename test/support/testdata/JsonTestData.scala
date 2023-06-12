@@ -16,7 +16,7 @@
 
 package support.testdata
 
-import model.TpsPayments
+import model.Journey
 import play.api.libs.json.{JsValue, Json}
 import support.testdata.TestData._
 
@@ -26,7 +26,7 @@ object JsonTestData {
 
   private val createdString: String = "2040-01-20T11:56:46Z"
 
-  private def jsonBuilder(tpsPayments: TpsPayments, paymentSpecificData: String, taxType: String) =
+  private def jsonBuilder(tpsPayments: Journey, paymentSpecificData: String, taxType: String) =
     s"""{
           "_id": "${tpsPayments._id.value}",
           "pid": "pid",

@@ -42,7 +42,7 @@ final case class TpsPaymentRequest(
     navigation: Navigation
 ) {
 
-  def tpsPayments(now: Instant): TpsPayments = {
+  def tpsPayments(now: Instant): Journey = {
     val tpsPayments = payments.map { p =>
       TpsPaymentItem(
         paymentItemId       = Some(PaymentItemId.fresh()),
@@ -58,7 +58,7 @@ final case class TpsPaymentRequest(
       )
     }.toList
 
-    TpsPayments(_id        = TpsId.fresh(), pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
+    Journey(_id        = JourneyId.fresh(), pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
   }
 }
 

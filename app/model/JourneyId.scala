@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
-
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Format
+package model
+import controllers.ValueClassBinder.valueClassBinder
+import org.bson.types.ObjectId
+import play.api.libs.json._
+import play.api.mvc.PathBindable
 import tps.model.repo.Id
 
-final case class DeniedRefsId(value: String) extends Id
+final case class JourneyId(value: String) extends Id
 
-object DeniedRefsId {
-  implicit val format: Format[DeniedRefsId] = implicitly[Format[String]].inmap(DeniedRefsId(_), _.value)
+object JourneyId {
+  implicit val format: Format[JourneyId] = Json.valueFormat
+  implicit val journeyIdBinder: PathBindable[JourneyId] = valueClassBinder(_.value)
+  def fresh(): JourneyId = JourneyId(ObjectId.get().toHexString)
 }
+

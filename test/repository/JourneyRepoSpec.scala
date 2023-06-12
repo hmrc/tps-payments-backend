@@ -16,12 +16,12 @@
 
 package repository
 
-import model.TpsId
+import model.JourneyId
 import model.pcipal.PcipalSessionId
 import support.ItSpec
 import support.testdata.TestData._
 
-class TpsPaymentsRepoSpec extends ItSpec {
+class JourneyRepoSpec extends ItSpec {
 
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
@@ -46,7 +46,7 @@ class TpsPaymentsRepoSpec extends ItSpec {
 
   "findByPcipalSessionId should throw error when more than one payment found" in {
     Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
-    Option(repo.upsert(tpsPaymentsWithPcipalData.copy(_id = TpsId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(repo.upsert(tpsPaymentsWithPcipalData.copy(_id = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
     intercept[Exception] {
       repo.findByPcipalSessionId(PcipalSessionId("48c978bb")).futureValue
     }.getMessage should include("Found 2 records with id 48c978bb.")

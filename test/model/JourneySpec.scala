@@ -33,12 +33,12 @@ package model
  */
 
 import play.api.libs.json.Json.toJson
-import repository.TpsPaymentsRepo
+import repository.JourneyRepo
 import support.UnitSpec
 import support.testdata.JsonTestData._
 import support.testdata.TestData._
 
-class TpsPaymentsSpec extends UnitSpec {
+class JourneySpec extends UnitSpec {
   "to json" in {
     toJson(tpsPayments) shouldBe tpsPaymentsJson
     toJson(mibPayments) shouldBe mibPaymentsJson
@@ -55,30 +55,30 @@ class TpsPaymentsSpec extends UnitSpec {
   }
 
   "from json should de-serialise a TpsPayments object with a tax type" in {
-    tpsPaymentsJson.as[TpsPayments] shouldBe tpsPayments
-    mibPaymentsJson.as[TpsPayments] shouldBe mibPayments
-    childBenefitsPaymentsJson.as[TpsPayments] shouldBe childBenefitPayments
-    saPaymentsJson.as[TpsPayments] shouldBe saPayments
-    sdltPaymentsJson.as[TpsPayments] shouldBe sdltPayments
-    safePaymentsJson.as[TpsPayments] shouldBe safePayments
-    cotaxPaymentsJson.as[TpsPayments] shouldBe cotaxPayments
-    ntcPaymentsJson.as[TpsPayments] shouldBe ntcPayments
-    payePaymentsJson.as[TpsPayments] shouldBe payePayments
-    npsPaymentsJson.as[TpsPayments] shouldBe npsPayments
-    vatPaymentsJson.as[TpsPayments] shouldBe vatPayments
-    pptPaymentsJson.as[TpsPayments] shouldBe pptPayments
+    tpsPaymentsJson.as[Journey] shouldBe tpsPayments
+    mibPaymentsJson.as[Journey] shouldBe mibPayments
+    childBenefitsPaymentsJson.as[Journey] shouldBe childBenefitPayments
+    saPaymentsJson.as[Journey] shouldBe saPayments
+    sdltPaymentsJson.as[Journey] shouldBe sdltPayments
+    safePaymentsJson.as[Journey] shouldBe safePayments
+    cotaxPaymentsJson.as[Journey] shouldBe cotaxPayments
+    ntcPaymentsJson.as[Journey] shouldBe ntcPayments
+    payePaymentsJson.as[Journey] shouldBe payePayments
+    npsPaymentsJson.as[Journey] shouldBe npsPayments
+    vatPaymentsJson.as[Journey] shouldBe vatPayments
+    pptPaymentsJson.as[Journey] shouldBe pptPayments
   }
 
   "mongo writes" in {
-    TpsPaymentsRepo.formatMongo.writes((tpsPayments)) shouldBe tpsPaymentsMongoJson
+    JourneyRepo.formatMongo.writes((tpsPayments)) shouldBe tpsPaymentsMongoJson
   }
 
   "mongo reads" in {
-    tpsPaymentsMongoJson.as[TpsPayments](TpsPaymentsRepo.formatMongo) shouldBe tpsPayments
+    tpsPaymentsMongoJson.as[Journey](JourneyRepo.formatMongo) shouldBe tpsPayments
   }
 
   "mongo legacy reads" in {
-    tpsPaymentsMongoLegacyJson.as[TpsPayments](TpsPaymentsRepo.formatMongo) shouldBe tpsPayments
+    tpsPaymentsMongoLegacyJson.as[Journey](JourneyRepo.formatMongo) shouldBe tpsPayments
   }
 
 }

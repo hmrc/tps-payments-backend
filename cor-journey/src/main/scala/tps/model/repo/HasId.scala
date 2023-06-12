@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package model
-import controllers.ValueClassBinder.valueClassBinder
-import org.bson.types.ObjectId
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import repository.Repo.Id
+package tps.model.repo
 
-final case class TpsId(value: String) extends Id
-
-object TpsId {
-  implicit val format: Format[TpsId] = implicitly[Format[String]].inmap(TpsId(_), _.value)
-  implicit val journeyIdBinder: PathBindable[TpsId] = valueClassBinder(_.value)
-  def fresh(): TpsId = TpsId(ObjectId.get().toHexString)
+trait Id {
+  def value: String
 }
 
+trait HasId[ID <: Id] {
+  def _id: ID
+  def id: ID = _id
+}
