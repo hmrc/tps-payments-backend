@@ -18,7 +18,7 @@ package model
 
 import enumeratum._
 import play.api.libs.json.Format
-import util.EnumFormat
+import tps.utils.EnumFormat
 
 import scala.collection.immutable
 

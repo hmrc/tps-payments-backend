@@ -16,7 +16,7 @@
 
 package model.pcipal
 
-import controllers.ValueClassBinder.valueClassBinder
+import tps.utils.ValueClassBinder.valueClassBinder
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.PathBindable

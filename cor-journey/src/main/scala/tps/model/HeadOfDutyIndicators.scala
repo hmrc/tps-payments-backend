@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package model
+package tps.model
 
 import enumeratum._
-import model.SafeEquals.EqualsOps
-import play.api.libs.json.Format
-import util.EnumFormat
 
 import scala.collection.immutable
+import enumeratum.EnumEntry
+import play.api.libs.json.Format
+import tps.utils.EnumFormat
+import tps.utils.SafeEquals.EqualsOps
 
 sealed abstract class HeadOfDutyIndicator extends EnumEntry
 

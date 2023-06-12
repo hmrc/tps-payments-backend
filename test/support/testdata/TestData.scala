@@ -23,6 +23,7 @@ import model._
 import model.pcipal._
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
+import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation}
 
 import java.time.{Instant, LocalDateTime}
 

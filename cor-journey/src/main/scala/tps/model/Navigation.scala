@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package util
+package tps.model
 
-import enumeratum.{Enum, EnumEntry}
-import play.api.libs.json._
+import play.api.libs.json.{Json, OFormat}
 
-object EnumFormat {
-  def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
-    Reads {
-      case JsString(value) => e.withNameOption(value).map[JsResult[T]](JsSuccess(_)).getOrElse(JsError(s"Unknown ${e.getClass.getSimpleName} value: $value"))
-      case _               => JsError("Can only parse String")
-    },
-    Writes(v => JsString(v.entryName))
-  )
+final case class Navigation(
+    back:     String,
+    reset:    String,
+    finish:   String,
+    callback: String
+)
+
+object Navigation {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[Navigation] = Json.format[Navigation]
 }
+

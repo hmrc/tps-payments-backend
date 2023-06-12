@@ -18,6 +18,7 @@ package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
+import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation}
 
 import java.time.Instant
 import scala.Option.empty
@@ -58,7 +59,13 @@ final case class TpsPaymentRequest(
       )
     }.toList
 
-    Journey(_id        = JourneyId.fresh(), pid = pid, created = now, payments = tpsPayments, navigation = Some(navigation))
+    Journey(
+      _id        = JourneyId.fresh(),
+      pid        = pid,
+      created    = now,
+      payments   = tpsPayments,
+      navigation = Some(navigation)
+    )
   }
 }
 

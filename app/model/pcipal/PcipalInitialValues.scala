@@ -16,7 +16,8 @@
 
 package model.pcipal
 
-import model.{HeadOfDutyIndicator, PaymentItemId}
+import model.PaymentItemId
+import tps.model.HeadOfDutyIndicator
 
 final case class PcipalInitialValues(
     clientId:           String,

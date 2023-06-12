@@ -18,6 +18,7 @@ package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json._
+import tps.model.HeadOfDutyIndicator
 
 import java.time.Instant
 

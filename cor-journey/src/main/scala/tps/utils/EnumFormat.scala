@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-package model
+package tps.utils
 
-/**
- * Simple safe equals so we don't have to import cats into cor library
- */
-object SafeEquals {
+import enumeratum.{Enum, EnumEntry}
+import play.api.libs.json._
 
-  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-  implicit class EqualsOps[A](v: A) {
-    def ===(other: A): Boolean = v == other
-    def =!=(other: A): Boolean = v != other
-  }
+object EnumFormat {
+  def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
+    Reads {
+      case JsString(value) => e.withNameOption(value).map[JsResult[T]](JsSuccess(_)).getOrElse(JsError(s"Unknown ${e.getClass.getSimpleName} value: $value"))
+      case _               => JsError("Can only parse String")
+    },
+    Writes(v => JsString(v.entryName))
+  )
 }

@@ -20,6 +20,7 @@ import model._
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import paymentsprocessor.ModsPaymentCallBackRequest
 import recon.FindRPaymentSpecificDataRequest
+import tps.model.JourneyId
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import util.HttpReadsInstances._
 

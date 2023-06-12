@@ -17,7 +17,7 @@
 package deniedrefs
 
 import _root_.model.Reference
-import _root_.model.SafeEquals._
+import tps.utils.SafeEquals._
 import akka.Done
 import akka.stream.Materializer
 import akka.stream.alpakka.csv.scaladsl.CsvParsing

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package tps.utils
 
 import play.api.libs.json._
 import play.api.mvc.{PathBindable, QueryStringBindable}

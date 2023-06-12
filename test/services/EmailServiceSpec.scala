@@ -22,6 +22,7 @@ import model.TaxTypes.P800
 import model._
 import support.ItSpec
 import support.testdata.TestData.paymentItemId
+import tps.model.HeadOfDutyIndicators
 import uk.gov.hmrc.http.HttpClient
 import util.EmailCrypto
 

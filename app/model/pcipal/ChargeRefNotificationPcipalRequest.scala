@@ -16,8 +16,9 @@
 
 package model.pcipal
 
-import model.{HeadOfDutyIndicator, PaymentItemId, StatusType}
+import model.{PaymentItemId, StatusType}
 import play.api.libs.json.{Json, OFormat}
+import tps.model.HeadOfDutyIndicator
 
 /**
  * This represents notification data being sent from PciPal to the payments-processor.

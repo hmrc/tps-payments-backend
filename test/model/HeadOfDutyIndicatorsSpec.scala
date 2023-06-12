@@ -18,6 +18,7 @@ package model
 
 import play.api.libs.json.{JsString, Json}
 import support.UnitSpec
+import tps.model.{HeadOfDutyIndicator, HeadOfDutyIndicators}
 
 class HeadOfDutyIndicatorsSpec extends UnitSpec {
 

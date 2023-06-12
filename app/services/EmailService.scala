@@ -24,7 +24,7 @@ import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
 import util.EmailCrypto
-import model.SafeEquals.EqualsOps
+import tps.utils.SafeEquals.EqualsOps
 
 import javax.inject.{Inject, Singleton}
 

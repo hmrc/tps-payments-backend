@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package model
-import controllers.ValueClassBinder.valueClassBinder
+package tps.model
+
 import org.bson.types.ObjectId
 import play.api.libs.json._
 import play.api.mvc.PathBindable
 import tps.model.repo.Id
+import tps.utils.ValueClassBinder.valueClassBinder
 
 final case class JourneyId(value: String) extends Id
 

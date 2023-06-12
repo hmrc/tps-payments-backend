@@ -16,10 +16,10 @@
 
 package controllers
 
-import model.JourneyId
 import play.api.http.Status
 import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
+import tps.model.JourneyId
 import uk.gov.hmrc.http.HeaderCarrier
 
 class PaymentProcessorControllerSpec extends ItSpec with Status {

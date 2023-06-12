@@ -18,6 +18,7 @@ package model
 
 import model.pcipal.PcipalSessionId
 import play.api.libs.json.{Json, OFormat}
+import tps.model.JourneyId
 
 final case class UpdateRequest(tpsId: JourneyId, pcipalSessionId: PcipalSessionId)
 

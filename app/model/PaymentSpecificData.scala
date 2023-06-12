@@ -15,7 +15,7 @@
  */
 
 package model
-import model.SafeEquals.EqualsOps
+import tps.utils.SafeEquals.EqualsOps
 import play.api.libs.json._
 
 sealed trait PaymentSpecificData {

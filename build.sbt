@@ -26,13 +26,15 @@ lazy val microservice2 = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9125)
   .settings(
     routesImport ++= Seq(
-      "model._"
+      "model._",
+      "tps.model._",
+      "tps.utils._"
     ))
 
 
 lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(
     scalaVersion := scalaV,
     majorVersion := majorVer,

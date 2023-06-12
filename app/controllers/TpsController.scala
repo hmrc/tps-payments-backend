@@ -24,6 +24,7 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
 import services.EmailService
+import tps.model.JourneyId
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import util.EmailCrypto
 

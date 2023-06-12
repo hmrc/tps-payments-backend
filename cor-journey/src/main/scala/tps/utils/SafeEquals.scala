@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package model
+package tps.utils
 
-import play.api.libs.json.{Json, OFormat}
+/**
+ * Simple safe equals so we don't have to import cats into cor library
+ */
+object SafeEquals {
 
-final case class Navigation(back: String, reset: String, finish: String, callback: String)
-
-object Navigation {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Navigation] = Json.format[Navigation]
+  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
+  implicit class EqualsOps[A](v: A) {
+    def ===(other: A): Boolean = v == other
+    def =!=(other: A): Boolean = v != other
+  }
 }
-

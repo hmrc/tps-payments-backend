@@ -15,7 +15,7 @@
  */
 
 package model
-import controllers.ValueClassBinder.valueClassBinder
+import tps.utils.ValueClassBinder.valueClassBinder
 import org.bson.types.ObjectId
 import play.api.libs.functional.syntax._
 import play.api.libs.json._

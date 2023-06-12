@@ -17,9 +17,10 @@
 package model.pcipal
 
 import model.pcipal.PcipalInitialValues._
-import model.{HeadOfDutyIndicators, PaymentItemId}
+import model.PaymentItemId
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
+import tps.model.HeadOfDutyIndicators
 
 import scala.annotation.tailrec
 

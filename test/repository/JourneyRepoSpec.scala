@@ -16,10 +16,10 @@
 
 package repository
 
-import model.JourneyId
 import model.pcipal.PcipalSessionId
 import support.ItSpec
 import support.testdata.TestData._
+import tps.model.JourneyId
 
 class JourneyRepoSpec extends ItSpec {
 
