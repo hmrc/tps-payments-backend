@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package model.pcipal
+package tps.pcipalmodel
 
-import model.PaymentItemId
-import tps.model.HeadOfDutyIndicator
+import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 
 final case class PcipalInitialValues(
     clientId:           String,

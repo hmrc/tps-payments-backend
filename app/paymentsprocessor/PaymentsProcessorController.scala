@@ -16,10 +16,10 @@
 
 package paymentsprocessor
 
-import model.PaymentItemId
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import tps.model.PaymentItemId
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}

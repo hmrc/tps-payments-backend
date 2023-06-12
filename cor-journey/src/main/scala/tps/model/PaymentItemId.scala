@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package model
-import tps.utils.ValueClassBinder.valueClassBinder
+package tps.model
+
 import org.bson.types.ObjectId
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import play.api.mvc.PathBindable
+import tps.utils.ValueClassBinder.valueClassBinder
 
 final case class PaymentItemId(
     value: String

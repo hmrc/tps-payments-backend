@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package model.pcipal
+package tps.pcipalmodel
 
-import model.pcipal.PcipalInitialValues._
-import model.PaymentItemId
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
-import tps.model.HeadOfDutyIndicators
+import tps.model.{HeadOfDutyIndicators, PaymentItemId}
+import tps.pcipalmodel
+import tps.pcipalmodel.PcipalInitialValues._
 
 import scala.annotation.tailrec
 
@@ -62,7 +62,7 @@ object PcipalSessionLaunchRequest {
   private def unwrap(values: Map[String, String], a: Int = 1, acc: List[PcipalInitialValues] = List.empty[PcipalInitialValues]): List[PcipalInitialValues] = {
     if (!values.contains(s"${PcipalInitialValues.ClientID}${a.toString}")) acc
     else {
-      val newPciPal = PcipalInitialValues(
+      val newPciPal = pcipalmodel.PcipalInitialValues(
         clientId           = values(s"${PcipalInitialValues.ClientID}${a.toString}"),
         pid                = values(s"${PcipalInitialValues.PID}${a.toString}"),
         accountOfficeId    = values(s"${PcipalInitialValues.AccountOfficeID}${a.toString}"),

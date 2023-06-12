@@ -18,7 +18,7 @@ package model
 
 import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
-import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation}
+import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation, PaymentItemId}
 
 import java.time.Instant
 import scala.Option.empty

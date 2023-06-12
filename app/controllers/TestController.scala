@@ -16,10 +16,11 @@
 
 package controllers
 
-import model.{PaymentItemId, TpsPaymentItem, TpsPaymentRequest, Journey}
+import model.{TpsPaymentItem, TpsPaymentRequest, Journey}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
+import tps.model.PaymentItemId
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.Instant

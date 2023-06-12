@@ -22,7 +22,7 @@ import model.pcipal.PcipalSessionId
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
-import tps.model.JourneyId
+import tps.model.{JourneyId, PaymentItemId}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
