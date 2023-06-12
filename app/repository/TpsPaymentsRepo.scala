@@ -16,6 +16,7 @@
 
 package repository
 
+import model.SafeEquals.EqualsOps
 import model._
 import model.pcipal.PcipalSessionId
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
@@ -118,7 +119,7 @@ final class TpsPaymentsRepo @Inject() (
       .map { listOfPayments =>
         listOfPayments
           .flatMap { tpsPayments =>
-            tpsPayments.payments.filter(_.taxType == TaxTypes.MIB)
+            tpsPayments.payments.filter(_.taxType === TaxTypes.MIB)
               .map { tpsPaymentItem =>
                 tpsPaymentItem.paymentSpecificData
               }

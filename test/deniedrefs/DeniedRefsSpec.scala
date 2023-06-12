@@ -18,9 +18,8 @@ package deniedrefs
 
 import _root_.model.Reference
 import deniedrefs.model._
-import support.testdata.TestData._
 import support.ItSpec
-import support.testdata.TestData
+import support.testdata.TestData._
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 

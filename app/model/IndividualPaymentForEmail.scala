@@ -18,10 +18,10 @@ package model
 
 import play.api.libs.json.{Json, OWrites}
 
-case class IndividualPaymentForEmail(taxType:           String,
-                                     amount:            String,
-                                     transactionFee:    String,
-                                     transactionNumber: String
+final case class IndividualPaymentForEmail(taxType:           String,
+                                           amount:            String,
+                                           transactionFee:    String,
+                                           transactionNumber: String
 )
 
 object IndividualPaymentForEmail {

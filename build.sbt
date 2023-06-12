@@ -1,13 +1,11 @@
-import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, integrationTestSettings, scalaSettings}
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import wartremover.Wart
-import wartremover.WartRemover.autoImport.wartremoverErrors
-import wartremover.WartRemover.autoImport.wartremoverExcluded
 
 val appName = "tps-payments-backend"
 
 scalaVersion := "2.13.10"
+
+val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
+StrictBuilding.strictBuildingSetting
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
@@ -22,9 +20,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(majorVersion := 1)
   .settings(ScalariformSettings())
   .settings(ScoverageSettings())
-  .settings(WartRemoverSettings.wartRemoverError)
-  .settings(WartRemoverSettings.wartRemoverWarning)
-  .settings((Test / compile / wartremoverErrors) --= Seq(Wart.Any, Wart.Equals, Wart.Null, Wart.NonUnitStatements, Wart.PublicInference))
+  .settings(WartRemoverSettings.wartRemoverSettings)
   .settings(wartremoverExcluded ++=
     (Compile / routes).value ++
       (baseDirectory.value / "test").get ++
@@ -42,19 +38,38 @@ lazy val microservice = Project(appName, file("."))
       "model._"
     ))
   .settings(
-    scalacOptions ++= Seq(
-      "-Ywarn-unused:-imports,-patvars,-privates,-locals,-explicits,-implicits,_",
-      "-Xfatal-warnings",
-      "-Xlint:-missing-interpolator,_",
-      "-Xlint:adapted-args",
-      "-Xlint:-byname-implicit",
-      "-Ywarn-value-discard",
-      "-Ywarn-dead-code",
-      "-deprecation",
-      "-feature",
-      "-unchecked",
-      "-language:implicitConversions",
-      "-language:reflectiveCalls"
-    )
+    scalacOptions ++= scalaCompilerOptions,
+    scalacOptions ++= {
+      if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil
+    }
   )
-  .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always)
+  .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) //otherwise scoverage pulls newer incompatible lib
+
+lazy val scalaCompilerOptions: Seq[String] = Seq(
+  "-language:implicitConversions",
+  "-language:reflectiveCalls",
+  "-Wconf:cat=unused-imports&src=html/.*:s",
+  "-Wconf:src=routes/.*:s"
+)
+
+lazy val strictScalaCompilerOptions: Seq[String] = Seq(
+  "-Xfatal-warnings",
+  "-Xlint:-missing-interpolator,_",
+  "-Xlint:adapted-args",
+  "-Xlint:constant",
+  "-Xlint:-byname-implicit",
+  "-Ywarn-unused:imports",
+  "-Ywarn-unused:patvars",
+  "-Ywarn-unused:privates",
+  "-Ywarn-unused:locals",
+  "-Ywarn-unused:explicits",
+  "-Ywarn-unused:params",
+  "-Ywarn-unused:implicits",
+  "-Ywarn-value-discard",
+  "-Ywarn-dead-code",
+  "-deprecation",
+  "-feature",
+  "-unchecked",
+  "-Wconf:cat=unused-imports&src=html/.*:s",
+  "-Wconf:src=routes/.*:s"
+)

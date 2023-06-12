@@ -19,7 +19,7 @@ package deniedrefs
 import com.mongodb.client.model.Sorts
 import deniedrefs.model.{DeniedRefs, DeniedRefsId}
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import repository.{Repo, RepoConfig}
+import repository.Repo
 import uk.gov.hmrc.mongo.MongoComponent
 
 import javax.inject.{Inject, Singleton}
@@ -36,8 +36,7 @@ object DeniedRefsRepo {
 
 @Singleton
 final class DeniedRefsRepo @Inject() (
-    mongoComponent: MongoComponent,
-    config:         RepoConfig
+    mongoComponent: MongoComponent
 )(implicit ec: ExecutionContext)
   extends Repo[DeniedRefsId, DeniedRefs](
     collectionName = "denied-refs",

@@ -21,9 +21,7 @@ import _root_.model._
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Sink}
 import akka.util.ByteString
-import auth.Actions
-import play.api.Logger
-import play.api.libs.json.{Json}
+import play.api.libs.json.Json
 import play.api.libs.streams.Accumulator
 import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -35,7 +33,6 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class DeniedRefsController @Inject() (
-    as:                Actions,
     cc:                ControllerComponents,
     deniedRefsService: DeniedRefsService
 )(implicit ec: ExecutionContext) extends BackendController(cc) {
@@ -73,11 +70,9 @@ class DeniedRefsController @Inject() (
     } yield Ok(Json.toJson(VerifyRefResponse(verifyRefStatus)))
   }
 
-  def dropDb(): Action[AnyContent] = Action.async { implicit request =>
+  def dropDb(): Action[AnyContent] = Action.async { _ =>
     for {
       result <- deniedRefsService.dropDb()
     } yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
   }
-
-  private lazy val logger: Logger = Logger(this.getClass)
 }

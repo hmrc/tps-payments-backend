@@ -21,7 +21,7 @@ import play.api.libs.json._
 
 import java.time.Instant
 
-case class TpsPaymentItem(
+final case class TpsPaymentItem(
     paymentItemId:       Option[PaymentItemId],
     amount:              BigDecimal,
     headOfDutyIndicator: HeadOfDutyIndicator,

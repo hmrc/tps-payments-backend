@@ -24,6 +24,7 @@ import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
 import util.EmailCrypto
+import model.SafeEquals.EqualsOps
 
 import javax.inject.{Inject, Singleton}
 
@@ -36,7 +37,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
       val emailAddress: String = tpsPaymentItems.find(_.email.nonEmpty).flatMap(_.email).fold("impossible")(email => email)
       val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
         tpsPaymentItems.filter(_.pcipalData
-          .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status.equals(StatusTypes.validated)))
+          .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated))
 
       listOfSuccessfulTpsPaymentItems.headOption match {
         case Some(TpsPaymentItem(_, _, _, _, _, _, Some(ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)), _, _, _)) =>
@@ -46,6 +47,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
     } else ()
   }
 
+  @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
     val totalCommissionPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
     val totalAmountPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
@@ -70,7 +72,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
   private def emailAddressHasBeenProvided(tpsPaymentItems: List[TpsPaymentItem]): Boolean = tpsPaymentItems.exists(_.email.nonEmpty)
 
   private def isNotMibOrPngr(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
-    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType.equals(MIB) || nextPaymentItem.taxType.equals(PNGR))
+    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType === MIB || nextPaymentItem.taxType === PNGR)
   }
 
   def parseTpsPaymentsItemsForEmail(tpsPayments: List[TpsPaymentItem]): List[IndividualPaymentForEmail] = {

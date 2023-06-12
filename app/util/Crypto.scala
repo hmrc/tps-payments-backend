@@ -17,7 +17,7 @@
 package util
 
 import com.google.inject.{Inject, Singleton}
-import uk.gov.hmrc.crypto.{AesGCMCrypto, _}
+import uk.gov.hmrc.crypto._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.util.Try
