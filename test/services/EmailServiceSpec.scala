@@ -40,8 +40,8 @@ class EmailServiceSpec extends ItSpec {
     "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
       val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
       val individualPaymentForEmail = service.parseTpsPaymentsItemsForEmail(List(testTpsPaymentItemWithNoPciPalData))
-      individualPaymentForEmail.head.transactionFee shouldBe "Unknown"
-      individualPaymentForEmail.head.transactionNumber shouldBe "Unknown"
+      individualPaymentForEmail.headOption.value.transactionFee shouldBe "Unknown"
+      individualPaymentForEmail.headOption.value.transactionNumber shouldBe "Unknown"
     }
 
     Seq[(TaxType, String)](
@@ -63,7 +63,7 @@ class EmailServiceSpec extends ItSpec {
           s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
             val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
             val individualPaymentForEmail = service.parseTpsPaymentsItemsForEmail(List(tpsPaymentItem))
-            individualPaymentForEmail.head.taxType shouldBe expectedTaxTypeString
+            individualPaymentForEmail.headOption.value.taxType shouldBe expectedTaxTypeString
           }
       }
   }

@@ -20,7 +20,10 @@ import model.TpsPayments
 import play.api.libs.json.{JsValue, Json}
 import support.testdata.TestData._
 
+import support.RichMatchers._
+
 object JsonTestData {
+
   private val createdString: String = "2040-01-20T11:56:46Z"
 
   private def jsonBuilder(tpsPayments: TpsPayments, paymentSpecificData: String, taxType: String) =
@@ -34,7 +37,7 @@ object JsonTestData {
               "amount": 100.00,
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
-              "paymentItemId": "${tpsPayments.payments.head.paymentItemId.get.value}",
+              "paymentItemId": "${tpsPayments.payments.headOption.value.paymentItemId.value.value}",
               "updated": "$createdString",
               "customerName": "customerName",
               "taxType": "$taxType"

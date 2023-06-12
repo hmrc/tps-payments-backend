@@ -30,7 +30,7 @@ class VerifyRefResponseSpec extends UnitSpec {
     )
 
     testCases.foreach { tc =>
-      s"test for ${tc._2}" in {
+      s"test for ${tc._2.toString}" in {
         val json: JsValue = Json.parse(tc._1)
         val verifyRefResponse: VerifyRefResponse = tc._2
         json.as[VerifyRefResponse] shouldBe verifyRefResponse

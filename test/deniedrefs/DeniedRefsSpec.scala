@@ -74,18 +74,18 @@ class DeniedRefsSpec extends ItSpec {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
   }
 
-  private lazy val baseUrl = s"http://localhost:$port/tps-payments-backend"
+  private lazy val baseUrl = s"http://localhost:${port.toString}/tps-payments-backend"
   private lazy val httpClient = app.injector.instanceOf[HttpClient]
 
   private def uploadDeniedRefs(deniedRefsCsv: String) = {
-    implicit val dummyHc = HeaderCarrier()
+    implicit val dummyHc: HeaderCarrier = HeaderCarrier()
     val url = baseUrl + "/upload-denied-refs"
     httpClient.POSTString[UploadDeniedRefsResponse](url, deniedRefsCsv)
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefResponse] = {
     val refsSet = refs.toSet
-    implicit val dummyHc = HeaderCarrier()
+    implicit val dummyHc: HeaderCarrier = HeaderCarrier()
     val url = baseUrl + "/verify-refs"
     val request = VerifyRefsRequest(refsSet)
     httpClient.POST[VerifyRefsRequest, VerifyRefResponse](url, request)

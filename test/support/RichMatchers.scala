@@ -20,10 +20,11 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.verification.LoggedRequest
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
-import play.api.libs.json.{JsValue, Json}
 import org.scalatest.matchers.should.Matchers
 
 import scala.jdk.CollectionConverters.IterableHasAsScala
+
+object RichMatchers extends RichMatchers
 
 trait RichMatchers
   extends Matchers
@@ -37,10 +38,6 @@ trait RichMatchers
   with Eventually
   with IntegrationPatience {
 
-  implicit def toLoggedRequestOps(lr: LoggedRequest) = new {
-    def getBodyAsJson: JsValue = Json.parse(lr.getBodyAsString)
-  }
-
   /**
    * Returns recorded by WireMock request.
    * Asserts there was only one request made to wire mock.
@@ -49,7 +46,7 @@ trait RichMatchers
   def getRecordedRequest: LoggedRequest = {
     val allRecordedRequests: List[LoggedRequest] = WireMock.getAllServeEvents.asScala.map(_.getRequest).toList
     allRecordedRequests should have length 1 withClue "there suppose to be only one request recorded"
-    allRecordedRequests.head
+    allRecordedRequests.headOption.value
   }
 
 }
