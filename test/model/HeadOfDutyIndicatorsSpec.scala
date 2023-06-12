@@ -23,7 +23,7 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec {
 
   "de/serialize headOfDutyIndicators" in {
 
-    val headOfDutyIndicators: List[(String, HeadOfDutyIndicator)] = List(
+    val headOfDutyIndicators: List[(String, HeadOfDutyIndicator)] = List[(String, HeadOfDutyIndicator)](
       "B" -> HeadOfDutyIndicators.B,
       "A" -> HeadOfDutyIndicators.A,
       "N" -> HeadOfDutyIndicators.N,
@@ -38,8 +38,8 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec {
 
     headOfDutyIndicators.foreach { tt =>
       val jsValue = Json.toJson(tt._2)
-      jsValue shouldBe JsString(tt._1) withClue s"serialize $tt"
-      jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize $tt"
+      jsValue shouldBe JsString(tt._1) withClue s"serialize ${tt.toString()}"
+      jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize ${tt.toString()}"
     }
   }
 }

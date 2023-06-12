@@ -30,8 +30,14 @@ object  WartRemoverSettings {
         Wart.Null,
         Wart.NonUnitStatements,
         Wart.PublicInference
-      ),
-      wartremoverExcluded ++= (Compile / routes).value
+      )
     )
+
+  lazy val wartRemoverSettingsPlay = Seq(
+    wartremoverExcluded ++= (Compile / routes).value ++ Seq(
+      sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"
+    )
+  )
+
 
 }

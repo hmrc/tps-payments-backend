@@ -2,48 +2,83 @@ import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, integrationTestSetting
 
 val appName = "tps-payments-backend"
 
-scalaVersion := "2.13.10"
+val scalaV = "2.13.10"
+scalaVersion := scalaV
+val majorVer = 2
+majorVersion := majorVer
 
-val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
-StrictBuilding.strictBuildingSetting
-
-lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+lazy val microservice2 = Project(appName, file("."))
+  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .settings(commonSettings *)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
-    resolvers                        ++= Seq(Resolver.jcenterRepo),
+    majorVersion                     := majorVer,
+    scalaVersion                     := scalaV,
     libraryDependencies              ++= AppDependencies.microserviceDependencies,
-    retrieveManaged                  :=  true,
+    //otherwise scoverage pulls newer incompatible lib:
+    libraryDependencySchemes         += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     routesGenerator                  :=  InjectedRoutesGenerator,
     update / evictionWarningOptions  :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
-  .settings(majorVersion := 1)
-  .settings(ScalariformSettings())
-  .settings(ScoverageSettings())
-  .settings(WartRemoverSettings.wartRemoverSettings)
-  .settings(wartremoverExcluded ++=
-    (Compile / routes).value ++
-      (baseDirectory.value / "test").get ++
-      Seq(sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"))
-  .settings(SbtUpdatesSettings.sbtUpdatesSettings)
+  .settings(WartRemoverSettings.wartRemoverSettingsPlay)
+  .dependsOn(corJourney, corJourneyTestData)
+  .aggregate(corJourney, corJourneyTestData)
   .settings(PlayKeys.playDefaultPort := 9125)
-  .settings(scalaSettings: _*)
-  .settings(defaultSettings(): _*)
-  .settings(integrationTestSettings())
-  .configs(IntegrationTest)
-  .settings(resolvers += Resolver.jcenterRepo)
-  .settings(Compile / scalacOptions -= "utf8")
   .settings(
     routesImport ++= Seq(
       "model._"
     ))
+
+
+lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+  .settings(commonSettings: _*)
   .settings(
-    scalacOptions ++= scalaCompilerOptions,
-    scalacOptions ++= {
-      if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil
-    }
+    scalaVersion := scalaV,
+    majorVersion := majorVer,
+    libraryDependencies ++= List(
+      "uk.gov.hmrc"       %% "auth-client"              % "6.1.0-play-28",
+      "uk.gov.hmrc"       %% "bootstrap-common-play-28" % AppDependencies.bootstrapVersion % Provided,
+      "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
+      "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumVersion,
+      "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
+    )
   )
-  .settings(libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) //otherwise scoverage pulls newer incompatible lib
+
+/**
+ * Collection Of Routines - test data
+ */
+lazy val corJourneyTestData = Project(appName + "-cor-journey-test-data", file("cor-journey-test-data"))
+  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
+  .settings(commonSettings: _*)
+  .settings(
+    scalaVersion := scalaV,
+    majorVersion := majorVer,
+    libraryDependencies ++= List(
+      "com.typesafe.play" %% "play"      % play.core.PlayVersion.current % Provided,
+      "com.typesafe.play" %% "play-test" % play.core.PlayVersion.current % Provided
+    )
+  )
+  .dependsOn(corJourney)
+  .aggregate(corJourney)
+
+lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
+  majorVersion := majorVer,
+  resolvers += Resolver.jcenterRepo,
+  Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
+  Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
+  Compile / scalacOptions -= "utf8",
+  scalacOptions ++= scalaCompilerOptions,
+  scalacOptions ++= {
+    if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil
+  }
+)
+  .++(ScalariformSettings())
+  .++(ScoverageSettings())
+  .++(WartRemoverSettings.wartRemoverSettings)
+  .++(scalaSettings)
+  .++(uk.gov.hmrc.DefaultBuildSettings.defaultSettings())
+  .++(SbtUpdatesSettings.sbtUpdatesSettings)
 
 lazy val scalaCompilerOptions: Seq[String] = Seq(
   "-language:implicitConversions",
@@ -73,3 +108,7 @@ lazy val strictScalaCompilerOptions: Seq[String] = Seq(
   "-Wconf:cat=unused-imports&src=html/.*:s",
   "-Wconf:src=routes/.*:s"
 )
+
+lazy val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
+StrictBuilding.strictBuildingSetting
+

@@ -24,6 +24,9 @@ object SbtUpdatesSettings {
     // error on 1.7.2
     dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum"),
     dependencyUpdatesFilter -= moduleFilter("com.beachape", "enumeratum-play"),
+    // locked to the version of play
+    dependencyUpdatesFilter -= moduleFilter("org.julienrf", "play-json-derived-codecs"),
+
     dependencyUpdatesFilter -= moduleFilter("com.lightbend.akka", "akka-stream-alpakka-csv")
   )
 

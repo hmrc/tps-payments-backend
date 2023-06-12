@@ -38,7 +38,7 @@ class TpsControllerSpec extends ItSpec with Status {
     val id = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
     val payment = connector.find(id).futureValue
 
-    payment.payments.head.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.head.chargeReference
+    payment.payments.headOption.value.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.headOption.value.chargeReference
   }
 
   "store data when authorised" in {
@@ -77,10 +77,7 @@ class TpsControllerSpec extends ItSpec with Status {
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK
     val result: TpsPayments = connector.find(id).futureValue
-    result.payments.head.pcipalData match {
-      case Some(x) => x shouldBe chargeRefNotificationPcipalRequest
-      case None    => throw new RuntimeException("Pcipal data missing")
-    }
+    result.payments.headOption.value.pcipalData.value shouldBe chargeRefNotificationPcipalRequest
   }
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {

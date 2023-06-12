@@ -3,6 +3,11 @@ import sbt._
 
 object AppDependencies {
 
+  val bootstrapVersion: String = "7.15.0"
+  val hmrcMongoVersion: String = "1.3.0"
+  val playJsonDerivedCodesVersion: String = "7.0.0"
+  val enumeratumVersion: String = "1.7.0"
+
   lazy val microserviceDependencies: Seq[ModuleID] = {
 
     val bootstrapVersion = "7.15.0"
