@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package model
+package tps.model
+
+import play.api.libs.json.{Json, OFormat}
 import tps.utils.SafeEquals.EqualsOps
 import play.api.libs.json._
 

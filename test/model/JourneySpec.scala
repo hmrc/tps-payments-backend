@@ -37,6 +37,7 @@ import repository.JourneyRepo
 import support.UnitSpec
 import support.testdata.JsonTestData._
 import support.testdata.TestData._
+import tps.model.Journey
 
 class JourneySpec extends UnitSpec {
   "to json" in {

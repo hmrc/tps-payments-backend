@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package model
+package tps.pcipalmodel
 
-import model.pcipal.PcipalSessionId
-import play.api.libs.json.{Json, OFormat}
-import tps.model.JourneyId
+import play.api.libs.json._
+import play.api.mvc.PathBindable
+import tps.utils.ValueClassBinder.valueClassBinder
 
-final case class UpdateRequest(tpsId: JourneyId, pcipalSessionId: PcipalSessionId)
+final case class PcipalSessionId(
+    value: String
+)
 
-object UpdateRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[UpdateRequest] = Json.format[UpdateRequest]
+object PcipalSessionId {
+  implicit val format: Format[PcipalSessionId] = Json.valueFormat
+  implicit val pciPalIdBinder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
 }
+

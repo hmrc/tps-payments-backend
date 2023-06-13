@@ -16,11 +16,11 @@
 
 package support
 
-import model._
-import model.pcipal.ChargeRefNotificationPcipalRequest
 import paymentsprocessor.ModsPaymentCallBackRequest
 import recon.FindRPaymentSpecificDataRequest
-import tps.model.{JourneyId, PaymentItemId}
+import tps.model.{Journey, JourneyId, PaymentItemId, TaxType}
+import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
+import tps.startjourneymodel.StartJourneyRequest
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import util.HttpReadsInstances._
 
@@ -33,8 +33,8 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
   private val port = 19001
   private val headers: Seq[(String, String)] = Seq(("Content-Type", "application/json"))
 
-  def startTpsJourneyMibOrPngr(launchRequest: TpsPaymentRequest)(implicit hc: HeaderCarrier): Future[JourneyId] =
-    httpClient.POST[TpsPaymentRequest, JourneyId](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments", launchRequest, headers)
+  def startTpsJourneyMibOrPngr(launchRequest: StartJourneyRequest)(implicit hc: HeaderCarrier): Future[JourneyId] =
+    httpClient.POST[StartJourneyRequest, JourneyId](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments", launchRequest, headers)
 
   def upsert(tpsPayments: Journey)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient.POST[Journey, Unit](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/upsert", tpsPayments, headers)

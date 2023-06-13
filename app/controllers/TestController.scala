@@ -16,11 +16,11 @@
 
 package controllers
 
-import model.{PaymentItem, TpsPaymentRequest, Journey}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
-import tps.model.PaymentItemId
+import tps.model.{Journey, PaymentItem, PaymentItemId}
+import tps.startjourneymodel.StartJourneyRequest
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.Instant
@@ -49,7 +49,7 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: JourneyRepo)(
     }
   }
 
-  def createTpsPayments: Action[TpsPaymentRequest] = Action.async(parse.json[TpsPaymentRequest]) { implicit request =>
+  def createTpsPayments: Action[StartJourneyRequest] = Action.async(parse.json[StartJourneyRequest]) { implicit request =>
     val tpsPayments: Journey = request.body.tpsPayments(Instant.now())
 
     tpsRepo.upsert(tpsPayments).map { _ =>

@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package model
+package tps.startjourneymodel
 
-import play.api.libs.functional.syntax._
-import play.api.libs.json.Format
+import play.api.libs.json.{Json, OFormat}
+import tps.model.{PaymentSpecificData, TaxType}
 
-final case class Reference(value: String)
+/**
+ * Start Journey (Sj) Payment Item
+ */
+final case class SjPaymentItem(
+    chargeReference:     String,
+    customerName:        String,
+    amount:              BigDecimal,
+    taxRegimeDisplay:    String,
+    taxType:             TaxType,
+    paymentSpecificData: PaymentSpecificData,
+    email:               Option[String])
 
-object Reference {
-  implicit val format: Format[Reference] = implicitly[Format[String]].inmap(Reference(_), _.value)
+object SjPaymentItem {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[SjPaymentItem] = Json.format[SjPaymentItem]
 }
+

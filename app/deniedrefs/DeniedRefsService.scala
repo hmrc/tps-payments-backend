@@ -16,17 +16,18 @@
 
 package deniedrefs
 
-import _root_.model.Reference
 import tps.utils.SafeEquals._
 import akka.Done
 import akka.stream.Materializer
 import akka.stream.alpakka.csv.scaladsl.CsvParsing
 import akka.stream.scaladsl.{FileIO, Keep, Sink}
 import akka.util.ByteString
-import deniedrefs.model.VerifyRefStatuses._
+import tps.deniedrefsmodel.VerifyRefStatuses._
 import deniedrefs.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
+import tps.deniedrefsmodel.VerifyRefStatus
+import tps.model.Reference
 import util.Crypto
 
 import java.nio.file.{Files, Path}

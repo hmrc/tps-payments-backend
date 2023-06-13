@@ -16,9 +16,8 @@
 
 package paymentsprocessor
 
-import model.MibSpecificData
 import repository.JourneyRepo
-import tps.model.PaymentItemId
+import tps.model.{MibSpecificData, PaymentItemId}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}

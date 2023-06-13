@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package model
+package tps.model
 
-import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json._
-import tps.model.{HeadOfDutyIndicator, PaymentItemId}
+import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 
 import java.time.Instant
 

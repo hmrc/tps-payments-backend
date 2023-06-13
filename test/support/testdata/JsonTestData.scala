@@ -16,11 +16,11 @@
 
 package support.testdata
 
-import model.Journey
 import play.api.libs.json.{JsValue, Json}
 import support.testdata.TestData._
 
 import support.RichMatchers._
+import tps.model.Journey
 
 object JsonTestData {
 

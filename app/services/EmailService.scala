@@ -17,11 +17,12 @@
 package services
 
 import connectors.EmailConnector
-import model.TaxTypes.{MIB, PNGR}
-import model.pcipal.ChargeRefNotificationPcipalRequest
-import model.{IndividualPaymentForEmail, StatusTypes, TaxType, TaxTypes, PaymentItem}
+import tps.model.TaxTypes.{MIB, PNGR}
+import model.IndividualPaymentForEmail
 import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
+import tps.model.{PaymentItem, TaxType, TaxTypes}
+import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
 import uk.gov.hmrc.http.HeaderCarrier
 import util.EmailCrypto
 import tps.utils.SafeEquals.EqualsOps

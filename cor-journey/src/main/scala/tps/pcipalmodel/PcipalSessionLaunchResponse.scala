@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package model.pcipal
+package tps.pcipalmodel
 
-import tps.utils.ValueClassBinder.valueClassBinder
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
-import play.api.mvc.PathBindable
+import play.api.libs.json.{Json, OFormat}
 
-final case class PcipalSessionId(
-    value: String
-)
+final case class PcipalSessionLaunchResponse(Id: PcipalSessionId, LinkId: String)
 
-object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = implicitly[Format[String]].inmap(PcipalSessionId(_), _.value)
-  implicit val pciPalIdBinder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+object PcipalSessionLaunchResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]
 }
 

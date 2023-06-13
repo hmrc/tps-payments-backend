@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package model.pcipal
+package tps.pcipalmodel
 
-import model.StatusType
 import play.api.libs.json.{Json, OFormat}
 import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
+package tps.deniedrefsmodel
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class VerifyRefResponse(status: VerifyRefStatus)
+final case class VerifyRefsResponse(status: VerifyRefStatus)
 
-object VerifyRefResponse {
-  implicit val format: OFormat[VerifyRefResponse] = Json.format[VerifyRefResponse]
+object VerifyRefsResponse {
+  implicit val format: OFormat[VerifyRefsResponse] = Json.format[VerifyRefsResponse]
 }

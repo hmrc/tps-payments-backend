@@ -18,11 +18,10 @@ package services
 
 import config.AppConfig
 import connectors.EmailConnector
-import model.TaxTypes.P800
-import model._
+import tps.model.TaxTypes.P800
 import support.ItSpec
 import support.testdata.TestData.paymentItemId
-import tps.model.HeadOfDutyIndicators
+import tps.model.{HeadOfDutyIndicators, PaymentItem, PaymentSpecificDataP800, TaxType, TaxTypes}
 import uk.gov.hmrc.http.HttpClient
 import util.EmailCrypto
 

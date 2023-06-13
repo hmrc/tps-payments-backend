@@ -16,10 +16,11 @@
 
 package model
 
-import model.StatusTypes.{failed, validated}
+import tps.pcipalmodel.StatusTypes.{failed, validated}
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
 import support.UnitSpec
+import tps.pcipalmodel.StatusType
 
 import scala.collection.immutable
 

@@ -18,22 +18,23 @@ package deniedrefs.model
 
 import play.api.libs.json.{JsValue, Json}
 import support.UnitSpec
+import tps.deniedrefsmodel.{VerifyRefsResponse, VerifyRefStatuses}
 
-class VerifyRefResponseSpec extends UnitSpec {
+class VerifyRefsResponseSpec extends UnitSpec {
 
   "json serialization/deserialization" - {
 
     val testCases = List(
-      ("""{"status": "RefDenied"}""", VerifyRefResponse(status = VerifyRefStatuses.RefDenied)),
-      ("""{"status": "RefPermitted"}""", VerifyRefResponse(status = VerifyRefStatuses.RefPermitted)),
-      ("""{"status": "MissingInformation"}""", VerifyRefResponse(status = VerifyRefStatuses.MissingInformation))
+      ("""{"status": "RefDenied"}""", VerifyRefsResponse(status = VerifyRefStatuses.RefDenied)),
+      ("""{"status": "RefPermitted"}""", VerifyRefsResponse(status = VerifyRefStatuses.RefPermitted)),
+      ("""{"status": "MissingInformation"}""", VerifyRefsResponse(status = VerifyRefStatuses.MissingInformation))
     )
 
     testCases.foreach { tc =>
       s"test for ${tc._2.toString}" in {
         val json: JsValue = Json.parse(tc._1)
-        val verifyRefResponse: VerifyRefResponse = tc._2
-        json.as[VerifyRefResponse] shouldBe verifyRefResponse
+        val verifyRefResponse: VerifyRefsResponse = tc._2
+        json.as[VerifyRefsResponse] shouldBe verifyRefResponse
         Json.toJson(verifyRefResponse) shouldBe json
       }
     }

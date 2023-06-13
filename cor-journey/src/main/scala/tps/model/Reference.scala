@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
+package tps.model
 
-import model.Reference
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{Format, Json}
 
-final case class VerifyRefsRequest(refs: Set[Reference])
+final case class Reference(value: String)
 
-object VerifyRefsRequest {
-  implicit val format: OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]
-
+object Reference {
+  implicit val format: Format[Reference] = Json.valueFormat
 }

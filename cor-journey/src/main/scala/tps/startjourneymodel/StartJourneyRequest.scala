@@ -14,32 +14,19 @@
  * limitations under the License.
  */
 
-package model
+package tps.startjourneymodel
 
-import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.libs.json.{Json, OFormat}
-import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation, PaymentItemId}
+import tps.model._
+import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 
 import java.time.Instant
 import scala.Option.empty
 
-final case class TpsPaymentRequestItem(
-    chargeReference:     String,
-    customerName:        String,
-    amount:              BigDecimal,
-    taxRegimeDisplay:    String,
-    taxType:             TaxType,
-    paymentSpecificData: PaymentSpecificData,
-    email:               Option[String])
-
-object TpsPaymentRequestItem {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[TpsPaymentRequestItem] = Json.format[TpsPaymentRequestItem]
-}
-
-final case class TpsPaymentRequest(
+//start journey request
+final case class StartJourneyRequest(
     pid:        String,
-    payments:   Seq[TpsPaymentRequestItem],
+    payments:   Seq[SjPaymentItem],
     navigation: Navigation
 ) {
 
@@ -69,7 +56,7 @@ final case class TpsPaymentRequest(
   }
 }
 
-object TpsPaymentRequest {
+object StartJourneyRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[TpsPaymentRequest] = Json.format[TpsPaymentRequest]
+  implicit val format: OFormat[StartJourneyRequest] = Json.format[StartJourneyRequest]
 }

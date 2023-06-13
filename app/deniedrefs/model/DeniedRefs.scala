@@ -16,8 +16,8 @@
 
 package deniedrefs.model
 
-import model.Reference
 import play.api.libs.json.{Json, OFormat}
+import tps.model.Reference
 import tps.model.repo.HasId
 
 import java.time.LocalDateTime

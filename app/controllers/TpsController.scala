@@ -18,13 +18,14 @@ package controllers
 
 import auth.Actions
 import model._
-import model.pcipal.ChargeRefNotificationPcipalRequest
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
 import services.EmailService
-import tps.model.{JourneyId, PaymentItemId}
+import tps.model.{Journey, JourneyId, PaymentItem, PaymentItemId}
+import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
+import tps.startjourneymodel.StartJourneyRequest
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import util.EmailCrypto
 
@@ -41,7 +42,7 @@ class TpsController @Inject() (actions:      Actions,
 
   val logger: Logger = Logger(this.getClass)
 
-  def startTpsJourneyMibOrPngr: Action[TpsPaymentRequest] = actions.strideAuthenticateAction().async(parse.json[TpsPaymentRequest]) { implicit request =>
+  def startTpsJourneyMibOrPngr: Action[StartJourneyRequest] = actions.strideAuthenticateAction().async(parse.json[StartJourneyRequest]) { implicit request =>
     val tpsPayments: Journey = encryptEmail(request.body.tpsPayments(Instant.now()))
     tpsRepo.upsert(tpsPayments).map { _ =>
       Created(toJson(tpsPayments._id))

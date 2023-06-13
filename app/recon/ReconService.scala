@@ -16,8 +16,8 @@
 
 package recon
 
-import model.PaymentSpecificData
 import repository.JourneyRepo
+import tps.model.PaymentSpecificData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future

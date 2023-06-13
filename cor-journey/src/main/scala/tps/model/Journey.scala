@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package model
+package tps.model
 
-import model.pcipal.{PcipalSessionId, PcipalSessionLaunchResponse}
 import play.api.libs.json.{Json, OFormat}
-import tps.model.{JourneyId, Navigation}
 import tps.model.repo.HasId
-import tps.pcipalmodel.PcipalSessionLaunchRequest
+import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 
 import java.time.Instant
 

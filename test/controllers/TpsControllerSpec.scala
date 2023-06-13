@@ -16,14 +16,13 @@
 
 package controllers
 
-import model.pcipal.PcipalSessionId
-import model.{TaxTypes, Journey}
 import play.api.http.Status
 import services.EmailService
 import support.AuthStub._
 import support.testdata.TestData._
 import support.{ItSpec, TestConnector}
-import tps.model.{JourneyId, PaymentItemId}
+import tps.model.{Journey, JourneyId, PaymentItemId, TaxTypes}
+import tps.pcipalmodel.PcipalSessionId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 import util.EmailCrypto
 

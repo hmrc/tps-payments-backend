@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package model.pcipal
+package tps.deniedrefsmodel
 
 import play.api.libs.json.{Json, OFormat}
+import tps.model.Reference
 
-final case class PcipalSessionLaunchResponse(Id: PcipalSessionId, LinkId: String)
+final case class VerifyRefsRequest(refs: Set[Reference])
 
-object PcipalSessionLaunchResponse {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]
+object VerifyRefsRequest {
+  implicit val format: OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]
 }
-

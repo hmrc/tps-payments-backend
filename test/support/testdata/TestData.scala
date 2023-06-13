@@ -16,15 +16,16 @@
 
 package support.testdata
 
-import deniedrefs.model.{DeniedRefs, DeniedRefsId, VerifyRefsRequest}
-import model.StatusTypes.validated
-import model.TaxTypes.{MIB, P800, PNGR, Sa}
-import model._
-import model.pcipal._
+import deniedrefs.model.{DeniedRefs, DeniedRefsId}
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
-import tps.model.{HeadOfDutyIndicators, JourneyId, Navigation, PaymentItemId}
-import tps.pcipalmodel.{PcipalInitialValues, PcipalSessionLaunchRequest}
+import tps.deniedrefsmodel.VerifyRefsRequest
+import tps.model.TaxTypes.{MIB, P800, PNGR, Sa}
+import tps.model._
+import tps.pcipalmodel.StatusTypes.validated
+import tps.pcipalmodel._
+import tps.startjourneymodel
+import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequest}
 
 import java.time.{Instant, LocalDateTime}
 
@@ -38,10 +39,10 @@ object TestData {
   private val pid = "123"
   private val transReference = "51e267d84f91"
 
-  val tpsPaymentRequest: TpsPaymentRequest = TpsPaymentRequest(
+  val tpsPaymentRequest: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
     pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
-      TpsPaymentRequestItem(
+    payments   = Seq[SjPaymentItem](
+      SjPaymentItem(
         chargeReference     = "chargeReference",
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
@@ -54,10 +55,10 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val tpsPaymentRequestPngr: TpsPaymentRequest = TpsPaymentRequest(
+  val tpsPaymentRequestPngr: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
     pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
-      TpsPaymentRequestItem(
+    payments   = Seq[SjPaymentItem](
+      SjPaymentItem(
         chargeReference     = "chargeReference",
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
@@ -70,10 +71,10 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val tpsPaymentRequestMib: TpsPaymentRequest = TpsPaymentRequest(
+  val tpsPaymentRequestMib: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
     pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
-      TpsPaymentRequestItem(
+    payments   = Seq[SjPaymentItem](
+      SjPaymentItem(
         chargeReference     = "chargeReference",
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),
@@ -86,10 +87,10 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  def tpsPaymentRequestGeneric(taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData): TpsPaymentRequest = TpsPaymentRequest(
+  def tpsPaymentRequestGeneric(taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData): StartJourneyRequest = startjourneymodel.StartJourneyRequest(
     pid        = "pid",
-    payments   = Seq[TpsPaymentRequestItem](
-      TpsPaymentRequestItem(
+    payments   = Seq[SjPaymentItem](
+      SjPaymentItem(
         chargeReference     = "chargeReference",
         customerName        = "customerName",
         amount              = BigDecimal("100.00"),

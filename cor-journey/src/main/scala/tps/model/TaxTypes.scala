@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package model
+package tps.model
 
 import enumeratum._
 import play.api.libs.json.Format

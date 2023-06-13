@@ -18,6 +18,7 @@ package model
 
 import play.api.libs.json.{Json, OWrites}
 
+//TODO: move to email related package
 final case class IndividualPaymentForEmail(taxType:           String,
                                            amount:            String,
                                            transactionFee:    String,
