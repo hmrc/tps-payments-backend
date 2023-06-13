@@ -73,7 +73,7 @@ final class JourneyRepo @Inject() (
     config:         RepoConfig
 )(implicit ec: ExecutionContext)
   extends Repo[JourneyId, Journey](
-    collectionName = "tps-payments", //TODO: at some point address the name of the collection
+    collectionName = "tps-payments", //TODO: at some point address the name of the collection. Rename it to journey, rename existing collection to journey
     mongoComponent = mongoComponent,
     indexes        = JourneyRepo.indexes(config.expireMongo.toSeconds),
     extraCodecs    = Seq.empty,
