@@ -60,11 +60,11 @@ final case class TpsPaymentRequest(
     }.toList
 
     Journey(
-      _id          = JourneyId.fresh(),
-      pid          = pid,
-      created      = now,
-      paymentItems = tpsPayments,
-      navigation   = Some(navigation)
+      _id        = JourneyId.fresh(),
+      pid        = pid,
+      created    = now,
+      payments   = tpsPayments,
+      navigation = Some(navigation)
     )
   }
 }

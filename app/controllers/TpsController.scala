@@ -56,26 +56,26 @@ class TpsController @Inject() (actions:      Actions,
   }
 
   private def encryptEmail(tpsPayments: Journey): Journey = {
-    val paymentItems: List[PaymentItem] = tpsPayments.paymentItems
+    val paymentItems: List[PaymentItem] = tpsPayments.payments
     val paymentItemsWithEncryptedEmails: List[PaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
       case Some(email) => tpsPaymentItem.copy(email = Some(emailCrypto.encryptEmailIfNotAlreadyEncrypted(email)))
       case _           => tpsPaymentItem
     })
-    tpsPayments.copy(paymentItems = paymentItemsWithEncryptedEmails)
+    tpsPayments.copy(payments = paymentItemsWithEncryptedEmails)
   }
 
   def findTpsPayments(id: JourneyId): Action[AnyContent] = actions.strideAuthenticateAction().async {
     tpsRepo.findPayment(id).map {
       case Some(tpsPayments) =>
         val tpsPaymentItemsWithDecryptedEmail: List[PaymentItem] = tpsPayments
-          .paymentItems
+          .payments
           .map(nextTpsPaymentItem =>
             nextTpsPaymentItem.copy(
               email = emailCrypto.maybeDecryptEmail(nextTpsPaymentItem.email)
             )
           )
 
-        val tpsPaymentsWithDecryptedEmails: Journey = tpsPayments.copy(paymentItems = tpsPaymentItemsWithDecryptedEmail)
+        val tpsPaymentsWithDecryptedEmails: Journey = tpsPayments.copy(payments = tpsPaymentItemsWithDecryptedEmail)
         Ok(toJson(tpsPaymentsWithDecryptedEmails))
       case None => NotFound(s"No payments found for id ${id.value}")
     }
@@ -101,7 +101,7 @@ class TpsController @Inject() (actions:      Actions,
       existingTpsPayments <- tpsRepo.findByPcipalSessionId(request.body.PCIPalSessionId)
       updatedTpsPayments = updateTpsPayments(existingTpsPayments, request.body)
       _ <- tpsRepo.upsert(updatedTpsPayments)
-      _ = emailService.maybeSendEmail(updatedTpsPayments.paymentItems)
+      _ = emailService.maybeSendEmail(updatedTpsPayments.payments)
     } yield Ok
 
     f.recover {
@@ -111,8 +111,8 @@ class TpsController @Inject() (actions:      Actions,
 
   private def updateTpsPayments(tpsPayments: Journey, chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest): Journey = {
     logger.debug("updateTpsPayments")
-    val remainder: List[PaymentItem] = tpsPayments.paymentItems.filterNot(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
-    val update: List[PaymentItem] = tpsPayments.paymentItems.filter(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
+    val remainder: List[PaymentItem] = tpsPayments.payments.filterNot(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
+    val update: List[PaymentItem] = tpsPayments.payments.filter(nextTpsPaymentItem => nextTpsPaymentItem.paymentItemId.contains(chargeRefNotificationPciPalRequest.paymentItemId))
     val tpsPaymentsListNew = update.headOption match {
       case Some(singleUpdate) =>
         val updated = singleUpdate.copy(pcipalData = Some(chargeRefNotificationPciPalRequest))
@@ -120,6 +120,6 @@ class TpsController @Inject() (actions:      Actions,
       case None => throw new IdNotFoundException(s"Could not find paymentItemId: ${chargeRefNotificationPciPalRequest.paymentItemId.value}")
     }
 
-    tpsPayments.copy(paymentItems = tpsPaymentsListNew)
+    tpsPayments.copy(payments = tpsPaymentsListNew)
   }
 }

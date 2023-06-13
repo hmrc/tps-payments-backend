@@ -88,7 +88,7 @@ final class JourneyRepo @Inject() (
   def findPaymentItem(id: PaymentItemId): Future[Option[PaymentItem]] =
     find("payments.paymentItemId" -> Some(id)).map { payments =>
       val paymentItems = payments.flatMap { payment =>
-        payment.paymentItems.filter(_.paymentItemId.contains(id))
+        payment.payments.filter(_.paymentItemId.contains(id))
       }
 
       if (paymentItems.size > 1) throw new RuntimeException(s"Multiple payment items with id ${id.value}")
@@ -121,7 +121,7 @@ final class JourneyRepo @Inject() (
       .map { listOfPayments =>
         listOfPayments
           .flatMap { tpsPayments =>
-            tpsPayments.paymentItems.filter(_.taxType === TaxTypes.MIB)
+            tpsPayments.payments.filter(_.taxType === TaxTypes.MIB)
               .map { tpsPaymentItem =>
                 tpsPaymentItem.paymentSpecificData
               }

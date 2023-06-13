@@ -39,7 +39,7 @@ class TpsControllerSpec extends ItSpec with Status {
     val id = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
     val payment = connector.find(id).futureValue
 
-    payment.paymentItems.headOption.value.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.headOption.value.chargeReference
+    payment.payments.headOption.value.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.headOption.value.chargeReference
   }
 
   "store data when authorised" in {
@@ -78,7 +78,7 @@ class TpsControllerSpec extends ItSpec with Status {
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK
     val result: Journey = connector.find(id).futureValue
-    result.paymentItems.headOption.value.pcipalData.value shouldBe chargeRefNotificationPcipalRequest
+    result.payments.headOption.value.pcipalData.value shouldBe chargeRefNotificationPcipalRequest
   }
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
@@ -121,7 +121,7 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "should parse TpsPaymentItems for email correctly" in {
-    emailService.stringifyTpsPaymentsItemsForEmail(emailService.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.paymentItems)) shouldBe tpsItemsForEmail
+    emailService.stringifyTpsPaymentsItemsForEmail(emailService.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.payments)) shouldBe tpsItemsForEmail
   }
 
   "should decrypt email successfully" in {

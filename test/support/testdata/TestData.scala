@@ -201,7 +201,7 @@ object TestData {
       pid = pid,
       //      Some(pciPalSessionId),
       created                     = created,
-      paymentItems                = List(
+      payments                    = List(
         PaymentItem(
           Some(paymentItemId),
           1.92,
@@ -277,10 +277,10 @@ object TestData {
           Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
-    _id          = id,
-    pid          = pid,
-    created      = created,
-    paymentItems = List(
+    _id      = id,
+    pid      = pid,
+    created  = created,
+    payments = List(
       PaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,
@@ -299,10 +299,10 @@ object TestData {
         email               = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
-    _id          = id,
-    pid          = pid,
-    created      = created,
-    paymentItems = List(
+    _id      = id,
+    pid      = pid,
+    created  = created,
+    payments = List(
       PaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,
