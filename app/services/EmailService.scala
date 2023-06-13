@@ -19,7 +19,7 @@ package services
 import connectors.EmailConnector
 import model.TaxTypes.{MIB, PNGR}
 import model.pcipal.ChargeRefNotificationPcipalRequest
-import model.{IndividualPaymentForEmail, StatusTypes, TaxType, TaxTypes, TpsPaymentItem}
+import model.{IndividualPaymentForEmail, StatusTypes, TaxType, TaxTypes, PaymentItem}
 import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,15 +32,15 @@ import javax.inject.{Inject, Singleton}
 class EmailService @Inject() (emailCrypto:    EmailCrypto,
                               emailConnector: EmailConnector) {
 
-  def maybeSendEmail(tpsPaymentItems: List[TpsPaymentItem])(implicit hc: HeaderCarrier): Unit = {
+  def maybeSendEmail(tpsPaymentItems: List[PaymentItem])(implicit hc: HeaderCarrier): Unit = {
     if (weShouldSendEmail(tpsPaymentItems)) {
       val emailAddress: String = tpsPaymentItems.find(_.email.nonEmpty).flatMap(_.email).fold("impossible")(email => email)
-      val listOfSuccessfulTpsPaymentItems: List[TpsPaymentItem] =
+      val listOfSuccessfulTpsPaymentItems: List[PaymentItem] =
         tpsPaymentItems.filter(_.pcipalData
           .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated))
 
       listOfSuccessfulTpsPaymentItems.headOption match {
-        case Some(TpsPaymentItem(_, _, _, _, _, _, Some(ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)), _, _, _)) =>
+        case Some(PaymentItem(_, _, _, _, _, _, Some(ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)), _, _, _)) =>
           sendEmail(listOfSuccessfulTpsPaymentItems, referenceNumber.dropRight(2), emailAddress, cardType, cardLast4)
         case _ => ()
       }
@@ -48,7 +48,7 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-  private def sendEmail(tpsPaymentItems: List[TpsPaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
+  private def sendEmail(tpsPaymentItems: List[PaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
     val totalCommissionPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
     val totalAmountPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
 
@@ -63,19 +63,19 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
     ()
   }
 
-  private def weShouldSendEmail(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+  private def weShouldSendEmail(tpsPaymentItems: List[PaymentItem]): Boolean = {
     isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(tpsPaymentItems)
   }
 
-  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[TpsPaymentItem]): Boolean = tpsPaymentItems.forall(_.pcipalData.nonEmpty)
+  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[PaymentItem]): Boolean = tpsPaymentItems.forall(_.pcipalData.nonEmpty)
 
-  private def emailAddressHasBeenProvided(tpsPaymentItems: List[TpsPaymentItem]): Boolean = tpsPaymentItems.exists(_.email.nonEmpty)
+  private def emailAddressHasBeenProvided(tpsPaymentItems: List[PaymentItem]): Boolean = tpsPaymentItems.exists(_.email.nonEmpty)
 
-  private def isNotMibOrPngr(tpsPaymentItems: List[TpsPaymentItem]): Boolean = {
+  private def isNotMibOrPngr(tpsPaymentItems: List[PaymentItem]): Boolean = {
     !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType === MIB || nextPaymentItem.taxType === PNGR)
   }
 
-  def parseTpsPaymentsItemsForEmail(tpsPayments: List[TpsPaymentItem]): List[IndividualPaymentForEmail] = {
+  def parseTpsPaymentsItemsForEmail(tpsPayments: List[PaymentItem]): List[IndividualPaymentForEmail] = {
     tpsPayments.map(nextPaymentItem =>
       IndividualPaymentForEmail(
         taxType           = getTaxTypeString(nextPaymentItem.taxType),

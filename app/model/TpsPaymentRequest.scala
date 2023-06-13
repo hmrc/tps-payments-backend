@@ -45,7 +45,7 @@ final case class TpsPaymentRequest(
 
   def tpsPayments(now: Instant): Journey = {
     val tpsPayments = payments.map { p =>
-      TpsPaymentItem(
+      PaymentItem(
         paymentItemId       = Some(PaymentItemId.fresh()),
         amount              = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
@@ -60,11 +60,11 @@ final case class TpsPaymentRequest(
     }.toList
 
     Journey(
-      _id        = JourneyId.fresh(),
-      pid        = pid,
-      created    = now,
-      payments   = tpsPayments,
-      navigation = Some(navigation)
+      _id          = JourneyId.fresh(),
+      pid          = pid,
+      created      = now,
+      paymentItems = tpsPayments,
+      navigation   = Some(navigation)
     )
   }
 }

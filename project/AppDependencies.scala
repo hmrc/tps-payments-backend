@@ -10,7 +10,7 @@ object AppDependencies {
 
   lazy val microserviceDependencies: Seq[ModuleID] = {
 
-    val bootstrapVersion = "7.15.0"
+    val bootstrapVersion = "7.16.0"
 
     val compile: Seq[ModuleID] = Seq(
       "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"         % "1.3.0",

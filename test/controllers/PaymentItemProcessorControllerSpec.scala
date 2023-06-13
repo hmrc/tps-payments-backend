@@ -22,7 +22,7 @@ import support.{ItSpec, TestConnector}
 import tps.model.JourneyId
 import uk.gov.hmrc.http.HeaderCarrier
 
-class PaymentProcessorControllerSpec extends ItSpec with Status {
+class PaymentItemProcessorControllerSpec extends ItSpec with Status {
 
   private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
 

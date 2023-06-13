@@ -145,7 +145,7 @@ object TestData {
       //      Some(pciPalSessionId),
       created,
       List(
-        TpsPaymentItem(
+        PaymentItem(
           Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
@@ -201,8 +201,8 @@ object TestData {
       pid = pid,
       //      Some(pciPalSessionId),
       created                     = created,
-      payments                    = List(
-        TpsPaymentItem(
+      paymentItems                = List(
+        PaymentItem(
           Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
@@ -226,7 +226,7 @@ object TestData {
       //      Some(pciPalSessionId),
       created,
       List(
-        TpsPaymentItem(
+        PaymentItem(
           Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
@@ -245,7 +245,7 @@ object TestData {
       //      Some(pciPalSessionId),
       created,
       List(
-        TpsPaymentItem(
+        PaymentItem(
           Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
@@ -264,7 +264,7 @@ object TestData {
       //      Some(pciPalSessionId),
       created,
       List(
-        TpsPaymentItem(
+        PaymentItem(
           Some(paymentItemId),
           1.92,
           HeadOfDutyIndicators.B,
@@ -277,11 +277,11 @@ object TestData {
           Some(""))))
 
   val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
-    _id      = id,
-    pid      = pid,
-    created  = created,
-    payments = List(
-      TpsPaymentItem(
+    _id          = id,
+    pid          = pid,
+    created      = created,
+    paymentItems = List(
+      PaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
@@ -299,11 +299,11 @@ object TestData {
         email               = None)))
 
   val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
-    _id      = id,
-    pid      = pid,
-    created  = created,
-    payments = List(
-      TpsPaymentItem(
+    _id          = id,
+    pid          = pid,
+    created      = created,
+    paymentItems = List(
+      PaymentItem(
         paymentItemId       = Some(paymentItemId),
         amount              = 1.92,
         headOfDutyIndicator = HeadOfDutyIndicators.B,

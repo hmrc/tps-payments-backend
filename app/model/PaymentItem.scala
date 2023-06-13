@@ -22,7 +22,7 @@ import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 
 import java.time.Instant
 
-final case class TpsPaymentItem(
+final case class PaymentItem(
     paymentItemId:       Option[PaymentItemId],
     amount:              BigDecimal,
     headOfDutyIndicator: HeadOfDutyIndicator,
@@ -36,8 +36,8 @@ final case class TpsPaymentItem(
     email:               Option[String]) {
 }
 
-object TpsPaymentItem {
+object PaymentItem {
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit def formats: OFormat[TpsPaymentItem] = Json.format[TpsPaymentItem]
+  implicit def formats: OFormat[PaymentItem] = Json.format[PaymentItem]
 }

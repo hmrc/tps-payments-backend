@@ -19,7 +19,7 @@ package model
 import play.api.libs.json.{JsResultException, JsString}
 import support.UnitSpec
 
-class PaymentSpecificDataSpec extends UnitSpec {
+class PaymentItemSpecificDataSpec extends UnitSpec {
 
   "PaymentSpecificData get reference utility methods" - {
     "PaymentSpecificDataP800" in {

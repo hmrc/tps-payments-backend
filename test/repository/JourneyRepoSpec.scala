@@ -53,7 +53,7 @@ class JourneyRepoSpec extends ItSpec {
   }
 
   "insert and find an mib tps payment" in {
-    mibPayments.payments.headOption.value.paymentSpecificData.getReference shouldBe "chargeReference"
+    mibPayments.paymentItems.headOption.value.paymentSpecificData.getReference shouldBe "chargeReference"
     Option(repo.upsert(mibPayments).futureValue.getUpsertedId).isDefined shouldBe true
     repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
   }
@@ -61,7 +61,7 @@ class JourneyRepoSpec extends ItSpec {
   "findPaymentItem should optionally find the matching payment item" in {
     repo.findPaymentItem(paymentItemId).futureValue shouldBe None
     repo.upsert(tpsPayments).futureValue
-    repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.headOption.value)
+    repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.paymentItems.headOption.value)
   }
 
   "surfaceModsDataForRecon should find matching mods payments" in {

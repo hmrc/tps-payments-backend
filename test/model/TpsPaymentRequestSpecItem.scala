@@ -21,7 +21,7 @@ import play.api.libs.json.Json.toJson
 import support.testdata.TestData._
 import support.UnitSpec
 
-class TpsPaymentRequestSpec extends UnitSpec {
+class TpsPaymentRequestSpecItem extends UnitSpec {
   "to json should serialise to json" in {
     toJson(tpsPaymentRequest) shouldBe paymentRequestJson
   }

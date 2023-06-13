@@ -28,7 +28,7 @@ final case class Journey(
     _id:                         JourneyId,
     pid:                         String,
     created:                     Instant,
-    payments:                    List[TpsPaymentItem],
+    paymentItems:                List[PaymentItem],
     navigation:                  Option[Navigation]                  = None,
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None

@@ -16,7 +16,7 @@
 
 package controllers
 
-import model.{TpsPaymentItem, TpsPaymentRequest, Journey}
+import model.{PaymentItem, TpsPaymentRequest, Journey}
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
@@ -42,9 +42,9 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: JourneyRepo)(
   }
 
   def storeTpsPayments(): Action[Journey] = Action.async(parse.json[Journey]) { implicit request =>
-    val updatedPayments: List[TpsPaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh())))
+    val updatedPayments: List[PaymentItem] = request.body.paymentItems map (payment => payment.copy(paymentItemId = Some(PaymentItemId.fresh())))
 
-    tpsRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
+    tpsRepo.upsert(request.body.copy(paymentItems = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
     }
   }

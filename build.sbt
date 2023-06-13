@@ -7,7 +7,7 @@ scalaVersion := scalaV
 val majorVer = 2
 majorVersion := majorVer
 
-lazy val microservice2 = Project(appName, file("."))
+lazy val microservice = Project(appName, file("."))
   .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .settings(commonSettings *)
   .disablePlugins(JUnitXmlReportPlugin)

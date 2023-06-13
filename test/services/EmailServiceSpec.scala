@@ -36,7 +36,7 @@ class EmailServiceSpec extends ItSpec {
     val emailConnector = new EmailConnector(app.injector.instanceOf[HttpClient], app.injector.instanceOf[AppConfig])(ec)
     val service = new EmailService(emailCrypto, emailConnector)
 
-    val testTpsPaymentItem = TpsPaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
+    val testTpsPaymentItem = PaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
 
     "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
       val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
