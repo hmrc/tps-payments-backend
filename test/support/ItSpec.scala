@@ -32,7 +32,8 @@ package support
  * limitations under the License.
  */
 
-import com.google.inject.AbstractModule
+import com.google.inject.{AbstractModule, Provides}
+import journeysupport.TestJourneyIdGenerator
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -43,7 +44,10 @@ import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import repository.JourneyRepo
+import tps.model.JourneyIdGenerator
+import javax.inject.Singleton
 
+import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
 /**
@@ -66,11 +70,28 @@ trait ItSpec
 
   private val module: AbstractModule = new AbstractModule {
     override def configure(): Unit = ()
+
+    /**
+     * This one is randomised every time new test application is spawned. Thanks to that there will be no
+     * collisions in database when 2 tests insert journey.
+     */
+    @Provides
+    @Singleton
+    @nowarn // silence "method never used" warning
+    def journeyIdGenerator(testJourneyIdGenerator: TestJourneyIdGenerator): JourneyIdGenerator = testJourneyIdGenerator
+
+    @Provides
+    @Singleton
+    @nowarn // silence "method never used" warning
+    def testJourneyIdGenerator(): TestJourneyIdGenerator = new TestJourneyIdGenerator()
   }
 
   private val configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
-    "microservice.services.auth.port" -> WireMockSupport.port
+    "microservice.services.auth.port" -> WireMockSupport.port,
+    "microservice.services.tps-payments-backend.protocol" -> "http",
+    "microservice.services.tps-payments-backend.host" -> "localhost",
+    "microservice.services.tps-payments-backend.port" -> testServerPort
   )
 
   lazy val injector: Injector = fakeApplication().injector

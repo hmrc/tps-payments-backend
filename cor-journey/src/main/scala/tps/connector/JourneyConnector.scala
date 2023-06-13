@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-package tps
+package tps.connector
 
 import play.api.mvc.Request
-import tps.deniedrefsmodel.{VerifyRefsRequest, VerifyRefsResponse}
-import tps.utils.HttpReadsInstances._
-import tps.utils.RequestSupport._
+import tps.model.{Journey, JourneyId}
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import tps.utils.RequestSupport._
+import tps.utils.HttpReadsInstances._
 
-@Singleton
-class TpsPaymentsBackendConnector @Inject() (
-    httpClient:     HttpClient,
-    servicesConfig: ServicesConfig
+class JourneyConnector(
+    httpClient: HttpClient,
+    baseUrl:    String
 )(implicit ec: ExecutionContext) {
 
-  private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
+  def upsert(journey: Journey)(implicit request: Request[_]): Future[Unit] = httpClient
+    .POST[Journey, Unit](
+      s"$baseUrl/tps-payments-backend/tps-payments/upsert",
+      journey
+    )
 
-  def verifyRefDenyList(verifyRefsRequest: VerifyRefsRequest)(implicit request: Request[_]): Future[VerifyRefsResponse] =
-    httpClient
-      .POST[VerifyRefsRequest, VerifyRefsResponse](
-        s"$serviceURL/tps-payments-backend/verify-refs",
-        verifyRefsRequest
-      )
+  def find(id: JourneyId)(implicit request: Request[_]): Future[Option[Journey]] = httpClient
+    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/tps-payments/${id.value}")
+
+  @Inject()
+  def this(httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(
+    httpClient,
+    servicesConfig.baseUrl("tps-payments-backend")
+  )
 
 }
