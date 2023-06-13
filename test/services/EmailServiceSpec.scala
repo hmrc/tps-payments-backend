@@ -19,8 +19,8 @@ package services
 import config.AppConfig
 import connectors.EmailConnector
 import tps.model.TaxTypes.P800
-import support.ItSpec
-import support.testdata.TestData.paymentItemId
+import testsupport.ItSpec
+import testsupport.testdata.TestData.paymentItemId
 import tps.model.{HeadOfDutyIndicators, PaymentItem, PaymentSpecificDataP800, TaxType, TaxTypes}
 import uk.gov.hmrc.http.HttpClient
 import util.EmailCrypto

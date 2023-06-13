@@ -16,7 +16,7 @@
 
 package tps.connector
 
-import support.ItSpec
+import testsupport.ItSpec
 
 class JourneyConnectorSpec extends ItSpec {
 

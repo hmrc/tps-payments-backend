@@ -19,7 +19,7 @@ package model
 import tps.pcipalmodel.StatusTypes.{failed, validated}
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
-import support.UnitSpec
+import testsupport.UnitSpec
 import tps.pcipalmodel.StatusType
 
 import scala.collection.immutable

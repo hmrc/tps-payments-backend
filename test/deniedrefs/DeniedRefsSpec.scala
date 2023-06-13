@@ -17,8 +17,8 @@
 package deniedrefs
 
 import deniedrefs.model._
-import support.ItSpec
-import support.testdata.TestData._
+import testsupport.ItSpec
+import testsupport.testdata.TestData._
 import tps.model.Reference
 import tps.deniedrefsmodel.{VerifyRefsResponse, VerifyRefStatuses, VerifyRefsRequest}
 import uk.gov.hmrc.http.HttpReads.Implicits._

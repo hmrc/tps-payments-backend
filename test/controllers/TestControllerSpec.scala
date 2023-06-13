@@ -17,7 +17,7 @@
 package controllers
 
 import play.api.test.FakeRequest
-import support.ItSpec
+import testsupport.ItSpec
 
 class TestControllerSpec extends ItSpec {
   private val controller = injector.instanceOf[TestController]

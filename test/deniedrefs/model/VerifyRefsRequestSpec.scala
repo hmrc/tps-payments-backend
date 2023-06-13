@@ -17,8 +17,8 @@
 package deniedrefs.model
 
 import play.api.libs.json.Json
-import support.UnitSpec
-import support.testdata.TestData
+import testsupport.UnitSpec
+import testsupport.testdata.TestData
 import tps.deniedrefsmodel.VerifyRefsRequest
 
 class VerifyRefsRequestSpec extends UnitSpec {

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package support.testdata
+package testsupport.testdata
 
 import play.api.libs.json.{JsValue, Json}
-import support.testdata.TestData._
+import testsupport.testdata.TestData._
 
-import support.RichMatchers._
+import testsupport.RichMatchers._
 import tps.model.Journey
 
 object JsonTestData {

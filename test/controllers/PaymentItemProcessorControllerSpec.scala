@@ -17,8 +17,8 @@
 package controllers
 
 import play.api.http.Status
-import support.testdata.TestData._
-import support.{ItSpec, TestConnector}
+import testsupport.testdata.TestData._
+import testsupport.{ItSpec, TestConnector}
 import tps.model.JourneyId
 import uk.gov.hmrc.http.HeaderCarrier
 

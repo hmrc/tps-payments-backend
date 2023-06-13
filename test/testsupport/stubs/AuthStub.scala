@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-package support
+package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.concurrent.Eventually
 
-object AuthStub extends Eventually {
+object AuthStub {
   private val expectedDetail = "SessionRecordNotFound"
 
-  def givenTheUserIsNotAuthenticated(): StubMapping =
-    stubFor(post(urlEqualTo("/auth/authorise"))
-      .willReturn(aResponse()
-        .withStatus(401)
-        .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
-      )
-    )
-
-  def givenTheUserIsAuthenticatedAndAuthorised(): StubMapping = eventually {
+  /**
+   * The user is authenticated and authorised
+   */
+  def authorised(): StubMapping = {
     stubFor(post(urlEqualTo("/auth/authorise"))
       .withRequestBody(
         equalToJson(
@@ -71,7 +66,16 @@ object AuthStub extends Eventually {
        """.stripMargin)))
   }
 
-  def givenTheUserIsNotAuthorised(error: String): StubMapping =
+  def notAuthenticated(): StubMapping =
+    stubFor(post(urlEqualTo("/auth/authorise"))
+      .willReturn(aResponse()
+        .withStatus(401)
+        .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
+      )
+    )
+
+
+  def notAuthorised(error: String): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)

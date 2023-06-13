@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package support.testdata
+package testsupport.testdata
 
 import deniedrefs.model.{DeniedRefs, DeniedRefsId}
 import paymentsprocessor.ModsPaymentCallBackRequest
@@ -25,7 +25,7 @@ import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
 import tps.pcipalmodel._
 import tps.startjourneymodel
-import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequest}
+import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
 
 import java.time.{Instant, LocalDateTime}
 
@@ -39,7 +39,7 @@ object TestData {
   private val pid = "123"
   private val transReference = "51e267d84f91"
 
-  val tpsPaymentRequest: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
+  val tpsPaymentRequest: StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
@@ -55,7 +55,7 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val tpsPaymentRequestPngr: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
+  val tpsPaymentRequestPngr: StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
@@ -71,7 +71,7 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  val tpsPaymentRequestMib: StartJourneyRequest = startjourneymodel.StartJourneyRequest(
+  val tpsPaymentRequestMib: StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
@@ -87,7 +87,7 @@ object TestData {
     navigation = Navigation("back", "reset", "finish", "callback")
   )
 
-  def tpsPaymentRequestGeneric(taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData): StartJourneyRequest = startjourneymodel.StartJourneyRequest(
+  def tpsPaymentRequestGeneric(taxRegimeDisplay: String, taxType: TaxType, paymentSpecificData: PaymentSpecificData): StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(

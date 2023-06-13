@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package support
+package testsupport
 
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.verification.LoggedRequest

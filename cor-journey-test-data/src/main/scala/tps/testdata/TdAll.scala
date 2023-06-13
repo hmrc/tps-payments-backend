@@ -21,3 +21,7 @@ object TdAll extends TdAll
 trait TdAll
   extends AnyRef
   with TdBase
+  with TdNavigation
+  with TdMib
+  with TdPngr
+  with StartJourneyRequest

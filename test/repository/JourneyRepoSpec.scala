@@ -16,8 +16,8 @@
 
 package repository
 
-import support.ItSpec
-import support.testdata.TestData._
+import testsupport.ItSpec
+import testsupport.testdata.TestData._
 import tps.model.JourneyId
 import tps.pcipalmodel.PcipalSessionId
 

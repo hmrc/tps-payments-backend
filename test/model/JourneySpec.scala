@@ -34,9 +34,9 @@ package model
 
 import play.api.libs.json.Json.toJson
 import repository.JourneyRepo
-import support.UnitSpec
-import support.testdata.JsonTestData._
-import support.testdata.TestData._
+import testsupport.UnitSpec
+import testsupport.testdata.JsonTestData._
+import testsupport.testdata.TestData._
 import tps.model.Journey
 
 class JourneySpec extends UnitSpec {

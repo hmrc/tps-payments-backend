@@ -23,8 +23,8 @@ import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import java.time.Instant
 import scala.Option.empty
 
-//start journey request
-final case class StartJourneyRequest(
+//TODO: remove this and use dedicated classes and endpoints for Mib and Pngr
+final case class StartJourneyRequestMibOrPngr(
     pid:        String,
     payments:   Seq[SjPaymentItem],
     navigation: Navigation
@@ -56,7 +56,7 @@ final case class StartJourneyRequest(
   }
 }
 
-object StartJourneyRequest {
+object StartJourneyRequestMibOrPngr {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[StartJourneyRequest] = Json.format[StartJourneyRequest]
+  implicit val format: OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]
 }

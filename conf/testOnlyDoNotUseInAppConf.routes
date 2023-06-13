@@ -16,11 +16,8 @@
 GET         /tps-payments-backend/test-only/remove-test-data        controllers.TestController.removeTestData()
 GET         /tps-payments-backend/test-only/find-by-reference/:ref  controllers.TestController.findByReference(ref: String)
 
-#TODO, do we need this? Remove this.
+#TODO, do we need this? Remove this. (Agree with Darren to use equivalent from app.routes and then delete this)
 POST        /tps-payments-backend/test-only/store                   controllers.TestController.storeTpsPayments()
-
-#TODO, do we need this? Remove this. This is the same as POST /tps-payments-backend/tps-payments used by bc-passangers-stride-frontend
-POST        /tps-payments-backend/test-only/create                   controllers.TestController.createTpsPayments()
 
 # Denied Utrs:
 DELETE        /tps-payments-backend/test-only/drop-denied-refs-collection      deniedrefs.DeniedRefsController.dropDb()

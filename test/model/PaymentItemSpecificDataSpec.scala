@@ -17,7 +17,7 @@
 package model
 
 import play.api.libs.json.{JsResultException, JsString}
-import support.UnitSpec
+import testsupport.UnitSpec
 import tps.model._
 
 class PaymentItemSpecificDataSpec extends UnitSpec {

@@ -18,4 +18,9 @@ package tps.testdata
 
 trait TdBase {
 
+  def pid: String = "1234567"
+  def customerName: String = "customerName"
+  def chargeReference: String = "chargeReference"
+  def amount: BigDecimal = BigDecimal("100.00")
+  def email: String = "test@email.com"
 }

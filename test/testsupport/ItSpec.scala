@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package support
+package testsupport
 
 /*
  * Copyright 2019 HM Revenue & Customs

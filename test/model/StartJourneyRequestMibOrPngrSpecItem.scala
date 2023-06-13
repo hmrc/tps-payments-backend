@@ -18,17 +18,17 @@ package model
 
 import play.api.libs.json.JsResultException
 import play.api.libs.json.Json.toJson
-import support.testdata.TestData._
-import support.UnitSpec
-import tps.startjourneymodel.StartJourneyRequest
+import testsupport.testdata.TestData._
+import testsupport.UnitSpec
+import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 
-class StartJourneyRequestSpecItem extends UnitSpec {
+class StartJourneyRequestMibOrPngrSpecItem extends UnitSpec {
   "to json should serialise to json" in {
     toJson(tpsPaymentRequest) shouldBe paymentRequestJson
   }
 
   "from json should de-serialise from json" in {
-    paymentRequestJson.as[StartJourneyRequest] shouldBe tpsPaymentRequest
+    paymentRequestJson.as[StartJourneyRequestMibOrPngr] shouldBe tpsPaymentRequest
   }
 
   "to json should serialise to json pngr" in {
@@ -36,7 +36,7 @@ class StartJourneyRequestSpecItem extends UnitSpec {
   }
 
   "from json should de-serialise from json pngr" in {
-    paymentRequestPngrJson.as[StartJourneyRequest] shouldBe tpsPaymentRequestPngr
+    paymentRequestPngrJson.as[StartJourneyRequestMibOrPngr] shouldBe tpsPaymentRequestPngr
   }
 
   "to json should serialise to json mib" in {
@@ -44,12 +44,12 @@ class StartJourneyRequestSpecItem extends UnitSpec {
   }
 
   "from json should de-serialise from json mib" in {
-    paymentRequestMibJson.as[StartJourneyRequest] shouldBe tpsPaymentRequestMib
+    paymentRequestMibJson.as[StartJourneyRequestMibOrPngr] shouldBe tpsPaymentRequestMib
   }
 
   "from json should error for an invalid tax type" in {
     intercept[JsResultException] {
-      invalidPaymentRequestJson.as[StartJourneyRequest]
+      invalidPaymentRequestJson.as[StartJourneyRequestMibOrPngr]
     }.getMessage.contains("Unknown TaxTypes") shouldBe true
   }
 

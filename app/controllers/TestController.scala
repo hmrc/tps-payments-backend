@@ -20,10 +20,8 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import repository.JourneyRepo
 import tps.model.{Journey, PaymentItem, PaymentItemId}
-import tps.startjourneymodel.StartJourneyRequest
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
-import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -46,14 +44,6 @@ class TestController @Inject() (cc: ControllerComponents, tpsRepo: JourneyRepo)(
 
     tpsRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
-    }
-  }
-
-  def createTpsPayments: Action[StartJourneyRequest] = Action.async(parse.json[StartJourneyRequest]) { implicit request =>
-    val tpsPayments: Journey = request.body.tpsPayments(Instant.now())
-
-    tpsRepo.upsert(tpsPayments).map { _ =>
-      Created(toJson(tpsPayments._id))
     }
   }
 
