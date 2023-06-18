@@ -31,6 +31,7 @@ final case class Journey(
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
 ) extends HasId[JourneyId] {
+  def journeyId: JourneyId = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
 }
 

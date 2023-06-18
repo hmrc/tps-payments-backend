@@ -23,13 +23,13 @@ import tps.model.{PaymentSpecificData, TaxType}
  * Start Journey (Sj) Payment Item
  */
 final case class SjPaymentItem(
-                                chargeReference:     String,
-                                customerName:        String,
-                                amount:              BigDecimal,
-                                taxRegimeDisplay:    String,
-                                taxType:             TaxType,
-                                paymentSpecificData: PaymentSpecificData,
-                                email:               Option[String])
+    chargeReference:     String,
+    customerName:        String,
+    amount:              BigDecimal,
+    taxRegimeDisplay:    String,
+    taxType:             TaxType,
+    paymentSpecificData: PaymentSpecificData,
+    email:               Option[String])
 
 object SjPaymentItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

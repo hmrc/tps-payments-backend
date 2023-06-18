@@ -21,7 +21,8 @@ import tps.model.{JourneyId, JourneyIdGenerator}
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * This pre alocates next JourneyId so it is known before actually getting it. Useful in tests.
+ * This is still a random journeyId generator which allows to see what is going to be the next journey Id.
+ * Useful in tests.
  */
 class TestJourneyIdGenerator extends JourneyIdGenerator {
   private val idIterator: Iterator[JourneyId] = LazyList.from(0).map(_ => super.nextJourneyId()).iterator

@@ -18,7 +18,6 @@ package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
-import org.scalatest.concurrent.Eventually
 
 object AuthStub {
   private val expectedDetail = "SessionRecordNotFound"
@@ -74,8 +73,7 @@ object AuthStub {
       )
     )
 
-
-  def notAuthorised(error: String): StubMapping =
+  def notAuthorised(error: String = "clump"): StubMapping =
     stubFor(post(urlEqualTo("/auth/authorise"))
       .willReturn(aResponse()
         .withStatus(401)

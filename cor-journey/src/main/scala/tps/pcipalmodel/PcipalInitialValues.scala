@@ -27,14 +27,14 @@ final case class PcipalInitialValues(
     UTRReference:       String,
     name1:              String,
     amount:             String,
-    taxAmount:          Option[String],  //for Paye only
-    nicAmount:          Option[String],  //for Paye only
-    lnpClass2:          Option[String],  //for Nps only
-    nirRate:            Option[String],  //for Nps only
-    startDate:          Option[String],  //for Nps only
-    endDate:            Option[String],  //for Nps only
-    vatPeriodReference: Option[String],  //always None
-    vatRemittanceType:  Option[String],  //for Vat only
+    taxAmount:          Option[String], //for Paye only
+    nicAmount:          Option[String], //for Paye only
+    lnpClass2:          Option[String], //for Nps only
+    nirRate:            Option[String], //for Nps only
+    startDate:          Option[String], //for Nps only
+    endDate:            Option[String], //for Nps only
+    vatPeriodReference: Option[String], //always None
+    vatRemittanceType:  Option[String], //for Vat only
     paymentItemId:      PaymentItemId,
     chargeReference:    String,
     taxRegimeDisplay:   String,

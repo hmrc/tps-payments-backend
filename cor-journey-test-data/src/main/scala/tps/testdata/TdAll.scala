@@ -21,15 +21,16 @@ object TdAll extends TdAll
 trait TdAll
   extends AnyRef
   with TdBase
+  with TdRequest
   with TdJourneyMib
   with TdJourneyPngr
-    with TdJourneyChildBenefit
-    with TdJourneySa
-    with TdJourneySdlt
-    with TdJourneySafe
-    with TdJourneyCotax
-    with TdJourneyNtc
-    with TdJourneyPaye
-    with TdJourneyNps
-    with TdJourneyVat
-    with TdJourneyPpt
+  with TdJourneyChildBenefit
+  with TdJourneySa
+  with TdJourneySdlt
+  with TdJourneySafe
+  with TdJourneyCotax
+  with TdJourneyNtc
+  with TdJourneyPaye
+  with TdJourneyNps
+  with TdJourneyVat
+  with TdJourneyPpt

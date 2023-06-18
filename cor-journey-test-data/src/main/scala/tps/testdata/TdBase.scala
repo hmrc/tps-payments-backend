@@ -26,19 +26,18 @@ trait TdBase {
 
   def pid: String = "1234567"
   def customerName: String = "customerName"
-//  def chargeReference: String = "chargeReference"
-//  def amountString: String = "100.00"
-//  def amount: BigDecimal = BigDecimal(amountString)
+  //  def chargeReference: String = "chargeReference"
+  //  def amountString: String = "100.00"
+  //  def amount: BigDecimal = BigDecimal(amountString)
   def email: String = "test@email.com"
   def emailEncrypted: String = "BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="
   def flowId: Int = 1055
   def journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 
-
   def navigation: Navigation = Navigation(
-    back = "http://localhost:9124/tps-payments/back-from-pcipal",
-    reset = "http://localhost:9124/tps-payments/full/reset",
-    finish = "http://localhost:9124/tps-payments/finish",
+    back     = "http://localhost:9124/tps-payments/back-from-pcipal",
+    reset    = "http://localhost:9124/tps-payments/full/reset",
+    finish   = "http://localhost:9124/tps-payments/finish",
     callback = "http://notification.host/payments/notifications/send-card-payments"
   )
 
