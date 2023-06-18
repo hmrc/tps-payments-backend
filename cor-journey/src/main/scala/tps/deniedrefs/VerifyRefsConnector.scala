@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package tps
+package tps.deniedrefs
 
 import play.api.mvc.Request
-import tps.deniedrefsmodel.{VerifyRefsRequest, VerifyRefsResponse}
+import tps.deniedrefs.model.{VerifyRefsRequest, VerifyRefsResponse}
 import tps.utils.HttpReadsInstances._
 import tps.utils.RequestSupport._
 import uk.gov.hmrc.http.HttpClient
@@ -27,14 +27,14 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TpsPaymentsBackendConnector @Inject() (
+class VerifyRefsConnector @Inject() (
     httpClient:     HttpClient,
     servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
   private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 
-  def verifyRefDenyList(verifyRefsRequest: VerifyRefsRequest)(implicit request: Request[_]): Future[VerifyRefsResponse] =
+  def verifyRefs(verifyRefsRequest: VerifyRefsRequest)(implicit request: Request[_]): Future[VerifyRefsResponse] =
     httpClient
       .POST[VerifyRefsRequest, VerifyRefsResponse](
         s"$serviceURL/tps-payments-backend/verify-refs",

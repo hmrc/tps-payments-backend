@@ -19,10 +19,11 @@ package deniedrefs
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Sink}
 import akka.util.ByteString
+import deniedrefs.model.UploadDeniedRefsResponse
 import play.api.libs.json.Json
 import play.api.libs.streams.Accumulator
 import play.api.mvc._
-import tps.deniedrefsmodel.{VerifyRefsResponse, VerifyRefsRequest}
+import tps.deniedrefs.model.{VerifyRefsRequest, VerifyRefsResponse}
 import tps.model.Reference
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -42,7 +43,7 @@ class DeniedRefsController @Inject() (
     for {
       deniedRefs <- deniedRefsService.parseDeniedRefs(pathToCsv)
       _ <- deniedRefsService.upsert(deniedRefs)
-      response = model.UploadDeniedRefsResponse(
+      response = UploadDeniedRefsResponse(
         _id      = deniedRefs._id,
         inserted = deniedRefs.inserted,
         size     = deniedRefs.refs.size
@@ -61,7 +62,6 @@ class DeniedRefsController @Inject() (
   }
 
   def verifyRefs(): Action[VerifyRefsRequest] = Action.async(parse.json[VerifyRefsRequest]) { implicit request =>
-
     val refs: Set[Reference] = request.body.refs
 
     for {

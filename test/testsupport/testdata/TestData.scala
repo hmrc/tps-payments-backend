@@ -16,10 +16,8 @@
 
 package testsupport.testdata
 
-import deniedrefs.model.{DeniedRefs, DeniedRefsId}
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
-import tps.deniedrefsmodel.VerifyRefsRequest
 import tps.model.TaxTypes.{MIB, P800, PNGR, Sa}
 import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
@@ -27,7 +25,7 @@ import tps.pcipalmodel._
 import tps.startjourneymodel
 import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
 
-import java.time.{Instant, LocalDateTime}
+import java.time.Instant
 
 object TestData {
   private val createdString: String = "2040-01-20T11:56:46Z"
@@ -536,36 +534,4 @@ object TestData {
   val modsPaymentCallBackRequestWithAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest = ModsPaymentCallBackRequest("XMIB12345678", None)
 
-  val ref1 = Reference("REF1")
-  val ref2 = Reference("REF2")
-  val ref3 = Reference("REF3")
-  val ref4 = Reference("REF4")
-  val ref5 = Reference("REF5")
-
-  val csvFile1: String =
-    s"""${ref1.value}
-       |${ref2.value}
-       |${ref3.value}
-       |""".stripMargin
-
-  val csvFile2: String =
-    s"""${ref2.value}
-       |${ref3.value}
-       |${ref4.value}
-       |${ref5.value}
-       |""".stripMargin
-
-  val deniedRefs1 = DeniedRefs(
-    _id      = DeniedRefsId("denied-refs-id-123"),
-    refs     = List(ref1, ref2, ref3),
-    inserted = LocalDateTime.parse("2022-02-04T10:00:24.371")
-  )
-
-  val deniedRefs2 = DeniedRefs(
-    _id      = DeniedRefsId("denied-refs-id-123"),
-    refs     = List(ref2, ref3, ref4),
-    inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
-  )
-
-  val verifyRefRequest = VerifyRefsRequest(Set(ref1))
 }

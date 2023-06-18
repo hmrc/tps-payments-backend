@@ -17,25 +17,27 @@
 package deniedrefs
 
 import deniedrefs.model._
+import play.api.mvc.Request
 import testsupport.ItSpec
-import testsupport.testdata.TestData._
+import tps.deniedrefs.VerifyRefsConnector
 import tps.model.Reference
-import tps.deniedrefsmodel.{VerifyRefsResponse, VerifyRefStatuses, VerifyRefsRequest}
+import tps.testdata.TdAll
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
+import TdDeniedRefs._
+import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 import scala.concurrent.Future
 
 class DeniedRefsSpec extends ItSpec {
+
+  val connector: VerifyRefsConnector = app.injector.instanceOf[tps.deniedrefs.VerifyRefsConnector]
 
   "upload denied refs" in {
     val uploadResult1: UploadDeniedRefsResponse = uploadDeniedRefs(csvFile1).futureValue
     uploadResult1.size shouldBe 3
     val uploadResult2: UploadDeniedRefsResponse = uploadDeniedRefs(csvFile2).futureValue
     uploadResult2.size shouldBe 4
-
     uploadResult2.inserted isAfter uploadResult1.inserted shouldBe true withClue "second upload is newer"
-
   }
 
   "verify refs" in {
@@ -75,21 +77,17 @@ class DeniedRefsSpec extends ItSpec {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
   }
 
-  private lazy val baseUrl = s"http://localhost:${port.toString}/tps-payments-backend"
-  private lazy val httpClient = app.injector.instanceOf[HttpClient]
-
   private def uploadDeniedRefs(deniedRefsCsv: String) = {
     implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url = baseUrl + "/upload-denied-refs"
+    val url = s"http://localhost:${port.toString}/tps-payments-backend" + "/upload-denied-refs"
+    val httpClient = app.injector.instanceOf[HttpClient]
     httpClient.POSTString[UploadDeniedRefsResponse](url, deniedRefsCsv)
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
-    val refsSet = refs.toSet
-    implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url = baseUrl + "/verify-refs"
-    val request = VerifyRefsRequest(refsSet)
-    httpClient.POST[VerifyRefsRequest, VerifyRefsResponse](url, request)
+    val verifyRefsRequest = VerifyRefsRequest(refs.toSet)
+    implicit val request: Request[_] = TdAll.request
+    connector.verifyRefs(verifyRefsRequest)
   }
 
 }

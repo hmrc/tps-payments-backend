@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
+package deniedrefs
+package model
 
 import java.time.LocalDateTime
 import play.api.libs.json._

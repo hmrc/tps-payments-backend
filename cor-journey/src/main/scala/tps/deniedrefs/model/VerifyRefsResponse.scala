@@ -14,27 +14,12 @@
  * limitations under the License.
  */
 
-package deniedrefs.model
+package tps.deniedrefs.model
 
-import play.api.libs.json.Json
-import testsupport.UnitSpec
-import testsupport.testdata.TestData
-import tps.deniedrefsmodel.VerifyRefsRequest
+import play.api.libs.json.{Json, OFormat}
 
-class VerifyRefsRequestSpec extends UnitSpec {
+final case class VerifyRefsResponse(status: VerifyRefStatus)
 
-  "json serialization/deserialization" in {
-    val verifyRefRequest = TestData.verifyRefRequest
-
-    val verifyRefRequestJson = Json.parse(
-      //language=JSON
-      """
-         {
-          "refs": ["REF1"]
-          }
-        """)
-
-    Json.toJson(verifyRefRequest) shouldBe verifyRefRequestJson
-    verifyRefRequestJson.as[VerifyRefsRequest] shouldBe verifyRefRequest
-  }
+object VerifyRefsResponse {
+  implicit val format: OFormat[VerifyRefsResponse] = Json.format[VerifyRefsResponse]
 }

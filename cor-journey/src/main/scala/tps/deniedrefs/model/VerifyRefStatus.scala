@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tps.deniedrefsmodel
+package tps.deniedrefs.model
 
 import enumeratum.{Enum, EnumEntry}
 import play.api.libs.json.Format

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package tps.deniedrefsmodel
+package tps.deniedrefs.model
 
 import play.api.libs.json.{Json, OFormat}
 import tps.model.Reference

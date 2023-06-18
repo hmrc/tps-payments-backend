@@ -22,11 +22,11 @@ import akka.stream.Materializer
 import akka.stream.alpakka.csv.scaladsl.CsvParsing
 import akka.stream.scaladsl.{FileIO, Keep, Sink}
 import akka.util.ByteString
-import tps.deniedrefsmodel.VerifyRefStatuses._
+import tps.deniedrefs.model.VerifyRefStatuses._
 import deniedrefs.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
-import tps.deniedrefsmodel.VerifyRefStatus
+import tps.deniedrefs.model.VerifyRefStatus
 import tps.model.Reference
 import util.Crypto
 
