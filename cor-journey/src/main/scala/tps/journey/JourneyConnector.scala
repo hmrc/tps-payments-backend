@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package tps.connector
+package tps.journey
 
 import play.api.mvc.Request
-import tps.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId}
+import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
@@ -31,14 +32,18 @@ class JourneyConnector(
     baseUrl:    String
 )(implicit ec: ExecutionContext) {
 
+  def startMibOrPngrJourney(startJourneyRequest: StartJourneyRequestMibOrPngr)(implicit request: Request[_]): Future[JourneyId] = {
+    httpClient.POST[StartJourneyRequestMibOrPngr, JourneyId](s"$baseUrl/tps-payments-backend/tps-payments", startJourneyRequest)
+  }
+
   def upsert(journey: Journey)(implicit request: Request[_]): Future[Unit] = httpClient
     .POST[Journey, Unit](
-      s"$baseUrl/tps-payments-backend/tps-payments/upsert",
+      s"$baseUrl/tps-payments-backend/journey",
       journey
     )
 
   def find(id: JourneyId)(implicit request: Request[_]): Future[Option[Journey]] = httpClient
-    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/tps-payments/${id.value}")
+    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/journey/${id.value}")
 
   @Inject()
   def this(httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(

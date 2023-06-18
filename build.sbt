@@ -26,8 +26,8 @@ lazy val microservice = Project(appName, file("."))
   .settings(PlayKeys.playDefaultPort := 9125)
   .settings(
     routesImport ++= Seq(
-      "model._",
       "tps.model._",
+      "tps.journey.model._",
       "tps.utils._"
     ))
 

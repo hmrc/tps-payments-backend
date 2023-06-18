@@ -18,7 +18,7 @@ package repository
 
 import testsupport.ItSpec
 import testsupport.testdata.TestData._
-import tps.model.JourneyId
+import tps.journey.model.JourneyId
 import tps.pcipalmodel.PcipalSessionId
 
 class JourneyRepoSpec extends ItSpec {
@@ -31,11 +31,6 @@ class JourneyRepoSpec extends ItSpec {
     repo.drop().futureValue
     repo.ensureIndexes().futureValue
     repo.collection.listIndexes().toFuture().futureValue.size shouldBe 3
-  }
-
-  "insert and find a record" in {
-    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
-    repo.findPayment(id).futureValue shouldBe Some(tpsPayments)
   }
 
   "getPayment should throw error when no tpsPayments found" in {
@@ -52,16 +47,10 @@ class JourneyRepoSpec extends ItSpec {
     }.getMessage should include("Found 2 records with id 48c978bb.")
   }
 
-  "insert and find an mib tps payment" in {
-    mibPayments.payments.headOption.value.paymentSpecificData.getReference shouldBe "chargeReference"
-    Option(repo.upsert(mibPayments).futureValue.getUpsertedId).isDefined shouldBe true
-    repo.findPayment(mibPayments._id).futureValue shouldBe Some(mibPayments)
-  }
-
   "findPaymentItem should optionally find the matching payment item" in {
-    repo.findPaymentItem(paymentItemId).futureValue shouldBe None
+    repo.findByPaymentItemId(paymentItemId).futureValue shouldBe None
     repo.upsert(tpsPayments).futureValue
-    repo.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.headOption.value)
+    repo.findByPaymentItemId(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.headOption.value)
   }
 
   "surfaceModsDataForRecon should find matching mods payments" in {

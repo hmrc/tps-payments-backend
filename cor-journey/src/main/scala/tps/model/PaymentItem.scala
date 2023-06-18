@@ -22,7 +22,7 @@ import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import java.time.Instant
 
 final case class PaymentItem(
-    paymentItemId:       Option[PaymentItemId],
+    paymentItemId:       Option[PaymentItemId], //TODO this is always set
     amount:              BigDecimal,
     headOfDutyIndicator: HeadOfDutyIndicator,
     updated:             Instant,
@@ -33,6 +33,8 @@ final case class PaymentItem(
     paymentSpecificData: PaymentSpecificData,
     taxType:             TaxType,
     email:               Option[String]) {
+
+  def getPcipalData: ChargeRefNotificationPcipalRequest = pcipalData.getOrElse(throw new RuntimeException(s"Expected PciPal data to be there [${paymentItemId.toString}]"))
 }
 
 object PaymentItem {

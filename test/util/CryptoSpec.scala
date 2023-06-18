@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package tps.model
+package util
 
-import org.bson.types.ObjectId
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.model.repo.Id
-import tps.utils.ValueClassBinder.valueClassBinder
+import testsupport.ItSpec
 
-final case class JourneyId(value: String) extends Id
+class CryptoSpec extends ItSpec {
 
-object JourneyId {
-  implicit val format: Format[JourneyId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[JourneyId] = valueClassBinder(_.value)
-  def fresh(): JourneyId = JourneyId(ObjectId.get().toHexString)
+  "encrypt/decrypt" in {
+    val crypto = app.injector.instanceOf[Crypto]
+    val plain: String = "sialala"
+    val encrypted: String = crypto.encrypt(plain)
+    val decrypted: String = crypto.decrypt(encrypted)
+
+    plain should not be encrypted
+    decrypted shouldBe plain
+
+    val e: Exception = intercept[Exception](crypto.decrypt("wrong string"))
+    e should have message "Illegal base64 character 20"
+  }
+
 }
-

@@ -14,17 +14,14 @@
  * limitations under the License.
  */
 
-package tps.model
+package email.model
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import play.api.libs.json.{Json, OFormat}
 
-final case class PaymentItemId(
-    value: String
-)
+//TODO move to email related package
+final case class EmailSendRequest(to: Seq[String], templateId: String, parameters: Map[String, String], force: Boolean = false)
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+object EmailSendRequest {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[EmailSendRequest] = Json.format[EmailSendRequest]
 }

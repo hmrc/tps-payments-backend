@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package tps.connector
+package tps.journey
 
 import journeysupport.TestJourneyIdGenerator
 import play.api.mvc.Request
 import testsupport.ItSpec
 import testsupport.stubs.AuthStub
-import tps.model.JourneyId
+import tps.journey.model.JourneyId
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-class JourneyConnectorSpec extends ItSpec {
+class JourneyControllerSpec extends ItSpec {
   val journeyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
   def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
   implicit val request: Request[_] = TdAll.request
 
-  "POST/GET journey find/upsert" in {
+  "find and upsert journey" in {
     val tdAll = new TdAll {
-      override lazy val journeyId: JourneyId = journeyIdGenerator.nextJourneyId()
+      override lazy val journeyId: JourneyId = journeyIdGenerator.nextId()
     }
 
     val journey = tdAll.JourneySa.journey

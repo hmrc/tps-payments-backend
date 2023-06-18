@@ -17,6 +17,7 @@
 package controllers
 
 import play.api.test.FakeRequest
+import testonly.TestController
 import testsupport.ItSpec
 
 class TestControllerSpec extends ItSpec {

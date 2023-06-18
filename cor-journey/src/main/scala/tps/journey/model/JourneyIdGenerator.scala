@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package tps.model
+package tps.journey.model
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import org.bson.types.ObjectId
 
-final case class PaymentItemId(
-    value: String
-)
+import javax.inject.Singleton;
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+@Singleton
+class JourneyIdGenerator {
+  def nextId(): JourneyId = JourneyId(ObjectId.get().toHexString)
 }

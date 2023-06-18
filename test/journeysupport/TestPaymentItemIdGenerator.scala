@@ -16,24 +16,25 @@
 
 package journeysupport
 
-import tps.journey.model.{JourneyId, JourneyIdGenerator}
+import tps.journey.model.PaymentItemIdGenerator
+import tps.model.PaymentItemId
 
 import java.util.concurrent.atomic.AtomicReference
 
 /**
- * This is still a random journeyId generator which allows to see what is going to be the next journey Id.
+ * This is still a random id generator which allows to see what is going to be the next Id.
  * Useful in tests.
  */
-class TestJourneyIdGenerator extends JourneyIdGenerator {
+class TestPaymentItemIdGenerator extends PaymentItemIdGenerator {
 
-  private val idIterator: Iterator[JourneyId] = LazyList.from(0).map(_ => super.nextId()).iterator
-  private val nextIdCached = new AtomicReference[JourneyId](idIterator.next())
+  private val idIterator: Iterator[PaymentItemId] = LazyList.from(0).map(_ => super.nextId()).iterator
+  private val nextIdCached = new AtomicReference[PaymentItemId](idIterator.next())
 
-  def predictNextId(): JourneyId = {
+  def predictNextId(): PaymentItemId = {
     nextIdCached.get()
   }
 
-  override def nextId(): JourneyId = {
+  override def nextId(): PaymentItemId = {
     val id = idIterator.next()
     nextIdCached.getAndSet(id)
   }

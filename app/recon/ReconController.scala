@@ -16,24 +16,19 @@
 
 package recon
 
-import javax.inject.{Inject, Singleton}
-import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
 class ReconController @Inject() (cc: ControllerComponents, reconService: ReconService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-  val logger: Logger = Logger(this.getClass)
-
   def findModsPayments(): Action[FindRPaymentSpecificDataRequest] = Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
-    logger.debug(s"findModsPayments [ ${request.toString} ]")
     for {
       transactions <- reconService.findModsPaymentsByReference(request.body.modsReferences)
     } yield Ok(Json.toJson(transactions))
   }
-
 }

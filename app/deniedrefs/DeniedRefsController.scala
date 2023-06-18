@@ -70,9 +70,4 @@ class DeniedRefsController @Inject() (
     } yield Ok(Json.toJson(VerifyRefsResponse(verifyRefStatus)))
   }
 
-  def dropDb(): Action[AnyContent] = Action.async { _ =>
-    for {
-      result <- deniedRefsService.dropDb()
-    } yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
-  }
 }

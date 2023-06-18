@@ -16,21 +16,19 @@
 
 package controllers
 
+import email.EmailService
 import play.api.http.Status
-import services.EmailService
 import testsupport.stubs.AuthStub
 import testsupport.stubs.AuthStub._
 import testsupport.testdata.TestData._
 import testsupport.{ItSpec, TestConnector}
-import tps.model.{Journey, JourneyId, PaymentItemId, TaxTypes}
+import tps.journey.model.{Journey, JourneyId}
+import tps.model.{PaymentItemId, TaxTypes}
 import tps.pcipalmodel.PcipalSessionId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
-import util.EmailCrypto
 
-class TpsControllerSpec extends ItSpec with Status {
+class JourneyControllerSpec extends ItSpec with Status {
   private val connector = injector.instanceOf[TestConnector]
-  private val emailCrypto = injector.instanceOf[EmailCrypto]
-  private val emailService = injector.instanceOf[EmailService]
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
@@ -121,35 +119,8 @@ class TpsControllerSpec extends ItSpec with Status {
   }
 
   "should parse TpsPaymentItems for email correctly" in {
-    emailService.stringifyTpsPaymentsItemsForEmail(emailService.parseTpsPaymentsItemsForEmail(tpsPaymentsWithPcipalData.payments)) shouldBe tpsItemsForEmail
-  }
-
-  "should decrypt email successfully" in {
-    emailCrypto.decryptEmail("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==") shouldBe "test@email.com"
-  }
-
-  "should encrypt email successfully" in {
-    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("test@email.com")
-    emailCrypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
-  }
-
-  "should not encrypt email if empty" in {
-    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("")
-    encryptedEmail shouldBe ""
-  }
-
-  "should not encrypt email if email is already encrypted" in {
-    val encryptedEmail = emailCrypto.encryptEmailIfNotAlreadyEncrypted("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")
-    emailCrypto.decryptEmail(encryptedEmail) shouldBe "test@email.com"
-  }
-
-  "should throw error when decrypt fails" in {
-    intercept[Exception] {
-      emailCrypto.decryptEmail("zzzzzzzzzzzzzz==")
-    }.getMessage shouldBe "Failed to decrypt field email due to exception Failed decrypting data"
-  }
-
-  "isEmailNotAlreadyEncrypted should return true when email matches regex" in {
-    emailCrypto.isEmailNotAlreadyEncrypted("bobross@joyofpainting.com") shouldBe true
+    val emailService = app.injector.instanceOf[EmailService]
+    val t = tpsPaymentsWithPcipalData.payments.map(emailService.toIndividualPaymentForEmail)
+    emailService.stringifyTpsPaymentsItemsForEmail(t) shouldBe tpsItemsForEmail
   }
 }

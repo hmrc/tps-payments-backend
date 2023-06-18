@@ -14,13 +14,21 @@
  * limitations under the License.
  */
 
-package tps.model
+package testsupport
 
-import org.bson.types.ObjectId
+import journeysupport.TestPaymentItemIdGenerator
+import tps.journey.model.PaymentItemIdGenerator
 
-import javax.inject.Singleton;
+class TestPaymentItemIdGeneratorSpec extends ItSpec {
 
-@Singleton
-class JourneyIdGenerator {
-  def nextJourneyId(): JourneyId = JourneyId(ObjectId.get().toHexString)
+  "predict next PaymentItemId" in {
+    val testPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
+    val paymentItemIdGenerator = app.injector.instanceOf[PaymentItemIdGenerator]
+
+    (0 to 1000).foreach { _ =>
+      val predicted = testPaymentItemIdGenerator.predictNextId()
+      paymentItemIdGenerator.nextId() shouldBe predicted
+    }
+  }
+
 }

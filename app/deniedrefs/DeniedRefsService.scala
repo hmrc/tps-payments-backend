@@ -71,7 +71,7 @@ class DeniedRefsService @Inject() (
   private def decryptDeniedRefs(encryptedDeniedRefs: DeniedRefs): DeniedRefs = {
     val decryptionResult: List[Try[String]] = encryptedDeniedRefs
       .refs
-      .map(ref => crypto.decrypt(ref.value))
+      .map(ref => Try(crypto.decrypt(ref.value)))
     val successfullyDecrypted: List[Reference] = decryptionResult.collect { case Success(ref) => Reference(ref) }
     decryptionResult.collect {
       case Failure(ex) => logger.error(s"Failed to decrypt ref. Has encryption key changed? [${encryptedDeniedRefs._id.value}] [inserted:${encryptedDeniedRefs.inserted.toString}]", ex)
@@ -153,8 +153,5 @@ class DeniedRefsService @Inject() (
     logger.info(s"DeniedRefs cache updated [size:${deniedRefs.refs.size.toString}] [inserted:${deniedRefs.inserted.toString}] [${latestId.toString}]")
   }
 
-  def dropDb(): Future[Boolean] = {
-    deniedRefsRepo.drop()
-  }
   lazy val logger: Logger = Logger(this.getClass)
 }

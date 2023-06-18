@@ -14,26 +14,40 @@
  * limitations under the License.
  */
 
-package services
+package email
 
-import connectors.EmailConnector
-import tps.model.TaxTypes.{MIB, PNGR}
-import model.IndividualPaymentForEmail
+import email.model.IndividualPaymentForEmail
+import play.api.Logger
 import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
+import tps.journey.model.Journey
+import tps.model.TaxTypes.{MIB, PNGR}
 import tps.model.{PaymentItem, TaxType, TaxTypes}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
-import uk.gov.hmrc.http.HeaderCarrier
-import util.EmailCrypto
 import tps.utils.SafeEquals.EqualsOps
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 @Singleton
-class EmailService @Inject() (emailCrypto:    EmailCrypto,
-                              emailConnector: EmailConnector) {
+class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: ExecutionContext) {
 
-  def maybeSendEmail(tpsPaymentItems: List[PaymentItem])(implicit hc: HeaderCarrier): Unit = {
+  /**
+   * This function sends email:
+   * if all notifications has been received (one for each PaymentItem)
+   * and if the tax type is not PNGR nor MIB
+   * and if the email address has been provided
+   * and if at least one payment has succeeded (failed payments aren't aggregated into the email)
+   *
+   * (!) Since the each PaymentItem can have one email address and only one aggregate email is sent
+   * the first found email from the list of PaymentItems is taken
+   * (!!) The referenceNumber being part of the emails (randomly generated number without two last characters) from first paymentItem found on the list is used as a reference for the client presented in the email)
+   *
+   * (this function had been developed before this scaladoc)
+   */
+  def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit = {
+    val tpsPaymentItems: List[PaymentItem] = journey.payments
     if (weShouldSendEmail(tpsPaymentItems)) {
       val emailAddress: String = tpsPaymentItems.find(_.email.nonEmpty).flatMap(_.email).fold("impossible")(email => email)
       val listOfSuccessfulTpsPaymentItems: List[PaymentItem] =
@@ -49,18 +63,26 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
   }
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-  private def sendEmail(tpsPaymentItems: List[PaymentItem], transactionReference: String, emailAddress: String, cardType: String, cardNumber: String)(implicit hc: HeaderCarrier): Unit = {
-    val totalCommissionPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
-    val totalAmountPaid: BigDecimal = tpsPaymentItems.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
+  private def sendEmail(
+      payments:             List[PaymentItem],
+      transactionReference: String,
+      emailAddress:         String,
+      cardType:             String,
+      cardNumber:           String)(implicit hc: HeaderCarrier): Unit = {
+
+    val totalCommissionPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
+    val totalAmountPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
 
     emailConnector.sendEmail(
-      emailAddress            = emailCrypto.decryptEmail(emailAddress),
+      emailAddress            = emailAddress,
       totalAmountPaid         = parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
       transactionReference    = transactionReference,
       cardType                = cardType,
       cardNumber              = cardNumber,
-      tpsPaymentItemsForEmail = stringifyTpsPaymentsItemsForEmail(parseTpsPaymentsItemsForEmail(tpsPaymentItems))
-    )
+      tpsPaymentItemsForEmail = stringifyTpsPaymentsItemsForEmail(payments.map(toIndividualPaymentForEmail))
+    ).recover {
+        case e => logger.error("Failed to send email, investigate", e)
+      }
     ()
   }
 
@@ -76,15 +98,13 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
     !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType === MIB || nextPaymentItem.taxType === PNGR)
   }
 
-  def parseTpsPaymentsItemsForEmail(tpsPayments: List[PaymentItem]): List[IndividualPaymentForEmail] = {
-    tpsPayments.map(nextPaymentItem =>
-      IndividualPaymentForEmail(
-        taxType           = getTaxTypeString(nextPaymentItem.taxType),
-        amount            = parseBigDecimalToString(nextPaymentItem.amount),
-        transactionFee    = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
-        transactionNumber = nextPaymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
-      ))
-  }
+  def toIndividualPaymentForEmail(paymentItem: PaymentItem): IndividualPaymentForEmail = IndividualPaymentForEmail(
+    taxType = getTaxTypeString(paymentItem.taxType),
+    amount  = parseBigDecimalToString(paymentItem.amount),
+    //TODO: at this stage the pciPalData should be always there, right? If so then it should not bother with "Unknown"
+    transactionFee    = paymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
+    transactionNumber = paymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
+  )
 
   def stringifyTpsPaymentsItemsForEmail(tpsPaymentsForEmail: List[IndividualPaymentForEmail]): String = JsArray(tpsPaymentsForEmail.map(toJson(_))).toString
 
@@ -105,4 +125,6 @@ class EmailService @Inject() (emailCrypto:    EmailCrypto,
     case TaxTypes.MIB                     => taxType.toString
     case TaxTypes.PNGR                    => taxType.toString
   }
+
+  private lazy val logger = Logger(this.getClass)
 }

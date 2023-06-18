@@ -79,13 +79,6 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .toFuture()
     .map(_.getDeletedCount)
 
-  def removeById(id: ID): Future[Long] = collection
-    .deleteOne(
-      filter = Filters.eq("_id", id.value)
-    )
-    .toFuture()
-    .map(_.getDeletedCount)
-
   def drop(): Future[Boolean] = collection
     .drop()
     .toFuture()

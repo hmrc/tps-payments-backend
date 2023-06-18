@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-package model
+package tps.journey.model
 
-import play.api.libs.json.{Json, OFormat}
+import testsupport.UnitSpec
 
-//TODO move to email related package
-final case class EmailSendRequest(to: Seq[String], templateId: String, parameters: Map[String, String], force: Boolean = false)
+class PaymentItemIdGeneratorSpec extends UnitSpec {
 
-object EmailSendRequest {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[EmailSendRequest] = Json.format[EmailSendRequest]
+  "generates unique values" in {
+    val generator = new PaymentItemIdGenerator()
+    val n = 1000
+    val ids = (0 until n).map(_ => generator.nextId()).toSet
+    ids.size shouldBe n
+  }
+
 }

@@ -35,8 +35,7 @@ class PaymentsProcessorController @Inject() (
 
   def findModsSpecificData(paymentItemId: PaymentItemId): Action[AnyContent] = Action.async { _ =>
     for {
-      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <- paymentsProcessorService.findModsPaymentsByReference(paymentItemId)
-      _ = logger.debug("Response to /payment-items/:id/mods-amendment-ref call: " + modsPaymentCallBackRequest.toString)
+      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <- paymentsProcessorService.getModsPaymentCallbackRequest(paymentItemId)
     } yield Ok(Json.toJson(modsPaymentCallBackRequest))
   }
 

@@ -16,12 +16,13 @@
 
 package tps.startjourneymodel
 
+import org.bson.types.ObjectId
 import play.api.libs.json.{Json, OFormat}
+import tps.journey.model.{Journey, JourneyId}
 import tps.model._
-import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
+import tps.utils.SafeEquals.EqualsOps
 
 import java.time.Instant
-import scala.Option.empty
 
 //TODO: remove this and use dedicated classes and endpoints for Mib and Pngr
 final case class StartJourneyRequestMibOrPngr(
@@ -30,16 +31,21 @@ final case class StartJourneyRequestMibOrPngr(
     navigation: Navigation
 ) {
 
-  def tpsPayments(now: Instant): Journey = {
-    val tpsPayments = payments.map { p =>
+  require(payments.size === 1)
+  @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+  val paymentItem: SjPaymentItem = payments.head
+
+  //TODO: remove this
+  def makeJourney(now: Instant): Journey = {
+    val tpsPayments: List[PaymentItem] = payments.map { p =>
       PaymentItem(
-        paymentItemId       = Some(PaymentItemId.fresh()),
+        paymentItemId       = Some(PaymentItemId(ObjectId.get().toHexString)),
         amount              = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = now,
         customerName        = p.customerName,
         chargeReference     = p.chargeReference,
-        pcipalData          = empty[ChargeRefNotificationPcipalRequest],
+        pcipalData          = None,
         paymentSpecificData = p.paymentSpecificData,
         taxType             = p.taxType,
         email               = p.email

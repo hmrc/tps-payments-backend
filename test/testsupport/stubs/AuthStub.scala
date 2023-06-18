@@ -17,52 +17,55 @@
 package testsupport.stubs
 
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.matching.UrlPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import tps.testdata.TdAll
 
 object AuthStub {
   private val expectedDetail = "SessionRecordNotFound"
+  private val authoriseUrlPattern: UrlPattern = urlEqualTo("/auth/authorise")
 
   /**
    * The user is authenticated and authorised
    */
-  def authorised(): StubMapping = {
-    stubFor(post(urlEqualTo("/auth/authorise"))
+  def authorised(tdAll: TdAll = TdAll): StubMapping = {
+    val authProvider: String = "PrivilegedApplication"
+    val strideUserId: String = tdAll.pid
+
+    stubFor(post(authoriseUrlPattern)
       .withRequestBody(
         equalToJson(
           //language=JSON
-          """
-              {
-                "authorise": [
-                  {
-                    "$or": [
-                      {
-                        "enrolment": "digital_tps_payment_taker_call_handler",
-                        "identifiers": [],
-                        "state": "Activated"
-                      },
-                      {
-                        "enrolment": "tps_payment_taker_call_handler",
-                        "identifiers": [],
-                        "state": "Activated"
-                      }
-                    ]
-                  },
-                  {
-                    "authProviders": [
-                      "PrivilegedApplication"
-                    ]
-                  }
-                ],
-                "retrieve": []
-              }
-           """, true, true))
+          s"""
+           {
+             "authorise": [
+               {
+                "identifiers":[],
+                "state":"Activated",
+                "enrolment":"tps_payment_taker_call_handler"
+               },
+               {
+                 "authProviders": [
+                   "$authProvider"
+                 ]
+               }
+             ]
+           }""", true, true
+        )
+      )
       .willReturn(aResponse()
         .withStatus(200)
         .withBody(
           //language=JSON
           s"""
-                    {"allEnrolments":[{"key":"digital_tps_payment_taker_call_handler","identifiers":[],"state":"activated"}]}
-       """.stripMargin)))
+           {
+             "optionalCredentials":{
+               "providerId": "$strideUserId",
+               "providerType": "$authProvider"
+             }
+           }
+     """.stripMargin
+        )))
   }
 
   def notAuthenticated(): StubMapping =

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package model
+package email.model
 
 import play.api.libs.json.{Json, OWrites}
 
-//TODO: move to email related package
-final case class IndividualPaymentForEmail(taxType:           String,
-                                           amount:            String,
-                                           transactionFee:    String,
-                                           transactionNumber: String
+final case class IndividualPaymentForEmail(
+    taxType:           String,
+    amount:            String,
+    transactionFee:    String,
+    transactionNumber: String
 )
 
 object IndividualPaymentForEmail {

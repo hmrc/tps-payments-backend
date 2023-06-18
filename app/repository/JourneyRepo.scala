@@ -16,13 +16,13 @@
 
 package repository
 
-import tps.utils.SafeEquals.EqualsOps
-import model._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
-import tps.model.{Journey, JourneyId, PaymentItem, PaymentItemId, PaymentSpecificData, TaxTypes}
+import tps.journey.model.{Journey, JourneyId}
+import tps.model.{PaymentItemId, PaymentSpecificData, TaxTypes}
 import tps.pcipalmodel.PcipalSessionId
+import tps.utils.SafeEquals.EqualsOps
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -82,32 +82,18 @@ final class JourneyRepo @Inject() (
     domainFormat     = JourneyRepo.formatMongo,
     executionContext = implicitly[ExecutionContext]) {
 
-  def findPayment(tpsId: JourneyId): Future[Option[Journey]] = findById(tpsId)
-
   //TODO: there is missing index on that attribute ,each search results in a full scan which leads to poor performance and DB resources leak
-  def findPaymentItem(id: PaymentItemId): Future[Option[PaymentItem]] =
-    find("payments.paymentItemId" -> Some(id)).map { payments =>
-      val paymentItems = payments.flatMap { payment =>
-        payment.payments.filter(_.paymentItemId.contains(id))
-      }
+  def findByPaymentItemId(id: PaymentItemId): Future[List[Journey]] =
+    find("payments.paymentItemId" -> id)
 
-      if (paymentItems.size > 1) throw new RuntimeException(s"Multiple payment items with id ${id.value}")
-      else paymentItems.headOption
-    }
-
-  def getPayment(tpsId: JourneyId): Future[Journey] = findById(tpsId).map {
+  def getPayment(journeyId: JourneyId): Future[Journey] = findById(journeyId).map {
     case Some(tpsPayment) => tpsPayment
-    case None             => throw new RuntimeException(s"Record with id ${tpsId.value} not found")
+    case None             => throw new RuntimeException(s"Record with id ${journeyId.value} not found")
   }
 
   //TODO: there is missing index on that attribute, each search results in full scan...
-  def findByPcipalSessionId(id: PcipalSessionId): Future[Journey] =
-    find("pcipalSessionLaunchResponse.Id" -> id.value).map { payments =>
-      if (payments.size > 1)
-        throw new RuntimeException(s"Found ${payments.size.toString} records with id ${id.value}")
-      else
-        payments.headOption.getOrElse(throw new IdNotFoundException(s"Could not find pcipalSessionId: ${id.value}"))
-    }
+  def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
+    find("pcipalSessionLaunchResponse.Id" -> id.value)
 
   def removeByReferenceForTest(references: List[String]): Future[Long] =
     remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> toJson(references)))

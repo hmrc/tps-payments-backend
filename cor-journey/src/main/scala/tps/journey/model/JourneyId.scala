@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package tps.model
+package tps.journey.model
 
+import org.bson.types.ObjectId
 import play.api.libs.json._
 import play.api.mvc.PathBindable
+import tps.model.repo.Id
 import tps.utils.ValueClassBinder.valueClassBinder
 
-final case class PaymentItemId(
-    value: String
-)
+final case class JourneyId(value: String) extends Id
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+object JourneyId {
+  implicit val format: Format[JourneyId] = Json.valueFormat
+  implicit val journeyIdBinder: PathBindable[JourneyId] = valueClassBinder(_.value)
+  def fresh(): JourneyId = JourneyId(ObjectId.get().toHexString)
 }
+

@@ -14,6 +14,14 @@
  * limitations under the License.
  */
 
-package model
+package tps.journey.model
 
-class IdNotFoundException(message: String) extends RuntimeException(message)
+import org.bson.types.ObjectId
+import tps.model.PaymentItemId
+
+import javax.inject.Singleton;
+
+@Singleton
+class PaymentItemIdGenerator {
+  def nextId(): PaymentItemId = PaymentItemId(ObjectId.get().toHexString)
+}

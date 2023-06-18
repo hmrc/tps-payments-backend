@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-package services
+package email
 
-import config.AppConfig
-import connectors.EmailConnector
-import tps.model.TaxTypes.P800
+import email.model.IndividualPaymentForEmail
 import testsupport.ItSpec
 import testsupport.testdata.TestData.paymentItemId
-import tps.model.{HeadOfDutyIndicators, PaymentItem, PaymentSpecificDataP800, TaxType, TaxTypes}
-import uk.gov.hmrc.http.HttpClient
-import util.EmailCrypto
+import tps.model.TaxTypes.P800
+import tps.model._
 
 import java.time.Instant
 
 class EmailServiceSpec extends ItSpec {
 
   "EmailService" - {
-
-    val emailCrypto = new EmailCrypto("MWJhcmNsYXlzc2Z0cGRldg==")
-    val emailConnector = new EmailConnector(app.injector.instanceOf[HttpClient], app.injector.instanceOf[AppConfig])(ec)
-    val service = new EmailService(emailCrypto, emailConnector)
+    val emailService: EmailService = app.injector.instanceOf[EmailService]
 
     val testTpsPaymentItem = PaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
 
     "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
       val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
-      val individualPaymentForEmail = service.parseTpsPaymentsItemsForEmail(List(testTpsPaymentItemWithNoPciPalData))
-      individualPaymentForEmail.headOption.value.transactionFee shouldBe "Unknown"
-      individualPaymentForEmail.headOption.value.transactionNumber shouldBe "Unknown"
+      val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
+      individualPaymentForEmail.transactionFee shouldBe "Unknown"
+      individualPaymentForEmail.transactionNumber shouldBe "Unknown"
     }
 
     Seq[(TaxType, String)](
@@ -61,9 +55,10 @@ class EmailServiceSpec extends ItSpec {
     ).foreach {
         case (tt, expectedTaxTypeString) =>
           s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
+            //TODO: stronger test would compare entire object instead of just one filed.
             val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
-            val individualPaymentForEmail = service.parseTpsPaymentsItemsForEmail(List(tpsPaymentItem))
-            individualPaymentForEmail.headOption.value.taxType shouldBe expectedTaxTypeString
+            val individualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
+            individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
           }
       }
   }

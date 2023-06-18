@@ -20,7 +20,7 @@ import play.api.libs.json.{JsValue, Json}
 import testsupport.testdata.TestData._
 
 import testsupport.RichMatchers._
-import tps.model.Journey
+import tps.journey.model.Journey
 
 object JsonTestData {
 

@@ -18,7 +18,8 @@ package testsupport
 
 import paymentsprocessor.ModsPaymentCallBackRequest
 import recon.FindRPaymentSpecificDataRequest
-import tps.model.{Journey, JourneyId, PaymentItemId, TaxType}
+import tps.journey.model.{Journey, JourneyId}
+import tps.model.{PaymentItemId, TaxType}
 import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}

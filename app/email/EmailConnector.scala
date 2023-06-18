@@ -14,25 +14,28 @@
  * limitations under the License.
  */
 
-package connectors
+package email
 
-import config.AppConfig
-import model.EmailSendRequest
+import email.model.EmailSendRequest
+import play.api.Logger
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class EmailConnector @Inject() (
-    http:      HttpClient,
-    appConfig: AppConfig
+    httpClient:     HttpClient,
+    servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
+  //TODO: refactor so it doesn't take dozen String parameters
   def sendEmail(emailAddress: String, totalAmountPaid: String, transactionReference: String, cardType: String, cardNumber: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
-    http.POST[EmailSendRequest, Unit](
-      appConfig.emailServiceUrl,
+    logger.info("sending email ...")
+    httpClient.POST[EmailSendRequest, Unit](
+      sendEmailUrl,
       EmailSendRequest(
         Seq(emailAddress),
         "telephone_payments_service",
@@ -46,4 +49,8 @@ final class EmailConnector @Inject() (
       )
     )
   }
+
+  private val sendEmailUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"
+
+  private lazy val logger: Logger = Logger(this.getClass)
 }

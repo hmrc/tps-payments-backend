@@ -16,6 +16,7 @@
 
 package tps.testdata
 
+import tps.journey.model.{Journey, JourneyId}
 import tps.model._
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 
@@ -39,8 +40,18 @@ trait TdJourneyInStates {
   def paymentItem: PaymentItem
   def paymentSpecificData: PaymentSpecificData
 
+  lazy val journeyAfterCreated: Journey = Journey(
+    _id                         = journeyId,
+    pid                         = pid,
+    created                     = created,
+    payments                    = Nil,
+    navigation                  = Some(navigation),
+    pcipalSessionLaunchRequest  = None,
+    pcipalSessionLaunchResponse = None
+  )
+
   //TODO: this is in one particular (final) state
-  def journey: Journey = Journey(
+  lazy val journey: Journey = Journey(
     _id                         = journeyId,
     pid                         = pid,
     created                     = created,

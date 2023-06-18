@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package tps.model
+package tps.journey.model
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import testsupport.UnitSpec
 
-final case class PaymentItemId(
-    value: String
-)
+class JourneyIdGeneratorSpec extends UnitSpec {
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  "generates unique values" in {
+    val generator = new JourneyIdGenerator()
+    val n = 1000
+    val ids = (0 until n).map(_ => generator.nextId()).toSet
+    ids.size shouldBe n
+  }
+
 }

@@ -16,6 +16,7 @@
 
 package tps.testdata
 
+import tps.journey.model.{Journey, JourneyId}
 import tps.model._
 import tps.pcipalmodel._
 import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
@@ -26,7 +27,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
 
   object JourneyPngr extends TdJourneyInStates {
 
-    def startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
+    lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
       pid        = dependencies.pid,
       payments   = Seq[SjPaymentItem](
         SjPaymentItem(
@@ -42,21 +43,21 @@ trait TdJourneyPngr { dependencies: TdBase =>
       navigation = dependencies.navigation
     )
 
-    override def journeyId: JourneyId = dependencies.journeyId
-    override def pid: String = dependencies.pid
-    override def created: Instant = dependencies.instant
-    override def navigation: Navigation = dependencies.navigation
-    override def amountString: String = "101.01"
-    override def taxReference: String = "XSPR5814332193"
+    override lazy val journeyId: JourneyId = dependencies.journeyId
+    override lazy val pid: String = dependencies.pid
+    override lazy val created: Instant = dependencies.instant
+    override lazy val navigation: Navigation = dependencies.navigation
+    override lazy val amountString: String = "101.01"
+    override lazy val taxReference: String = "XSPR5814332193"
 
-    override def paymentSpecificData: PngrSpecificData = PngrSpecificData(
+    override lazy val paymentSpecificData: PngrSpecificData = PngrSpecificData(
       chargeReference = taxReference,
       vat             = BigDecimal("297.25"),
       customs         = BigDecimal("150.00"),
       excise          = BigDecimal("136.27")
     )
 
-    override def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
+    override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,
       InitialValues       = List(PcipalInitialValues(
         clientId           = "PSML",
@@ -90,12 +91,12 @@ trait TdJourneyPngr { dependencies: TdBase =>
       finishUrl           = navigation.finish
     )
 
-    override def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(
+    override lazy val pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(
       Id     = dependencies.pciPalSessionId,
       LinkId = dependencies.linkId
     )
 
-    override def pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    override lazy val pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.B,
       TaxReference         = taxReference,
       Amount               = amount,
@@ -110,17 +111,27 @@ trait TdJourneyPngr { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override def paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItem: PaymentItem = PaymentItem(
       paymentItemId       = Some(dependencies.paymentItemId),
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.B,
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
-      pcipalData          = Some(pciPalData),
+      pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
-      taxType             = TaxTypes.ChildBenefitsRepayments,
+      taxType             = TaxTypes.PNGR,
       email               = Some(dependencies.email)
+    )
+
+    override lazy val journeyAfterCreated: Journey = Journey(
+      _id                         = journeyId,
+      pid                         = pid,
+      created                     = created,
+      payments                    = List(paymentItem),
+      navigation                  = Some(navigation),
+      pcipalSessionLaunchRequest  = None,
+      pcipalSessionLaunchResponse = None
     )
 
   }

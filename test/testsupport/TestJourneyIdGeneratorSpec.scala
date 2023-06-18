@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package tps.model
+package testsupport
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import journeysupport.TestJourneyIdGenerator
+import tps.journey.model.JourneyIdGenerator
 
-final case class PaymentItemId(
-    value: String
-)
+class TestJourneyIdGeneratorSpec extends ItSpec {
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  "predict next journeyId" in {
+    val testJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
+    val journeyIdGenerator = app.injector.instanceOf[JourneyIdGenerator]
+
+    (0 to 1000).foreach { _ =>
+      val predicted = testJourneyIdGenerator.predictNextId()
+      journeyIdGenerator.nextId() shouldBe predicted
+    }
+  }
+
 }

@@ -16,6 +16,7 @@
 
 package tps.testdata
 
+import tps.journey.model.JourneyId
 import tps.model._
 import tps.pcipalmodel._
 
@@ -25,18 +26,18 @@ trait TdJourneySdlt { dependencies: TdBase =>
 
   object JourneySdlt extends TdJourneyInStates {
 
-    override def journeyId: JourneyId = dependencies.journeyId
-    override def pid: String = dependencies.pid
-    override def created: Instant = dependencies.instant
-    override def navigation: Navigation = dependencies.navigation
-    override def amountString: String = "105.05"
-    override def taxReference: String = "123456789MA"
+    override lazy val journeyId: JourneyId = dependencies.journeyId
+    override lazy val pid: String = dependencies.pid
+    override lazy val created: Instant = dependencies.instant
+    override lazy val navigation: Navigation = dependencies.navigation
+    override lazy val amountString: String = "105.05"
+    override lazy val taxReference: String = "123456789MA"
 
-    override def paymentSpecificData: SdltSpecificData = SdltSpecificData(
+    override lazy val paymentSpecificData: SdltSpecificData = SdltSpecificData(
       sdltReference = taxReference
     )
 
-    override def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
+    override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,
       InitialValues       = List(PcipalInitialValues(
         clientId           = "SDPL",
@@ -70,12 +71,12 @@ trait TdJourneySdlt { dependencies: TdBase =>
       finishUrl           = navigation.finish
     )
 
-    override def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(
+    override lazy val pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(
       Id     = dependencies.pciPalSessionId,
       LinkId = dependencies.linkId
     )
 
-    override def pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    override lazy val pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.M,
       TaxReference         = taxReference,
       Amount               = amount,
@@ -90,7 +91,7 @@ trait TdJourneySdlt { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override def paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItem: PaymentItem = PaymentItem(
       paymentItemId       = Some(dependencies.paymentItemId),
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.M,

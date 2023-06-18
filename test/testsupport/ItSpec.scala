@@ -33,10 +33,11 @@ package testsupport
  */
 
 import com.google.inject.{AbstractModule, Provides}
-import journeysupport.TestJourneyIdGenerator
+import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
+import org.scalatest.TestData
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
+import org.scalatestplus.play.guice.GuiceOneServerPerTest
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.mvc.Result
@@ -44,9 +45,11 @@ import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import repository.JourneyRepo
-import tps.model.JourneyIdGenerator
-import javax.inject.Singleton
+import tps.journey.model.{JourneyIdGenerator, PaymentItemIdGenerator}
+import tps.testdata.TdAll
 
+import java.time.{Clock, Instant, ZoneId}
+import javax.inject.Singleton
 import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
 
@@ -58,18 +61,24 @@ trait ItSpec
   extends AnyFreeSpecLike
   with RichMatchers
   with WireMockSupport
-  with GuiceOneServerPerSuite { self =>
+  with GuiceOneServerPerTest { self =>
 
-  val testServerPort = 19001
+  val testPort = 19001
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
   override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(5, Seconds)),
+    timeout  = scaled(Span(1115, Seconds)),
     interval = scaled(Span(300, Millis)))
 
+  lazy val frozenInstant: Instant = TdAll.instant
+
+  lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
+
   private val module: AbstractModule = new AbstractModule {
-    override def configure(): Unit = ()
+    override def configure(): Unit = {
+      bind(classOf[Clock]).toInstance(clock)
+    }
 
     /**
      * This one is randomised every time new test application is spawned. Thanks to that there will be no
@@ -84,6 +93,16 @@ trait ItSpec
     @Singleton
     @nowarn // silence "method never used" warning
     def testJourneyIdGenerator(): TestJourneyIdGenerator = new TestJourneyIdGenerator()
+
+    @Provides
+    @Singleton
+    @nowarn // silence "method never used" warning
+    def paymentItemIdGenerator(testPaymentItemIdGenerator: TestPaymentItemIdGenerator): PaymentItemIdGenerator = testPaymentItemIdGenerator
+
+    @Provides
+    @Singleton
+    @nowarn // silence "method never used" warning
+    def testPaymentItemIdGenerator(): TestPaymentItemIdGenerator = new TestPaymentItemIdGenerator()
   }
 
   private val configMap: Map[String, Any] = Map[String, Any](
@@ -91,7 +110,7 @@ trait ItSpec
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.protocol" -> "http",
     "microservice.services.tps-payments-backend.host" -> "localhost",
-    "microservice.services.tps-payments-backend.port" -> testServerPort
+    "microservice.services.tps-payments-backend.port" -> testPort
   )
 
   lazy val injector: Injector = fakeApplication().injector
@@ -99,7 +118,8 @@ trait ItSpec
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
-    .configure(configMap).build()
+    .configure(configMap)
+    .build()
 
   override def beforeEach(): Unit = {
     super.beforeEach()
@@ -109,12 +129,12 @@ trait ItSpec
 
   def status(of: Result): Int = of.header.status
 
-  override implicit protected lazy val runningServer: RunningServer =
+  override protected def newServerForTest(app: Application, testData: TestData): RunningServer =
     TestServerFactory.start(app)
 
   object TestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {
-      val sc = ServerConfig(port    = Some(testServerPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
+      val sc = ServerConfig(port    = Some(testPort), sslPort = Some(0), mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
     }
   }
