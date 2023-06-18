@@ -22,17 +22,17 @@ import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import java.time.Instant
 
 final case class PaymentItem(
-    paymentItemId:       Option[PaymentItemId],
-    amount:              BigDecimal,
-    headOfDutyIndicator: HeadOfDutyIndicator,
-    updated:             Instant,
-    customerName:        String,
-    chargeReference:     String                = "",
-    //this is updated upon receiving notification from PciPal via payments-processor
-    pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
-    paymentSpecificData: PaymentSpecificData,
-    taxType:             TaxType,
-    email:               Option[String]) {
+                              paymentItemId:       Option[PaymentItemId],
+                              amount:              BigDecimal,
+                              headOfDutyIndicator: HeadOfDutyIndicator,
+                              updated:             Instant,
+                              customerName:        String,
+                              chargeReference:     String                = "",
+                              //this is updated upon receiving notification from PciPal via payments-processor
+                              pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
+                              paymentSpecificData: PaymentSpecificData,
+                              taxType:             TaxType,
+                              email:               Option[String]) {
 }
 
 object PaymentItem {

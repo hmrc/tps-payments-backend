@@ -85,10 +85,11 @@ object ChildBenefitSpecificData {
 }
 
 final case class SaSpecificData(
-    saReference: String
+    saReference: String //TODO make strong type for that UTR
 ) extends PaymentSpecificData {
   override def getReference: String = saReference
 }
+
 object SaSpecificData {
   implicit val format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
 }
@@ -166,7 +167,7 @@ object NpsSpecificData {
 
 final case class VatSpecificData(
     vatReference:   String,
-    remittanceType: String
+    remittanceType: String //TODO make strong type, enum
 ) extends PaymentSpecificData {
   override def getReference: String = vatReference
 }

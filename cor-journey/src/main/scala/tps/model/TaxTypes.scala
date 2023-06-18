@@ -31,15 +31,28 @@ object TaxType {
 object TaxTypes extends Enum[TaxType] {
 
   case object P800 extends TaxType
+
+  /**
+   * Merchandise in Baggage (Mib)
+   */
   case object MIB extends TaxType
+
   case object PNGR extends TaxType
   case object ChildBenefitsRepayments extends TaxType
   case object Sa extends TaxType
   case object Sdlt extends TaxType
   case object Safe extends TaxType
   case object Cotax extends TaxType
+
+  /**
+   * Tax credits overpayments
+   */
   case object Ntc extends TaxType
   case object Paye extends TaxType
+
+  /**
+   * National Insurance and Pay as You Earn Service (NPS/NIRS)
+   */
   case object Nps extends TaxType
   case object Vat extends TaxType
   case object Ppt extends TaxType

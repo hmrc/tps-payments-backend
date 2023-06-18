@@ -27,7 +27,7 @@ final case class Journey(
     pid:                         String,
     created:                     Instant,
     payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
-    navigation:                  Option[Navigation]                  = None,
+    navigation:                  Option[Navigation]                  = None, //TODO: this is always Some
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
 ) extends HasId[JourneyId] {

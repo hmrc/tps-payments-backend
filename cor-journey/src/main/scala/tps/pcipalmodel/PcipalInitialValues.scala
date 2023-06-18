@@ -18,6 +18,7 @@ package tps.pcipalmodel
 
 import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 
+//TODO: make strong types instead of Strings
 final case class PcipalInitialValues(
     clientId:           String,
     pid:                String,
@@ -26,14 +27,14 @@ final case class PcipalInitialValues(
     UTRReference:       String,
     name1:              String,
     amount:             String,
-    taxAmount:          Option[String],
-    nicAmount:          Option[String],
-    lnpClass2:          Option[String],
-    nirRate:            Option[String],
-    startDate:          Option[String],
-    endDate:            Option[String],
-    vatPeriodReference: Option[String],
-    vatRemittanceType:  Option[String],
+    taxAmount:          Option[String],  //for Paye only
+    nicAmount:          Option[String],  //for Paye only
+    lnpClass2:          Option[String],  //for Nps only
+    nirRate:            Option[String],  //for Nps only
+    startDate:          Option[String],  //for Nps only
+    endDate:            Option[String],  //for Nps only
+    vatPeriodReference: Option[String],  //always None
+    vatRemittanceType:  Option[String],  //for Vat only
     paymentItemId:      PaymentItemId,
     chargeReference:    String,
     taxRegimeDisplay:   String,
