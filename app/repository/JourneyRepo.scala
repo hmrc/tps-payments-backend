@@ -82,7 +82,7 @@ final class JourneyRepo @Inject() (
     domainFormat     = JourneyRepo.formatMongo,
     executionContext = implicitly[ExecutionContext]) {
 
-  //TODO: there is missing index on that attribute ,each search results in a full scan which leads to poor performance and DB resources leak
+  //TODO:x there is missing index on that attribute ,each search results in a full scan which leads to poor performance and DB resources leak
   def findByPaymentItemId(id: PaymentItemId): Future[List[Journey]] =
     find("payments.paymentItemId" -> id)
 
@@ -91,7 +91,7 @@ final class JourneyRepo @Inject() (
     case None             => throw new RuntimeException(s"Record with id ${journeyId.value} not found")
   }
 
-  //TODO: there is missing index on that attribute, each search results in full scan...
+  //TODO:x there is missing index on that attribute, each search results in full scan...
   def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
     find("pcipalSessionLaunchResponse.Id" -> id.value)
 
@@ -101,7 +101,7 @@ final class JourneyRepo @Inject() (
   def findByReferenceForTest(reference: String): Future[List[Journey]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
 
-  //TODO: there is missing index on that attribute, each search results in full scan...
+  //TODO:x there is missing index on that attribute, each search results in full scan...
   def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] = {
     find("payments.chargeReference" -> Json.obj("$in" -> toJson(modsReferences)))
       .map { listOfPayments =>

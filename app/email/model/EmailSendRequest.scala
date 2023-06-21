@@ -18,7 +18,6 @@ package email.model
 
 import play.api.libs.json.{Json, OFormat}
 
-//TODO move to email related package
 final case class EmailSendRequest(to: Seq[String], templateId: String, parameters: Map[String, String], force: Boolean = false)
 
 object EmailSendRequest {
