@@ -16,7 +16,7 @@
 
 package recon
 
-import repository.JourneyRepo
+import journey.JourneyRepo
 import tps.model.PaymentSpecificData
 
 import javax.inject.{Inject, Singleton}

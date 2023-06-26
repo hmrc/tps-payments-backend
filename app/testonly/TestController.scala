@@ -17,11 +17,11 @@
 package testonly
 
 import deniedrefs.DeniedRefsRepo
+import journey.JourneyRepo
 import org.bson.types.ObjectId
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import repository.JourneyRepo
 import tps.journey.model.Journey
 import tps.model.{PaymentItem, PaymentItemId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController

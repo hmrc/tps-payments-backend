@@ -33,6 +33,7 @@ package testsupport
  */
 
 import com.google.inject.{AbstractModule, Provides}
+import journey.JourneyRepo
 import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
 import org.scalatest.TestData
 import org.scalatest.freespec.AnyFreeSpecLike
@@ -44,7 +45,6 @@ import play.api.mvc.Result
 import play.api.test.{DefaultTestServerFactory, RunningServer}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
-import repository.JourneyRepo
 import tps.journey.model.{JourneyIdGenerator, PaymentItemIdGenerator}
 import tps.testdata.TdAll
 

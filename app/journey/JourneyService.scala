@@ -17,7 +17,6 @@
 package journey
 
 import play.api.Logger
-import repository.JourneyRepo
 import tps.journey.model.{Journey, JourneyId}
 import tps.model.{PaymentItem, PaymentItemId}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId}

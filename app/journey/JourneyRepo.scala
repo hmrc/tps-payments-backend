@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package repository
+package journey
 
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
+import repository.{Repo, RepoConfig}
 import tps.journey.model.{Journey, JourneyId}
 import tps.model.{PaymentItemId, PaymentSpecificData, TaxTypes}
 import tps.pcipalmodel.PcipalSessionId
