@@ -33,7 +33,7 @@ package testsupport
  */
 
 import com.google.inject.{AbstractModule, Provides}
-import journey.JourneyRepo
+import journey.{JourneyRepo, JourneyService}
 import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
 import org.scalatest.TestData
 import org.scalatest.freespec.AnyFreeSpecLike
@@ -115,6 +115,7 @@ trait ItSpec
 
   lazy val injector: Injector = fakeApplication().injector
   lazy val repo: JourneyRepo = injector.instanceOf[JourneyRepo]
+  lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))

@@ -51,7 +51,7 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status {
   }
 
   "propagate error from findModsPaymentsByReference if payment specific data is not MibSpecificData" in {
-    repo.upsert(tpsPaymentsWithEmptyEmail).futureValue
+    journeyService.upsert(tpsPaymentsWithEmptyEmail).futureValue
     intercept[Exception] {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
     }.getMessage should include(s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?")

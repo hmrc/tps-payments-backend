@@ -17,7 +17,6 @@
 package controllers
 
 import email.EmailService
-import journey.JourneyService
 import play.api.http.Status
 import testsupport.stubs.AuthStub
 import testsupport.stubs.AuthStub._
@@ -30,7 +29,6 @@ import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
 class JourneyControllerSpec extends ItSpec with Status {
   private def connector = injector.instanceOf[TestConnector]
-  private def journeyService = app.injector.instanceOf[JourneyService]
 
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
