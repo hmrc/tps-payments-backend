@@ -26,11 +26,13 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import TdDeniedRefs._
 import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
+
+import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
 
 class DeniedRefsSpec extends ItSpec {
 
-  val connector: VerifyRefsConnector = app.injector.instanceOf[tps.deniedrefs.VerifyRefsConnector]
+  def connector: VerifyRefsConnector = app.injector.instanceOf[tps.deniedrefs.VerifyRefsConnector]
 
   "upload denied refs" in {
     val uploadResult1: UploadDeniedRefsResponse = uploadDeniedRefs(csvFile1).futureValue
@@ -72,6 +74,8 @@ class DeniedRefsSpec extends ItSpec {
 
     }
   }
+
+  override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
   private def dropDb() = {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"

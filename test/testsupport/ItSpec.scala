@@ -73,7 +73,7 @@ trait ItSpec
 
   lazy val frozenInstant: Instant = TdAll.instant
 
-  lazy val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
+  def clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   private val module: AbstractModule = new AbstractModule {
     override def configure(): Unit = {

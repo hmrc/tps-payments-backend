@@ -26,40 +26,38 @@ import java.time.Instant
 
 class EmailServiceSpec extends ItSpec {
 
-  "EmailService" - {
-    val emailService: EmailService = app.injector.instanceOf[EmailService]
+  def emailService: EmailService = app.injector.instanceOf[EmailService]
 
-    val testTpsPaymentItem = PaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
+  val testTpsPaymentItem = PaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
 
-    "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
-      val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
-      val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
-      individualPaymentForEmail.transactionFee shouldBe "Unknown"
-      individualPaymentForEmail.transactionNumber shouldBe "Unknown"
-    }
-
-    Seq[(TaxType, String)](
-      TaxTypes.ChildBenefitsRepayments -> "Child Benefits repayments",
-      TaxTypes.Sa -> "Self Assessment",
-      TaxTypes.Sdlt -> "Stamp Duty Land Tax",
-      TaxTypes.Safe -> "SAFE",
-      TaxTypes.Cotax -> "Corporation Tax",
-      TaxTypes.Ntc -> "Tax credit repayments",
-      TaxTypes.Paye -> "PAYE",
-      TaxTypes.Nps -> "NPS/NIRS",
-      TaxTypes.Vat -> "VAT",
-      TaxTypes.Ppt -> "Plastic Packaging Tax",
-      TaxTypes.P800 -> "P800",
-      TaxTypes.MIB -> "MIB",
-      TaxTypes.PNGR -> "PNGR"
-    ).foreach {
-        case (tt, expectedTaxTypeString) =>
-          s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
-            //TODO: stronger test would compare entire object instead of just one filed.
-            val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
-            val individualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
-            individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
-          }
-      }
+  "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
+    val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
+    val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
+    individualPaymentForEmail.transactionFee shouldBe "Unknown"
+    individualPaymentForEmail.transactionNumber shouldBe "Unknown"
   }
+
+  Seq[(TaxType, String)](
+    TaxTypes.ChildBenefitsRepayments -> "Child Benefits repayments",
+    TaxTypes.Sa -> "Self Assessment",
+    TaxTypes.Sdlt -> "Stamp Duty Land Tax",
+    TaxTypes.Safe -> "SAFE",
+    TaxTypes.Cotax -> "Corporation Tax",
+    TaxTypes.Ntc -> "Tax credit repayments",
+    TaxTypes.Paye -> "PAYE",
+    TaxTypes.Nps -> "NPS/NIRS",
+    TaxTypes.Vat -> "VAT",
+    TaxTypes.Ppt -> "Plastic Packaging Tax",
+    TaxTypes.P800 -> "P800",
+    TaxTypes.MIB -> "MIB",
+    TaxTypes.PNGR -> "PNGR"
+  ).foreach {
+      case (tt, expectedTaxTypeString) =>
+        s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
+          //TODO: stronger test would compare entire object instead of just one filed.
+          val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
+          val individualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
+          individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
+        }
+    }
 }
