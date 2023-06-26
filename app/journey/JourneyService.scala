@@ -16,6 +16,7 @@
 
 package journey
 
+import journey.JourneyService.FindByPcipalSessionIdResult
 import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
 import tps.model.{PaymentItem, PaymentItemId}
@@ -38,14 +39,19 @@ class JourneyService @Inject() (
       .findById(journeyId)
       .map(_.map(decryptEmails))
 
-  def findByPcipalSessionId(pcipalSessionId: PcipalSessionId): Future[Option[Journey]] =
+  def findByPcipalSessionId(pcipalSessionId: PcipalSessionId, paymentItemId: PaymentItemId): Future[FindByPcipalSessionIdResult] = {
     journeyRepo
       .findByPcipalSessionId(pcipalSessionId)
       .map {
-        case Nil        => None
-        case one :: Nil => Some(decryptEmails(one))
-        case multiple   => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
+        case Nil => FindByPcipalSessionIdResult.NotJourneyBySessionId
+        case one :: Nil =>
+          val journey = decryptEmails(one)
+          val hasPaymentItem = journey.payments.exists(_.paymentItemId === Some(paymentItemId))
+          if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
+          else FindByPcipalSessionIdResult.NoMatchingPaymentItem
+        case multiple => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
       }
+  }
 
   def findPaymentItem(paymentItemId: PaymentItemId): Future[Option[PaymentItem]] = {
     journeyRepo
@@ -103,4 +109,25 @@ class JourneyService @Inject() (
   }
 
   private lazy val logger = Logger(this.getClass)
+}
+
+object JourneyService {
+
+  sealed trait FindByPcipalSessionIdResult
+  object FindByPcipalSessionIdResult {
+    /**
+     * Journey Found by PcipalSessionId and payments contain item with give paymentItemId
+     */
+    final case class Found(journey: Journey) extends FindByPcipalSessionIdResult
+
+    /**
+     * No journey with given PcipalSessionId
+     */
+    case object NotJourneyBySessionId extends FindByPcipalSessionIdResult
+
+    /**
+     * Journey Found by PcipalSessionId but there is no PaymentItem in payments with given paymentItemId.
+     */
+    case object NoMatchingPaymentItem extends FindByPcipalSessionIdResult
+  }
 }

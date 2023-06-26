@@ -71,14 +71,22 @@ class JourneyController @Inject() (actions:        Actions,
     logger.info(s"Updating journey with Pcipal data (upon ChargeRefNotification) [paymentItemId:${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
 
     for {
-      maybeJourney: Option[Journey] <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId)
-      maybeUpdatedJourney = maybeJourney.map(journeyService.updateJourneyWithPcipalData(_, notification))
-      _ <- maybeUpdatedJourney.fold[Future[Unit]](Future.successful(()))(journeyService.upsert)
-      _ = maybeUpdatedJourney.fold(())(maybeUpdatedJourney => emailService.maybeSendEmail(maybeUpdatedJourney))
-    } yield maybeJourney match {
-      case Some(_) => Ok
-      case None    => BadRequest(s"Could not find journey with paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
-    }
+      maybeJourney: JourneyService.FindByPcipalSessionIdResult <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
+      result <- maybeJourney match {
+        case JourneyService.FindByPcipalSessionIdResult.Found(journey) =>
+          val newJourney = journeyService.updateJourneyWithPcipalData(journey, notification)
+          emailService.maybeSendEmail(newJourney)
+          journeyService
+            .upsert(newJourney)
+            .map(_ => Ok)
+        case JourneyService.FindByPcipalSessionIdResult.NotJourneyBySessionId => Future.successful(
+          BadRequest(s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
+        )
+        case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem => Future.successful(
+          BadRequest(s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
+        )
+      }
+    } yield result
   }
 
   private lazy val logger: Logger = Logger(this.getClass)

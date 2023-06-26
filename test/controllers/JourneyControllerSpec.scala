@@ -17,6 +17,7 @@
 package controllers
 
 import email.EmailService
+import journey.JourneyService
 import play.api.http.Status
 import testsupport.stubs.AuthStub
 import testsupport.stubs.AuthStub._
@@ -28,15 +29,15 @@ import tps.pcipalmodel.PcipalSessionId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
 class JourneyControllerSpec extends ItSpec with Status {
-  private val connector = injector.instanceOf[TestConnector]
+  private def connector = injector.instanceOf[TestConnector]
+  private def journeyService = app.injector.instanceOf[JourneyService]
+
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
     AuthStub.authorised()
-
     val id = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
     val payment = connector.find(id).futureValue
-
     payment.payments.headOption.value.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.headOption.value.chargeReference
   }
 
@@ -66,7 +67,7 @@ class JourneyControllerSpec extends ItSpec with Status {
   "Check that TpsData cannot be found" in {
     authorised()
     val result = connector.find(id).failed.futureValue
-    result.getMessage should include(s"No payments found for id ${id.value}")
+    result.getMessage should include(s"No journey with given id [${id.value}]")
   }
 
   "update with pci-pal data" in {
@@ -84,19 +85,21 @@ class JourneyControllerSpec extends ItSpec with Status {
     Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
     response.status shouldBe 400
-    response.body should include("Could not find pcipalSessionId: new")
+    response.body should include("Could not find corresponding journey matching pcipalSessionId: [paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91] [PCIPalSessionId:new)] [HoD:B]")
   }
 
   "get an exception if paymentItemId not found and trying to do an update" in {
     authorised()
-    Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
-    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = PaymentItemId("New"))).futureValue
+    journeyService.upsert(tpsPaymentsWithPcipalData).futureValue
+    val nonExistingPaymentItemId: PaymentItemId = PaymentItemId("649965afeb13cd4b9787b054")
+    nonExistingPaymentItemId should not be chargeRefNotificationPcipalRequest.paymentItemId withClue "notification comes with different payment item id"
+    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = nonExistingPaymentItemId)).futureValue
     response.status shouldBe 400
-    response.body should include("Could not find paymentItemId: New")
+    response.body should include("Could not find corresponding journey matching paymentItemId: [649965afeb13cd4b9787b054] [PCIPalSessionId:48c978bb] [HoD:B]")
   }
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
-    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
+    journeyService.upsert(tpsPayments).futureValue
     connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.P800
   }
 

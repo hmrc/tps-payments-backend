@@ -38,10 +38,10 @@ class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext
     httpClient.POST[StartJourneyRequestMibOrPngr, JourneyId](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments", launchRequest, headers)
 
   def upsert(tpsPayments: Journey)(implicit hc: HeaderCarrier): Future[Unit] =
-    httpClient.POST[Journey, Unit](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/upsert", tpsPayments, headers)
+    httpClient.POST[Journey, Unit](s"http://localhost:${port.toString}/tps-payments-backend/journey", tpsPayments, headers)
 
   def find(id: JourneyId)(implicit hc: HeaderCarrier): Future[Journey] =
-    httpClient.GET[Journey](s"http://localhost:${port.toString}/tps-payments-backend/tps-payments/${id.value}", headers)
+    httpClient.GET[Journey](s"http://localhost:${port.toString}/tps-payments-backend/journey/${id.value}", headers)
 
   def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
     httpClient.GET[TaxType](s"http://localhost:${port.toString}/tps-payments-backend/payment-items/${id.value}/tax-type", headers)
