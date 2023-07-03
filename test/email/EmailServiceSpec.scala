@@ -28,7 +28,7 @@ class EmailServiceSpec extends ItSpec {
 
   def emailService: EmailService = app.injector.instanceOf[EmailService]
 
-  val testTpsPaymentItem = PaymentItem(Some(paymentItemId), 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), "JB", "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some("test@email.com"))
+  val testTpsPaymentItem = PaymentItem(paymentItemId, 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), CustomerName("JB"), "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some(Email("test@email.com")))
 
   "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
     val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem

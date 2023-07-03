@@ -39,7 +39,7 @@ final case class StartJourneyRequestMibOrPngr(
   def makeJourney(now: Instant): Journey = {
     val tpsPayments: List[PaymentItem] = payments.map { p =>
       PaymentItem(
-        paymentItemId       = Some(PaymentItemId(ObjectId.get().toHexString)),
+        paymentItemId       = PaymentItemId(ObjectId.get().toHexString),
         amount              = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = now,
@@ -57,7 +57,7 @@ final case class StartJourneyRequestMibOrPngr(
       pid        = pid,
       created    = now,
       payments   = tpsPayments,
-      navigation = Some(navigation)
+      navigation = navigation
     )
   }
 }

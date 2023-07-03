@@ -22,19 +22,19 @@ import tps.utils.EnumFormat
 
 import scala.collection.immutable
 
-sealed abstract class VerifyRefStatus extends EnumEntry
+sealed abstract class VerifyRefsStatus extends EnumEntry
 
-object VerifyRefStatuses extends Enum[VerifyRefStatus] {
+object VerifyRefStatuses extends Enum[VerifyRefsStatus] {
 
-  case object RefDenied extends VerifyRefStatus
-  case object RefPermitted extends VerifyRefStatus
-  case object MissingInformation extends VerifyRefStatus
+  case object RefDenied extends VerifyRefsStatus
+  case object RefPermitted extends VerifyRefsStatus
+  case object MissingInformation extends VerifyRefsStatus
 
-  override def values: immutable.IndexedSeq[VerifyRefStatus] = findValues
+  override def values: immutable.IndexedSeq[VerifyRefsStatus] = findValues
 }
 
-object VerifyRefStatus {
-  implicit val format: Format[VerifyRefStatus] = Format(
+object VerifyRefsStatus {
+  implicit val format: Format[VerifyRefsStatus] = Format(
     EnumFormat(VerifyRefStatuses),
     EnumFormat(VerifyRefStatuses)
   )

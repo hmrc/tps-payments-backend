@@ -17,19 +17,19 @@
 package tps.startjourneymodel
 
 import play.api.libs.json.{Json, OFormat}
-import tps.model.{PaymentSpecificData, TaxType}
+import tps.model.{CustomerName, Email, PaymentSpecificData, TaxType}
 
 /**
  * Start Journey (Sj) Payment Item
  */
 final case class SjPaymentItem(
     chargeReference:     String,
-    customerName:        String,
+    customerName:        CustomerName,
     amount:              BigDecimal,
     taxRegimeDisplay:    String,
     taxType:             TaxType,
     paymentSpecificData: PaymentSpecificData,
-    email:               Option[String])
+    email:               Option[Email])
 
 object SjPaymentItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

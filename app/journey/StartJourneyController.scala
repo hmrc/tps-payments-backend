@@ -49,7 +49,7 @@ class StartJourneyController @Inject() (actions:                Actions,
   private def makeJourney(startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr): Journey = {
     val tpsPayments: List[PaymentItem] = startJourneyRequestMibOrPngr.payments.map { p =>
       PaymentItem(
-        paymentItemId       = Some(paymentItemIdGenerator.nextId()),
+        paymentItemId       = paymentItemIdGenerator.nextId(),
         amount              = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = Instant.now(clock),
@@ -67,7 +67,7 @@ class StartJourneyController @Inject() (actions:                Actions,
       pid        = startJourneyRequestMibOrPngr.pid,
       created    = Instant.now(clock),
       payments   = tpsPayments,
-      navigation = Some(startJourneyRequestMibOrPngr.navigation)
+      navigation = startJourneyRequestMibOrPngr.navigation
     )
   }
 

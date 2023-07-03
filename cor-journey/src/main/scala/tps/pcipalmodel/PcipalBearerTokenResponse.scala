@@ -16,16 +16,18 @@
 
 package tps.pcipalmodel
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import play.api.libs.json.{Json, OFormat}
 
-final case class PcipalSessionId(
-    value: String
+final case class PcipalBearerTokenResponse(
+    access_token:  String,
+    token_type:    String,
+    expires_in:    Int,
+    refresh_token: String,
+    client_id:     String,
+    tenantName:    String
 )
 
-object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = Json.valueFormat
-  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+object PcipalBearerTokenResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[PcipalBearerTokenResponse] = Json.format[PcipalBearerTokenResponse]
 }
-

@@ -18,6 +18,7 @@ package email
 
 import email.model.EmailSendRequest
 import play.api.Logger
+import tps.model.Email
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -32,7 +33,7 @@ final class EmailConnector @Inject() (
 )(implicit ec: ExecutionContext) {
 
   //TODO: refactor so it doesn't take dozen String parameters
-  def sendEmail(emailAddress: String, totalAmountPaid: String, transactionReference: String, cardType: String, cardNumber: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def sendEmail(emailAddress: Email, totalAmountPaid: String, transactionReference: String, cardType: String, cardNumber: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     logger.info("sending email ...")
     httpClient.POST[EmailSendRequest, Unit](
       sendEmailUrl,

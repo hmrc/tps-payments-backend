@@ -22,7 +22,7 @@ import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
 import tps.journey.model.Journey
 import tps.model.TaxTypes.{MIB, PNGR}
-import tps.model.{PaymentItem, TaxType, TaxTypes}
+import tps.model.{Email, PaymentItem, TaxType, TaxTypes}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
 import tps.utils.SafeEquals.EqualsOps
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,11 +47,11 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
    * (this function had been developed before this scaladoc)
    */
   def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit = {
-    val tpsPaymentItems: List[PaymentItem] = journey.payments
-    if (weShouldSendEmail(tpsPaymentItems)) {
-      val emailAddress: String = tpsPaymentItems.find(_.email.nonEmpty).flatMap(_.email).fold("impossible")(email => email)
+    val paymentItems: List[PaymentItem] = journey.payments
+    if (weShouldSendEmail(paymentItems)) {
+      val emailAddress: Email = paymentItems.find(_.email.nonEmpty).flatMap(_.email).getOrElse(throw new RuntimeException("Missing email in payment items"))
       val listOfSuccessfulTpsPaymentItems: List[PaymentItem] =
-        tpsPaymentItems.filter(_.pcipalData
+        paymentItems.filter(_.pcipalData
           .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated))
 
       listOfSuccessfulTpsPaymentItems.headOption match {
@@ -66,7 +66,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
   private def sendEmail(
       payments:             List[PaymentItem],
       transactionReference: String,
-      emailAddress:         String,
+      emailAddress:         Email,
       cardType:             String,
       cardNumber:           String)(implicit hc: HeaderCarrier): Unit = {
 

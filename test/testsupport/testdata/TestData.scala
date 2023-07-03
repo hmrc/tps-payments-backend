@@ -19,7 +19,7 @@ package testsupport.testdata
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 import tps.journey.model.{Journey, JourneyId}
-import tps.model.TaxTypes.{MIB, P800, PNGR, Sa}
+import tps.model.TaxTypes.{MIB, PNGR, Sa}
 import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
 import tps.pcipalmodel._
@@ -37,18 +37,19 @@ object TestData {
   private val reference3 = "P800"
   private val pid = "123"
   private val transReference = "51e267d84f91"
+  val navigation = Navigation(back     = "back", reset = "reset", finish = "finish", callback = "callback")
 
   val tpsPaymentRequest: StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
         chargeReference     = "chargeReference",
-        customerName        = "customerName",
+        customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = Sa,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
-        email               = Some("test@email.com")
+        email               = Some(Email("test@email.com"))
       )
     ),
     navigation = Navigation("back", "reset", "finish", "callback")
@@ -59,7 +60,7 @@ object TestData {
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
         chargeReference     = "chargeReference",
-        customerName        = "customerName",
+        customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
@@ -75,7 +76,7 @@ object TestData {
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
         chargeReference     = "chargeReference",
-        customerName        = "customerName",
+        customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "MIB",
         taxType             = MIB,
@@ -91,7 +92,7 @@ object TestData {
     payments   = Seq[SjPaymentItem](
       SjPaymentItem(
         chargeReference     = "chargeReference",
-        customerName        = "customerName",
+        customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = taxRegimeDisplay,
         taxType             = taxType,
@@ -146,18 +147,21 @@ object TestData {
       created,
       List(
         PaymentItem(
-          Some(paymentItemId),
+          paymentItemId,
           1.92,
           HeadOfDutyIndicators.B,
           created,
-          "AR",
+          CustomerName("AR"),
           "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          Some("test@email.com"))))
-
-  val navigation = Navigation(back     = "back", reset = "reset", finish = "finish", callback = "callback")
+          TaxTypes.P800,
+          Some(Email("test@email.com")))
+      ),
+      navigation                  = navigation,
+      pcipalSessionLaunchRequest  = None,
+      pcipalSessionLaunchResponse = None
+    )
 
   val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
     FlowId              = 123,
@@ -203,18 +207,18 @@ object TestData {
       created                     = created,
       payments                    = List(
         PaymentItem(
-          Some(paymentItemId),
+          paymentItemId,
           1.92,
           HeadOfDutyIndicators.B,
           created,
-          "AR",
+          CustomerName("AR"),
           "12345",
           Some(chargeRefNotificationPcipalRequest),
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          Some("test@email.com"))
+          TaxTypes.P800,
+          Some(Email("test@email.com")))
       ),
-      navigation                  = Some(navigation),
+      navigation                  = navigation,
       pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
       pcipalSessionLaunchResponse = Some(PcipalSessionLaunchResponse(Id = pciPalSessionId, "LinkId123"))
     )
@@ -227,16 +231,21 @@ object TestData {
       created,
       List(
         PaymentItem(
-          Some(paymentItemId),
+          paymentItemId,
           1.92,
           HeadOfDutyIndicators.B,
           created,
-          "AR",
+          CustomerName("AR"),
           "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          Some("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))))
+          TaxTypes.P800,
+          Some(Email("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")))
+      ),
+      navigation                  = navigation,
+      pcipalSessionLaunchRequest  = None,
+      pcipalSessionLaunchResponse = None
+    )
 
   val tpsPaymentsWithoutEmail: Journey =
     Journey(
@@ -246,16 +255,20 @@ object TestData {
       created,
       List(
         PaymentItem(
-          Some(paymentItemId),
+          paymentItemId,
           1.92,
           HeadOfDutyIndicators.B,
           created,
-          "AR",
+          CustomerName("AR"),
           "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          None)))
+          TaxTypes.P800,
+          None)),
+      navigation                  = navigation,
+      pcipalSessionLaunchRequest  = None,
+      pcipalSessionLaunchResponse = None
+    )
 
   val tpsPaymentsWithEmptyEmail: Journey =
     Journey(
@@ -265,28 +278,33 @@ object TestData {
       created,
       List(
         PaymentItem(
-          Some(paymentItemId),
+          paymentItemId,
           1.92,
           HeadOfDutyIndicators.B,
           created,
-          "AR",
+          CustomerName("AR"),
           "12345",
           None,
           PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          P800,
-          Some(""))))
+          TaxTypes.P800,
+          Some(Email.emptyEmail))
+      ),
+      navigation                  = navigation,
+      pcipalSessionLaunchRequest  = None,
+      pcipalSessionLaunchResponse = None
+    )
 
   val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
-    _id      = id,
-    pid      = pid,
-    created  = created,
-    payments = List(
+    _id                         = id,
+    pid                         = pid,
+    created                     = created,
+    payments                    = List(
       PaymentItem(
-        paymentItemId       = Some(paymentItemId),
+        paymentItemId       = paymentItemId,
         amount              = 1.92,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = created,
-        customerName        = "Bob Ross",
+        customerName        = CustomerName("Bob Ross"),
         chargeReference     = modsRef,
         pcipalData          = None,
         paymentSpecificData = MibSpecificData(
@@ -296,19 +314,23 @@ object TestData {
           amendmentReference = None
         ),
         taxType             = MIB,
-        email               = None)))
+        email               = None)),
+    navigation                  = navigation,
+    pcipalSessionLaunchRequest  = None,
+    pcipalSessionLaunchResponse = None
+  )
 
   val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
-    _id      = id,
-    pid      = pid,
-    created  = created,
-    payments = List(
+    _id                         = id,
+    pid                         = pid,
+    created                     = created,
+    payments                    = List(
       PaymentItem(
-        paymentItemId       = Some(paymentItemId),
+        paymentItemId       = paymentItemId,
         amount              = 1.92,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
         updated             = created,
-        customerName        = "Bob Ross",
+        customerName        = CustomerName("Bob Ross"),
         chargeReference     = modsRef,
         pcipalData          = None,
         paymentSpecificData = MibSpecificData(
@@ -318,7 +340,12 @@ object TestData {
           amendmentReference = Some(1)
         ),
         taxType             = MIB,
-        email               = None)))
+        email               = None)
+    ),
+    navigation                  = navigation,
+    pcipalSessionLaunchRequest  = None,
+    pcipalSessionLaunchResponse = None
+  )
 
   //language=JSON
   val chargeRefNotificationPciPalRequestJson: JsValue = Json.parse(

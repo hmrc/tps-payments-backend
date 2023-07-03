@@ -45,7 +45,7 @@ trait TdJourneySa { dependencies: TdBase =>
         accountOfficeId    = "S1",
         HODIdentifier      = HeadOfDutyIndicators.K,
         UTRReference       = taxReference,
-        name1              = dependencies.customerName,
+        name1              = dependencies.customerName.value,
         amount             = amountString,
         taxAmount          = None,
         nicAmount          = None,
@@ -92,7 +92,7 @@ trait TdJourneySa { dependencies: TdBase =>
     )
 
     override lazy val paymentItem: PaymentItem = PaymentItem(
-      paymentItemId       = Some(dependencies.paymentItemId),
+      paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.K,
       updated             = dependencies.instant,

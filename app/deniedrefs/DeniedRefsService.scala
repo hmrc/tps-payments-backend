@@ -26,7 +26,7 @@ import tps.deniedrefs.model.VerifyRefStatuses._
 import deniedrefs.model._
 import org.mongodb.scala.result.UpdateResult
 import play.api.Logger
-import tps.deniedrefs.model.VerifyRefStatus
+import tps.deniedrefs.model.VerifyRefsStatus
 import tps.model.Reference
 import util.Crypto
 
@@ -116,7 +116,7 @@ class DeniedRefsService @Inject() (
 
   private val cachedDeniedRefs = new AtomicReference[Option[DeniedRefs]](None)
 
-  def verifyRefs(refs: Set[Reference]): VerifyRefStatus = {
+  def verifyRefs(refs: Set[Reference]): VerifyRefsStatus = {
     cachedDeniedRefs.get() match {
       case Some(cache) =>
         val anyDenied = refs.exists(cache.containsRef)

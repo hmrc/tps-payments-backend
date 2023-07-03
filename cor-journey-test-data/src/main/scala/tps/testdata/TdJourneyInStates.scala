@@ -45,7 +45,7 @@ trait TdJourneyInStates {
     pid                         = pid,
     created                     = created,
     payments                    = Nil,
-    navigation                  = Some(navigation),
+    navigation                  = navigation,
     pcipalSessionLaunchRequest  = None,
     pcipalSessionLaunchResponse = None
   )
@@ -56,7 +56,7 @@ trait TdJourneyInStates {
     pid                         = pid,
     created                     = created,
     payments                    = List(paymentItem),
-    navigation                  = Some(navigation),
+    navigation                  = navigation,
     pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
     pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
   )

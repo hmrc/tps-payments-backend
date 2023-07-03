@@ -29,7 +29,7 @@ class JourneyServiceSpec extends ItSpec {
 
     Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
     Option(repo.upsert(tpsPaymentsWithPcipalData.copy(_id = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
-    val tpsPaymentId: PaymentItemId = tpsPaymentsWithPcipalData.payments.headOption.value.paymentItemId.value
+    val tpsPaymentId: PaymentItemId = tpsPaymentsWithPcipalData.payments.headOption.value.paymentItemId
     intercept[Exception] {
       journeyService.findByPcipalSessionId(PcipalSessionId("48c978bb"), tpsPaymentId).futureValue
     }.getMessage should include("Found 2 journeys with given pcipalSessionId [48c978bb]")

@@ -19,7 +19,7 @@ package journey
 import journey.JourneyService.FindByPcipalSessionIdResult
 import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
-import tps.model.{PaymentItem, PaymentItemId}
+import tps.model.{Email, PaymentItem, PaymentItemId}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
 import tps.utils.SafeEquals.EqualsOps
 import util.Crypto
@@ -46,7 +46,7 @@ class JourneyService @Inject() (
         case Nil => FindByPcipalSessionIdResult.NotJourneyBySessionId
         case one :: Nil =>
           val journey = decryptEmails(one)
-          val hasPaymentItem = journey.payments.exists(_.paymentItemId === Some(paymentItemId))
+          val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
           if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
           else FindByPcipalSessionIdResult.NoMatchingPaymentItem
         case multiple => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
@@ -61,7 +61,7 @@ class JourneyService @Inject() (
         case one :: Nil => Some(decryptEmails(one))
         case multiple   => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given paymentItemId [${paymentItemId.value}]")
       }
-      .map(_.map(_.payments.filter(_.paymentItemId === Some(paymentItemId))))
+      .map(_.map(_.payments.filter(_.paymentItemId === paymentItemId)))
       .map(_.map {
         case Nil        => throw new RuntimeException(s"Expected paymentItem in this journey [paymentItemId:${paymentItemId.value}]")
         case one :: Nil => one
@@ -72,7 +72,7 @@ class JourneyService @Inject() (
   private def encryptEmails(journey: Journey): Journey = {
     val paymentItems: List[PaymentItem] = journey.payments
     val paymentItemsWithEncryptedEmails: List[PaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
-      case Some(email) => tpsPaymentItem.copy(email = Some(crypto.encrypt(email)))
+      case Some(email) => tpsPaymentItem.copy(email = Some(Email(crypto.encrypt(email.value))))
       case _           => tpsPaymentItem
     })
     journey.copy(payments = paymentItemsWithEncryptedEmails)
@@ -84,8 +84,8 @@ class JourneyService @Inject() (
       item.copy(email = item.email.map(decryptEmail))
     ))
 
-  private def decryptEmail(email: String) = Try(crypto.decrypt(email)) match {
-    case Success(v) => v
+  private def decryptEmail(email: Email): Email = Try(crypto.decrypt(email.value)) match {
+    case Success(v) => Email(v)
     case Failure(e) =>
       throw new RuntimeException(s"Failed to decrypt email. Has encryption key changed?", e)
   }
@@ -95,7 +95,7 @@ class JourneyService @Inject() (
   ): Journey = {
 
     val updatedJourney = journey.copy(payments = journey.payments.map {
-      case p: PaymentItem if p.paymentItemId === Some(pcipalData.paymentItemId) => p.copy(pcipalData = Some(pcipalData))
+      case p: PaymentItem if p.paymentItemId === pcipalData.paymentItemId => p.copy(pcipalData = Some(pcipalData))
       case p => p
     })
 

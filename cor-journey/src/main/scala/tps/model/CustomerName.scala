@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package tps.pcipalmodel
+package tps.model
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import play.api.libs.json.{Format, Json}
 
-final case class PcipalSessionId(
-    value: String
-)
+final case class CustomerName(value: String) extends AnyVal
 
-object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = Json.valueFormat
-  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+object CustomerName {
+  implicit val format: Format[CustomerName] = Json.valueFormat
 }
-

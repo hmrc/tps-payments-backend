@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package tps.pcipalmodel
+package tps.model
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import play.api.libs.json.{Format, Json}
 
-final case class PcipalSessionId(
-    value: String
-)
+//JB: we should make this use sensitive string and encrypter/decryter as in essttp/f2f
+final case class Email(value: String) extends AnyVal
 
-object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = Json.valueFormat
-  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+object Email {
+  implicit val format: Format[Email] = Json.valueFormat
+  val emptyEmail: Email = Email("") //TODO: better None
 }
 

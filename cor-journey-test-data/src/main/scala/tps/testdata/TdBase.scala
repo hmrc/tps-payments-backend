@@ -17,7 +17,7 @@
 package tps.testdata
 
 import tps.journey.model.JourneyId
-import tps.model.{Navigation, PaymentItemId}
+import tps.model.{CustomerName, Email, Navigation, PaymentItemId}
 import tps.pcipalmodel.PcipalSessionId
 
 import java.time.format.DateTimeFormatter
@@ -26,11 +26,11 @@ import java.time.{Instant, LocalDateTime, ZoneOffset}
 trait TdBase {
 
   lazy val pid: String = "1234567"
-  lazy val customerName: String = "customerName"
+  lazy val customerName: CustomerName = CustomerName("customerName")
   //  lazy val chargeReference: String = "chargeReference"
   //  lazy val amountString: String = "100.00"
   //  lazy val amount: BigDecimal = BigDecimal(amountString)
-  lazy val email: String = "test@email.com"
+  lazy val email: Email = Email("test@email.com")
   lazy val flowId: Int = 1055
   lazy val journeyId: JourneyId = JourneyId("64886ed616fe8b501cbf0088")
 

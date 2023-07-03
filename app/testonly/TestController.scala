@@ -47,7 +47,7 @@ class TestController @Inject() (
   }
 
   def storeTpsPayments(): Action[Journey] = Action.async(parse.json[Journey]) { implicit request =>
-    val updatedPayments: List[PaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = Some(PaymentItemId(ObjectId.get().toHexString))))
+    val updatedPayments: List[PaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = PaymentItemId(ObjectId.get().toHexString)))
 
     journeyRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))

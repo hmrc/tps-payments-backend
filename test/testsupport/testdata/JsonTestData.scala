@@ -37,7 +37,7 @@ object JsonTestData {
               "amount": 100.00,
               "chargeReference": "chargeReference",
               "headOfDutyIndicator": "B",
-              "paymentItemId": "${tpsPayments.payments.headOption.value.paymentItemId.value.value}",
+              "paymentItemId": "${tpsPayments.payments.headOption.value.paymentItemId.value}",
               "updated": "$createdString",
               "customerName": "customerName",
               "taxType": "$taxType"

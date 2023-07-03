@@ -22,37 +22,26 @@ import play.api.libs.json._
 
 sealed trait PaymentSpecificData {
   def getReference: String
-}
-
-final case class PaymentSpecificDataP800(
-    ninoPart1:          String,
-    ninoPart2:          String,
-    taxTypeScreenValue: String,
-    period:             Int
-) extends PaymentSpecificData {
-  def getReference: String = {
-    s"$ninoPart1$ninoPart2$taxTypeScreenValue${period.toString}"
-  }
-}
-
-object PaymentSpecificDataP800 {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PaymentSpecificDataP800] = Json.format[PaymentSpecificDataP800]
+  def getRawReference: String
 }
 
 final case class SimplePaymentSpecificData(chargeReference: String) extends PaymentSpecificData {
   override def getReference: String = chargeReference
+  override def getRawReference: String = chargeReference
 }
 
 object SimplePaymentSpecificData {
   implicit val format: OFormat[SimplePaymentSpecificData] = Json.format[SimplePaymentSpecificData]
 }
 
-final case class PngrSpecificData(chargeReference: String,
-                                  vat:             BigDecimal,
-                                  customs:         BigDecimal,
-                                  excise:          BigDecimal) extends PaymentSpecificData {
+final case class PngrSpecificData(
+    chargeReference: String,
+    vat:             BigDecimal,
+    customs:         BigDecimal,
+    excise:          BigDecimal
+) extends PaymentSpecificData {
   override def getReference: String = chargeReference
+  override def getRawReference: String = chargeReference
 }
 
 object PngrSpecificData {
@@ -60,13 +49,15 @@ object PngrSpecificData {
   implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 }
 
-final case class MibSpecificData(chargeReference:    String,
-                                 vat:                BigDecimal,
-                                 customs:            BigDecimal,
-                                 amendmentReference: Option[Int] = None
+final case class MibSpecificData(
+    chargeReference:    String,
+    vat:                BigDecimal,
+    customs:            BigDecimal,
+    amendmentReference: Option[Int] = None
 ) extends PaymentSpecificData {
   override def getReference: String = chargeReference
   def getAmendmentReference: Option[Int] = amendmentReference
+  override def getRawReference: String = chargeReference
 }
 
 object MibSpecificData {
@@ -78,6 +69,7 @@ final case class ChildBenefitSpecificData(
     childBenefitYReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = childBenefitYReference
+  override def getRawReference: String = childBenefitYReference
 }
 object ChildBenefitSpecificData {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
@@ -88,6 +80,7 @@ final case class SaSpecificData(
     saReference: String //TODO make strong type for that UTR
 ) extends PaymentSpecificData {
   override def getReference: String = saReference
+  override def getRawReference: String = saReference.dropRight(1)
 }
 
 object SaSpecificData {
@@ -98,6 +91,7 @@ final case class SdltSpecificData(
     sdltReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = sdltReference
+  override def getRawReference: String = sdltReference
 }
 object SdltSpecificData {
   implicit val format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
@@ -107,6 +101,7 @@ final case class SafeSpecificData(
     safeReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = safeReference
+  override def getRawReference: String = safeReference
 }
 object SafeSpecificData {
   implicit val format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
@@ -116,6 +111,7 @@ final case class CotaxSpecificData(
     cotaxReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = cotaxReference
+  override def getRawReference: String = cotaxReference.dropRight(7)
 }
 object CotaxSpecificData {
   implicit val format: OFormat[CotaxSpecificData] = Json.format[CotaxSpecificData]
@@ -125,18 +121,10 @@ final case class NtcSpecificData(
     ntcReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = ntcReference
+  override def getRawReference: String = ntcReference.dropRight(8)
 }
 object NtcSpecificData {
   implicit val format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
-}
-
-final case class PptSpecificData(
-    pptReference: String
-) extends PaymentSpecificData {
-  override def getReference: String = pptReference
-}
-object PptSpecificData {
-  implicit val format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
 }
 
 final case class PayeSpecificData(
@@ -145,6 +133,7 @@ final case class PayeSpecificData(
     nicAmount:     BigDecimal
 ) extends PaymentSpecificData {
   override def getReference: String = payeReference
+  override def getRawReference: String = payeReference.dropRight(4)
 }
 object PayeSpecificData {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
@@ -159,6 +148,7 @@ final case class NpsSpecificData(
     rate:            BigDecimal
 ) extends PaymentSpecificData {
   override def getReference: String = npsReference
+  override def getRawReference: String = npsReference.dropRight(2)
 }
 object NpsSpecificData {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
@@ -170,10 +160,39 @@ final case class VatSpecificData(
     remittanceType: String //TODO make strong type, enum
 ) extends PaymentSpecificData {
   override def getReference: String = vatReference
+  override def getRawReference: String = vatReference.dropRight(4)
 }
+
 object VatSpecificData {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
+}
+
+final case class PptSpecificData(
+    pptReference: String
+) extends PaymentSpecificData {
+  override def getReference: String = pptReference
+  override def getRawReference: String = pptReference
+}
+object PptSpecificData {
+  implicit val format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
+}
+
+final case class PaymentSpecificDataP800(
+    ninoPart1:          String,
+    ninoPart2:          String,
+    taxTypeScreenValue: String,
+    period:             Int
+) extends PaymentSpecificData {
+  override def getReference: String = {
+    s"$ninoPart1$ninoPart2$taxTypeScreenValue${period.toString}"
+  }
+  override def getRawReference: String = throw new RuntimeException("P800 is not supported")
+}
+
+object PaymentSpecificDataP800 {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[PaymentSpecificDataP800] = Json.format[PaymentSpecificDataP800]
 }
 
 object PaymentSpecificData {
@@ -215,7 +234,7 @@ object PaymentSpecificData {
       JsSuccess(json.as[CotaxSpecificData])
     case json: JsObject if json.keys === jsonKeysNtc =>
       JsSuccess(json.as[NtcSpecificData])
-    case json: JsObject if json.keys === jsonKeysPaye =>
+    case json: JsObject if (json.keys === jsonKeysPayeVariant1) || (json.keys === jsonKeysPayeVariant2) || (json.keys === jsonKeysPayeVariant3) =>
       JsSuccess(json.as[PayeSpecificData])
     case json: JsObject if json.keys === jsonKeysNps =>
       JsSuccess(json.as[NpsSpecificData])
@@ -227,18 +246,21 @@ object PaymentSpecificData {
   }
 
   val jsonKeysSimplePaymentSpecificData: Set[String] = Set("chargeReference")
-  val jsonKeysPaymentSpecificDataP800: Set[String] = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
   val jsonKeysPngrSpecificData: Set[String] = Set("chargeReference", "vat", "customs", "excise")
   val jsonKeysMibSpecificDataVariant1: Set[String] = Set("chargeReference", "vat", "customs")
   val jsonKeysMibSpecificDataVariant2: Set[String] = Set("chargeReference", "vat", "customs", "amendmentReference")
   val jsonKeysChildBenefit: Set[String] = Set("childBenefitYReference")
-  val jsonKeysPpt: Set[String] = Set("pptReference")
   val jsonKeysSa: Set[String] = Set("saReference")
   val jsonKeysSdlt: Set[String] = Set("sdltReference")
   val jsonKeysSafe: Set[String] = Set("safeReference")
   val jsonKeysCotax: Set[String] = Set("cotaxReference")
   val jsonKeysNtc: Set[String] = Set("ntcReference")
-  val jsonKeysPaye: Set[String] = Set("payeReference", "taxAmount", "nicAmount")
+  val jsonKeysPayeVariant1: Set[String] = Set("payeReference", "taxAmount")
+  val jsonKeysPayeVariant2: Set[String] = Set("payeReference", "nicAmount")
+  val jsonKeysPayeVariant3: Set[String] = Set("payeReference", "taxAmount", "nicAmount")
   val jsonKeysNps: Set[String] = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
   val jsonKeysVat: Set[String] = Set("vatReference", "remittanceType")
+  val jsonKeysPpt: Set[String] = Set("pptReference")
+  val jsonKeysPaymentSpecificDataP800: Set[String] = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
 }
+

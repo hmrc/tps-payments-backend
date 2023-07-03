@@ -18,7 +18,7 @@ package tps.deniedrefs.model
 
 import play.api.libs.json.{Json, OFormat}
 
-final case class VerifyRefsResponse(status: VerifyRefStatus)
+final case class VerifyRefsResponse(status: VerifyRefsStatus)
 
 object VerifyRefsResponse {
   implicit val format: OFormat[VerifyRefsResponse] = Json.format[VerifyRefsResponse]

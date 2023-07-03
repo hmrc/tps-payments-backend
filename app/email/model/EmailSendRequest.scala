@@ -17,8 +17,9 @@
 package email.model
 
 import play.api.libs.json.{Json, OFormat}
+import tps.model.Email
 
-final case class EmailSendRequest(to: Seq[String], templateId: String, parameters: Map[String, String], force: Boolean = false)
+final case class EmailSendRequest(to: Seq[Email], templateId: String, parameters: Map[String, String], force: Boolean = false)
 
 object EmailSendRequest {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
