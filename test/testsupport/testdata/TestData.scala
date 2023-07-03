@@ -29,6 +29,8 @@ import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
 import java.time.Instant
 
 object TestData {
+  val navigation = Navigation(back     = "back", reset = "reset", finish = "finish", callback = "callback")
+
   private val createdString: String = "2040-01-20T11:56:46Z"
   private val createdStringLegacy: String = "2040-01-20T11:56:46"
   private val created: Instant = Instant.parse(createdString)
@@ -37,7 +39,6 @@ object TestData {
   private val reference3 = "P800"
   private val pid = "123"
   private val transReference = "51e267d84f91"
-  val navigation = Navigation(back     = "back", reset = "reset", finish = "finish", callback = "callback")
 
   val tpsPaymentRequest: StartJourneyRequestMibOrPngr = startjourneymodel.StartJourneyRequestMibOrPngr(
     pid        = "pid",
@@ -139,7 +140,7 @@ object TestData {
     CardLast4            = "0123"
   )
 
-  val tpsPayments: Journey =
+  val journey: Journey =
     Journey(
       id,
       pid,
@@ -478,12 +479,18 @@ object TestData {
               },
               "email": "test@email.com"
             }
-          ]
+          ],
+          "navigation": {
+            "back" : "back",
+            "reset" : "reset",
+            "finish" : "finish",
+            "callback" : "callback"
+          }
         }
      """.stripMargin)
 
   //language=JSON
-  val tpsPaymentsMongoJson: JsValue = Json.parse(
+  val journeyMongoJson: JsValue = Json.parse(
     s"""{
           "_id" : "${id.value}",
           "pid" : "$pid",
@@ -510,7 +517,13 @@ object TestData {
               },
               "email": "test@email.com"
             }
-          ]
+          ],
+          "navigation": {
+            "back" : "back",
+            "reset" : "reset",
+            "finish" : "finish",
+            "callback" : "callback"
+          }
         }
      """.stripMargin)
 

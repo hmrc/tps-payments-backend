@@ -40,9 +40,9 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status {
 
   "getModsAmendmentRef should return 500 when a duplicate id is found" in {
     val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
-    val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
+    val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(tpsPayments).futureValue
+    repo.upsert(journey).futureValue
     repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {

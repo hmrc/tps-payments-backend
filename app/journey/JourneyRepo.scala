@@ -21,8 +21,8 @@ import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
 import repository.{Repo, RepoConfig}
 import tps.journey.model.{Journey, JourneyId}
-import tps.model.{PaymentItemId, PaymentSpecificData, TaxTypes}
-import tps.pcipalmodel.PcipalSessionId
+import tps.model.{Navigation, PaymentItem, PaymentItemId, PaymentSpecificData, TaxTypes}
+import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import tps.utils.SafeEquals.EqualsOps
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -45,6 +45,16 @@ object JourneyRepo {
     )
   )
 
+  final case class LegacyJourney(
+      _id:                         JourneyId,
+      pid:                         String,
+      created:                     Instant,
+      payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
+      navigation:                  Option[Navigation], //HERE the difference
+      pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
+      pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
+  )
+
   /**
    * This format stores date time in mongo specific way.
    * For example: {{{
@@ -64,7 +74,19 @@ object JourneyRepo {
       MongoJavatimeFormats.instantReads.orElse(legacyCreatedReads),
       MongoJavatimeFormats.instantWrites
     )
-    Json.format[Journey]
+
+    val dummyNavigation = Navigation("dummy", "dummy", "dummy", "dummy")
+
+    val journeyReads: Reads[Journey] = Json.reads[LegacyJourney].map[Journey](lg => Journey(
+      _id                         = lg._id,
+      pid                         = lg.pid,
+      created                     = lg.created,
+      payments                    = lg.payments,
+      navigation                  = lg.navigation.getOrElse(dummyNavigation),
+      pcipalSessionLaunchRequest  = lg.pcipalSessionLaunchRequest,
+      pcipalSessionLaunchResponse = lg.pcipalSessionLaunchResponse
+    ))
+    OFormat[Journey](journeyReads, Json.writes[Journey])
   }
 }
 

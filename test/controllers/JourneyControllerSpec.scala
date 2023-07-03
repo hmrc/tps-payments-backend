@@ -41,25 +41,25 @@ class JourneyControllerSpec extends ItSpec with Status {
 
   "store data when authorised" in {
     authorised()
-    val result = connector.upsert(tpsPayments).futureValue
+    val result = connector.upsert(journey).futureValue
     result shouldBe ()
   }
 
   "Not authorised should get an exception" in {
     notAuthenticated()
-    an[Exception] should be thrownBy connector.upsert(tpsPayments).futureValue
+    an[Exception] should be thrownBy connector.upsert(journey).futureValue
   }
 
   "Insufficient Enrolments should get an exception" in {
     notAuthorised("InsufficientEnrolments")
-    an[Exception] should be thrownBy connector.upsert(tpsPayments).futureValue
+    an[Exception] should be thrownBy connector.upsert(journey).futureValue
   }
 
   "Check that TpsData can be found" in {
     authorised()
-    connector.upsert(tpsPayments).futureValue
+    connector.upsert(journey).futureValue
     val result = connector.find(id).futureValue
-    result shouldBe tpsPayments
+    result shouldBe journey
   }
 
   "Check that TpsData cannot be found" in {
@@ -80,7 +80,7 @@ class JourneyControllerSpec extends ItSpec with Status {
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
     authorised()
-    Option(repo.upsert(tpsPayments).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(repo.upsert(journey).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
     response.status shouldBe 400
     response.body should include("Could not find corresponding journey matching pcipalSessionId: [paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91] [PCIPalSessionId:new)] [HoD:B]")
@@ -97,7 +97,7 @@ class JourneyControllerSpec extends ItSpec with Status {
   }
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
-    journeyService.upsert(tpsPayments).futureValue
+    journeyService.upsert(journey).futureValue
     connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.P800
   }
 
@@ -109,9 +109,9 @@ class JourneyControllerSpec extends ItSpec with Status {
 
   "getTaxType should return 500 when a duplicate id is found" in {
     val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
-    val paymentWithDuplicatePaymentItemId = tpsPayments.copy(_id = tpsIdForDuplicate)
+    val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(tpsPayments).futureValue
+    repo.upsert(journey).futureValue
     repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {

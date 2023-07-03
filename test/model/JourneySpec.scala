@@ -38,10 +38,11 @@ import testsupport.UnitSpec
 import testsupport.testdata.JsonTestData._
 import testsupport.testdata.TestData._
 import tps.journey.model.Journey
+import tps.model.Navigation
 
 class JourneySpec extends UnitSpec {
   "to json" in {
-    toJson(tpsPayments) shouldBe tpsPaymentsJson
+    toJson(journey) shouldBe tpsPaymentsJson
     toJson(mibPayments) shouldBe mibPaymentsJson
     toJson(childBenefitPayments) shouldBe childBenefitsPaymentsJson
     toJson(saPayments) shouldBe saPaymentsJson
@@ -56,7 +57,7 @@ class JourneySpec extends UnitSpec {
   }
 
   "from json should de-serialise a TpsPayments object with a tax type" in {
-    tpsPaymentsJson.as[Journey] shouldBe tpsPayments
+    tpsPaymentsJson.as[Journey] shouldBe journey
     mibPaymentsJson.as[Journey] shouldBe mibPayments
     childBenefitsPaymentsJson.as[Journey] shouldBe childBenefitPayments
     saPaymentsJson.as[Journey] shouldBe saPayments
@@ -71,15 +72,15 @@ class JourneySpec extends UnitSpec {
   }
 
   "mongo writes" in {
-    JourneyRepo.formatMongo.writes((tpsPayments)) shouldBe tpsPaymentsMongoJson
+    JourneyRepo.formatMongo.writes((journey)) shouldBe journeyMongoJson
   }
 
   "mongo reads" in {
-    tpsPaymentsMongoJson.as[Journey](JourneyRepo.formatMongo) shouldBe tpsPayments
+    journeyMongoJson.as[Journey](JourneyRepo.formatMongo) shouldBe journey
   }
 
   "mongo legacy reads" in {
-    tpsPaymentsMongoLegacyJson.as[Journey](JourneyRepo.formatMongo) shouldBe tpsPayments
+    tpsPaymentsMongoLegacyJson.as[Journey](JourneyRepo.formatMongo) shouldBe journey.copy(navigation = Navigation("dummy", "dummy", "dummy", "dummy"))
   }
 
 }

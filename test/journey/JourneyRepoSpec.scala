@@ -33,8 +33,8 @@ class JourneyRepoSpec extends ItSpec {
 
   "getPayment should throw error when no tpsPayments found" in {
     intercept[Exception] {
-      repo.getPayment(tpsPayments._id).futureValue
-    }.getMessage should include(s"Record with id ${tpsPayments._id.value} not found")
+      repo.getPayment(journey._id).futureValue
+    }.getMessage should include(s"Record with id ${journey._id.value} not found")
   }
 
   "surfaceModsDataForRecon should find matching mods payments" in {

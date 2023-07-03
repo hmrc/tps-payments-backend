@@ -39,8 +39,8 @@ class JourneyServiceSpec extends ItSpec {
     val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
 
     journeyService.findPaymentItem(paymentItemId).futureValue shouldBe None
-    journeyService.upsert(tpsPayments).futureValue
-    journeyService.findPaymentItem(paymentItemId).futureValue shouldBe Some(tpsPayments.payments.headOption.value)
+    journeyService.upsert(journey).futureValue
+    journeyService.findPaymentItem(paymentItemId).futureValue shouldBe Some(journey.payments.headOption.value)
   }
 
 }
