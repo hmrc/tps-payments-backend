@@ -113,9 +113,9 @@ trait ItSpec
     "microservice.services.tps-payments-backend.port" -> testPort
   )
 
-  lazy val injector: Injector = fakeApplication().injector
-  lazy val repo: JourneyRepo = injector.instanceOf[JourneyRepo]
-  lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
+  def injector: Injector = fakeApplication().injector
+  def repo: JourneyRepo = injector.instanceOf[JourneyRepo]
+  def journeyService: JourneyService = injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
