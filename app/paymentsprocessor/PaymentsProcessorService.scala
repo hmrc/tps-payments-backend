@@ -16,17 +16,17 @@
 
 package paymentsprocessor
 
-import model.{MibSpecificData, PaymentItemId}
-import repository.TpsPaymentsRepo
+import journey.JourneyService
+import tps.model.{MibSpecificData, PaymentItemId}
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PaymentsProcessorService @Inject() (repo: TpsPaymentsRepo)(implicit executionContext: ExecutionContext) {
+class PaymentsProcessorService @Inject() (journeyService: JourneyService)(implicit ec: ExecutionContext) {
 
-  def findModsPaymentsByReference(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] = {
-    repo.findPaymentItem(paymentItemId).map {
+  def getModsPaymentCallbackRequest(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] = {
+    journeyService.findPaymentItem(paymentItemId).map {
       case Some(paymentItem) =>
         paymentItem.paymentSpecificData match {
           case paymentItem: MibSpecificData => ModsPaymentCallBackRequest(paymentItem.chargeReference, paymentItem.amendmentReference)

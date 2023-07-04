@@ -16,14 +16,15 @@
 
 package deniedrefs
 
-import _root_.deniedrefs.model._
-import _root_.model._
 import akka.stream.IOResult
 import akka.stream.scaladsl.{FileIO, Sink}
 import akka.util.ByteString
+import deniedrefs.model.UploadDeniedRefsResponse
 import play.api.libs.json.Json
 import play.api.libs.streams.Accumulator
 import play.api.mvc._
+import tps.deniedrefs.model.{VerifyRefsRequest, VerifyRefsResponse}
+import tps.model.Reference
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.nio.file.{Path, Paths}
@@ -42,7 +43,7 @@ class DeniedRefsController @Inject() (
     for {
       deniedRefs <- deniedRefsService.parseDeniedRefs(pathToCsv)
       _ <- deniedRefsService.upsert(deniedRefs)
-      response = model.UploadDeniedRefsResponse(
+      response = UploadDeniedRefsResponse(
         _id      = deniedRefs._id,
         inserted = deniedRefs.inserted,
         size     = deniedRefs.refs.size
@@ -61,18 +62,12 @@ class DeniedRefsController @Inject() (
   }
 
   def verifyRefs(): Action[VerifyRefsRequest] = Action.async(parse.json[VerifyRefsRequest]) { implicit request =>
-
     val refs: Set[Reference] = request.body.refs
 
     for {
       _ <- deniedRefsService.updateCacheIfNeeded()
       verifyRefStatus = deniedRefsService.verifyRefs(refs)
-    } yield Ok(Json.toJson(VerifyRefResponse(verifyRefStatus)))
+    } yield Ok(Json.toJson(VerifyRefsResponse(verifyRefStatus)))
   }
 
-  def dropDb(): Action[AnyContent] = Action.async { _ =>
-    for {
-      result <- deniedRefsService.dropDb()
-    } yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
-  }
 }

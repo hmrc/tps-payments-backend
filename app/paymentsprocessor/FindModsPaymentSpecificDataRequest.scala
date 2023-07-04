@@ -16,8 +16,8 @@
 
 package paymentsprocessor
 
-import model.PaymentItemId
 import play.api.libs.json.{Json, OFormat}
+import tps.model.PaymentItemId
 
 final case class FindModsPaymentSpecificDataRequest(paymentItemId: PaymentItemId)
 

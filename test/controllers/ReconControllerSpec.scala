@@ -18,8 +18,8 @@ package controllers
 
 import play.api.http.Status
 import recon.FindRPaymentSpecificDataRequest
-import support.testdata.TestData._
-import support.{ItSpec, TestConnector}
+import testsupport.testdata.TestData._
+import testsupport.{ItSpec, TestConnector}
 import uk.gov.hmrc.http.HeaderCarrier
 
 class ReconControllerSpec extends ItSpec with Status {

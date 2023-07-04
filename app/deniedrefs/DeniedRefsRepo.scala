@@ -46,6 +46,8 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
+  //TODO:x bring back the projection attribute so we don't fetch entire collection each time to
+  // see what is the latest it
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = collection
     .find()
     .sort(Sorts.descending(inserted))

@@ -22,7 +22,7 @@ import org.mongodb.scala.model.{Filters, IndexModel, ReplaceOptions}
 import org.mongodb.scala.result
 import play.api.libs.json.Json.JsValueWrapper
 import play.api.libs.json._
-import repository.Repo.{HasId, Id}
+import tps.model.repo.{HasId, Id}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -79,13 +79,6 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .toFuture()
     .map(_.getDeletedCount)
 
-  def removeById(id: ID): Future[Long] = collection
-    .deleteOne(
-      filter = Filters.eq("_id", id.value)
-    )
-    .toFuture()
-    .map(_.getDeletedCount)
-
   def drop(): Future[Boolean] = collection
     .drop()
     .toFuture()
@@ -100,16 +93,5 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .toFuture()
     .map(_ => ())
 
-}
-
-object Repo {
-  trait Id {
-    def value: String
-  }
-
-  trait HasId[ID <: Id] {
-    def _id: ID
-    def id: ID = _id
-  }
 }
 

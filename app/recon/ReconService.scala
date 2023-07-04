@@ -16,14 +16,14 @@
 
 package recon
 
-import model.PaymentSpecificData
-import repository.TpsPaymentsRepo
+import journey.JourneyRepo
+import tps.model.PaymentSpecificData
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReconService @Inject() (repo: TpsPaymentsRepo) {
+class ReconService @Inject() (repo: JourneyRepo) {
 
   def findModsPaymentsByReference(listOfReferencesToFind: List[String]): Future[List[PaymentSpecificData]] = {
     repo.surfaceModsDataForRecon(listOfReferencesToFind)

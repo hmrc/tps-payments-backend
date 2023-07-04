@@ -16,10 +16,10 @@
 
 package paymentsprocessor
 
-import model.PaymentItemId
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import tps.model.PaymentItemId
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -35,8 +35,7 @@ class PaymentsProcessorController @Inject() (
 
   def findModsSpecificData(paymentItemId: PaymentItemId): Action[AnyContent] = Action.async { _ =>
     for {
-      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <- paymentsProcessorService.findModsPaymentsByReference(paymentItemId)
-      _ = logger.debug("Response to /payment-items/:id/mods-amendment-ref call: " + modsPaymentCallBackRequest.toString)
+      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <- paymentsProcessorService.getModsPaymentCallbackRequest(paymentItemId)
     } yield Ok(Json.toJson(modsPaymentCallBackRequest))
   }
 

@@ -17,9 +17,6 @@
 package auth
 
 import auth.UnhappyPathResponses.{notLoggedIn, unauthorised}
-import config.AppConfig
-
-import javax.inject._
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
@@ -28,38 +25,36 @@ import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
 class AuthenticatedAction @Inject() (
     cc:            MessagesControllerComponents,
-    appConfig:     AppConfig,
-    val connector: AuthConnector)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] {
-
-  private val af: AuthorisedFunctions = new AuthorisedFunctions {
-    override def authConnector: AuthConnector = connector
-  }
-
-  val logger: Logger = Logger(this.getClass)
+    authConnector: AuthConnector)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] { self =>
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    val enrolments: Set[Predicate] = appConfig.strideRoles.map(Enrolment.apply)
+    val strideRoles: Set[String] = Set("tps_payment_taker_call_handler")
+    val enrolments: Set[Predicate] = strideRoles.map(Enrolment.apply)
     val stridePredicate: Predicate = enrolments.reduceOption(_ or _).getOrElse(EmptyPredicate)
 
     af.authorised(stridePredicate and AuthProviders(PrivilegedApplication))(block(request)).recover {
       case _: NoActiveSession =>
-        logger.warn(s"no active session")
+        logger.info(s"no active session")
         notLoggedIn
       case e: AuthorisationException =>
-        logger.debug(s"Unauthorised because of ${e.reason}, ${e.toString}")
+        logger.info(s"Unauthorised because of ${e.reason}, ${e.toString}")
         unauthorised
     }
-
   }
 
   override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 
   override protected def executionContext: ExecutionContext = cc.executionContext
 
+  private val af: AuthorisedFunctions = new AuthorisedFunctions {
+    override def authConnector: AuthConnector = self.authConnector
+  }
+  private lazy val logger: Logger = Logger(this.getClass)
 }

@@ -16,14 +16,14 @@
 
 package deniedrefs.model
 
+import deniedrefs.TdDeniedRefs
 import play.api.libs.json.Json
-import support.UnitSpec
-import support.testdata.TestData
+import testsupport.UnitSpec
 
 class DeniedRefsSpec extends UnitSpec {
 
   "json serialization/deserialization" in {
-    val deniedRefs = TestData.deniedRefs1
+    val deniedRefs = TdDeniedRefs.deniedRefs1
 
     val deniedRefsJson = Json.parse(
       //language=JSON

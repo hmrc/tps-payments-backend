@@ -20,8 +20,6 @@ import com.google.inject.{Inject, Singleton}
 import uk.gov.hmrc.crypto._
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import scala.util.Try
-
 @Singleton
 class Crypto(encryptionKeyInBase64: String) { self =>
 
@@ -34,6 +32,6 @@ class Crypto(encryptionKeyInBase64: String) { self =>
 
   def encrypt(s: String): String = aes.encrypt(PlainText(s)).value
 
-  def decrypt(s: String): Try[String] = Try(aes.decrypt(Crypted(s)).value)
+  def decrypt(s: String): String = aes.decrypt(Crypted(s)).value
 
 }
