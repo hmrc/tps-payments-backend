@@ -22,7 +22,7 @@ import tps.utils.ValueClassBinder.valueClassBinder
 
 final case class PaymentItemId(
     value: String
-)
+) extends AnyVal
 
 object PaymentItemId {
   implicit val format: Format[PaymentItemId] = Json.valueFormat

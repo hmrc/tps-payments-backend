@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 class JourneyControllerSpec extends ItSpec {
-  val journeyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
+  def journeyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
   def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
   implicit val request: Request[_] = TdAll.request
 
@@ -46,7 +46,7 @@ class JourneyControllerSpec extends ItSpec {
     AuthStub.notAuthorised()
     val throwable: Throwable = journeyConnector.find(TdAll.journeyId).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
-    throwable should have message """GET of 'http://localhost:19001/tps-payments-backend/tps-payments/64886ed616fe8b501cbf0088' returned 401. Response body: 'You do not have access to this service'"""
+    throwable should have message """GET of 'http://localhost:19001/tps-payments-backend/journey/64886ed616fe8b501cbf0088' returned 401. Response body: 'You do not have access to this service'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
@@ -54,7 +54,7 @@ class JourneyControllerSpec extends ItSpec {
     AuthStub.notAuthenticated()
     val throwable: Throwable = journeyConnector.find(TdAll.journeyId).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
-    throwable should have message """GET of 'http://localhost:19001/tps-payments-backend/tps-payments/64886ed616fe8b501cbf0088' returned 401. Response body: 'You are not logged in'"""
+    throwable should have message """GET of 'http://localhost:19001/tps-payments-backend/journey/64886ed616fe8b501cbf0088' returned 401. Response body: 'You are not logged in'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
@@ -62,7 +62,7 @@ class JourneyControllerSpec extends ItSpec {
     AuthStub.notAuthorised()
     val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
-    throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/tps-payments/upsert' returned 401. Response body: 'You do not have access to this service'"""
+    throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You do not have access to this service'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
@@ -70,7 +70,7 @@ class JourneyControllerSpec extends ItSpec {
     AuthStub.notAuthenticated()
     val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
-    throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/tps-payments/upsert' returned 401. Response body: 'You are not logged in'"""
+    throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You are not logged in'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 

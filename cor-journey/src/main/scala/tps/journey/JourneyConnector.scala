@@ -16,34 +16,39 @@
 
 package tps.journey
 
-import play.api.mvc.Request
+import play.api.mvc.RequestHeader
 import tps.journey.model.{Journey, JourneyId}
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
+import tps.utils.HttpReadsInstances._
+import tps.utils.RequestSupport._
 import uk.gov.hmrc.http.HttpClient
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import tps.utils.RequestSupport._
-import tps.utils.HttpReadsInstances._
 
 class JourneyConnector(
     httpClient: HttpClient,
     baseUrl:    String
 )(implicit ec: ExecutionContext) {
 
-  def startMibOrPngrJourney(startJourneyRequest: StartJourneyRequestMibOrPngr)(implicit request: Request[_]): Future[JourneyId] = {
+  def startMibOrPngrJourney(startJourneyRequest: StartJourneyRequestMibOrPngr)(implicit request: RequestHeader): Future[JourneyId] = {
     httpClient.POST[StartJourneyRequestMibOrPngr, JourneyId](s"$baseUrl/tps-payments-backend/tps-payments", startJourneyRequest)
   }
 
-  def upsert(journey: Journey)(implicit request: Request[_]): Future[Unit] = httpClient
+  def upsert(journey: Journey)(implicit request: RequestHeader): Future[Unit] = httpClient
     .POST[Journey, Unit](
       s"$baseUrl/tps-payments-backend/journey",
       journey
     )
 
-  def find(id: JourneyId)(implicit request: Request[_]): Future[Option[Journey]] = httpClient
-    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/journey/${id.value}")
+  def find(journeyId: JourneyId)(implicit request: RequestHeader): Future[Option[Journey]] = httpClient
+    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/journey/${journeyId.value}")
+
+  /**
+   * Call this when you're certainly sure that the journey exist
+   */
+  def get(journeyId: JourneyId)(implicit request: RequestHeader): Future[Journey] = find(journeyId).map(_.getOrElse(throw new RuntimeException(s"No journey by given id ${journeyId.toString}")))
 
   @Inject()
   def this(httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(

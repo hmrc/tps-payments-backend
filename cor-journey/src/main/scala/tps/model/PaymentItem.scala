@@ -27,7 +27,7 @@ final case class PaymentItem(
     headOfDutyIndicator: HeadOfDutyIndicator,
     updated:             Instant,
     customerName:        CustomerName,
-    chargeReference:     String              = "",
+    chargeReference:     String,
     //this is updated upon receiving notification from PciPal via payments-processor
     pcipalData:          Option[ChargeRefNotificationPcipalRequest] = None,
     paymentSpecificData: PaymentSpecificData,
