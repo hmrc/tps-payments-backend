@@ -29,8 +29,7 @@ class CryptoSpec extends ItSpec {
     plain should not be encrypted
     decrypted shouldBe plain
 
-    val e: Exception = intercept[Exception](crypto.decrypt("wrong string"))
-    e should have message "Illegal base64 character 20"
+    val e: Exception = intercept[Exception](crypto.decrypt("cant decrypt plain string"))
+    e should have message "Unable to decrypt value"
   }
-
 }

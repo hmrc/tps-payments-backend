@@ -105,13 +105,15 @@ trait ItSpec
     def testPaymentItemIdGenerator(): TestPaymentItemIdGenerator = new TestPaymentItemIdGenerator()
   }
 
+  protected lazy val configOverrides: Map[String, Any] = Map()
+
   private val configMap: Map[String, Any] = Map[String, Any](
     "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.protocol" -> "http",
     "microservice.services.tps-payments-backend.host" -> "localhost",
     "microservice.services.tps-payments-backend.port" -> testPort
-  )
+  ) ++ configOverrides
 
   def injector: Injector = fakeApplication().injector
   def repo: JourneyRepo = injector.instanceOf[JourneyRepo]
