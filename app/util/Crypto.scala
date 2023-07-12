@@ -22,7 +22,7 @@ import uk.gov.hmrc.crypto._
 
 @Singleton
 class Crypto @Inject() (config: Config) {
-  val encrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
+  private val encrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
   def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
   def decrypt(s: String): String = encrypterDecrypter.decrypt(Crypted(s)).value
 }
