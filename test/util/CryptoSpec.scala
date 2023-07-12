@@ -17,6 +17,9 @@
 package util
 
 import testsupport.ItSpec
+import testsupport.testdata.TestData.{tpsPaymentsWithEmptyEmail, tpsPaymentsWithoutEmail}
+import tps.journey.model.{Journey, JourneyId}
+import tps.model.Email
 
 class CryptoSpec extends ItSpec {
 
@@ -31,5 +34,30 @@ class CryptoSpec extends ItSpec {
 
     val e: Exception = intercept[Exception](crypto.decrypt("cant decrypt plain string"))
     e should have message "Unable to decrypt value"
+  }
+}
+
+class CryptoWithDifferentKeysSpec extends ItSpec {
+
+  /**
+   * overwrite the crypto.key value with new one
+   * put the old crypto.key field in previous keys
+   * note: I used the original crypto.key value to encrypt test@email.com to obtain an encrypted value to insert into mongo.
+    */
+  override lazy val configOverrides: Map[String, Any] = Map(
+    "crypto.key" -> "bWFkZXVwMTIzNDVhYmNkZQ==",
+    "crypto.previousKeys.0" -> "MWJhcmNsYXlzc2Z0cGRldg=="
+  )
+
+  "successfully decrypt when the key used to encrypt a field is moved to the previousKeys field in config" in {
+    val paymentsWithEmailEncrypted = tpsPaymentsWithoutEmail.payments.map(_.copy(email = Some(Email("cvosnBPokl/JvPPXel5xww=="))))
+    Option(repo.upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted)).futureValue.getUpsertedId).isDefined shouldBe true
+    val crypto = app.injector.instanceOf[Crypto]
+    val journey: Option[Journey] = repo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
+    val encryptedEmail: Email =
+      journey.map(_.payments.headOption.flatMap(_.email))
+        .getOrElse(throw new Exception("somthing went wrong"))
+        .getOrElse(throw new Exception("somthing went wrong"))
+    crypto.decrypt(encryptedEmail.value) shouldBe "test@email.com"
   }
 }
