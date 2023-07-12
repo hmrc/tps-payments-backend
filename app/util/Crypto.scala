@@ -17,21 +17,12 @@
 package util
 
 import com.google.inject.{Inject, Singleton}
+import com.typesafe.config.Config
 import uk.gov.hmrc.crypto._
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 @Singleton
-class Crypto(encryptionKeyInBase64: String) { self =>
-
-  @Inject
-  def this(servicesConfig: ServicesConfig) = this(servicesConfig.getString("crypto.encryption-key"))
-
-  private val aes = new AesGCMCrypto {
-    override val encryptionKey: String = self.encryptionKeyInBase64
-  }
-
-  def encrypt(s: String): String = aes.encrypt(PlainText(s)).value
-
-  def decrypt(s: String): String = aes.decrypt(Crypted(s)).value
-
+class Crypto @Inject() (config: Config) {
+  private val encrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
+  def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
+  def decrypt(s: String): String = encrypterDecrypter.decrypt(Crypted(s)).value
 }
