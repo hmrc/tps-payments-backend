@@ -75,6 +75,12 @@ class DeniedRefsSpec extends ItSpec {
     }
   }
 
+  // trivial test just to make sure no one accidentally renames refs field name in DeniedRefs case class, without updating projection in DeniedRefsRepo
+  "sanity check the DeniedRefs case class" in {
+    val fieldNames: Array[String] = classOf[DeniedRefs].getDeclaredFields.map(_.getName)
+    fieldNames.contains("refs") shouldBe true withClue s"It looks like the field name: [refs] has changed, make sure you update the projection. Current list of fields: ${fieldNames.mkString("Array(", ", ", ")")}"
+  }
+
   override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
   private def dropDb() = {
