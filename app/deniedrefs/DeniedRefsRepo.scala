@@ -18,6 +18,7 @@ package deniedrefs
 
 import com.mongodb.client.model.Sorts
 import deniedrefs.model.{DeniedRefs, DeniedRefsId}
+import org.mongodb.scala.model.Projections._
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import repository.Repo
 import uk.gov.hmrc.mongo.MongoComponent
@@ -46,10 +47,14 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
-  //TODO:x bring back the projection attribute so we don't fetch entire collection each time to
-  // see what is the latest it
+  /**
+   * Projection is used (i.e. slice("refs", 1) ) to limit the number of refs returned to just one.
+   * We don't need them and it can introduce performance issue if there are lots in list of refs inside DeniedRefs
+   * Don't remove this... unless you know what you're doing ;)
+   */
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = collection
     .find()
+    .projection(slice("refs", 1))
     .sort(Sorts.descending(inserted))
     .headOption()
     .map(_.map(_._id))
