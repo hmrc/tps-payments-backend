@@ -26,6 +26,7 @@ sealed trait TaxType extends EnumEntry {
   def pcipalProductionClientId: String
   def pcipalTestClientId: String
   def screenValue: String
+  def hod: HeadOfDutyIndicator
 
   def clientId(usePcipalTestSettings: Boolean): String =
     if (usePcipalTestSettings) pcipalTestClientId else pcipalProductionClientId
@@ -44,42 +45,49 @@ object TaxTypes extends Enum[TaxType] {
   val values: immutable.IndexedSeq[TaxType] = findValues
 
   case object ChildBenefitsRepayments extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.B
     override val pcipalProductionClientId: String = "CBCE"
     override val pcipalTestClientId: String = "CBCE"
     override val screenValue: String = "Repay Child Benefit overpayments"
   }
 
   case object Cotax extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.A
     override val pcipalProductionClientId: String = "COPL"
     override val pcipalTestClientId: String = "COPD"
     override val screenValue: String = "COTAX"
   }
 
   case object MIB extends TaxType {
+    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"MIB should not be looking for its HoD")
     override val pcipalProductionClientId: String = "MBML"
     override val pcipalTestClientId: String = "MPCE"
     override val screenValue: String = "MIB"
   }
 
   case object Nps extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.J
     override val pcipalProductionClientId: String = "NPPL"
     override val pcipalTestClientId: String = "NPPD"
     override val screenValue: String = "NPS"
   }
 
   case object Ntc extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.N
     override val pcipalProductionClientId: String = "NTPL"
     override val pcipalTestClientId: String = "NTPD"
     override val screenValue: String = "NTC"
   }
 
   case object Paye extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.P
     override val pcipalProductionClientId: String = "PAPL"
     override val pcipalTestClientId: String = "PAPD"
     override val screenValue: String = "PAYE"
   }
 
   case object PNGR extends TaxType {
+    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"PNGR should not be looking for its HoD")
     override val pcipalProductionClientId: String = "PSML"
     override val pcipalTestClientId: String = "PPCE"
     override val screenValue: String = "PNGR"
@@ -87,36 +95,42 @@ object TaxTypes extends Enum[TaxType] {
 
   //TODO: remove this tax type
   case object P800 extends TaxType {
+    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"P800 should not be looking for its HoD")
     override def pcipalProductionClientId: String = throw new RuntimeException("p800 is not suported")
     override def pcipalTestClientId: String = throw new RuntimeException("p800 is not suported")
     override def screenValue: String = throw new RuntimeException("p800 is not suported")
   }
 
   case object Ppt extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.C
     override val pcipalProductionClientId: String = genericPcipalProductionClientId
     override val pcipalTestClientId: String = genericPcipalTestClientId
     override val screenValue: String = "PPT"
   }
 
   case object Sa extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.K
     override val pcipalProductionClientId: String = "SAPM"
     override val pcipalTestClientId: String = "SAPD"
     override val screenValue: String = "SA"
   }
 
   case object Safe extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.X
     override val pcipalProductionClientId: String = "SFPL"
     override val pcipalTestClientId: String = "SFPD"
     override val screenValue: String = "SAFE"
   }
 
   case object Sdlt extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.M
     override val pcipalProductionClientId: String = "SDPL"
     override val pcipalTestClientId: String = "SDPD"
     override val screenValue: String = "SDLT"
   }
 
   case object Vat extends TaxType {
+    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.V
     override val pcipalProductionClientId: String = "VAPM"
     override val pcipalTestClientId: String = "VAPD"
     override val screenValue: String = "VAT"

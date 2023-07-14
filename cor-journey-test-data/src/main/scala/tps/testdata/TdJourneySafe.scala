@@ -32,6 +32,7 @@ trait TdJourneySafe { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "106.06"
     override lazy val taxReference: String = "XA1234567890123"
+    override final val selectedTaxType: TaxType = TaxTypes.Safe
 
     override lazy val paymentSpecificData: SafeSpecificData = SafeSpecificData(
       safeReference = taxReference

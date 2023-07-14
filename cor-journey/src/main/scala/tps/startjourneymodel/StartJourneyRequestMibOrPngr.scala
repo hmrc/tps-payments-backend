@@ -18,7 +18,7 @@ package tps.startjourneymodel
 
 import org.bson.types.ObjectId
 import play.api.libs.json.{Json, OFormat}
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
 import tps.utils.SafeEquals.EqualsOps
 
@@ -53,11 +53,12 @@ final case class StartJourneyRequestMibOrPngr(
     }.toList
 
     Journey(
-      _id        = JourneyId.fresh(),
-      pid        = pid,
-      created    = now,
-      payments   = tpsPayments,
-      navigation = navigation
+      _id          = JourneyId.fresh(),
+      journeyState = JourneyState.Landing,
+      pid          = pid,
+      created      = now,
+      payments     = tpsPayments,
+      navigation   = navigation
     )
   }
 }
