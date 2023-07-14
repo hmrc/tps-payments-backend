@@ -16,7 +16,7 @@
 
 package tps.testdata
 
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 
@@ -27,6 +27,7 @@ trait TdJourneyInStates {
   def pid: String
   def created: Instant
   def navigation: Navigation
+  def selectedTaxType: TaxType
 
   def amountString: String
   final def amount: BigDecimal = BigDecimal(amountString)
@@ -42,6 +43,7 @@ trait TdJourneyInStates {
 
   lazy val journeyAfterCreated: Journey = Journey(
     _id                         = journeyId,
+    journeyState                = JourneyState.Landing,
     pid                         = pid,
     created                     = created,
     payments                    = Nil,
@@ -50,9 +52,12 @@ trait TdJourneyInStates {
     pcipalSessionLaunchResponse = None
   )
 
+  lazy val journeyAfterSelectedTaxType: Journey = journeyAfterCreated.copy(journeyState = JourneyState.EnterPayment(taxType = selectedTaxType))
+
   //TODO: this is in one particular (final) state
   lazy val journey: Journey = Journey(
     _id                         = journeyId,
+    journeyState                = JourneyState.AtPciPal,
     pid                         = pid,
     created                     = created,
     payments                    = List(paymentItem),

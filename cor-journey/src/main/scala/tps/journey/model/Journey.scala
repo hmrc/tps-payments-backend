@@ -25,6 +25,7 @@ import java.time.Instant
 
 final case class Journey(
     _id:                         JourneyId,
+    journeyState:                JourneyState,
     pid:                         String,
     created:                     Instant,
     payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
@@ -34,6 +35,8 @@ final case class Journey(
 ) extends HasId[JourneyId] {
   def journeyId: JourneyId = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
+
+  def getPcipalSessionLaunchResponse: PcipalSessionLaunchResponse = pcipalSessionLaunchResponse.getOrElse(throw new RuntimeException(s"Error: PcipalSessionLaunchResponse is missing from journey [journeyId:${journeyId.value}]"))
 }
 
 object Journey {
