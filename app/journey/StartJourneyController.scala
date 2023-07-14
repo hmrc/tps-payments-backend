@@ -20,7 +20,7 @@ import auth.Actions
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, ControllerComponents}
-import tps.journey.model.{Journey, JourneyIdGenerator, PaymentItemIdGenerator}
+import tps.journey.model.{Journey, JourneyIdGenerator, JourneyState, PaymentItemIdGenerator}
 import tps.model.{HeadOfDutyIndicators, PaymentItem}
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -63,11 +63,12 @@ class StartJourneyController @Inject() (actions:                Actions,
     }.toList
 
     Journey(
-      _id        = journeyIdGenerator.nextId(),
-      pid        = startJourneyRequestMibOrPngr.pid,
-      created    = Instant.now(clock),
-      payments   = tpsPayments,
-      navigation = startJourneyRequestMibOrPngr.navigation
+      _id          = journeyIdGenerator.nextId(),
+      journeyState = JourneyState.Landing,
+      pid          = startJourneyRequestMibOrPngr.pid,
+      created      = Instant.now(clock),
+      payments     = tpsPayments,
+      navigation   = startJourneyRequestMibOrPngr.navigation
     )
   }
 

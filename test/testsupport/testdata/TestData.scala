@@ -18,7 +18,7 @@ package testsupport.testdata
 
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.TaxTypes.{MIB, PNGR, Sa}
 import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
@@ -143,6 +143,7 @@ object TestData {
   val journey: Journey =
     Journey(
       id,
+      journeyState = JourneyState.Landing,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -202,8 +203,9 @@ object TestData {
 
   val tpsPaymentsWithPcipalData: Journey =
     Journey(
-      _id = id,
-      pid = pid,
+      _id          = id,
+      journeyState = JourneyState.Landing,
+      pid          = pid,
       //      Some(pciPalSessionId),
       created                     = created,
       payments                    = List(
@@ -227,6 +229,7 @@ object TestData {
   val tpsPaymentsWithEncryptedEmail: Journey =
     Journey(
       id,
+      journeyState = JourneyState.Landing,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -251,6 +254,7 @@ object TestData {
   val tpsPaymentsWithoutEmail: Journey =
     Journey(
       id,
+      journeyState = JourneyState.Landing,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -273,7 +277,8 @@ object TestData {
 
   val tpsPaymentsWithEmptyEmail: Journey =
     Journey(
-      id,
+      _id          = id,
+      journeyState = JourneyState.Landing,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -297,6 +302,7 @@ object TestData {
 
   val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
     _id                         = id,
+    journeyState                = JourneyState.Landing,
     pid                         = pid,
     created                     = created,
     payments                    = List(
@@ -323,6 +329,7 @@ object TestData {
 
   val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
     _id                         = id,
+    journeyState                = JourneyState.Landing,
     pid                         = pid,
     created                     = created,
     payments                    = List(

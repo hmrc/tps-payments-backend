@@ -16,7 +16,7 @@
 
 package tps.testdata
 
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
 import tps.pcipalmodel._
 import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
@@ -26,6 +26,8 @@ import java.time.Instant
 trait TdJourneyMib { dependencies: TdBase =>
 
   lazy val JourneyMib = new TdJourneyInStates {
+
+    final val selectedTaxType: TaxType = TaxTypes.MIB
 
     lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
       pid        = dependencies.pid,
@@ -126,6 +128,7 @@ trait TdJourneyMib { dependencies: TdBase =>
 
     override lazy val journeyAfterCreated: Journey = Journey(
       _id                         = journeyId,
+      journeyState                = JourneyState.Landing,
       pid                         = pid,
       created                     = created,
       payments                    = List(paymentItem),
