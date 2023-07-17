@@ -36,8 +36,6 @@ import journey.JourneyRepo
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.toJson
 import testsupport.UnitSpec
-import testsupport.testdata.JsonTestData._
-import testsupport.testdata.TestData._
 import tps.journey.model.Journey
 import tps.model.Navigation
 import tps.testdata.TdAll

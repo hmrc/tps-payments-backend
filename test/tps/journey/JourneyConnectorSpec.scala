@@ -30,7 +30,7 @@ class JourneyConnectorSpec extends ItSpec {
   def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
   implicit val request: Request[_] = TdAll.request
 
-  "find and upsert journey in all possible state" - TdAll.allTdJourneysWithJson.map{ t =>
+  "find and upsert journey in all possible state" - TdAll.allTdJourneysWithJson.foreach{ t =>
     val journey = t._1
     val testCaseName = t._2.simpleName
     testCaseName in {

@@ -30,7 +30,7 @@ final case class JourneyJson(resourcePath: String) {
     .replace("""/tps/testdata/""", "")
     .replace(""".json""", "")
 
-  def json: JsObject = ResourceReader.read(resourcePath).asJson
+  lazy val json: JsObject = ResourceReader.read(resourcePath).asJson
 }
 
 trait TdJourneyInStates {

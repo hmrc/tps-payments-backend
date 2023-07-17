@@ -16,9 +16,6 @@
 
 package deniedrefs
 
-import org.scalatest.funsuite.AnyFunSuiteLike
-import tps.journey.model.PaymentItemIdGenerator
-
 import testsupport.UnitSpec
 
 class DeniedRefsIdGeneratorSpec extends UnitSpec {

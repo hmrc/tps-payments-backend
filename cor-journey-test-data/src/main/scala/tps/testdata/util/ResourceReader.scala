@@ -25,10 +25,18 @@ import scala.io.Source
 
 object ResourceReader {
 
-  def read(resourcePath: String): String = Source
-    .fromInputStream(
-      this.getClass.getResourceAsStream(resourcePath)
-    )
-    .getLines()
-    .mkString("\n")
+  def read(resourcePath: String): String = {
+    val source = Source
+      .fromInputStream(
+        this.getClass.getResourceAsStream(resourcePath)
+      )
+
+    val r = source
+      .getLines()
+      .mkString("\n")
+
+    source.close()
+    r
+
+  }
 }
