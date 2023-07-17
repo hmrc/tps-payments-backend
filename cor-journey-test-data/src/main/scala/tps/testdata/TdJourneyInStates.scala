@@ -26,6 +26,10 @@ import tps.testdata.util.ResourceReader
 import java.time.Instant
 
 final case class JourneyJson(resourcePath: String) {
+  val simpleName: String = resourcePath
+    .replace("""/tps/testdata/""", "")
+    .replace(""".json""", "")
+
   def json: JsObject = ResourceReader.read(resourcePath).asJson
 }
 

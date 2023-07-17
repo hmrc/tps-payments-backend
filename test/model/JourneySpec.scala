@@ -71,7 +71,7 @@ class JourneySpec extends UnitSpec {
     .map { t =>
       val journey = t._1
       val json = t._2.json
-      val testCaseName = t._2.resourcePath.replace("/tps/testdata/", "")
+      val testCaseName = t._2.simpleName
       TestCase(journey      = journey, json = json, testCaseName = testCaseName)
     }
 
