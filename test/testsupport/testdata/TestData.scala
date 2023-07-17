@@ -33,6 +33,7 @@ object TestData {
 
   private val createdString: String = "2040-01-20T11:56:46Z"
   private val createdStringLegacy: String = "2040-01-20T11:56:46"
+
   private val created: Instant = Instant.parse(createdString)
   private val reference = "JE231111"
   private val reference2 = "B"
@@ -466,6 +467,7 @@ object TestData {
   val tpsPaymentsJson: JsValue = Json.parse(
     s"""{
           "_id" : "${id.value}",
+          "journeyState" : "Landing",
           "pid" : "$pid",
           "created":  "$createdString",
           "payments": [
@@ -538,6 +540,9 @@ object TestData {
   val tpsPaymentsMongoLegacyJson: JsValue = Json.parse(
     s"""{
           "_id" : "${id.value}",
+          "journeyState" : {
+            "Landing" : { }
+          },
           "pid" : "$pid",
           "pciPalSessionId" : "${pciPalSessionId.value}",
           "created": "$createdStringLegacy",

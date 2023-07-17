@@ -44,13 +44,13 @@ class StartJourneyControllerSpec extends ItSpec {
 
     AuthStub.authorised()
     val journeyId: JourneyId = tdAll.journeyId
-    journeyConnector.startMibOrPngrJourney(tdAll.JourneyMib.startJourneyRequest).futureValue shouldBe journeyId
-    journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.JourneyMib.journeyAfterCreated
+    journeyConnector.startMibOrPngrJourney(tdAll.TdJourneyMib.startJourneyRequest).futureValue shouldBe journeyId
+    journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.TdJourneyMib.journeyCreated
   }
 
   "start Mib journey if not authorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.JourneyMib.startJourneyRequest).failed.futureValue
+    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMib.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You do not have access to this service'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -58,7 +58,7 @@ class StartJourneyControllerSpec extends ItSpec {
 
   "start Mib journey if not authenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.JourneyMib.startJourneyRequest).failed.futureValue
+    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMib.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -74,13 +74,13 @@ class StartJourneyControllerSpec extends ItSpec {
 
     AuthStub.authorised()
     val journeyId: JourneyId = tdAll.journeyId
-    journeyConnector.startMibOrPngrJourney(tdAll.JourneyPngr.startJourneyRequest).futureValue shouldBe journeyId
-    journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.JourneyPngr.journeyAfterCreated
+    journeyConnector.startMibOrPngrJourney(tdAll.TdJourneyPngr.startJourneyRequest).futureValue shouldBe journeyId
+    journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.TdJourneyPngr.journeyCreated
   }
 
   "start Pngr journey if not authorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.JourneyPngr.startJourneyRequest).failed.futureValue
+    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You do not have access to this service'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -88,7 +88,7 @@ class StartJourneyControllerSpec extends ItSpec {
 
   "start Pngr journey if not authenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.JourneyPngr.startJourneyRequest).failed.futureValue
+    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401

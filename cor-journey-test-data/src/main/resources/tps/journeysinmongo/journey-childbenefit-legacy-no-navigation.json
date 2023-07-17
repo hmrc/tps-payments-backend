@@ -1,0 +1,69 @@
+{
+  "_id": "64886ed616fe8b501cbf0088",
+  "journeyState": {
+    "ReceivedNotification": {}
+  },
+  "pid": "1234567",
+  "created": {
+    "$date": {
+      "$numberLong": "2837003631880"
+    }
+  },
+  "payments": [
+    {
+      "paymentItemId": "64897aee16fe8b501cbf008a",
+      "amount": 103.03,
+      "headOfDutyIndicator": "B",
+      "updated": "2059-11-25T16:33:51.880Z",
+      "customerName": "customerName",
+      "chargeReference": "YA123456789123",
+      "pcipalData": {
+        "HoD": "B",
+        "TaxReference": "YA123456789123",
+        "Amount": 103.03,
+        "Commission": 0,
+        "CardType": "VISA",
+        "Status": "validated",
+        "PCIPalSessionId": "dummy-session-id-765955124",
+        "TransactionReference": "YA123456789123",
+        "paymentItemId": "64897aee16fe8b501cbf008a",
+        "ChargeReference": "YA123456789123",
+        "ReferenceNumber": "3000000001",
+        "CardLast4": "1234"
+      },
+      "paymentSpecificData": {
+        "childBenefitYReference": "YA123456789123"
+      },
+      "taxType": "ChildBenefitsRepayments",
+      "email": "test@email.com"
+    }
+  ],
+  "pcipalSessionLaunchRequest": {
+    "FlowId": 1055,
+    "InitialValues": {
+      "ClientID_1": "CBCE",
+      "PaymentItemID_1": "64897aee16fe8b501cbf008a",
+      "ChargeReference_1": "YA123456789123",
+      "TaxRegimeDisplay_1": "Repay Child Benefit overpayments",
+      "Reference_1": "3000000001",
+      "PID_1": "1234567",
+      "AccountOfficeID_1": "S1",
+      "HODIdentifier_1": "B",
+      "UTRReference_1": "YA123456789123",
+      "Name1_1": "customerName",
+      "Amount_1": "103.03",
+      "UTRBlacklistFlag": "N",
+      "postcodeFlag": "Y",
+      "taxRegime": "gbl",
+      "TotalTaxAmountToPay": "103.03",
+      "callbackUrl": "http://notification.host/payments/notifications/send-card-payments",
+      "finishURL": "http://localhost:9124/tps-payments/finish",
+      "backURL": "http://localhost:9124/tps-payments/back-from-pcipal",
+      "resetURL": "http://localhost:9124/tps-payments/full/reset"
+    }
+  },
+  "pcipalSessionLaunchResponse": {
+    "Id": "dummy-session-id-765955124",
+    "LinkId": "3097"
+  }
+}

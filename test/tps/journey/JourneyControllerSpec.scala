@@ -35,7 +35,7 @@ class JourneyControllerSpec extends ItSpec {
       override lazy val journeyId: JourneyId = journeyIdGenerator.nextId()
     }
 
-    val journey = tdAll.JourneySa.journey
+    val journey = tdAll.TdJourneySa.journeyAtPciPal
     AuthStub.authorised()
     journeyConnector.find(journey.journeyId).futureValue shouldBe None withClue "journey not found as we haven't inserted it yet"
     journeyConnector.upsert(journey).futureValue shouldBe (()) withClue "upserting journey"
@@ -60,7 +60,7 @@ class JourneyControllerSpec extends ItSpec {
 
   "upsert unauthorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
+    val throwable: Throwable = journeyConnector.upsert(TdAll.TdJourneyCotax.journeyAtPciPal).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You do not have access to this service'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -68,7 +68,7 @@ class JourneyControllerSpec extends ItSpec {
 
   "upsert unauthenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
+    val throwable: Throwable = journeyConnector.upsert(TdAll.TdJourneyCotax.journeyAtPciPal).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You are not logged in'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401

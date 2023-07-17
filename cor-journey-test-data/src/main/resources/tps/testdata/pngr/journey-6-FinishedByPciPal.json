@@ -1,0 +1,58 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "FinishedByPciPal" : { }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 101.01,
+    "headOfDutyIndicator" : "B",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "XSPR5814332193",
+    "paymentSpecificData" : {
+      "chargeReference" : "XSPR5814332193",
+      "vat" : 297.25,
+      "customs" : 150,
+      "excise" : 136.27
+    },
+    "taxType" : "PNGR",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  },
+  "pcipalSessionLaunchRequest" : {
+    "FlowId" : 1055,
+    "InitialValues" : {
+      "ClientID_1" : "PSML",
+      "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_1" : "XSPR5814332193",
+      "TaxRegimeDisplay_1" : "PNGR",
+      "Reference_1" : "3000000001",
+      "PID_1" : "1234567",
+      "AccountOfficeID_1" : "S1",
+      "HODIdentifier_1" : "B",
+      "UTRReference_1" : "XSPR5814332193",
+      "Name1_1" : "customerName",
+      "Amount_1" : "101.01",
+      "UTRBlacklistFlag" : "N",
+      "postcodeFlag" : "Y",
+      "taxRegime" : "gbl",
+      "TotalTaxAmountToPay" : "101.01",
+      "callbackUrl" : "http://notification.host/payments/notifications/send-card-payments",
+      "finishURL" : "http://localhost:9124/tps-payments/finish",
+      "backURL" : "http://localhost:9124/tps-payments/back-from-pcipal",
+      "resetURL" : "http://localhost:9124/tps-payments/full/reset"
+    }
+  },
+  "pcipalSessionLaunchResponse" : {
+    "Id" : "dummy-session-id-765955124",
+    "LinkId" : "3097"
+  }
+}

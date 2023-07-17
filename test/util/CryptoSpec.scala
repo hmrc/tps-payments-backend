@@ -43,7 +43,7 @@ class CryptoWithDifferentKeysSpec extends ItSpec {
    * overwrite the crypto.key value with new one
    * put the old crypto.key field in previous keys
    * note: I used the original crypto.key value to encrypt test@email.com to obtain an encrypted value to insert into mongo.
-    */
+   */
   override lazy val configOverrides: Map[String, Any] = Map(
     "crypto.key" -> "bWFkZXVwMTIzNDVhYmNkZQ==",
     "crypto.previousKeys.0" -> "MWJhcmNsYXlzc2Z0cGRldg=="

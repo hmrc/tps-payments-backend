@@ -19,7 +19,7 @@ package journey
 import auth.Actions
 import email.EmailService
 import play.api.Logger
-import play.api.libs.json.Json.{prettyPrint, toJson}
+import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.PaymentItemId
@@ -82,7 +82,7 @@ class JourneyController @Inject() (actions:        Actions,
           journeyService
             .upsert(newJourney)
             .map(_ => Ok)
-        case JourneyService.FindByPcipalSessionIdResult.NotJourneyBySessionId => Future.successful(
+        case JourneyService.FindByPcipalSessionIdResult.NoJourneyBySessionId => Future.successful(
           BadRequest(s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
         )
         case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem => Future.successful(

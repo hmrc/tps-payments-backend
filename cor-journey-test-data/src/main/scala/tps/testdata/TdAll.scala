@@ -15,6 +15,7 @@
  */
 
 package tps.testdata
+import tps.journey.model.Journey
 
 object TdAll extends TdAll
 
@@ -25,12 +26,28 @@ trait TdAll
   with TdJourneyMib
   with TdJourneyPngr
   with TdJourneyChildBenefit
+  with TdJourneyCotax
   with TdJourneySa
   with TdJourneySdlt
   with TdJourneySafe
-  with TdJourneyCotax
   with TdJourneyNtc
   with TdJourneyPaye
   with TdJourneyNps
   with TdJourneyVat
-  with TdJourneyPpt
+  with TdJourneyPpt {
+
+  lazy val allTdJourneysWithJson: List[(Journey, JourneyJson)] =
+    TdJourneyChildBenefit.allJourneys ++
+      TdJourneyCotax.allJourneys ++
+      TdJourneyMib.allJourneys ++
+      TdJourneyNps.allJourneys ++
+      TdJourneyNtc.allJourneys ++
+      TdJourneyPaye.allJourneys ++
+      TdJourneyPngr.allJourneys ++
+      TdJourneyPpt.allJourneys ++
+      TdJourneySa.allJourneys ++
+      TdJourneySafe.allJourneys ++
+      TdJourneySdlt.allJourneys ++
+      TdJourneyVat.allJourneys
+
+}

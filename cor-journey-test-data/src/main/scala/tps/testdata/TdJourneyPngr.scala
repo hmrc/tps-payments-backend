@@ -25,7 +25,7 @@ import java.time.Instant
 
 trait TdJourneyPngr { dependencies: TdBase =>
 
-  object JourneyPngr extends TdJourneyInStates {
+  object TdJourneyPngr extends TdJourneyInStates {
 
     final val selectedTaxType: TaxType = TaxTypes.PNGR
 
@@ -98,7 +98,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
       LinkId = dependencies.linkId
     )
 
-    override lazy val pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.B,
       TaxReference         = taxReference,
       Amount               = amount,
@@ -126,7 +126,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
       email               = Some(dependencies.email)
     )
 
-    override lazy val journeyAfterCreated: Journey = Journey(
+    override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
       journeyState                = JourneyState.Landing,
       pid                         = pid,
@@ -135,6 +135,38 @@ trait TdJourneyPngr { dependencies: TdBase =>
       navigation                  = navigation,
       pcipalSessionLaunchRequest  = None,
       pcipalSessionLaunchResponse = None
+    )
+
+    override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-1-Created.json"
+    )
+
+    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-2-SelectedTaxType.json"
+    )
+
+    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-3-EnteredPayment.json"
+    )
+
+    override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-4-AtPciPal.json"
+    )
+
+    override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-5-ResetByPciPal.json"
+    )
+
+    override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-6-FinishedByPciPal.json"
+    )
+
+    override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-7-BackByPciPal.json"
+    )
+
+    override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
+      "/tps/testdata/pngr/journey-8-ReceivedNotification.json"
     )
 
   }
