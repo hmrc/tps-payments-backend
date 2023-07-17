@@ -20,7 +20,7 @@ import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
 import play.api.libs.json.Json.toJson
 import play.api.libs.json.{Format, Json, OFormat, Reads}
 import repository.{Repo, RepoConfig}
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.{Navigation, PaymentItem, PaymentItemId, PaymentSpecificData, TaxTypes}
 import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import tps.utils.SafeEquals.EqualsOps
@@ -48,6 +48,7 @@ object JourneyRepo {
   final case class LegacyJourney(
       _id:                         JourneyId,
       pid:                         String,
+      journeyState:                Option[JourneyState], //HERE the difference, recently added this state
       created:                     Instant,
       payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
       navigation:                  Option[Navigation], //HERE the difference
@@ -79,6 +80,7 @@ object JourneyRepo {
 
     val journeyReads: Reads[Journey] = Json.reads[LegacyJourney].map[Journey](lg => Journey(
       _id                         = lg._id,
+      journeyState                = lg.journeyState.getOrElse(JourneyState.ReceivedNotification),
       pid                         = lg.pid,
       created                     = lg.created,
       payments                    = lg.payments,

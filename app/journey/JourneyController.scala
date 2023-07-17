@@ -21,7 +21,7 @@ import email.EmailService
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import tps.journey.model.{Journey, JourneyId}
+import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.PaymentItemId
 import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
@@ -45,8 +45,9 @@ class JourneyController @Inject() (actions:        Actions,
   }
 
   def upsert(): Action[Journey] = actions.strideAuthenticateAction().async(parse.json[Journey]) { implicit request =>
+    val journey: Journey = request.body
     journeyService
-      .upsert(request.body)
+      .upsert(journey)
       .map(_ => Ok)
   }
 
@@ -74,12 +75,14 @@ class JourneyController @Inject() (actions:        Actions,
       maybeJourney: JourneyService.FindByPcipalSessionIdResult <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
       result <- maybeJourney match {
         case JourneyService.FindByPcipalSessionIdResult.Found(journey) =>
-          val newJourney = journeyService.updateJourneyWithPcipalData(journey, notification)
+          val newJourney = journeyService
+            .updateJourneyWithPcipalData(journey, notification)
+            .copy(journeyState = JourneyState.ReceivedNotification)
           emailService.maybeSendEmail(newJourney)
           journeyService
             .upsert(newJourney)
             .map(_ => Ok)
-        case JourneyService.FindByPcipalSessionIdResult.NotJourneyBySessionId => Future.successful(
+        case JourneyService.FindByPcipalSessionIdResult.NoJourneyBySessionId => Future.successful(
           BadRequest(s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
         )
         case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem => Future.successful(

@@ -45,11 +45,6 @@ class JourneyConnector(
   def find(journeyId: JourneyId)(implicit request: RequestHeader): Future[Option[Journey]] = httpClient
     .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/journey/${journeyId.value}")
 
-  /**
-   * Call this when you're certainly sure that the journey exist
-   */
-  def get(journeyId: JourneyId)(implicit request: RequestHeader): Future[Journey] = find(journeyId).map(_.getOrElse(throw new RuntimeException(s"No journey by given id ${journeyId.toString}")))
-
   @Inject()
   def this(httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(
     httpClient,

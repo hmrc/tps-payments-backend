@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package testsupport
 
 import email.EmailService
 import play.api.http.Status
 import testsupport.stubs.AuthStub
 import testsupport.stubs.AuthStub._
 import testsupport.testdata.TestData._
-import testsupport.{ItSpec, TestConnector}
 import tps.journey.model.{Journey, JourneyId}
 import tps.model.{PaymentItemId, TaxTypes}
 import tps.pcipalmodel.PcipalSessionId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
-class JourneyControllerSpec extends ItSpec with Status {
+class TestConnectorSpec extends ItSpec with Status {
   private def connector = injector.instanceOf[TestConnector]
 
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))

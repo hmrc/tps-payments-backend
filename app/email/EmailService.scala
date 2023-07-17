@@ -56,7 +56,13 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
 
       listOfSuccessfulTpsPaymentItems.headOption match {
         case Some(PaymentItem(_, _, _, _, _, _, Some(ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)), _, _, _)) =>
-          sendEmail(listOfSuccessfulTpsPaymentItems, referenceNumber.dropRight(2), emailAddress, cardType, cardLast4)
+          sendEmail(
+            payments             = listOfSuccessfulTpsPaymentItems,
+            transactionReference = referenceNumber.dropRight(2),
+            emailAddress         = emailAddress,
+            cardType             = cardType,
+            cardNumber           = cardLast4
+          )
         case _ => ()
       }
     } else ()

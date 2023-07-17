@@ -33,54 +33,97 @@ package model
  */
 
 import journey.JourneyRepo
+import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.toJson
 import testsupport.UnitSpec
-import testsupport.testdata.JsonTestData._
-import testsupport.testdata.TestData._
 import tps.journey.model.Journey
 import tps.model.Navigation
+import tps.testdata.TdAll
+import tps.testdata.util.JsonSyntax.toJsonOps
+import tps.testdata.util.ResourceReader
+
+import java.nio.charset.StandardCharsets
+import java.nio.file.{Files, Paths}
 
 class JourneySpec extends UnitSpec {
-  "to json" in {
-    toJson(journey) shouldBe tpsPaymentsJson
-    toJson(mibPayments) shouldBe mibPaymentsJson
-    toJson(childBenefitPayments) shouldBe childBenefitsPaymentsJson
-    toJson(saPayments) shouldBe saPaymentsJson
-    toJson(sdltPayments) shouldBe sdltPaymentsJson
-    toJson(safePayments) shouldBe safePaymentsJson
-    toJson(cotaxPayments) shouldBe cotaxPaymentsJson
-    toJson(ntcPayments) shouldBe ntcPaymentsJson
-    toJson(payePayments) shouldBe payePaymentsJson
-    toJson(npsPayments) shouldBe npsPaymentsJson
-    toJson(vatPayments) shouldBe vatPaymentsJson
-    toJson(pptPayments) shouldBe pptPaymentsJson
+
+  "generate journey jsons" ignore {
+
+    TdAll.allTdJourneysWithJson.foreach { t =>
+      val content = Json.prettyPrint(Json.toJson(t._1))
+      val rootPath = "/dbox/projects/hmrcdigital/tps-payments-backend/cor-journey-test-data/src/main/resources"
+      val path = s"$rootPath${t._2.resourcePath}"
+      println(s"generating $path...")
+      Files.createDirectories(Paths.get(path).getParent)
+      Files.write(
+        Paths.get(path),
+        content.getBytes(StandardCharsets.UTF_8)
+      )
+    }
+
   }
 
-  "from json should de-serialise a TpsPayments object with a tax type" in {
-    tpsPaymentsJson.as[Journey] shouldBe journey
-    mibPaymentsJson.as[Journey] shouldBe mibPayments
-    childBenefitsPaymentsJson.as[Journey] shouldBe childBenefitPayments
-    saPaymentsJson.as[Journey] shouldBe saPayments
-    sdltPaymentsJson.as[Journey] shouldBe sdltPayments
-    safePaymentsJson.as[Journey] shouldBe safePayments
-    cotaxPaymentsJson.as[Journey] shouldBe cotaxPayments
-    ntcPaymentsJson.as[Journey] shouldBe ntcPayments
-    payePaymentsJson.as[Journey] shouldBe payePayments
-    npsPaymentsJson.as[Journey] shouldBe npsPayments
-    vatPaymentsJson.as[Journey] shouldBe vatPayments
-    pptPaymentsJson.as[Journey] shouldBe pptPayments
+  case class TestCase(journey: Journey, json: JsObject, testCaseName: String)
+
+  val testCases: List[TestCase] = TdAll.allTdJourneysWithJson
+    .map { t =>
+      val journey = t._1
+      val json = t._2.json
+      val testCaseName = t._2.simpleName
+      TestCase(journey      = journey, json = json, testCaseName = testCaseName)
+    }
+
+  "serialize" - testCases.foreach { tc =>
+    tc.testCaseName in {
+      toJson(tc.journey) shouldBe tc.json
+    }
   }
 
-  "mongo writes" in {
-    JourneyRepo.formatMongo.writes((journey)) shouldBe journeyMongoJson
+  "deserialize" - testCases.foreach { tc =>
+    tc.testCaseName in {
+      tc.json.as[Journey] shouldBe tc.journey
+    }
   }
 
-  "mongo reads" in {
-    journeyMongoJson.as[Journey](JourneyRepo.formatMongo) shouldBe journey
+  "mongo requires time formatted in a special way" in {
+
+    val journeyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit.json"
+    ).asJson
+
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+    JourneyRepo.formatMongo.writes(journey) shouldBe journeyInMongoJson
+    JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value shouldBe journey
   }
 
-  "mongo legacy reads" in {
-    tpsPaymentsMongoLegacyJson.as[Journey](JourneyRepo.formatMongo) shouldBe journey.copy(navigation = Navigation("dummy", "dummy", "dummy", "dummy"))
+  "mongo format can read legacy journey with old time format" in {
+
+    val legacyJourneyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit-legacy-time-format.json"
+    ).asJson
+
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey
+  }
+
+  "mongo format can read legacy journey without navigation data" in {
+
+    val legacyJourneyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit-legacy-no-navigation.json"
+    ).asJson
+
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.copy(navigation = Navigation(
+      back     = "dummy", reset = "dummy", finish = "dummy", callback = "dummy"
+    ))
+    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey
+  }
+
+  "mongo format can read legacy journey without journeyStatus" in {
+    val legacyJourneyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit-legacy-no-journey-status.json"
+    ).asJson
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
   }
 
 }
