@@ -46,13 +46,10 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
-  import org.mongodb.scala.model.Projections._
-
   //TODO:x bring back the projection attribute so we don't fetch entire collection each time to
   // see what is the latest it
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = collection
     .find()
-    .projection(slice("_id", 1))
     .sort(Sorts.descending(inserted))
     .headOption()
     .map(_.map(_._id))
