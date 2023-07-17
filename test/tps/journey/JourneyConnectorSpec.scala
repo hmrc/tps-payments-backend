@@ -20,7 +20,6 @@ import journeysupport.TestJourneyIdGenerator
 import play.api.mvc.Request
 import testsupport.ItSpec
 import testsupport.stubs.AuthStub
-import tps.journey.model.JourneyId
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
