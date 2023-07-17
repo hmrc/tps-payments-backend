@@ -16,10 +16,12 @@
 
 package util
 
+import com.typesafe.config.ConfigFactory
 import testsupport.ItSpec
 import testsupport.testdata.TestData.{tpsPaymentsWithEmptyEmail, tpsPaymentsWithoutEmail}
 import tps.journey.model.{Journey, JourneyId}
 import tps.model.Email
+import uk.gov.hmrc.crypto.{AesGCMCrypto, Crypted, PlainText}
 
 class CryptoSpec extends ItSpec {
 
@@ -35,6 +37,41 @@ class CryptoSpec extends ItSpec {
     val e: Exception = intercept[Exception](crypto.decrypt("cant decrypt plain string"))
     e should have message "Unable to decrypt value"
   }
+
+  /**
+   * This test was added to ensure our crypto implementation is consistent with the old way (i.e. AES GCM).
+   * We had an issue where the encryption type used was different and errors arose in the DeniedRefs service layer.
+   */
+  "crypto impl old vs new" in {
+    val oldKey = "MmJhcmNsYXlzc2Z0cGRldg=="
+    val newKey = "MWJhcmNsYXlzc2Z0cGRldg=="
+
+    val oldAes = new AesGCMCrypto {
+      override val encryptionKey: String = oldKey
+    }
+
+    val configNew = ConfigFactory.parseString(
+      s"""
+         |crypto {
+         |  key = "$newKey"
+         |  previousKeys = ["$oldKey"]
+         |}
+         |""".stripMargin
+    )
+
+    val test: Crypted = oldAes.encrypt(PlainText("test@email.com"))
+    println(s"I am the field: ${test.value}")
+
+    val cryptoNew = new Crypto(configNew)
+    println(s"decrypted attempt: ${cryptoNew.decrypt(test.value)}")
+
+    val plain = PlainText("sialala")
+    val encryptedOld: Crypted = oldAes.encrypt(plain)
+    val decryptedOld: PlainText = oldAes.decrypt(encryptedOld)
+
+    decryptedOld shouldBe plain
+    cryptoNew.decrypt(encryptedOld.value) shouldBe "sialala"
+  }
 }
 
 class CryptoWithDifferentKeysSpec extends ItSpec {
@@ -42,15 +79,15 @@ class CryptoWithDifferentKeysSpec extends ItSpec {
   /**
    * overwrite the crypto.key value with new one
    * put the old crypto.key field in previous keys
-   * note: I used the original crypto.key value to encrypt test@email.com to obtain an encrypted value to insert into mongo.
+   * note: the 'old' i.e. previousKey is used to encrypt test@email.com to obtain an encrypted value to insert into mongo.
    */
   override lazy val configOverrides: Map[String, Any] = Map(
     "crypto.key" -> "bWFkZXVwMTIzNDVhYmNkZQ==",
-    "crypto.previousKeys.0" -> "MWJhcmNsYXlzc2Z0cGRldg=="
+    "crypto.previousKeys.0" -> "MmJhcmNsYXlzc2Z0cGRldg=="
   )
 
   "successfully decrypt when the key used to encrypt a field is moved to the previousKeys field in config" in {
-    val paymentsWithEmailEncrypted = tpsPaymentsWithoutEmail.payments.map(_.copy(email = Some(Email("cvosnBPokl/JvPPXel5xww=="))))
+    val paymentsWithEmailEncrypted = tpsPaymentsWithoutEmail.payments.map(_.copy(email = Some(Email("VIjzb5FRcfeoMQQEhSlSrIQ0Rybzs04XPFN47lizOz1KlXGs3/lXZKnLQievgA=="))))
     Option(repo.upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted)).futureValue.getUpsertedId).isDefined shouldBe true
     val crypto = app.injector.instanceOf[Crypto]
     val journey: Option[Journey] = repo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
