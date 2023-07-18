@@ -1,0 +1,223 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "ReceivedNotification" : { }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 103.03,
+    "headOfDutyIndicator" : "B",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "YA123456789123",
+    "pcipalData" : {
+      "HoD" : "B",
+      "TaxReference" : "YA123456789123",
+      "Amount" : 103.03,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "YA123456789123",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "YA123456789123",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "childBenefitYReference" : "YA123456789123"
+    },
+    "taxType" : "ChildBenefitsRepayments",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 107.07,
+    "headOfDutyIndicator" : "A",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "1097172564A00104A",
+    "pcipalData" : {
+      "HoD" : "A",
+      "TaxReference" : "1097172564A00104A",
+      "Amount" : 107.07,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "1097172564A00104A",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "1097172564A00104A",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "cotaxReference" : "1097172564A00104A"
+    },
+    "taxType" : "Cotax",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 111.11,
+    "headOfDutyIndicator" : "V",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "968501144",
+    "pcipalData" : {
+      "HoD" : "V",
+      "TaxReference" : "968501144",
+      "Amount" : 111.11,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "968501144",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "968501144",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "vatReference" : "968501144",
+      "remittanceType" : "Unaccompanied"
+    },
+    "taxType" : "Vat",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 209.09,
+    "headOfDutyIndicator" : "P",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "123PW123456782213",
+    "pcipalData" : {
+      "HoD" : "P",
+      "TaxReference" : "123PW123456782213",
+      "Amount" : 209.09,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "123PW123456782213",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "123PW123456782213",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "payeReference" : "123PW123456782213",
+      "taxAmount" : 109.09,
+      "nicAmount" : 100
+    },
+    "taxType" : "Paye",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 108.08,
+    "headOfDutyIndicator" : "N",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "JJ067874050421NV",
+    "pcipalData" : {
+      "HoD" : "N",
+      "TaxReference" : "JJ067874050421NV",
+      "Amount" : 108.08,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "JJ067874050421NV",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "JJ067874050421NV",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "ntcReference" : "JJ067874050421NV"
+    },
+    "taxType" : "Ntc",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  },
+  "pcipalSessionLaunchRequest" : {
+    "FlowId" : 1055,
+    "InitialValues" : {
+      "ClientID_1" : "CBCE",
+      "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_1" : "YA123456789123",
+      "TaxRegimeDisplay_1" : "Repay Child Benefit overpayments",
+      "Reference_1" : "3000000001",
+      "PID_1" : "1234567",
+      "AccountOfficeID_1" : "S1",
+      "HODIdentifier_1" : "B",
+      "UTRReference_1" : "YA123456789123",
+      "Name1_1" : "customerName",
+      "Amount_1" : "103.03",
+      "ClientID_2" : "COPL",
+      "PaymentItemID_2" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_2" : "1097172564A00104A",
+      "TaxRegimeDisplay_2" : "COTAX",
+      "Reference_2" : "3000000001",
+      "PID_2" : "1234567",
+      "AccountOfficeID_2" : "S1",
+      "HODIdentifier_2" : "A",
+      "UTRReference_2" : "1097172564A00104A",
+      "Name1_2" : "customerName",
+      "Amount_2" : "107.07",
+      "ClientID_3" : "VAPM",
+      "VATRemittanceType_3" : "0",
+      "PaymentItemID_3" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_3" : "968501144",
+      "TaxRegimeDisplay_3" : "VAT",
+      "Reference_3" : "3000000001",
+      "PID_3" : "1234567",
+      "AccountOfficeID_3" : "G1",
+      "HODIdentifier_3" : "V",
+      "UTRReference_3" : "968501144",
+      "Name1_3" : "customerName",
+      "Amount_3" : "111.11",
+      "ClientID_4" : "PAPL",
+      "PaymentItemID_4" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_4" : "123PW123456782213",
+      "TaxRegimeDisplay_4" : "PAYE",
+      "Reference_4" : "3000000001",
+      "PID_4" : "1234567",
+      "AccountOfficeID_4" : "G1",
+      "HODIdentifier_4" : "P",
+      "UTRReference_4" : "123PW123456782213",
+      "Name1_4" : "customerName",
+      "TaxAmount_4" : "109.09",
+      "NICAmount_4" : "100",
+      "Amount_4" : "209.09",
+      "ClientID_5" : "NTPL",
+      "PaymentItemID_5" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_5" : "JJ067874050421NV",
+      "TaxRegimeDisplay_5" : "NTC",
+      "Reference_5" : "3000000001",
+      "PID_5" : "1234567",
+      "AccountOfficeID_5" : "G1",
+      "HODIdentifier_5" : "N",
+      "UTRReference_5" : "JJ067874050421NV",
+      "Name1_5" : "customerName",
+      "Amount_5" : "108.08",
+      "UTRBlacklistFlag" : "N",
+      "postcodeFlag" : "Y",
+      "taxRegime" : "gen",
+      "TotalTaxAmountToPay" : "638.38",
+      "callbackUrl" : "http://notification.host/payments/notifications/send-card-payments",
+      "resetURL" : "http://localhost:9124/tps-payments/full/reset",
+      "backURL" : "http://localhost:9124/tps-payments/back-from-pcipal",
+      "finishURL" : "http://localhost:9124/tps-payments/finish"
+    }
+  },
+  "pcipalSessionLaunchResponse" : {
+    "Id" : "dummy-session-id-765955124",
+    "LinkId" : "3097"
+  }
+}

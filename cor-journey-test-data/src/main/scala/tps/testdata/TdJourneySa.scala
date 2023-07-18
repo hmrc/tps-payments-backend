@@ -64,7 +64,7 @@ trait TdJourneySa { dependencies: TdBase =>
       )),
       UTRBlacklistFlag    = "N",
       postcodeFlag        = "Y",
-      taxRegime           = "gbl",
+      taxRegime           = "gen",
       TotalTaxAmountToPay = amountString,
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,

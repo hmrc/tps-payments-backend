@@ -34,7 +34,8 @@ trait TdAll
   with TdJourneyPaye
   with TdJourneyNps
   with TdJourneyVat
-  with TdJourneyPpt {
+  with TdJourneyPpt
+  with TdMultiPaymentJourney {
 
   lazy val allTdJourneysWithJson: List[(Journey, JourneyJson)] =
     TdJourneyChildBenefit.allJourneys ++
@@ -48,6 +49,7 @@ trait TdAll
       TdJourneySa.allJourneys ++
       TdJourneySafe.allJourneys ++
       TdJourneySdlt.allJourneys ++
-      TdJourneyVat.allJourneys
+      TdJourneyVat.allJourneys ++
+      TdJourneyMultiPayment.allJourneys
 
 }

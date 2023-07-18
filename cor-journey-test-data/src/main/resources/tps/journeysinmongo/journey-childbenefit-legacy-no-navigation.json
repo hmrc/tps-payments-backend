@@ -54,7 +54,7 @@
       "Amount_1": "103.03",
       "UTRBlacklistFlag": "N",
       "postcodeFlag": "Y",
-      "taxRegime": "gbl",
+      "taxRegime": "gen",
       "TotalTaxAmountToPay": "103.03",
       "callbackUrl": "http://notification.host/payments/notifications/send-card-payments",
       "finishURL": "http://localhost:9124/tps-payments/finish",
