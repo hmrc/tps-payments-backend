@@ -43,6 +43,7 @@ object DeniedRefsRepo {
       case obj: JsObject => JsSuccess(obj)
       case _: JsValue    => JsError("Invalid JSON format for JsObject")
     }
+
     override def writes(o: JsObject): JsObject = o
   }
 
@@ -61,7 +62,7 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
-  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = {
+  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] =
     //TODO: could be less boilerplate implementation
     findLatestDeniedRefsIdJson()
       .map(_.map(_ \ "_id" match {
@@ -69,7 +70,6 @@ final class DeniedRefsRepo @Inject() (
         case other                      => throw new RuntimeException(s"Denied refs returns no '_id' field: ${other.toString}")
       }
       ))
-  }
 
   /**
    * Projection is used (i.e. slice("_id", 1) ) to limit the number of records returned to just one.
