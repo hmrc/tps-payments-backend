@@ -26,6 +26,7 @@ with TdJourneyNtc //for 5th item in a basket
 =>
 
   //special case of the journey data where journey has more then 1 (5 actually) items in a basket
+  //TODO: make TdJourneyInStates abstract so it can be used here
   object TdJourneyMultiPayment {
 
     private lazy val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyCreated

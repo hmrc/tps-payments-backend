@@ -25,7 +25,7 @@ import java.time.Instant
 
 trait TdJourneyMib { dependencies: TdBase =>
 
-  lazy val TdJourneyMib = new TdJourneyInStates {
+  object TdJourneyMib extends TdJourneyInStates {
 
     final val selectedTaxType: TaxType = TaxTypes.MIB
 
