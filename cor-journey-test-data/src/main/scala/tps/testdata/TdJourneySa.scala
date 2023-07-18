@@ -24,7 +24,7 @@ import java.time.Instant
 
 trait TdJourneySa { dependencies: TdBase =>
 
-  object JourneySa extends TdJourneyInStates {
+  object TdJourneySa extends TdJourneyInStates {
 
     override lazy val journeyId: JourneyId = dependencies.journeyId
     override lazy val pid: String = dependencies.pid
@@ -32,6 +32,7 @@ trait TdJourneySa { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "104.04"
     override lazy val taxReference: String = "1234567895K"
+    override final val selectedTaxType: TaxType = TaxTypes.Sa
 
     override lazy val paymentSpecificData: SaSpecificData = SaSpecificData(
       saReference = taxReference
@@ -63,7 +64,7 @@ trait TdJourneySa { dependencies: TdBase =>
       )),
       UTRBlacklistFlag    = "N",
       postcodeFlag        = "Y",
-      taxRegime           = "gbl",
+      taxRegime           = "gen",
       TotalTaxAmountToPay = amountString,
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,
@@ -76,7 +77,7 @@ trait TdJourneySa { dependencies: TdBase =>
       LinkId = dependencies.linkId
     )
 
-    override lazy val pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.K,
       TaxReference         = taxReference,
       Amount               = amount,
@@ -98,10 +99,42 @@ trait TdJourneySa { dependencies: TdBase =>
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
-      pcipalData          = Some(pciPalData),
+      pcipalData          = Some(pcipalData),
       paymentSpecificData = paymentSpecificData,
       taxType             = TaxTypes.Sa,
       email               = Some(dependencies.email)
+    )
+
+    override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-1-Created.json"
+    )
+
+    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-2-SelectedTaxType.json"
+    )
+
+    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-3-EnteredPayment.json"
+    )
+
+    override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-4-AtPciPal.json"
+    )
+
+    override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-5-ResetByPciPal.json"
+    )
+
+    override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-6-FinishedByPciPal.json"
+    )
+
+    override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-7-BackByPciPal.json"
+    )
+
+    override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
+      "/tps/testdata/sa/journey-8-ReceivedNotification.json"
     )
   }
 }

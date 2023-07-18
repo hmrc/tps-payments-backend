@@ -1,0 +1,69 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "ReceivedNotification" : { }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 108.08,
+    "headOfDutyIndicator" : "N",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "JJ067874050421NV",
+    "pcipalData" : {
+      "HoD" : "N",
+      "TaxReference" : "JJ067874050421NV",
+      "Amount" : 108.08,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "JJ067874050421NV",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "JJ067874050421NV",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "ntcReference" : "JJ067874050421NV"
+    },
+    "taxType" : "Ntc",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  },
+  "pcipalSessionLaunchRequest" : {
+    "FlowId" : 1055,
+    "InitialValues" : {
+      "ClientID_1" : "NTPL",
+      "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_1" : "JJ067874050421NV",
+      "TaxRegimeDisplay_1" : "NTC",
+      "Reference_1" : "3000000001",
+      "PID_1" : "1234567",
+      "AccountOfficeID_1" : "G1",
+      "HODIdentifier_1" : "N",
+      "UTRReference_1" : "JJ067874050421NV",
+      "Name1_1" : "customerName",
+      "Amount_1" : "108.08",
+      "UTRBlacklistFlag" : "N",
+      "postcodeFlag" : "Y",
+      "taxRegime" : "gen",
+      "TotalTaxAmountToPay" : "108.08",
+      "callbackUrl" : "http://notification.host/payments/notifications/send-card-payments",
+      "finishURL" : "http://localhost:9124/tps-payments/finish",
+      "backURL" : "http://localhost:9124/tps-payments/back-from-pcipal",
+      "resetURL" : "http://localhost:9124/tps-payments/full/reset"
+    }
+  },
+  "pcipalSessionLaunchResponse" : {
+    "Id" : "dummy-session-id-765955124",
+    "LinkId" : "3097"
+  }
+}

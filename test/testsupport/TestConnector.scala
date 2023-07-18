@@ -28,6 +28,7 @@ import util.HttpReadsInstances._
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+//TODO: document who is calling this, also no need tests for that code as it's extra cost to maintain it
 @Singleton
 class TestConnector @Inject() (httpClient: HttpClient)(implicit executionContext: ExecutionContext) {
 

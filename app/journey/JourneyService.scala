@@ -43,7 +43,7 @@ class JourneyService @Inject() (
     journeyRepo
       .findByPcipalSessionId(pcipalSessionId)
       .map {
-        case Nil => FindByPcipalSessionIdResult.NotJourneyBySessionId
+        case Nil => FindByPcipalSessionIdResult.NoJourneyBySessionId
         case one :: Nil =>
           val journey = decryptEmails(one)
           val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
@@ -123,7 +123,7 @@ object JourneyService {
     /**
      * No journey with given PcipalSessionId
      */
-    case object NotJourneyBySessionId extends FindByPcipalSessionIdResult
+    case object NoJourneyBySessionId extends FindByPcipalSessionIdResult
 
     /**
      * Journey Found by PcipalSessionId but there is no PaymentItem in payments with given paymentItemId.

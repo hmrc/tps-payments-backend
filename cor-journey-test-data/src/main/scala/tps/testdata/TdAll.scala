@@ -15,6 +15,7 @@
  */
 
 package tps.testdata
+import tps.journey.model.Journey
 
 object TdAll extends TdAll
 
@@ -25,12 +26,40 @@ trait TdAll
   with TdJourneyMib
   with TdJourneyPngr
   with TdJourneyChildBenefit
+  with TdJourneyCotax
   with TdJourneySa
   with TdJourneySdlt
   with TdJourneySafe
-  with TdJourneyCotax
   with TdJourneyNtc
   with TdJourneyPaye
   with TdJourneyNps
   with TdJourneyVat
   with TdJourneyPpt
+  with TdMultiPaymentJourney {
+
+  @SuppressWarnings(Array(
+    "org.wartremover.warts.JavaSerializable",
+    "org.wartremover.warts.Serializable",
+    "org.wartremover.warts.Product"))
+  lazy val allTdJourneyInStates: List[TdJourneyInStates] = List(
+    TdJourneyChildBenefit,
+    TdJourneyCotax,
+    TdJourneyMib,
+    TdJourneyNps,
+    TdJourneyNtc,
+    TdJourneyPaye,
+    TdJourneyPngr,
+    TdJourneyPpt,
+    TdJourneySa,
+    TdJourneySafe,
+    TdJourneySdlt,
+    TdJourneyVat
+  )
+
+  lazy val allTdJourneysWithJson: List[(Journey, JourneyJson)] =
+    allTdJourneyInStates
+      .map(_.allJourneys)
+      .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
+      .++(TdJourneyMultiPayment.allJourneys)
+
+}

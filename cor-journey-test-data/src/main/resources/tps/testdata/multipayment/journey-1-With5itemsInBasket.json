@@ -1,0 +1,134 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "Landing" : { }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 103.03,
+    "headOfDutyIndicator" : "B",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "YA123456789123",
+    "paymentSpecificData" : {
+      "childBenefitYReference" : "YA123456789123"
+    },
+    "taxType" : "ChildBenefitsRepayments",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 107.07,
+    "headOfDutyIndicator" : "A",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "1097172564A00104A",
+    "pcipalData" : {
+      "HoD" : "A",
+      "TaxReference" : "1097172564A00104A",
+      "Amount" : 107.07,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "1097172564A00104A",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "1097172564A00104A",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "cotaxReference" : "1097172564A00104A"
+    },
+    "taxType" : "Cotax",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 111.11,
+    "headOfDutyIndicator" : "V",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "968501144",
+    "pcipalData" : {
+      "HoD" : "V",
+      "TaxReference" : "968501144",
+      "Amount" : 111.11,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "968501144",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "968501144",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "vatReference" : "968501144",
+      "remittanceType" : "Unaccompanied"
+    },
+    "taxType" : "Vat",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 209.09,
+    "headOfDutyIndicator" : "P",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "123PW123456782213",
+    "pcipalData" : {
+      "HoD" : "P",
+      "TaxReference" : "123PW123456782213",
+      "Amount" : 209.09,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "123PW123456782213",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "123PW123456782213",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "payeReference" : "123PW123456782213",
+      "taxAmount" : 109.09,
+      "nicAmount" : 100
+    },
+    "taxType" : "Paye",
+    "email" : "test@email.com"
+  }, {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 108.08,
+    "headOfDutyIndicator" : "N",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "JJ067874050421NV",
+    "pcipalData" : {
+      "HoD" : "N",
+      "TaxReference" : "JJ067874050421NV",
+      "Amount" : 108.08,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "JJ067874050421NV",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "JJ067874050421NV",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "ntcReference" : "JJ067874050421NV"
+    },
+    "taxType" : "Ntc",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  }
+}

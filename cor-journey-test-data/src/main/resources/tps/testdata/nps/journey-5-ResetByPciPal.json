@@ -1,0 +1,77 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "ResetByPciPal" : { }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 110.1,
+    "headOfDutyIndicator" : "J",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "AA000000JM",
+    "pcipalData" : {
+      "HoD" : "J",
+      "TaxReference" : "AA000000JM",
+      "Amount" : 110.1,
+      "Commission" : 0,
+      "CardType" : "VISA",
+      "Status" : "validated",
+      "PCIPalSessionId" : "dummy-session-id-765955124",
+      "TransactionReference" : "AA000000JM",
+      "paymentItemId" : "64897aee16fe8b501cbf008a",
+      "ChargeReference" : "AA000000JM",
+      "ReferenceNumber" : "3000000001",
+      "CardLast4" : "1234"
+    },
+    "paymentSpecificData" : {
+      "npsReference" : "AA000000JM",
+      "periodStartDate" : "020122",
+      "periodEndDate" : "080122",
+      "npsType" : "Class 2 National Insurance",
+      "rate" : 1
+    },
+    "taxType" : "Nps",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  },
+  "pcipalSessionLaunchRequest" : {
+    "FlowId" : 1055,
+    "InitialValues" : {
+      "ClientID_1" : "NPPL",
+      "LNPClass2_1" : "61",
+      "NIRSRate_1" : "1.0",
+      "StartDate_1" : "020122",
+      "EndDate_1" : "080122",
+      "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
+      "ChargeReference_1" : "AA000000JM",
+      "TaxRegimeDisplay_1" : "NPS",
+      "Reference_1" : "3000000001",
+      "PID_1" : "1234567",
+      "AccountOfficeID_1" : "G1",
+      "HODIdentifier_1" : "J",
+      "UTRReference_1" : "AA000000JM",
+      "Name1_1" : "customerName",
+      "Amount_1" : "110.10",
+      "UTRBlacklistFlag" : "N",
+      "postcodeFlag" : "Y",
+      "taxRegime" : "gen",
+      "TotalTaxAmountToPay" : "110.10",
+      "callbackUrl" : "http://notification.host/payments/notifications/send-card-payments",
+      "finishURL" : "http://localhost:9124/tps-payments/finish",
+      "backURL" : "http://localhost:9124/tps-payments/back-from-pcipal",
+      "resetURL" : "http://localhost:9124/tps-payments/full/reset"
+    }
+  },
+  "pcipalSessionLaunchResponse" : {
+    "Id" : "dummy-session-id-765955124",
+    "LinkId" : "3097"
+  }
+}

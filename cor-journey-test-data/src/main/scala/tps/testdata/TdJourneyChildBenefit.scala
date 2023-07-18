@@ -32,6 +32,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "103.03"
     override lazy val taxReference: String = "YA123456789123"
+    override final val selectedTaxType: TaxType = TaxTypes.ChildBenefitsRepayments
 
     override lazy val paymentSpecificData = ChildBenefitSpecificData(
       childBenefitYReference = taxReference
@@ -63,7 +64,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       )),
       UTRBlacklistFlag    = "N",
       postcodeFlag        = "Y",
-      taxRegime           = "gbl",
+      taxRegime           = "gen",
       TotalTaxAmountToPay = amountString,
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,
@@ -76,7 +77,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       LinkId = dependencies.linkId
     )
 
-    override lazy val pciPalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
+    override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.B,
       TaxReference         = taxReference,
       Amount               = amount,
@@ -98,10 +99,42 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       updated             = instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
-      pcipalData          = Some(pciPalData),
+      pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
       taxType             = TaxTypes.ChildBenefitsRepayments,
       email               = Some(dependencies.email)
+    )
+
+    override lazy val journeyCreatedJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-1-Created.json"
+    )
+
+    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-2-SelectedTaxType.json"
+    )
+
+    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-3-EnteredPayment.json"
+    )
+
+    override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-4-AtPciPal.json"
+    )
+
+    override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-5-ResetByPciPal.json"
+    )
+
+    override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-6-FinishedByPciPal.json"
+    )
+
+    override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-7-BackByPciPal.json"
+    )
+
+    override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
+      "/tps/testdata/childbenefit/journey-8-ReceivedNotification.json"
     )
   }
 }

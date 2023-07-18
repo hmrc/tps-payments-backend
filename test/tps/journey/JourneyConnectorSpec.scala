@@ -20,26 +20,29 @@ import journeysupport.TestJourneyIdGenerator
 import play.api.mvc.Request
 import testsupport.ItSpec
 import testsupport.stubs.AuthStub
-import tps.journey.model.JourneyId
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-class JourneyControllerSpec extends ItSpec {
+class JourneyConnectorSpec extends ItSpec {
+
   def journeyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
   def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
   implicit val request: Request[_] = TdAll.request
 
-  "find and upsert journey" in {
-    val tdAll = new TdAll {
-      override lazy val journeyId: JourneyId = journeyIdGenerator.nextId()
+  "find and upsert journey in all possible state" - TdAll.allTdJourneysWithJson.foreach{ t =>
+    val journey = t._1
+    val testCaseName = t._2.simpleName
+    testCaseName in {
+      AuthStub.authorised()
+      journeyConnector.upsert(journey).futureValue shouldBe (()) withClue "upserting journey"
+      journeyConnector.find(journey.journeyId).futureValue shouldBe Some(journey) withClue "journey should be found"
     }
+  }
 
-    val journey = tdAll.JourneySa.journey
+  "find should return None if no journey at db" in {
     AuthStub.authorised()
-    journeyConnector.find(journey.journeyId).futureValue shouldBe None withClue "journey not found as we haven't inserted it yet"
-    journeyConnector.upsert(journey).futureValue shouldBe (()) withClue "upserting journey"
-    journeyConnector.find(journey.journeyId).futureValue shouldBe Some(journey) withClue "journey should be found"
+    journeyConnector.find(journeyIdGenerator.nextId()).futureValue shouldBe None withClue "journey not found as not inserted"
   }
 
   "find unauthorised" in {
@@ -60,7 +63,7 @@ class JourneyControllerSpec extends ItSpec {
 
   "upsert unauthorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
+    val throwable: Throwable = journeyConnector.upsert(TdAll.TdJourneyCotax.journeyAtPciPal).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You do not have access to this service'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -68,7 +71,7 @@ class JourneyControllerSpec extends ItSpec {
 
   "upsert unauthenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.upsert(TdAll.JourneyCotax.journey).failed.futureValue
+    val throwable: Throwable = journeyConnector.upsert(TdAll.TdJourneyCotax.journeyAtPciPal).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You are not logged in'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
