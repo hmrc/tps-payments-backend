@@ -37,19 +37,29 @@ trait TdAll
   with TdJourneyPpt
   with TdMultiPaymentJourney {
 
+  @SuppressWarnings(Array(
+    "org.wartremover.warts.JavaSerializable",
+    "org.wartremover.warts.Serializable",
+    "org.wartremover.warts.Product"))
+  lazy val allTdJourneyInStates: List[TdJourneyInStates] = List(
+    TdJourneyChildBenefit,
+    TdJourneyCotax,
+    TdJourneyMib,
+    TdJourneyNps,
+    TdJourneyNtc,
+    TdJourneyPaye,
+    TdJourneyPngr,
+    TdJourneyPpt,
+    TdJourneySa,
+    TdJourneySafe,
+    TdJourneySdlt,
+    TdJourneyVat
+  )
+
   lazy val allTdJourneysWithJson: List[(Journey, JourneyJson)] =
-    TdJourneyChildBenefit.allJourneys ++
-      TdJourneyCotax.allJourneys ++
-      TdJourneyMib.allJourneys ++
-      TdJourneyNps.allJourneys ++
-      TdJourneyNtc.allJourneys ++
-      TdJourneyPaye.allJourneys ++
-      TdJourneyPngr.allJourneys ++
-      TdJourneyPpt.allJourneys ++
-      TdJourneySa.allJourneys ++
-      TdJourneySafe.allJourneys ++
-      TdJourneySdlt.allJourneys ++
-      TdJourneyVat.allJourneys ++
-      TdJourneyMultiPayment.allJourneys
+    allTdJourneyInStates
+      .map(_.allJourneys)
+      .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
+      .++(TdJourneyMultiPayment.allJourneys)
 
 }
