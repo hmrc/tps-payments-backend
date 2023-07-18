@@ -20,7 +20,7 @@ import com.mongodb.client.model.Sorts
 import deniedrefs.model.{DeniedRefs, DeniedRefsId}
 import org.bson.codecs.Codec
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes, Projections}
-import play.api.libs.json.JsObject
+import play.api.libs.json.{JsDefined, JsObject, JsString}
 import repository.Repo
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.Codecs
@@ -61,7 +61,15 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
-  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = findLatestDeniedRefsIdJson().map(_.map(_.as[DeniedRefsId]))
+  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = {
+    //TODO: could be less boilerplate implementation
+    findLatestDeniedRefsIdJson()
+      .map(_.map(_ \ "_id" match {
+        case JsDefined(JsString(value)) => DeniedRefsId(value)
+        case other                      => throw new RuntimeException(s"Denied refs returns no '_id' field: ${other.toString}")
+      }
+      ))
+  }
 
   /**
    * Projection is used (i.e. slice("_id", 1) ) to limit the number of records returned to just one.
@@ -69,13 +77,11 @@ final class DeniedRefsRepo @Inject() (
    * We don't need them and it can introduce performance issue if there are lots in list of refs inside DeniedRefs
    * Don't remove this... unless you know what you're doing ;)
    */
-  private[deniedrefs] def findLatestDeniedRefsIdJson(): Future[Option[JsObject]] = {
-    collection
-      .find[JsObject]()
-      .projection(Projections.include("_id"))
-      .sort(Sorts.descending(inserted))
-      .headOption()
-  }
+  private[deniedrefs] def findLatestDeniedRefsIdJson(): Future[Option[JsObject]] = collection
+    .find[JsObject]()
+    .projection(Projections.include("_id"))
+    .sort(Sorts.descending(inserted))
+    .headOption()
 
   private lazy val inserted = "inserted"
 }
