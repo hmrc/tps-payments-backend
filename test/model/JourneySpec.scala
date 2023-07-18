@@ -60,12 +60,11 @@ class JourneySpec extends UnitSpec {
         content.getBytes(StandardCharsets.UTF_8)
       )
     }
-
   }
 
   case class TestCase(journey: Journey, json: JsObject, testCaseName: String)
 
-  val testCases: List[TestCase] = TdAll.allTdJourneysWithJson
+  lazy val testCases: List[TestCase] = TdAll.allTdJourneysWithJson
     .map { t =>
       val journey = t._1
       val json = t._2.json

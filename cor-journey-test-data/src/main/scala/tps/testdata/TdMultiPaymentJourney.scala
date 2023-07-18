@@ -28,9 +28,9 @@ with TdJourneyNtc //for 5th item in a basket
   //special case of the journey data where journey has more then 1 (5 actually) items in a basket
   object TdJourneyMultiPayment {
 
-    private val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyCreated
+    private lazy val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyCreated
 
-    val journeyWith5itemsInBasket: Journey = exampleJourneyAfterCreated.copy(
+    lazy val journeyWith5itemsInBasket: Journey = exampleJourneyAfterCreated.copy(
       payments = List(
         dependencies.TdJourneyChildBenefit.paymentItem,
         dependencies.TdJourneyCotax.paymentItem,
@@ -39,6 +39,9 @@ with TdJourneyNtc //for 5th item in a basket
         dependencies.TdJourneyNtc.paymentItem
       )
     )
+    lazy val journeyWith5itemsInBasketJson: JourneyJson = JourneyJson(
+      "/tps/testdata/multipayment/journey-1-With5itemsInBasket.json"
+    )
 
     private lazy val initialValues: List[PcipalInitialValues] = List(
       dependencies.TdJourneyChildBenefit.pcipalSessionLaunchRequest.InitialValues.headOption.getOrElse(throw new RuntimeException("there should be one item in the list")),
@@ -46,7 +49,12 @@ with TdJourneyNtc //for 5th item in a basket
       dependencies.TdJourneyVat.pcipalSessionLaunchRequest.InitialValues.headOption.getOrElse(throw new RuntimeException("there should be one item in the list")),
       dependencies.TdJourneyPaye.pcipalSessionLaunchRequest.InitialValues.headOption.getOrElse(throw new RuntimeException("there should be one item in the list")),
       dependencies.TdJourneyNtc.pcipalSessionLaunchRequest.InitialValues.headOption.getOrElse(throw new RuntimeException("there should be one item in the list"))
-    )
+    ).zipWithIndex.map{ t =>
+        //update increment!
+        val increment: Int = t._2 + 1
+        val initialValues = t._1
+        initialValues.copy(increment = increment.toString)
+      }
 
     lazy val amount =
       dependencies.TdJourneyChildBenefit.amount +
@@ -80,6 +88,10 @@ with TdJourneyNtc //for 5th item in a basket
         pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
       )
 
+    lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
+      "/tps/testdata/multipayment/journey-2-AtPciPal.json"
+    )
+
     lazy val journeyReceivedAllNotifications: Journey = journeyAtPciPal.copy(
       journeyState = JourneyState.ReceivedNotification,
       payments     = List(
@@ -90,6 +102,17 @@ with TdJourneyNtc //for 5th item in a basket
         dependencies.TdJourneyNtc.journeyReceivedNotification.payments.headOption.getOrElse(throw new RuntimeException("there should be one item in the list")),
       )
     )
+
+    lazy val journeyReceivedAllNotificationsJson: JourneyJson = JourneyJson(
+      "/tps/testdata/multipayment/journey-3-ReceivedAllNotifications.json"
+    )
+
+    lazy val allJourneys: List[(Journey, JourneyJson)] = List(
+      (journeyWith5itemsInBasket, journeyWith5itemsInBasketJson),
+      (journeyAtPciPal, journeyAtPciPalJson),
+      (journeyReceivedAllNotifications, journeyReceivedAllNotificationsJson)
+    )
+
   }
 
 }

@@ -49,6 +49,7 @@ trait TdAll
       TdJourneySa.allJourneys ++
       TdJourneySafe.allJourneys ++
       TdJourneySdlt.allJourneys ++
-      TdJourneyVat.allJourneys
+      TdJourneyVat.allJourneys ++
+      TdJourneyMultiPayment.allJourneys
 
 }
