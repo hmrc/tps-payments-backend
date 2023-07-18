@@ -47,17 +47,21 @@ final class DeniedRefsRepo @Inject() (
     replaceIndexes = true
   ) {
 
+  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = findLatestDeniedRefs().map(_.map(_._id))
+
   /**
-   * Projection is used (i.e. slice("refs", 1) ) to limit the number of refs returned to just one.
+   * Projection is used (i.e. slice("_id", 1) ) to limit the number of records returned to just one.
+   * Projection is also used (i.e. slice("refs", 1) ) to limit the number of refs returned to just one.
    * We don't need them and it can introduce performance issue if there are lots in list of refs inside DeniedRefs
    * Don't remove this... unless you know what you're doing ;)
    */
-  def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = collection
-    .find()
-    .projection(slice("refs", 1))
-    .sort(Sorts.descending(inserted))
-    .headOption()
-    .map(_.map(_._id))
+  protected[deniedrefs] def findLatestDeniedRefs(): Future[Option[DeniedRefs]] = {
+    collection.find()
+      .sort(Sorts.descending(inserted))
+      .projection(slice("_id", 1))
+      .projection(slice("refs", 1))
+      .headOption()
+  }
 
   private lazy val inserted = "inserted"
 }

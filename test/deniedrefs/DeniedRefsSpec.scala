@@ -16,16 +16,16 @@
 
 package deniedrefs
 
+import deniedrefs.TdDeniedRefs._
 import deniedrefs.model._
 import play.api.mvc.Request
 import testsupport.ItSpec
 import tps.deniedrefs.VerifyRefsConnector
+import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 import tps.model.Reference
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import TdDeniedRefs._
-import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
@@ -73,6 +73,12 @@ class DeniedRefsSpec extends ItSpec {
       verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied) withClue "one permitted one denied"
 
     }
+  }
+
+  "findLatestDeniedRefsIdJson should have a projection that only returns one of the references in the Set, since we don't care about them and it harms performance" in {
+    val repo = app.injector.instanceOf[DeniedRefsRepo]
+    val result: DeniedRefs = repo.findLatestDeniedRefs().futureValue.value
+    result.refs.size shouldBe 1
   }
 
   // trivial test just to make sure no one accidentally renames refs field name in DeniedRefs case class, without updating projection in DeniedRefsRepo
