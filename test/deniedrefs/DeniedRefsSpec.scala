@@ -16,16 +16,17 @@
 
 package deniedrefs
 
+import deniedrefs.TdDeniedRefs._
 import deniedrefs.model._
+import play.api.libs.json.JsObject
 import play.api.mvc.Request
 import testsupport.ItSpec
 import tps.deniedrefs.VerifyRefsConnector
+import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 import tps.model.Reference
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import TdDeniedRefs._
-import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
@@ -73,6 +74,19 @@ class DeniedRefsSpec extends ItSpec {
       verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied) withClue "one permitted one denied"
 
     }
+  }
+
+  "findLatestDeniedRefsIdJson should return only id so this query result doesn't transport unused fields" in {
+    val repo = app.injector.instanceOf[DeniedRefsRepo]
+    uploadDeniedRefs(csvFile1).futureValue withClue "insert something to db"
+    val result: JsObject = repo.findLatestDeniedRefsIdJson().futureValue.value
+    result.fields.map(_._1) shouldBe List("_id") withClue "only '_id' in the result"
+  }
+
+  // trivial test just to make sure no one accidentally renames refs field name in DeniedRefs case class, without updating projection in DeniedRefsRepo
+  "sanity check the DeniedRefs case class" in {
+    val fieldNames: Array[String] = classOf[DeniedRefs].getDeclaredFields.map(_.getName)
+    fieldNames.contains("refs") shouldBe true withClue s"It looks like the field name: [refs] has changed, make sure you update the projection. Current list of fields: ${fieldNames.mkString("Array(", ", ", ")")}"
   }
 
   override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
