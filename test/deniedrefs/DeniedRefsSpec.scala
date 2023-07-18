@@ -18,6 +18,7 @@ package deniedrefs
 
 import deniedrefs.TdDeniedRefs._
 import deniedrefs.model._
+import play.api.libs.json.JsObject
 import play.api.mvc.Request
 import testsupport.ItSpec
 import tps.deniedrefs.VerifyRefsConnector
@@ -75,10 +76,10 @@ class DeniedRefsSpec extends ItSpec {
     }
   }
 
-  "findLatestDeniedRefsIdJson should have a projection that only returns one of the references in the Set, since we don't care about them and it harms performance" in {
+  "findLatestDeniedRefsIdJson should return only id so this query result doesn't transport unused fields" in {
     val repo = app.injector.instanceOf[DeniedRefsRepo]
-    val result: DeniedRefs = repo.findLatestDeniedRefs().futureValue.value
-    result.refs.size shouldBe 1
+    val result: JsObject = repo.findLatestDeniedRefsIdJson().futureValue.value
+    result.fields.map(_._1) shouldBe List("_id") withClue "only '_id' in the result"
   }
 
   // trivial test just to make sure no one accidentally renames refs field name in DeniedRefs case class, without updating projection in DeniedRefsRepo
