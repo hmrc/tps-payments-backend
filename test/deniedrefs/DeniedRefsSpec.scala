@@ -78,6 +78,7 @@ class DeniedRefsSpec extends ItSpec {
 
   "findLatestDeniedRefsIdJson should return only id so this query result doesn't transport unused fields" in {
     val repo = app.injector.instanceOf[DeniedRefsRepo]
+    uploadDeniedRefs(csvFile1).futureValue withClue "insert something to db"
     val result: JsObject = repo.findLatestDeniedRefsIdJson().futureValue.value
     result.fields.map(_._1) shouldBe List("_id") withClue "only '_id' in the result"
   }

@@ -69,7 +69,7 @@ final class DeniedRefsRepo @Inject() (
    * We don't need them and it can introduce performance issue if there are lots in list of refs inside DeniedRefs
    * Don't remove this... unless you know what you're doing ;)
    */
-  def findLatestDeniedRefsIdJson(): Future[Option[JsObject]] = {
+  private[deniedrefs] def findLatestDeniedRefsIdJson(): Future[Option[JsObject]] = {
     collection
       .find[JsObject]()
       .projection(Projections.include("_id"))
