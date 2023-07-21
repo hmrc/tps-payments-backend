@@ -28,7 +28,7 @@ class JourneyRepoSpec extends ItSpec {
   "ensure indexes are created" in {
     repo.drop().futureValue
     repo.ensureIndexes().futureValue
-    repo.collection.listIndexes().toFuture().futureValue.size shouldBe 3
+    repo.collection.listIndexes().toFuture().futureValue.size shouldBe 6
   }
 
   "getPayment should throw error when no tpsPayments found" in {
