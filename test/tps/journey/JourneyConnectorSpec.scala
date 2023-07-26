@@ -26,7 +26,7 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 class JourneyConnectorSpec extends ItSpec {
 
-  def journeyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
+  def journeyIdGenerator: TestJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
   def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
   implicit val request: Request[_] = TdAll.request
 

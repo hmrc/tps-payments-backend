@@ -137,7 +137,7 @@ trait TdJourneyMib { dependencies: TdBase =>
       pcipalSessionLaunchResponse = None
     )
 
-    override lazy val journeyCreatedJson = JourneyJson(
+    override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
       "/tps/testdata/mib/journey-1-Created.json"
     )
 

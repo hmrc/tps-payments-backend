@@ -3,7 +3,7 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion: String = "7.19.0"
+  val bootstrapVersion: String = "7.20.0"
   val hmrcMongoVersion: String = "1.3.0"
   val playJsonDerivedCodesVersion: String = "7.0.0"
   val enumeratumVersion: String = "1.7.0"
