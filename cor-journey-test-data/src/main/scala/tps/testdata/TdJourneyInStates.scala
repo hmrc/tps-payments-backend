@@ -74,13 +74,13 @@ trait TdJourneyInStates {
 
   lazy val journeyEnteredPayment: Journey =
     journeySelectedTaxType.copy(
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.BasketNotEmpty,
       payments     = List(paymentItem)
     )
 
   def journeyEnteredPaymentJson: JourneyJson
 
-  lazy val journeyAtPciPal =
+  lazy val journeyAtPciPal: Journey =
     journeyEnteredPayment.copy(
       journeyState                = JourneyState.AtPciPal,
       pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),

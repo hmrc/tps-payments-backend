@@ -34,7 +34,7 @@ lazy val microservice = Project(appName, file("."))
 
 lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
   .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
-  .settings(commonSettings *)
+  .settings(commonSettings: _*)
   .settings(
     scalaVersion := scalaV,
     majorVersion := majorVer,

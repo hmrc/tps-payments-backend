@@ -35,6 +35,9 @@ object JourneyState {
   //Entering or Editing payment
   final case class EnterPayment(taxType: TaxType) extends JourneyState
 
+  //At least one payment is in the basket, but user can be on the landing page
+  final case object BasketNotEmpty extends JourneyState
+
   //Journey handed over to PciPal
   final case object AtPciPal extends JourneyState
 

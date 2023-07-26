@@ -108,7 +108,7 @@ trait TdJourneyPaye { dependencies: TdBase =>
       email               = Some(dependencies.email)
     )
 
-    override lazy val journeyCreatedJson = JourneyJson(
+    override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
       "/tps/testdata/paye/journey-1-Created.json"
     )
 
