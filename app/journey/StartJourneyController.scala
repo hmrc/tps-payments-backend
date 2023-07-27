@@ -64,7 +64,7 @@ class StartJourneyController @Inject() (actions:                Actions,
 
     Journey(
       _id          = journeyIdGenerator.nextId(),
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.BasketNotEmpty,
       pid          = startJourneyRequestMibOrPngr.pid,
       created      = Instant.now(clock),
       payments     = tpsPayments,

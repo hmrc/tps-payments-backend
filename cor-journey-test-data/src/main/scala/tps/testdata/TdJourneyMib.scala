@@ -128,7 +128,7 @@ trait TdJourneyMib { dependencies: TdBase =>
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
-      journeyState                = JourneyState.Landing,
+      journeyState                = JourneyState.BasketNotEmpty,
       pid                         = pid,
       created                     = created,
       payments                    = List(paymentItem),
