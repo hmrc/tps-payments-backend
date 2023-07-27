@@ -37,8 +37,8 @@ class StartJourneyControllerSpec extends ItSpec {
   "start Mib journey" in {
 
     val tdAll = new TdAll {
-      private val precatchedId = paymentItemIdGenerator.predictNextId() //don't inline
-      override lazy val paymentItemId: PaymentItemId = precatchedId
+      private val precachedId = paymentItemIdGenerator.predictNextId() //don't inline
+      override lazy val paymentItemId: PaymentItemId = precachedId
       override lazy val journeyId: JourneyId = journeyIdGenerator.predictNextId()
     }
 
@@ -48,7 +48,7 @@ class StartJourneyControllerSpec extends ItSpec {
     journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.TdJourneyMib.journeyCreated
   }
 
-  "start Mib journey if not authorised" in {
+  "not start Mib journey if not authorised" in {
     AuthStub.notAuthorised()
     val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMib.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
@@ -56,7 +56,7 @@ class StartJourneyControllerSpec extends ItSpec {
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
-  "start Mib journey if not authenticated" in {
+  "not start Mib journey if not authenticated" in {
     AuthStub.notAuthenticated()
     val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMib.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
@@ -67,8 +67,8 @@ class StartJourneyControllerSpec extends ItSpec {
   "start Pngr journey" in {
 
     val tdAll = new TdAll {
-      private val precatchedId = paymentItemIdGenerator.predictNextId() //don't inline
-      override lazy val paymentItemId: PaymentItemId = precatchedId
+      private val precachedId = paymentItemIdGenerator.predictNextId() //don't inline
+      override lazy val paymentItemId: PaymentItemId = precachedId
       override lazy val journeyId: JourneyId = journeyIdGenerator.predictNextId()
     }
 
@@ -78,7 +78,7 @@ class StartJourneyControllerSpec extends ItSpec {
     journeyConnector.find(journeyId).futureValue.value shouldBe tdAll.TdJourneyPngr.journeyCreated
   }
 
-  "start Pngr journey if not authorised" in {
+  "not start Pngr journey if not authorised" in {
     AuthStub.notAuthorised()
     val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
@@ -86,7 +86,7 @@ class StartJourneyControllerSpec extends ItSpec {
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
-  "start Pngr journey if not authenticated" in {
+  "not start Pngr journey if not authenticated" in {
     AuthStub.notAuthenticated()
     val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
