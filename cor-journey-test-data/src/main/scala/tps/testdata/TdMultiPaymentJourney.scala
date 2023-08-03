@@ -33,11 +33,11 @@ with TdJourneyNtc //for 5th item in a basket
 
     lazy val journeyWith5itemsInBasket: Journey = exampleJourneyAfterCreated.copy(
       payments = List(
-        dependencies.TdJourneyChildBenefit.paymentItem,
-        dependencies.TdJourneyCotax.paymentItem,
-        dependencies.TdJourneyVat.paymentItem,
-        dependencies.TdJourneyPaye.paymentItem,
-        dependencies.TdJourneyNtc.paymentItem
+        dependencies.TdJourneyChildBenefit.paymentItemBeforePcipal,
+        dependencies.TdJourneyCotax.paymentItemBeforePcipal,
+        dependencies.TdJourneyVat.paymentItemBeforePcipal,
+        dependencies.TdJourneyPaye.paymentItemBeforePcipal,
+        dependencies.TdJourneyNtc.paymentItemBeforePcipal
       )
     )
     lazy val journeyWith5itemsInBasketJson: JourneyJson = JourneyJson(

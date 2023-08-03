@@ -62,4 +62,27 @@ trait TdAll
       .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
       .++(TdJourneyMultiPayment.allJourneys)
 
+  // only journeys that have a frontend journey within tps-frontend
+  @SuppressWarnings(Array(
+    "org.wartremover.warts.JavaSerializable",
+    "org.wartremover.warts.Serializable",
+    "org.wartremover.warts.Product"))
+  lazy val allTdFrontendJourneyInStates: List[TdJourneyInStates] = List(
+    TdJourneyChildBenefit,
+    TdJourneyCotax,
+    TdJourneyNps,
+    TdJourneyNtc,
+    TdJourneyPaye,
+    TdJourneyPpt,
+    TdJourneySa,
+    TdJourneySafe,
+    TdJourneySdlt,
+    TdJourneyVat
+  )
+
+  lazy val allTdFrontendJourneysWithJson: List[(Journey, JourneyJson)] =
+    allTdFrontendJourneyInStates
+      .map(_.allJourneys)
+      .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
+
 }

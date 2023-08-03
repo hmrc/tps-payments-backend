@@ -113,7 +113,7 @@ trait TdJourneyMib { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.B,
@@ -126,12 +126,14 @@ trait TdJourneyMib { dependencies: TdBase =>
       email               = Some(dependencies.email)
     )
 
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
+
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
       journeyState                = JourneyState.BasketNotEmpty,
       pid                         = pid,
       created                     = created,
-      payments                    = List(paymentItem),
+      payments                    = List(paymentItemBeforePcipal),
       navigation                  = navigation,
       pcipalSessionLaunchRequest  = None,
       pcipalSessionLaunchResponse = None

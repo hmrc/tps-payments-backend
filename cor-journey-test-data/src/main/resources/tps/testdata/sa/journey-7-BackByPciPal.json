@@ -12,20 +12,6 @@
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
     "chargeReference" : "1234567895K",
-    "pcipalData" : {
-      "HoD" : "K",
-      "TaxReference" : "1234567895K",
-      "Amount" : 104.04,
-      "Commission" : 0,
-      "CardType" : "VISA",
-      "Status" : "validated",
-      "PCIPalSessionId" : "dummy-session-id-765955124",
-      "TransactionReference" : "1234567895K",
-      "paymentItemId" : "64897aee16fe8b501cbf008a",
-      "ChargeReference" : "1234567895K",
-      "ReferenceNumber" : "3000000001",
-      "CardLast4" : "1234"
-    },
     "paymentSpecificData" : {
       "saReference" : "1234567895K"
     },

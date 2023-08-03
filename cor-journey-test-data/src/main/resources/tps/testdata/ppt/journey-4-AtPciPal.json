@@ -12,20 +12,6 @@
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
     "chargeReference" : "XRPPT0001234567",
-    "pcipalData" : {
-      "HoD" : "C",
-      "TaxReference" : "XRPPT0001234567",
-      "Amount" : 112.12,
-      "Commission" : 0,
-      "CardType" : "VISA",
-      "Status" : "validated",
-      "PCIPalSessionId" : "dummy-session-id-765955124",
-      "TransactionReference" : "XRPPT0001234567",
-      "paymentItemId" : "64897aee16fe8b501cbf008a",
-      "ChargeReference" : "XRPPT0001234567",
-      "ReferenceNumber" : "3000000001",
-      "CardLast4" : "1234"
-    },
     "paymentSpecificData" : {
       "pptReference" : "XRPPT0001234567"
     },

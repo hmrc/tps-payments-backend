@@ -113,7 +113,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.B,
@@ -125,6 +125,8 @@ trait TdJourneyPngr { dependencies: TdBase =>
       taxType             = TaxTypes.PNGR,
       email               = Some(dependencies.email)
     )
+
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,

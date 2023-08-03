@@ -12,20 +12,6 @@
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
     "chargeReference" : "1097172564A00104A",
-    "pcipalData" : {
-      "HoD" : "A",
-      "TaxReference" : "1097172564A00104A",
-      "Amount" : 107.07,
-      "Commission" : 0,
-      "CardType" : "VISA",
-      "Status" : "validated",
-      "PCIPalSessionId" : "dummy-session-id-765955124",
-      "TransactionReference" : "1097172564A00104A",
-      "paymentItemId" : "64897aee16fe8b501cbf008a",
-      "ChargeReference" : "1097172564A00104A",
-      "ReferenceNumber" : "3000000001",
-      "CardLast4" : "1234"
-    },
     "paymentSpecificData" : {
       "cotaxReference" : "1097172564A00104A"
     },
