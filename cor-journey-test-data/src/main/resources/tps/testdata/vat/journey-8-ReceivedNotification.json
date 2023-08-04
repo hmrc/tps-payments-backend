@@ -23,7 +23,7 @@
       "TransactionReference" : "968501144",
       "paymentItemId" : "64897aee16fe8b501cbf008a",
       "ChargeReference" : "968501144",
-      "ReferenceNumber" : "3000000001",
+      "ReferenceNumber" : "3123456701",
       "CardLast4" : "1234"
     },
     "paymentSpecificData" : {
@@ -47,7 +47,7 @@
       "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
       "ChargeReference_1" : "968501144",
       "TaxRegimeDisplay_1" : "VAT",
-      "Reference_1" : "3000000001",
+      "Reference_1" : "3123456701",
       "PID_1" : "1234567",
       "AccountOfficeID_1" : "G1",
       "HODIdentifier_1" : "V",

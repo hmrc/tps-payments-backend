@@ -137,7 +137,7 @@ object TestData {
     TransactionReference = transReference,
     paymentItemId        = paymentItemId,
     ChargeReference      = "chargeReference",
-    ReferenceNumber      = "3000000001",
+    ReferenceNumber      = "3123456701",
     CardLast4            = "0123"
   )
 
@@ -369,7 +369,7 @@ object TestData {
             "TransactionReference": "$transReference",
             "paymentItemId": "${paymentItemId.value}",
             "ChargeReference" : "chargeReference",
-            "ReferenceNumber": "3000000001",
+            "ReferenceNumber": "3123456701",
             "CardLast4": "0123"
       }""".stripMargin)
 
@@ -568,7 +568,7 @@ object TestData {
         }
      """.stripMargin)
 
-  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3000000001"}]"""
+  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3123456701"}]"""
 
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(

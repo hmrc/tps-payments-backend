@@ -23,7 +23,7 @@
       "TransactionReference" : "XA1234567890123",
       "paymentItemId" : "64897aee16fe8b501cbf008a",
       "ChargeReference" : "XA1234567890123",
-      "ReferenceNumber" : "3000000001",
+      "ReferenceNumber" : "3123456701",
       "CardLast4" : "1234"
     },
     "paymentSpecificData" : {
@@ -45,7 +45,7 @@
       "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
       "ChargeReference_1" : "XA1234567890123",
       "TaxRegimeDisplay_1" : "SAFE",
-      "Reference_1" : "3000000001",
+      "Reference_1" : "3123456701",
       "PID_1" : "1234567",
       "AccountOfficeID_1" : "S1",
       "HODIdentifier_1" : "X",

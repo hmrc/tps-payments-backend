@@ -30,11 +30,11 @@
   "pcipalSessionLaunchRequest" : {
     "FlowId" : 1055,
     "InitialValues" : {
-      "ClientID_1" : "PSML",
+      "ClientID_1" : "MBML",
       "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
       "ChargeReference_1" : "XJPR5573376231",
       "TaxRegimeDisplay_1" : "MIB",
-      "Reference_1" : "3000000001",
+      "Reference_1" : "3123456701",
       "PID_1" : "1234567",
       "AccountOfficeID_1" : "S1",
       "HODIdentifier_1" : "B",

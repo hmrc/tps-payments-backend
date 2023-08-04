@@ -55,7 +55,7 @@ trait TdBase {
   //TODO: this probably is a transaction number,
   // change it to be a proper transaction number
   //investigate the source of this data
-  lazy val pciPalReferenceNumber: String = "3000000001"
+  lazy val pciPalReferenceNumber: String = "3123456701"
   lazy val paymentItemId: PaymentItemId = PaymentItemId("64897aee16fe8b501cbf008a")
 
   lazy val cardType: String = "VISA"

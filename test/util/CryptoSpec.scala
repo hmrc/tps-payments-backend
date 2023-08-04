@@ -59,11 +59,7 @@ class CryptoSpec extends ItSpec {
          |""".stripMargin
     )
 
-    val test: Crypted = oldAes.encrypt(PlainText("test@email.com"))
-    println(s"I am the field: ${test.value}")
-
     val cryptoNew = new Crypto(configNew)
-    println(s"decrypted attempt: ${cryptoNew.decrypt(test.value)}")
 
     val plain = PlainText("sialala")
     val encryptedOld: Crypted = oldAes.encrypt(plain)
