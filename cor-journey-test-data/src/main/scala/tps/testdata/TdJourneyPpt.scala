@@ -92,18 +92,20 @@ trait TdJourneyPpt { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.C,
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
-      pcipalData          = Some(pcipalData),
+      pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
       taxType             = TaxTypes.Ppt,
       email               = Some(dependencies.email)
     )
+
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
       "/tps/testdata/ppt/journey-1-Created.json"

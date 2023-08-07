@@ -30,7 +30,7 @@ trait TdJourneyNps { dependencies: TdBase =>
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
     override lazy val navigation: Navigation = dependencies.navigation
-    override lazy val amountString: String = "110.10"
+    override lazy val amountString: String = "110.01"
     override lazy val taxReference: String = "AA000000JM"
     override final val selectedTaxType: TaxType = TaxTypes.Nps
 
@@ -55,7 +55,7 @@ trait TdJourneyNps { dependencies: TdBase =>
         taxAmount          = None,
         nicAmount          = None,
         lnpClass2          = Some("61"),
-        nirRate            = Some("1.0"),
+        nirRate            = Some("1.00"),
         startDate          = Some("020122"),
         endDate            = Some("080122"),
         vatPeriodReference = None,
@@ -96,18 +96,20 @@ trait TdJourneyNps { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.J,
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
-      pcipalData          = Some(pcipalData),
+      pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
       taxType             = TaxTypes.Nps,
       email               = Some(dependencies.email)
     )
+
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyCreatedJson = JourneyJson(
       "/tps/testdata/nps/journey-1-Created.json"

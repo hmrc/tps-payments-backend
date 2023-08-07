@@ -12,20 +12,6 @@
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
     "chargeReference" : "123456789MA",
-    "pcipalData" : {
-      "HoD" : "M",
-      "TaxReference" : "123456789MA",
-      "Amount" : 105.05,
-      "Commission" : 0,
-      "CardType" : "VISA",
-      "Status" : "validated",
-      "PCIPalSessionId" : "dummy-session-id-765955124",
-      "TransactionReference" : "123456789MA",
-      "paymentItemId" : "64897aee16fe8b501cbf008a",
-      "ChargeReference" : "123456789MA",
-      "ReferenceNumber" : "3000000001",
-      "CardLast4" : "1234"
-    },
     "paymentSpecificData" : {
       "sdltReference" : "123456789MA"
     },
@@ -45,7 +31,7 @@
       "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
       "ChargeReference_1" : "123456789MA",
       "TaxRegimeDisplay_1" : "SDLT",
-      "Reference_1" : "3000000001",
+      "Reference_1" : "3123456701",
       "PID_1" : "1234567",
       "AccountOfficeID_1" : "S1",
       "HODIdentifier_1" : "M",

@@ -49,6 +49,7 @@ trait TdJourneyInStates {
   def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest
   def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse
   def pcipalData: ChargeRefNotificationPcipalRequest
+  def paymentItemBeforePcipal: PaymentItem // i.e. pcipal data is None
   def paymentItem: PaymentItem
   def paymentSpecificData: PaymentSpecificData
 
@@ -75,7 +76,7 @@ trait TdJourneyInStates {
   lazy val journeyEnteredPayment: Journey =
     journeySelectedTaxType.copy(
       journeyState = JourneyState.BasketNotEmpty,
-      payments     = List(paymentItem)
+      payments     = List(paymentItemBeforePcipal)
     )
 
   def journeyEnteredPaymentJson: JourneyJson

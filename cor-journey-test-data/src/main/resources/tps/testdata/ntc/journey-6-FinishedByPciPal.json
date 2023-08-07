@@ -12,20 +12,6 @@
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
     "chargeReference" : "JJ067874050421NV",
-    "pcipalData" : {
-      "HoD" : "N",
-      "TaxReference" : "JJ067874050421NV",
-      "Amount" : 108.08,
-      "Commission" : 0,
-      "CardType" : "VISA",
-      "Status" : "validated",
-      "PCIPalSessionId" : "dummy-session-id-765955124",
-      "TransactionReference" : "JJ067874050421NV",
-      "paymentItemId" : "64897aee16fe8b501cbf008a",
-      "ChargeReference" : "JJ067874050421NV",
-      "ReferenceNumber" : "3000000001",
-      "CardLast4" : "1234"
-    },
     "paymentSpecificData" : {
       "ntcReference" : "JJ067874050421NV"
     },
@@ -45,7 +31,7 @@
       "PaymentItemID_1" : "64897aee16fe8b501cbf008a",
       "ChargeReference_1" : "JJ067874050421NV",
       "TaxRegimeDisplay_1" : "NTC",
-      "Reference_1" : "3000000001",
+      "Reference_1" : "3123456701",
       "PID_1" : "1234567",
       "AccountOfficeID_1" : "G1",
       "HODIdentifier_1" : "N",

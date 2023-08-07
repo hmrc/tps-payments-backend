@@ -92,7 +92,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItem: PaymentItem = PaymentItem(
+    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.B,
@@ -104,6 +104,8 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       taxType             = TaxTypes.ChildBenefitsRepayments,
       email               = Some(dependencies.email)
     )
+
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyCreatedJson = JourneyJson(
       "/tps/testdata/childbenefit/journey-1-Created.json"
