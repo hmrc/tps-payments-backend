@@ -69,7 +69,6 @@ class TestConnectorSpec extends ItSpec with Status {
 
   "update with pci-pal data" in {
     authorised()
-    //    connector.upsert(tpsPaymentsWithEncryptedEmail).futureValue
     connector.upsert(tpsPaymentsWithPcipalData).futureValue
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK

@@ -188,7 +188,7 @@ object TestData {
         paymentItemId      = PaymentItemId("payment-item-id123123"),
         chargeReference    = "1234567895K",
         taxRegimeDisplay   = "SA",
-        reference          = "1234567895K",
+        reference          = "300001",
         increment          = "1"
       )
     ),
