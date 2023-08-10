@@ -17,24 +17,27 @@
 package controllers
 
 import play.api.http.Status
+import testsupport.stubs.AuthStub
 import testsupport.testdata.TestData._
 import testsupport.{ItSpec, TestConnector}
 import tps.journey.model.JourneyId
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 class PaymentItemProcessorControllerSpec extends ItSpec with Status {
 
-  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+  private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
   private lazy val connector = injector.instanceOf[TestConnector]
 
   "getModsAmendmentRef should return the amendment reference in the ModsPaymentCallBackRequest when there is one" in {
-    Option(repo.upsert(modsTpsPaymentsWithAnAmendmentReference).futureValue.getUpsertedId).isDefined shouldBe true
+    AuthStub.authorised()
+    connector.upsert(modsTpsPaymentsWithAnAmendmentReference).futureValue
     connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithAmendmentRef
   }
 
   "getModsAmendmentRef should return None for amendment reference in the ModsPaymentCallBackRequest when isn't one" in {
-    Option(repo.upsert(modsTpsPaymentsNoAmendmentReference).futureValue.getUpsertedId).isDefined shouldBe true
+    AuthStub.authorised()
+    connector.upsert(modsTpsPaymentsNoAmendmentReference).futureValue
     connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
 

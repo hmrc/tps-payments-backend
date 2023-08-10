@@ -19,8 +19,8 @@ package journey
 import journey.JourneyService.FindByPcipalSessionIdResult
 import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
-import tps.model.{Email, PaymentItem, PaymentItemId}
-import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId}
+import tps.model._
+import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalInitialValues, PcipalSessionId}
 import tps.utils.SafeEquals.EqualsOps
 import util.Crypto
 
@@ -28,16 +28,19 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class JourneyService @Inject() (
-    crypto:      Crypto,
-    journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
 
-  def upsert(journey: Journey): Future[Unit] = journeyRepo.upsert(encryptEmails(journey)).map(_ => ())
+  private lazy val logger = Logger(this.getClass)
+
+  def upsert(journey: Journey): Future[Unit] =
+    journeyRepo
+      .upsert(encryptOrDecryptSensitiveJourneyFields(journey)(encryptString))
+      .map(_ => ())
 
   def find(journeyId: JourneyId): Future[Option[Journey]] =
     journeyRepo
       .findById(journeyId)
-      .map(_.map(decryptEmails))
+      .map(_.map(encryptOrDecryptSensitiveJourneyFields(_)(decryptString)))
 
   def findByPcipalSessionId(pcipalSessionId: PcipalSessionId, paymentItemId: PaymentItemId): Future[FindByPcipalSessionIdResult] = {
     journeyRepo
@@ -45,7 +48,7 @@ class JourneyService @Inject() (
       .map {
         case Nil => FindByPcipalSessionIdResult.NoJourneyBySessionId
         case one :: Nil =>
-          val journey = decryptEmails(one)
+          val journey = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
           val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
           if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
           else FindByPcipalSessionIdResult.NoMatchingPaymentItem
@@ -58,7 +61,7 @@ class JourneyService @Inject() (
       .findByPaymentItemId(paymentItemId)
       .map {
         case Nil        => None
-        case one :: Nil => Some(decryptEmails(one))
+        case one :: Nil => Some(encryptOrDecryptSensitiveJourneyFields(one)(decryptString))
         case multiple   => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given paymentItemId [${paymentItemId.value}]")
       }
       .map(_.map(_.payments.filter(_.paymentItemId === paymentItemId)))
@@ -69,31 +72,7 @@ class JourneyService @Inject() (
       })
   }
 
-  private def encryptEmails(journey: Journey): Journey = {
-    val paymentItems: List[PaymentItem] = journey.payments
-    val paymentItemsWithEncryptedEmails: List[PaymentItem] = paymentItems.map(tpsPaymentItem => tpsPaymentItem.email match {
-      case Some(email) => tpsPaymentItem.copy(email = Some(Email(crypto.encrypt(email.value))))
-      case _           => tpsPaymentItem
-    })
-    journey.copy(payments = paymentItemsWithEncryptedEmails)
-  }
-
-  private def decryptEmails(journey: Journey): Journey = journey.copy(payments = journey
-    .payments
-    .map(item =>
-      item.copy(email = item.email.map(decryptEmail))
-    ))
-
-  private def decryptEmail(email: Email): Email = Try(crypto.decrypt(email.value)) match {
-    case Success(v) => Email(v)
-    case Failure(e) =>
-      throw new RuntimeException(s"Failed to decrypt email. Has encryption key changed?", e)
-  }
-
-  def updateJourneyWithPcipalData(journey:    Journey,
-                                  pcipalData: ChargeRefNotificationPcipalRequest
-  ): Journey = {
-
+  def updateJourneyWithPcipalData(journey: Journey, pcipalData: ChargeRefNotificationPcipalRequest): Journey = {
     val updatedJourney = journey.copy(payments = journey.payments.map {
       case p: PaymentItem if p.paymentItemId === pcipalData.paymentItemId => p.copy(pcipalData = Some(pcipalData))
       case p => p
@@ -108,7 +87,70 @@ class JourneyService @Inject() (
     updatedJourney
   }
 
-  private lazy val logger = Logger(this.getClass)
+  private val encryptString: String => String = s => crypto.encrypt(s)
+  private val decryptString: String => String = s => Try(crypto.decrypt(s)) match {
+    case Success(s) => s
+    case Failure(e) => throw new RuntimeException(s"Failed to decrypt journey. Has encryption key changed?", e)
+  }
+
+  private def encryptOrDecryptSensitiveJourneyFields(journey: Journey)(encryptOrDecrypt: String => String): Journey =
+    journey.copy(
+      payments                   = journey.payments.map(encryptOrDecryptSensitivePaymentItemFields(_)(encryptOrDecrypt)),
+      pcipalSessionLaunchRequest = journey.pcipalSessionLaunchRequest.map { pcipalSessionLaunchRequest =>
+        pcipalSessionLaunchRequest.copy(
+          InitialValues = pcipalSessionLaunchRequest.InitialValues.map(encryptOrDecryptPcipalInitialValue(_)(encryptOrDecrypt))
+        )
+      }
+    )
+
+  /* If we ever move to scala 3, we can use monocle to do this, it's cleaner code,
+   * i.e.
+   * paymentItem
+   * .focus(_.customerName.value).modify(encryptStringOrDecrypt)
+   * .focus(_.email.some.value).modify(encryptStringOrDecrypt)
+   * However scala 2.13 version doesn't work with nested options (so email etc is clunky), for now just use copy :(
+   */
+  private def encryptOrDecryptSensitivePaymentItemFields(paymentItem: PaymentItem)(encryptOrDecrypt: String => String): PaymentItem =
+    paymentItem.copy(
+      customerName        = CustomerName(encryptOrDecrypt(paymentItem.customerName.value)),
+      chargeReference     = encryptOrDecrypt(paymentItem.chargeReference),
+      pcipalData          = paymentItem.pcipalData.map(encryptOrDecryptPcipalData(_)(encryptOrDecrypt)),
+      paymentSpecificData = encryptOrDecryptPaymentSpecificData(paymentItem.paymentSpecificData)(encryptOrDecrypt),
+      email               = paymentItem.email.map(email => Email(encryptOrDecrypt(email.value)))
+    )
+
+  private def encryptOrDecryptPaymentSpecificData(paymentSpecificData: PaymentSpecificData)(encryptOrDecrypt: String => String): PaymentSpecificData = {
+    paymentSpecificData match {
+      case psd @ SimplePaymentSpecificData(_)        => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ PngrSpecificData(_, _, _, _)        => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ MibSpecificData(_, _, _, _)         => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ ChildBenefitSpecificData(_)         => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
+      case psd @ SaSpecificData(_)                   => psd.copy(encryptOrDecrypt(psd.saReference))
+      case psd @ SdltSpecificData(_)                 => psd.copy(encryptOrDecrypt(psd.sdltReference))
+      case psd @ SafeSpecificData(_)                 => psd.copy(encryptOrDecrypt(psd.safeReference))
+      case psd @ CotaxSpecificData(_)                => psd.copy(encryptOrDecrypt(psd.cotaxReference))
+      case psd @ NtcSpecificData(_)                  => psd.copy(encryptOrDecrypt(psd.ntcReference))
+      case psd @ PayeSpecificData(_, _, _)           => psd.copy(encryptOrDecrypt(psd.payeReference))
+      case psd @ NpsSpecificData(_, _, _, _, _)      => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
+      case psd @ VatSpecificData(_, _)               => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
+      case psd @ PptSpecificData(_)                  => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
+      case psd @ PaymentSpecificDataP800(_, _, _, _) => psd.copy(ninoPart1 = encryptOrDecrypt(psd.ninoPart1), ninoPart2 = encryptOrDecrypt(psd.ninoPart2))
+    }
+  }
+
+  private def encryptOrDecryptPcipalData(pcipalData: ChargeRefNotificationPcipalRequest)(encryptOrDecrypt: String => String): ChargeRefNotificationPcipalRequest =
+    pcipalData.copy(
+      TaxReference    = encryptOrDecrypt(pcipalData.TaxReference),
+      ChargeReference = encryptOrDecrypt(pcipalData.ChargeReference)
+    )
+
+  private def encryptOrDecryptPcipalInitialValue(pcipalInitialValue: PcipalInitialValues)(encryptOrDecrypt: String => String): PcipalInitialValues =
+    pcipalInitialValue.copy(
+      UTRReference    = encryptOrDecrypt(pcipalInitialValue.UTRReference),
+      name1           = encryptOrDecrypt(pcipalInitialValue.name1),
+      chargeReference = encryptOrDecrypt(pcipalInitialValue.chargeReference)
+    )
+
 }
 
 object JourneyService {
