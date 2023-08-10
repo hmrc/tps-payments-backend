@@ -44,7 +44,7 @@ class JourneyServiceSpec extends ItSpec {
     journeyService.upsert(journeyBeforeEncryption).futureValue
     val journeyInMongo = repo.findById(journeyBeforeEncryption.journeyId).futureValue
     journeyInMongo should not be journeyBeforeEncryption withClue "some fields in the journey should be encrypted"
-    val sensitiveStringsInJourney = List("JE231111", "AR", "test@email.com", "chargeReference", "1234567895K")
+    val sensitiveStringsInJourney = List("JE231111", "some test name", "test@email.com", "chargeReference", "1234567895K")
     sensitiveStringsInJourney.foreach { sensitiveData =>
       journeyBeforeEncryption.toString should include(sensitiveData) withClue "the strings should be in the unencrypted journey..."
       journeyInMongo.toString should not include sensitiveData withClue "there were unencrypted values in the 'encrypted' journey..."
