@@ -17,7 +17,7 @@
 package testonly
 
 import deniedrefs.DeniedRefsRepo
-import journey.JourneyRepo
+import journey.{JourneyRepo, JourneyService}
 import org.bson.types.ObjectId
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
@@ -33,7 +33,9 @@ import scala.concurrent.ExecutionContext
 class TestController @Inject() (
     deniedRefsRepo: DeniedRefsRepo,
     cc:             ControllerComponents,
-    journeyRepo:    JourneyRepo)(implicit ec: ExecutionContext) extends BackendController(cc) {
+    journeyRepo:    JourneyRepo,
+    journeyService: JourneyService
+)(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   private val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
     "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
@@ -43,13 +45,13 @@ class TestController @Inject() (
   }
 
   def findByReference(ref: String): Action[AnyContent] = Action.async {
+
     journeyRepo.findByReferenceForTest(ref).map(result => Ok(toJson(result)))
   }
 
   def storeTpsPayments(): Action[Journey] = Action.async(parse.json[Journey]) { implicit request =>
     val updatedPayments: List[PaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = PaymentItemId(ObjectId.get().toHexString)))
-
-    journeyRepo.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
+    journeyService.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
     }
   }

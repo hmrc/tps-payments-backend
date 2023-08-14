@@ -130,9 +130,11 @@ final class JourneyRepo @Inject() (
   def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
     find("pcipalSessionLaunchResponse.Id" -> id.value)
 
+  //todo can we remove this
   def removeByReferenceForTest(references: List[String]): Future[Long] =
     remove("payments.paymentSpecificData.ninoPart1" -> Json.obj("$in" -> toJson(references)))
 
+  //todo can we remove this
   def findByReferenceForTest(reference: String): Future[List[Journey]] =
     find("payments.paymentSpecificData.ninoPart1" -> reference)
 
