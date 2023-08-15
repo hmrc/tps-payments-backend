@@ -17,12 +17,12 @@
 package testonly
 
 import deniedrefs.DeniedRefsRepo
-import journey.{JourneyRepo, JourneyService}
+import journey.JourneyService
 import org.bson.types.ObjectId
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import tps.journey.model.Journey
+import tps.journey.model.{Journey, JourneyId}
 import tps.model.{PaymentItem, PaymentItemId}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
@@ -33,20 +33,11 @@ import scala.concurrent.ExecutionContext
 class TestController @Inject() (
     deniedRefsRepo: DeniedRefsRepo,
     cc:             ControllerComponents,
-    journeyRepo:    JourneyRepo,
     journeyService: JourneyService
 )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  private val possibleReferences = Seq("TT999991", "TT999992", "TT999993", "TT999994",
-    "TT999995", "TT999996", "TT999997", "TT999998", "TT999999")
-
-  def removeTestData(): Action[AnyContent] = Action.async {
-    journeyRepo.removeByReferenceForTest(possibleReferences.toList).map(_ => Ok("Test data removed"))
-  }
-
-  def findByReference(ref: String): Action[AnyContent] = Action.async {
-
-    journeyRepo.findByReferenceForTest(ref).map(result => Ok(toJson(result)))
+  def findById(journeyId: JourneyId): Action[AnyContent] = Action.async {
+    journeyService.find(journeyId).map(result => Ok(toJson(result)))
   }
 
   def storeTpsPayments(): Action[Journey] = Action.async(parse.json[Journey]) { implicit request =>
