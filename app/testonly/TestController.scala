@@ -17,7 +17,7 @@
 package testonly
 
 import deniedrefs.DeniedRefsRepo
-import journey.{JourneyRepo, JourneyService}
+import journey.JourneyService
 import org.bson.types.ObjectId
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
@@ -33,7 +33,6 @@ import scala.concurrent.ExecutionContext
 class TestController @Inject() (
     deniedRefsRepo: DeniedRefsRepo,
     cc:             ControllerComponents,
-    journeyRepo:    JourneyRepo,
     journeyService: JourneyService
 )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
