@@ -21,6 +21,7 @@ lazy val microservice = Project(appName, file("."))
     update / evictionWarningOptions  :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
   .settings(WartRemoverSettings.wartRemoverSettingsPlay)
+  .settings(ScoverageSettings())
   .dependsOn(corJourney, corJourneyTestData)
   .aggregate(corJourney, corJourneyTestData)
   .settings(PlayKeys.playDefaultPort := 9125)
@@ -46,6 +47,7 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
   )
+  .settings(ScoverageSettings())
 
 /**
  * Collection Of Routines - test data
@@ -77,7 +79,6 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   }
 )
   .++(ScalariformSettings())
-  .++(ScoverageSettings())
   .++(WartRemoverSettings.wartRemoverSettings)
   .++(scalaSettings)
   .++(uk.gov.hmrc.DefaultBuildSettings.defaultSettings())

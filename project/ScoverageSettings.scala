@@ -15,7 +15,6 @@ object ScoverageSettings {
       ".*javascript.*",
       ".*Routes.*",
       ".*GuiceInjector",
-      ".*DateTimeQueryStringBinder.*", // better covered via wiremock/E2E integration tests
       ".*Test.*",
       ".*ValueClassBinder.*"
     ).mkString(";"),
