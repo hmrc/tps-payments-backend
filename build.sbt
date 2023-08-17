@@ -70,6 +70,7 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Compile / scalacOptions -= "utf8",
+  libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
   scalacOptions ++= scalaCompilerOptions,
   scalacOptions ++= {
     if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil

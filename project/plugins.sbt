@@ -4,9 +4,7 @@ resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases
 resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
 
 
-ThisBuild / libraryDependencySchemes ++= Seq(
-  "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
-)
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 
 addSbtPlugin("com.typesafe.play" %  "sbt-plugin"            % "2.8.20")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-auto-build"        % "3.9.0")
