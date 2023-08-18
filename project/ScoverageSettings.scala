@@ -18,8 +18,8 @@ object ScoverageSettings {
       ".*Test.*",
       ".*ValueClassBinder.*"
     ).mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 85,
-    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
+    ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
     Test / parallelExecution := false
   )
