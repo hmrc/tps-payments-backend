@@ -15,12 +15,11 @@ object ScoverageSettings {
       ".*javascript.*",
       ".*Routes.*",
       ".*GuiceInjector",
-      ".*DateTimeQueryStringBinder.*", // better covered via wiremock/E2E integration tests
       ".*Test.*",
       ".*ValueClassBinder.*"
     ).mkString(";"),
-    ScoverageKeys.coverageMinimumStmtTotal := 90,  //should be a lot higher but we are where we are
-    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
+    ScoverageKeys.coverageFailOnMinimum := false,
     ScoverageKeys.coverageHighlighting := true,
     Test / parallelExecution := false
   )

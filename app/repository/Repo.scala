@@ -72,13 +72,6 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .toFuture()
     .map(_.toList)
 
-  def remove(query: (String, JsValueWrapper)*): Future[Long] = collection
-    .deleteMany(
-      filter = new JsonObject(Json.obj(query: _*).toString())
-    )
-    .toFuture()
-    .map(_.getDeletedCount)
-
   def drop(): Future[Boolean] = collection
     .drop()
     .toFuture()
