@@ -69,7 +69,7 @@ class JourneyController @Inject() (actions:        Actions,
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     val notification: ChargeRefNotificationPcipalRequest = request.body
-    logger.info(s"Updating journey with Pcipal data [paymentStatus: ${notification.Status}] [paymentItemId:${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
+    logger.info(s"Update request from Pcipal received [paymentStatus: ${notification.Status.toString}] [paymentItemId:${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
 
     for {
       maybeJourney: JourneyService.FindByPcipalSessionIdResult <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
@@ -81,7 +81,10 @@ class JourneyController @Inject() (actions:        Actions,
           emailService.maybeSendEmail(newJourney)
           journeyService
             .upsert(newJourney)
-            .map(_ => Ok)
+            .map { _ =>
+              logger.info(s"Journey updated with Pcipal data [journeyId: ${newJourney.journeyId.value}] [paymentStatus:${notification.Status.toString}]")
+              Ok
+            }
         case JourneyService.FindByPcipalSessionIdResult.NoJourneyBySessionId => Future.successful(
           BadRequest(s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
         )
