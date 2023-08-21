@@ -69,7 +69,7 @@ class JourneyController @Inject() (actions:        Actions,
 
   def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     val notification: ChargeRefNotificationPcipalRequest = request.body
-    logger.info(s"Updating journey with Pcipal data (upon ChargeRefNotification) [paymentItemId:${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
+    logger.info(s"Updating journey with Pcipal data [paymentStatus: ${notification.Status}] [paymentItemId:${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]")
 
     for {
       maybeJourney: JourneyService.FindByPcipalSessionIdResult <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
