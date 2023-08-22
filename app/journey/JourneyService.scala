@@ -46,22 +46,13 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
     journeyRepo
       .findByPcipalSessionId(pcipalSessionId)
       .map {
-        case Nil =>
-          logger.info(s"No Journey by session id found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
-          FindByPcipalSessionIdResult.NoJourneyBySessionId
+        case Nil => FindByPcipalSessionIdResult.NoJourneyBySessionId
         case one :: Nil =>
           val journey = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
           val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
-          if (hasPaymentItem) {
-            logger.info(s"Found payment to update [journeyId:${journey.journeyId.value}] [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
-            FindByPcipalSessionIdResult.Found(journey)
-          } else {
-            logger.info(s"No matching payment item found [journeyId:${journey.journeyId.value}] [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
-            FindByPcipalSessionIdResult.NoMatchingPaymentItem
-          }
-        case multiple =>
-          logger.info(s"Multiple payment items found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
-          throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
+          if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
+          else FindByPcipalSessionIdResult.NoMatchingPaymentItem(one)
+        case multiple => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
       }
   }
 
@@ -179,6 +170,6 @@ object JourneyService {
     /**
      * Journey Found by PcipalSessionId but there is no PaymentItem in payments with given paymentItemId.
      */
-    case object NoMatchingPaymentItem extends FindByPcipalSessionIdResult
+    final case class NoMatchingPaymentItem(journey: Journey) extends FindByPcipalSessionIdResult
   }
 }
