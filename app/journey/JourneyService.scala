@@ -46,13 +46,22 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
     journeyRepo
       .findByPcipalSessionId(pcipalSessionId)
       .map {
-        case Nil => FindByPcipalSessionIdResult.NoJourneyBySessionId
+        case Nil =>
+          logger.info(s"No Journey by session id found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
+          FindByPcipalSessionIdResult.NoJourneyBySessionId
         case one :: Nil =>
           val journey = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
           val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
-          if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
-          else FindByPcipalSessionIdResult.NoMatchingPaymentItem
-        case multiple => throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
+          if (hasPaymentItem) {
+            logger.info(s"Found payment to update [journeyId:${journey.journeyId.value}] [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
+            FindByPcipalSessionIdResult.Found(journey)
+          } else {
+            logger.info(s"No matching payment item found [journeyId:${journey.journeyId.value}] [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
+            FindByPcipalSessionIdResult.NoMatchingPaymentItem
+          }
+        case multiple =>
+          logger.info(s"Multiple payment items found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]")
+          throw new RuntimeException(s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]")
       }
   }
 
