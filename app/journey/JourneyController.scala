@@ -104,7 +104,6 @@ class JourneyController @Inject() (actions:        Actions,
         case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey) =>
           KibanaLogger.info("Update request from Pcipal resulted in NoMatchingPaymentItem", Some(journey), Some(notification.PCIPalSessionId), Some(notification.paymentItemId))
           Future.successful(BadRequest(s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"))
-
       }
     } yield result
   }
