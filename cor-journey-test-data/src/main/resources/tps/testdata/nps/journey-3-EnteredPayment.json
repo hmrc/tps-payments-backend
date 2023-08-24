@@ -19,7 +19,7 @@
       "npsType" : "Class 2 National Insurance",
       "rate" : 1
     },
-    "taxType" : "Nps",
+    "taxType" : "NPS",
     "email" : "test@email.com"
   } ],
   "navigation" : {

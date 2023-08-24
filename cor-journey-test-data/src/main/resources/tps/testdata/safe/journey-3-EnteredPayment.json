@@ -15,7 +15,7 @@
     "paymentSpecificData" : {
       "safeReference" : "XA1234567890123"
     },
-    "taxType" : "Safe",
+    "taxType" : "SAFE",
     "email" : "test@email.com"
   } ],
   "navigation" : {

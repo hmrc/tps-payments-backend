@@ -2,7 +2,7 @@
   "_id" : "64886ed616fe8b501cbf0088",
   "journeyState" : {
     "EnterPayment" : {
-      "taxType" : "Nps"
+      "taxType" : "NPS"
     }
   },
   "pid" : "1234567",

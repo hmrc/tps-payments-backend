@@ -15,7 +15,7 @@
     "paymentSpecificData" : {
       "saReference" : "1234567895K"
     },
-    "taxType" : "Sa",
+    "taxType" : "SA",
     "email" : "test@email.com"
   } ],
   "navigation" : {

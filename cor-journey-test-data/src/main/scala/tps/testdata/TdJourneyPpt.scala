@@ -32,7 +32,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "112.12"
     override lazy val taxReference: String = "XRPPT0001234567"
-    override final val selectedTaxType: TaxType = TaxTypes.Ppt
+    override final val selectedTaxType: TaxType = TaxTypes.PPT
 
     override lazy val paymentSpecificData: PptSpecificData = PptSpecificData(
       pptReference = taxReference
@@ -101,7 +101,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
       chargeReference     = taxReference,
       pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
-      taxType             = TaxTypes.Ppt,
+      taxType             = TaxTypes.PPT,
       email               = Some(dependencies.email)
     )
 

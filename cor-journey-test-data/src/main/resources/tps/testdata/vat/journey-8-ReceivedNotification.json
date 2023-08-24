@@ -30,7 +30,7 @@
       "vatReference" : "968501144",
       "remittanceType" : "Unaccompanied"
     },
-    "taxType" : "Vat",
+    "taxType" : "VAT",
     "email" : "test@email.com"
   } ],
   "navigation" : {

@@ -34,7 +34,7 @@
       "paymentSpecificData": {
         "childBenefitYReference": "YA123456789123"
       },
-      "taxType": "ChildBenefitsRepayments",
+      "taxType": "ZCHB",
       "email": "test@email.com"
     }
   ],

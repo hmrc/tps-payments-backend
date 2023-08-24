@@ -43,7 +43,8 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
       "uk.gov.hmrc"       %% "bootstrap-common-play-28" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
       "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumVersion,
-      "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
+      "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"       % AppDependencies.hmrcMongoVersion, //for java Instant Json Formats
+      "org.typelevel"     %% "cats-core"                % "2.10.0"
     )
   )
 

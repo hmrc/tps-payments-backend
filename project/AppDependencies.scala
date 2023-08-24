@@ -14,7 +14,8 @@ object AppDependencies {
       "uk.gov.hmrc.mongo"   %% "hmrc-mongo-play-28"         % "1.3.0",
       "uk.gov.hmrc"         %% "bootstrap-backend-play-28"  % bootstrapVersion,
       "com.beachape"        %% "enumeratum"                 % "1.7.0",
-      "com.lightbend.akka"  %% "akka-stream-alpakka-csv"    % "2.0.2"
+      "com.lightbend.akka"  %% "akka-stream-alpakka-csv"    % "2.0.2",
+      "org.typelevel"       %% "cats-core"                  % "2.10.0"
     )
 
     val test: Seq[ModuleID] = Seq(

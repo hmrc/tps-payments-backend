@@ -38,16 +38,16 @@ class EmailServiceSpec extends ItSpec {
   }
 
   Seq[(TaxType, String)](
-    TaxTypes.ChildBenefitsRepayments -> "Child Benefits repayments",
-    TaxTypes.Sa -> "Self Assessment",
-    TaxTypes.Sdlt -> "Stamp Duty Land Tax",
-    TaxTypes.Safe -> "SAFE",
-    TaxTypes.Cotax -> "Corporation Tax",
-    TaxTypes.Ntc -> "Tax credit repayments",
-    TaxTypes.Paye -> "PAYE",
-    TaxTypes.Nps -> "NPS/NIRS",
-    TaxTypes.Vat -> "VAT",
-    TaxTypes.Ppt -> "Plastic Packaging Tax",
+    TaxTypes.ZCHB -> "Child Benefits repayments",
+    TaxTypes.SA -> "Self Assessment",
+    TaxTypes.SDLT -> "Stamp Duty Land Tax",
+    TaxTypes.SAFE -> "SAFE",
+    TaxTypes.CT -> "Corporation Tax",
+    TaxTypes.NTC -> "Tax credit repayments",
+    TaxTypes.PAYE -> "PAYE",
+    TaxTypes.NPS -> "NPS/NIRS",
+    TaxTypes.VAT -> "VAT",
+    TaxTypes.PPT -> "Plastic Packaging Tax",
     TaxTypes.P800 -> "P800",
     TaxTypes.MIB -> "MIB",
     TaxTypes.PNGR -> "PNGR"

@@ -2,7 +2,7 @@
   "_id" : "64886ed616fe8b501cbf0088",
   "journeyState" : {
     "EnterPayment" : {
-      "taxType" : "Sa"
+      "taxType" : "SA"
     }
   },
   "pid" : "1234567",

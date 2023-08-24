@@ -15,7 +15,7 @@
     "paymentSpecificData" : {
       "cotaxReference" : "1097172564A00104A"
     },
-    "taxType" : "Cotax",
+    "taxType" : "CT",
     "email" : "test@email.com"
   } ],
   "navigation" : {

@@ -4,7 +4,6 @@
 # Warn, this endpoint accepts optional email in the body, but clients don't pass this data
 POST       /tps-payments                                            journey.StartJourneyController.startJourneyMibOrPngr()
 
-#TODO: once tps-payments is renamed to Journey, remove "upsert" part from that URL
 GET        /journey/:id                                             journey.JourneyController.findJourney(id: JourneyId)
 POST       /journey                                                 journey.JourneyController.upsert()
 
@@ -12,10 +11,8 @@ POST       /journey                                                 journey.Jour
 #PciPal calls payments-processor, and then it calls below endpoint:
 PATCH      /update-with-pcipal-data                                 journey.JourneyController.updateWithPcipalData()
 
-#used by payments-processor for MIB payments upon receiving notifcation from PciPal
-#see MIBM-55
-# TODO: investigate if this can be removed. Maybe the tax id can be derived based on the data from the notification from pcipal
-GET        /payment-items/:paymentItemId/tax-type                              journey.JourneyController.getTaxType(paymentItemId: PaymentItemId)
+# used by payments-processor to derive tax type to send to des
+GET        /payment-items/:paymentItemId/tax-type                   journey.JourneyController.getTaxType(paymentItemId: PaymentItemId)
 
 # Denied Refs:
 POST       /verify-refs                                             deniedrefs.DeniedRefsController.verifyRefs()

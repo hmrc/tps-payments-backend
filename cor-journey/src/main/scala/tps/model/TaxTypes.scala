@@ -21,6 +21,7 @@ import play.api.libs.json.Format
 import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
+import cats.Eq
 
 sealed trait TaxType extends EnumEntry {
   def pcipalProductionClientId: String
@@ -36,28 +37,41 @@ object TaxType {
   implicit val format: Format[TaxType] = tps.utils.EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = tps.utils.ValueClassBinder.bindableA(_.toString)
   implicit val taxTypeBinder: PathBindable[TaxType] = tps.utils.ValueClassBinder.valueClassBinder(_.toString)
-
+  implicit val eq: Eq[TaxType] = Eq.fromUniversalEquals
 }
 
+/**
+ * If you are adding a new tax regime, please make it all capitals, length 1-4.
+ * This value is used by /payment-items/:paymentItemId/tax-type in payments processor and there is a requirement in the des spec for length to be 1-4.
+ */
 object TaxTypes extends Enum[TaxType] {
   private val genericPcipalProductionClientId = "TPSETMP"
   private val genericPcipalTestClientId = "TPSP800"
   val values: immutable.IndexedSeq[TaxType] = findValues
 
-  case object ChildBenefitsRepayments extends TaxType {
+  /**
+   * Child benefit repayment
+   */
+  case object ZCHB extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.B
     override val pcipalProductionClientId: String = "CBCE"
     override val pcipalTestClientId: String = "CBCE"
     override val screenValue: String = "Repay Child Benefit overpayments"
   }
 
-  case object Cotax extends TaxType {
+  /**
+   * Corporation tax
+   */
+  case object CT extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.A
     override val pcipalProductionClientId: String = "COPL"
     override val pcipalTestClientId: String = "COPD"
     override val screenValue: String = "COTAX"
   }
 
+  /**
+   * Merchandise in baggage/mods
+   */
   case object MIB extends TaxType {
     override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"MIB should not be looking for its HoD")
     override val pcipalProductionClientId: String = "MBML"
@@ -65,27 +79,39 @@ object TaxTypes extends Enum[TaxType] {
     override val screenValue: String = "MIB"
   }
 
-  case object Nps extends TaxType {
+  /**
+   * NPS/NIRS
+   */
+  case object NPS extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.J
     override val pcipalProductionClientId: String = "NPPL"
     override val pcipalTestClientId: String = "NPPD"
     override val screenValue: String = "NPS"
   }
 
-  case object Ntc extends TaxType {
+  /**
+   * Tax credit repayments
+   */
+  case object NTC extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.N
     override val pcipalProductionClientId: String = "NTPL"
     override val pcipalTestClientId: String = "NTPD"
     override val screenValue: String = "NTC"
   }
 
-  case object Paye extends TaxType {
+  /**
+   * Pay as you earn
+   */
+  case object PAYE extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.P
     override val pcipalProductionClientId: String = "PAPL"
     override val pcipalTestClientId: String = "PAPD"
     override val screenValue: String = "PAYE"
   }
 
+  /**
+   * Passengers
+   */
   case object PNGR extends TaxType {
     override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"PNGR should not be looking for its HoD")
     override val pcipalProductionClientId: String = "PSML"
@@ -101,40 +127,55 @@ object TaxTypes extends Enum[TaxType] {
     override def screenValue: String = throw new RuntimeException("p800 is not suported")
   }
 
-  case object Ppt extends TaxType {
+  /**
+   * Plastic packaging tax
+   */
+  case object PPT extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.C
     override val pcipalProductionClientId: String = genericPcipalProductionClientId
     override val pcipalTestClientId: String = genericPcipalTestClientId
     override val screenValue: String = "PPT"
   }
 
-  case object Sa extends TaxType {
+  /**
+   * Self assessment
+   */
+  case object SA extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.K
     override val pcipalProductionClientId: String = "SAPM"
     override val pcipalTestClientId: String = "SAPD"
     override val screenValue: String = "SA"
   }
 
-  case object Safe extends TaxType {
+  /**
+   * Safe
+   */
+  case object SAFE extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.X
     override val pcipalProductionClientId: String = "SFPL"
     override val pcipalTestClientId: String = "SFPD"
     override val screenValue: String = "SAFE"
   }
 
-  case object Sdlt extends TaxType {
+  /**
+   * Stamp duty land tax
+   */
+  case object SDLT extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.M
     override val pcipalProductionClientId: String = "SDPL"
     override val pcipalTestClientId: String = "SDPD"
     override val screenValue: String = "SDLT"
   }
 
-  case object Vat extends TaxType {
+  /**
+   * Value added tax
+   */
+  case object VAT extends TaxType {
     override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.V
     override val pcipalProductionClientId: String = "VAPM"
     override val pcipalTestClientId: String = "VAPD"
     override val screenValue: String = "VAT"
   }
 
-  val usedOnFrontend: Seq[TaxType] = Seq[TaxType](ChildBenefitsRepayments, Sa, Sdlt, Safe, Cotax, Ntc, Paye, Nps, Vat, Ppt)
+  val usedOnFrontend: Seq[TaxType] = Seq[TaxType](ZCHB, SA, SDLT, SAFE, CT, NTC, PAYE, NPS, VAT, PPT)
 }

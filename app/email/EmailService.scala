@@ -117,19 +117,19 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
   private def parseBigDecimalToString(bigDecimal: BigDecimal): String = bigDecimal.setScale(2).toString
 
   private def getTaxTypeString(taxType: TaxType): String = taxType match {
-    case TaxTypes.ChildBenefitsRepayments => "Child Benefits repayments"
-    case TaxTypes.Sa                      => "Self Assessment"
-    case TaxTypes.Sdlt                    => "Stamp Duty Land Tax"
-    case TaxTypes.Safe                    => "SAFE"
-    case TaxTypes.Cotax                   => "Corporation Tax"
-    case TaxTypes.Ntc                     => "Tax credit repayments"
-    case TaxTypes.Paye                    => "PAYE"
-    case TaxTypes.Nps                     => "NPS/NIRS"
-    case TaxTypes.Vat                     => "VAT"
-    case TaxTypes.Ppt                     => "Plastic Packaging Tax"
-    case TaxTypes.P800                    => taxType.toString
-    case TaxTypes.MIB                     => taxType.toString
-    case TaxTypes.PNGR                    => taxType.toString
+    case TaxTypes.ZCHB => "Child Benefits repayments"
+    case TaxTypes.SA   => "Self Assessment"
+    case TaxTypes.SDLT => "Stamp Duty Land Tax"
+    case TaxTypes.SAFE => "SAFE"
+    case TaxTypes.CT   => "Corporation Tax"
+    case TaxTypes.NTC  => "Tax credit repayments"
+    case TaxTypes.PAYE => "PAYE"
+    case TaxTypes.NPS  => "NPS/NIRS"
+    case TaxTypes.VAT  => "VAT"
+    case TaxTypes.PPT  => "Plastic Packaging Tax"
+    case TaxTypes.P800 => taxType.toString
+    case TaxTypes.MIB  => taxType.toString
+    case TaxTypes.PNGR => taxType.toString
   }
 
   private lazy val logger = Logger(this.getClass)

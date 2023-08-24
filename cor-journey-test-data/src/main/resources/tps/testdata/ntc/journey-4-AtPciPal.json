@@ -15,7 +15,7 @@
     "paymentSpecificData" : {
       "ntcReference" : "JJ067874050421NV"
     },
-    "taxType" : "Ntc",
+    "taxType" : "NTC",
     "email" : "test@email.com"
   } ],
   "navigation" : {

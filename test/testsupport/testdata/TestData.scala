@@ -19,7 +19,7 @@ package testsupport.testdata
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
-import tps.model.TaxTypes.{MIB, PNGR, Sa}
+import tps.model.TaxTypes.{MIB, PNGR, SA}
 import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
 import tps.pcipalmodel._
@@ -49,7 +49,7 @@ object TestData {
         customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = Sa,
+        taxType             = SA,
         paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
         email               = Some(Email("test@email.com"))
       )
@@ -106,16 +106,16 @@ object TestData {
   )
 
   val mibPayments: Journey = startJourneyRequestMibOrPngr("MIB", TaxTypes.MIB, MibSpecificData("chargeReference", BigDecimal(1), BigDecimal(2))).makeJourney(created)
-  val childBenefitPayments: Journey = startJourneyRequestMibOrPngr("ChildBenefitsRepayments", TaxTypes.ChildBenefitsRepayments, ChildBenefitSpecificData("childBenefitRef")).makeJourney(created)
-  val saPayments: Journey = startJourneyRequestMibOrPngr("SA", TaxTypes.Sa, SaSpecificData("saRef")).makeJourney(created)
-  val sdltPayments: Journey = startJourneyRequestMibOrPngr("SDLT", TaxTypes.Sdlt, SdltSpecificData("sdltRef")).makeJourney(created)
-  val safePayments: Journey = startJourneyRequestMibOrPngr("SAFE", TaxTypes.Safe, SafeSpecificData("safeRef")).makeJourney(created)
-  val cotaxPayments: Journey = startJourneyRequestMibOrPngr("COTAX", TaxTypes.Cotax, CotaxSpecificData("cotaxRef")).makeJourney(created)
-  val ntcPayments: Journey = startJourneyRequestMibOrPngr("NTC", TaxTypes.Ntc, NtcSpecificData("ntcRef")).makeJourney(created)
-  val payePayments: Journey = startJourneyRequestMibOrPngr("PAYE", TaxTypes.Paye, PayeSpecificData("payeRef", BigDecimal(100), BigDecimal(100))).makeJourney(created)
-  val npsPayments: Journey = startJourneyRequestMibOrPngr("NPS", TaxTypes.Nps, NpsSpecificData("npsRef", "1", "2", "3", BigDecimal(10))).makeJourney(created)
-  val vatPayments: Journey = startJourneyRequestMibOrPngr("VAT", TaxTypes.Vat, VatSpecificData("vatRef", "someRemittanceType")).makeJourney(created)
-  val pptPayments: Journey = startJourneyRequestMibOrPngr("PPT", TaxTypes.Ppt, PptSpecificData("pptRef")).makeJourney(created)
+  val childBenefitPayments: Journey = startJourneyRequestMibOrPngr("ChildBenefitsRepayments", TaxTypes.ZCHB, ChildBenefitSpecificData("childBenefitRef")).makeJourney(created)
+  val saPayments: Journey = startJourneyRequestMibOrPngr("SA", TaxTypes.SA, SaSpecificData("saRef")).makeJourney(created)
+  val sdltPayments: Journey = startJourneyRequestMibOrPngr("SDLT", TaxTypes.SDLT, SdltSpecificData("sdltRef")).makeJourney(created)
+  val safePayments: Journey = startJourneyRequestMibOrPngr("SAFE", TaxTypes.SAFE, SafeSpecificData("safeRef")).makeJourney(created)
+  val cotaxPayments: Journey = startJourneyRequestMibOrPngr("COTAX", TaxTypes.CT, CotaxSpecificData("cotaxRef")).makeJourney(created)
+  val ntcPayments: Journey = startJourneyRequestMibOrPngr("NTC", TaxTypes.NTC, NtcSpecificData("ntcRef")).makeJourney(created)
+  val payePayments: Journey = startJourneyRequestMibOrPngr("PAYE", TaxTypes.PAYE, PayeSpecificData("payeRef", BigDecimal(100), BigDecimal(100))).makeJourney(created)
+  val npsPayments: Journey = startJourneyRequestMibOrPngr("NPS", TaxTypes.NPS, NpsSpecificData("npsRef", "1", "2", "3", BigDecimal(10))).makeJourney(created)
+  val vatPayments: Journey = startJourneyRequestMibOrPngr("VAT", TaxTypes.VAT, VatSpecificData("vatRef", "someRemittanceType")).makeJourney(created)
+  val pptPayments: Journey = startJourneyRequestMibOrPngr("PPT", TaxTypes.PPT, PptSpecificData("pptRef")).makeJourney(created)
 
   val id: JourneyId = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")
   val pciPalSessionId: PcipalSessionId = PcipalSessionId("48c978bb")

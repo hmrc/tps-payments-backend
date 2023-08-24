@@ -15,7 +15,7 @@
     "paymentSpecificData" : {
       "childBenefitYReference" : "YA123456789123"
     },
-    "taxType" : "ChildBenefitsRepayments",
+    "taxType" : "ZCHB",
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
@@ -27,7 +27,7 @@
     "paymentSpecificData" : {
       "cotaxReference" : "1097172564A00104A"
     },
-    "taxType" : "Cotax",
+    "taxType" : "CT",
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
@@ -40,7 +40,7 @@
       "vatReference" : "968501144",
       "remittanceType" : "Unaccompanied"
     },
-    "taxType" : "Vat",
+    "taxType" : "VAT",
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
@@ -54,7 +54,7 @@
       "taxAmount" : 109.09,
       "nicAmount" : 100
     },
-    "taxType" : "Paye",
+    "taxType" : "PAYE",
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
@@ -66,7 +66,7 @@
     "paymentSpecificData" : {
       "ntcReference" : "JJ067874050421NV"
     },
-    "taxType" : "Ntc",
+    "taxType" : "NTC",
     "email" : "test@email.com"
   } ],
   "navigation" : {

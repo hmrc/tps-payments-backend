@@ -29,7 +29,7 @@
     "paymentSpecificData" : {
       "sdltReference" : "123456789MA"
     },
-    "taxType" : "Sdlt",
+    "taxType" : "SDLT",
     "email" : "test@email.com"
   } ],
   "navigation" : {

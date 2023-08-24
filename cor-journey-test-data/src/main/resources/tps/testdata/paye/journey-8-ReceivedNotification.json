@@ -31,7 +31,7 @@
       "taxAmount" : 109.09,
       "nicAmount" : 100
     },
-    "taxType" : "Paye",
+    "taxType" : "PAYE",
     "email" : "test@email.com"
   } ],
   "navigation" : {
