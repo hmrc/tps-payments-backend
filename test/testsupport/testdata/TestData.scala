@@ -382,7 +382,7 @@ object TestData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "Sa",
+            "taxType": "SA",
             "paymentSpecificData":{
               "chargeReference":"chargeReference"
             },
