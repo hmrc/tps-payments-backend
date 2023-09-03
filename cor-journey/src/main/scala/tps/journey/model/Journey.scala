@@ -20,6 +20,7 @@ import play.api.libs.json._
 import tps.model.repo.HasId
 import tps.model.{Navigation, PaymentItem}
 import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
+import tps.utils.SafeEquals.EqualsOps
 
 import java.time.Instant
 
@@ -28,13 +29,17 @@ final case class Journey(
     journeyState:                JourneyState,
     pid:                         String,
     created:                     Instant,
-    payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
+    payments:                    List[PaymentItem], //note that field is in mongo query, refactor wisely making sure historical records are also updated
     navigation:                  Navigation,
     pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
     pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
 ) extends HasId[JourneyId] {
   def journeyId: JourneyId = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
+  def basketEmpty: Boolean = payments.size === 0
+  def basketNonEmpty: Boolean = !basketEmpty
+
+  def basketFull: Boolean = payments.size >= 5
 
   def getPcipalSessionLaunchResponse: PcipalSessionLaunchResponse = pcipalSessionLaunchResponse.getOrElse(throw new RuntimeException(s"Error: PcipalSessionLaunchResponse is missing from journey [journeyId:${journeyId.value}]"))
 }

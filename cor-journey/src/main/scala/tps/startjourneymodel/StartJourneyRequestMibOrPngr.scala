@@ -54,7 +54,7 @@ final case class StartJourneyRequestMibOrPngr(
 
     Journey(
       _id          = JourneyId.fresh(),
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid          = pid,
       created      = now,
       payments     = tpsPayments,

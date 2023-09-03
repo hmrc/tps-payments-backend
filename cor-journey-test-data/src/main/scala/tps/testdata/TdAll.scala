@@ -15,6 +15,7 @@
  */
 
 package tps.testdata
+
 import tps.journey.model.Journey
 
 object TdAll extends TdAll
@@ -37,6 +38,9 @@ trait TdAll
   with TdJourneyPpt
   with TdMultiPaymentJourney {
 
+  /**
+   * only journeys with TpsInternalTaxType
+   */
   @SuppressWarnings(Array(
     "org.wartremover.warts.JavaSerializable",
     "org.wartremover.warts.Serializable",
@@ -44,11 +48,9 @@ trait TdAll
   lazy val allTdJourneyInStates: List[TdJourneyInStates] = List(
     TdJourneyChildBenefit,
     TdJourneyCotax,
-    TdJourneyMib,
     TdJourneyNps,
     TdJourneyNtc,
     TdJourneyPaye,
-    TdJourneyPngr,
     TdJourneyPpt,
     TdJourneySa,
     TdJourneySafe,
@@ -56,33 +58,17 @@ trait TdAll
     TdJourneyVat
   )
 
-  lazy val allTdJourneysWithJson: List[(Journey, JourneyJson)] =
-    allTdJourneyInStates
-      .map(_.allJourneys)
+  /**
+   * only journeys with ExternalTaxType
+   */
+  lazy val allTdJourneyInStatesExternalTaxTypes: List[TdJourneyInStatesExternalTaxTypes] = List(
+    TdJourneyPngr,
+    TdJourneyMib
+  )
+
+  lazy val allJourneysWithJson: List[(Journey, JourneyJson)] =
+    (allTdJourneyInStates.map(_.allJourneys) ++ allTdJourneyInStatesExternalTaxTypes.map(_.allJourneys))
       .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
       .++(TdJourneyMultiPayment.allJourneys)
-
-  // only journeys that have a frontend journey within tps-frontend
-  @SuppressWarnings(Array(
-    "org.wartremover.warts.JavaSerializable",
-    "org.wartremover.warts.Serializable",
-    "org.wartremover.warts.Product"))
-  lazy val allTdFrontendJourneyInStates: List[TdJourneyInStates] = List(
-    TdJourneyChildBenefit,
-    TdJourneyCotax,
-    TdJourneyNps,
-    TdJourneyNtc,
-    TdJourneyPaye,
-    TdJourneyPpt,
-    TdJourneySa,
-    TdJourneySafe,
-    TdJourneySdlt,
-    TdJourneyVat
-  )
-
-  lazy val allTdFrontendJourneysWithJson: List[(Journey, JourneyJson)] =
-    allTdFrontendJourneyInStates
-      .map(_.allJourneys)
-      .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
 
 }

@@ -33,7 +33,7 @@ trait TdJourneyPaye { dependencies: TdBase =>
 
     override lazy val amountString: String = "209.09" //nicAmount + taxAmount
     override lazy val taxReference: String = "123PW123456782213"
-    override final val selectedTaxType: TaxType = TaxTypes.Paye
+    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Paye
 
     override lazy val paymentSpecificData: PayeSpecificData = PayeSpecificData(
       payeReference = taxReference,

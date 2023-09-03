@@ -25,9 +25,9 @@ import java.time.Instant
 
 trait TdJourneyPngr { dependencies: TdBase =>
 
-  object TdJourneyPngr extends TdJourneyInStates {
+  object TdJourneyPngr extends TdJourneyInStatesExternalTaxTypes {
 
-    final val selectedTaxType: TaxType = TaxTypes.PNGR
+    override final val taxType: ExternalTaxType = TaxTypes.PNGR
 
     lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
       pid        = dependencies.pid,
@@ -130,7 +130,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
-      journeyState                = JourneyState.BasketNotEmpty,
+      journeyState                = JourneyState.Started,
       pid                         = pid,
       created                     = created,
       payments                    = List(paymentItem),
@@ -141,14 +141,6 @@ trait TdJourneyPngr { dependencies: TdBase =>
 
     override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
       "/tps/testdata/pngr/journey-1-Created.json"
-    )
-
-    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-2-SelectedTaxType.json"
-    )
-
-    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-3-EnteredPayment.json"
     )
 
     override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(

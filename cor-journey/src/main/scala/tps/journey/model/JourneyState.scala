@@ -18,7 +18,7 @@ package tps.journey.model
 
 import julienrf.json.derived
 import play.api.libs.json.Format
-import tps.model.TaxType
+import tps.model.{PaymentItemId, TpsNativeTaxType}
 
 sealed trait JourneyState
 
@@ -30,13 +30,13 @@ object JourneyState {
   implicit val format: Format[JourneyState] = derived.oformat[JourneyState]()
 
   //Journey Started by Tps, on Landing page (or in MIB or in PNGR)
-  final case object Landing extends JourneyState
+  final case object Started extends JourneyState
 
-  //Entering or Editing payment
-  final case class EnterPayment(taxType: TaxType) extends JourneyState
+  //Entering Payment
+  final case class EnterPayment(taxType: TpsNativeTaxType) extends JourneyState
 
-  //At least one payment is in the basket, but user can be on the landing page
-  final case object BasketNotEmpty extends JourneyState
+  //Editing Payment
+  final case class EditPayment(paymentItemId: PaymentItemId) extends JourneyState
 
   //Journey handed over to PciPal
   final case object AtPciPal extends JourneyState

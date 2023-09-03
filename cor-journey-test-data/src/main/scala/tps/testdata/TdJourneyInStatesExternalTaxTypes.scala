@@ -17,61 +17,49 @@
 package tps.testdata
 
 import tps.journey.model.{Journey, JourneyId, JourneyState}
-import tps.model._
+import tps.model.{ExternalTaxType, Navigation, PaymentItem, PaymentSpecificData}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
+import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 
 import java.time.Instant
 
-trait TdJourneyInStates {
+trait TdJourneyInStatesExternalTaxTypes {
+  def taxType: ExternalTaxType
+
   def journeyId: JourneyId
+
   def pid: String
+
   def created: Instant
+
   def navigation: Navigation
-  def selectedTaxType: TpsNativeTaxType
 
   def amountString: String
+
   final def amount: BigDecimal = BigDecimal(amountString)
 
-  //TODO: provide a strong type for that, use it in Journey, etc. Make sure you don't break existing json formats
   def taxReference: String
 
   def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest
+
   def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse
+
   def pcipalData: ChargeRefNotificationPcipalRequest
+
   def paymentItemBeforePcipal: PaymentItem // i.e. pcipal data is None
+
   def paymentItem: PaymentItem
+
   def paymentSpecificData: PaymentSpecificData
 
-  lazy val journeyCreated: Journey = Journey(
-    _id                         = journeyId,
-    journeyState                = JourneyState.Started,
-    pid                         = pid,
-    created                     = created,
-    payments                    = Nil,
-    navigation                  = navigation,
-    pcipalSessionLaunchRequest  = None,
-    pcipalSessionLaunchResponse = None
-  )
+  def startJourneyRequest: StartJourneyRequestMibOrPngr
+
+  def journeyCreated: Journey
 
   def journeyCreatedJson: JourneyJson
 
-  lazy val journeySelectedTaxType: Journey =
-    journeyCreated.copy(
-      journeyState = JourneyState.EnterPayment(taxType = selectedTaxType)
-    )
-
-  def journeySelectedTaxTypeJson: JourneyJson
-
-  lazy val journeyEnteredPayment: Journey =
-    journeySelectedTaxType.copy(
-      journeyState = JourneyState.Started,
-      payments     = List(paymentItemBeforePcipal)
-    )
-
-  def journeyEnteredPaymentJson: JourneyJson
-
   lazy val journeyAtPciPal: Journey =
-    journeyEnteredPayment.copy(
+    journeyCreated.copy(
       journeyState                = JourneyState.AtPciPal,
       pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
       pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
@@ -108,8 +96,6 @@ trait TdJourneyInStates {
 
   lazy val allJourneys: List[(Journey, JourneyJson)] = List(
     (journeyCreated, journeyCreatedJson),
-    (journeySelectedTaxType, journeySelectedTaxTypeJson),
-    (journeyEnteredPayment, journeyEnteredPaymentJson),
     (journeyAtPciPal, journeyAtPciPalJson),
     (journeyResetByPciPal, journeyResetByPciPalJson),
     (journeyFinishedByPciPal, journeyFinishedByPciPalJson),

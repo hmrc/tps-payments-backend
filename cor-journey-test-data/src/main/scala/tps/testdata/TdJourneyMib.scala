@@ -25,11 +25,11 @@ import java.time.Instant
 
 trait TdJourneyMib { dependencies: TdBase =>
 
-  object TdJourneyMib extends TdJourneyInStates {
+  object TdJourneyMib extends TdJourneyInStatesExternalTaxTypes {
 
-    final val selectedTaxType: TaxType = TaxTypes.MIB
+    override final val taxType: ExternalTaxType = TaxTypes.MIB
 
-    lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
+    override lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
       pid        = dependencies.pid,
       payments   = Seq[SjPaymentItem](
         SjPaymentItem(
@@ -37,7 +37,7 @@ trait TdJourneyMib { dependencies: TdBase =>
           customerName        = dependencies.customerName,
           amount              = amount,
           taxRegimeDisplay    = "MODS", //https://github.com/hmrc/merchandise-in-baggage-frontend/blob/96027c5b4cdbc4f957c06b0c7e295861962f2432/app/uk/gov/hmrc/merchandiseinbaggage/model/api/tpspayments/TpsPaymentsItem.scala#L25
-          taxType             = TaxTypes.MIB,
+          taxType             = taxType,
           paymentSpecificData = paymentSpecificData,
           email               = Some(dependencies.email)
         )
@@ -130,7 +130,7 @@ trait TdJourneyMib { dependencies: TdBase =>
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
-      journeyState                = JourneyState.BasketNotEmpty,
+      journeyState                = JourneyState.Started,
       pid                         = pid,
       created                     = created,
       payments                    = List(paymentItemBeforePcipal),
@@ -141,14 +141,6 @@ trait TdJourneyMib { dependencies: TdBase =>
 
     override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
       "/tps/testdata/mib/journey-1-Created.json"
-    )
-
-    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
-      "/tps/testdata/mib/journey-2-SelectedTaxType.json"
-    )
-
-    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
-      "/tps/testdata/mib/journey-3-EnteredPayment.json"
     )
 
     override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(

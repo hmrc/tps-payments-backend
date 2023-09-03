@@ -32,7 +32,7 @@ trait TdJourneyCotax { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "107.07"
     override lazy val taxReference: String = "1097172564A00104A"
-    override final val selectedTaxType: TaxType = TaxTypes.Cotax
+    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Cotax
 
     override lazy val paymentSpecificData: CotaxSpecificData = CotaxSpecificData(
       cotaxReference = taxReference

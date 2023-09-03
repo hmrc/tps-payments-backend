@@ -144,7 +144,7 @@ object TestData {
   val journey: Journey =
     Journey(
       id,
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -205,7 +205,7 @@ object TestData {
   val tpsPaymentsWithPcipalData: Journey =
     Journey(
       _id          = id,
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid          = pid,
       //      Some(pciPalSessionId),
       created                     = created,
@@ -230,7 +230,7 @@ object TestData {
   val tpsPaymentsWithEncryptedEmail: Journey =
     Journey(
       id,
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -255,7 +255,7 @@ object TestData {
   val tpsPaymentsWithoutEmail: Journey =
     Journey(
       id,
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -279,7 +279,7 @@ object TestData {
   val tpsPaymentsWithEmptyEmail: Journey =
     Journey(
       _id          = id,
-      journeyState = JourneyState.Landing,
+      journeyState = JourneyState.Started,
       pid,
       //      Some(pciPalSessionId),
       created,
@@ -303,7 +303,7 @@ object TestData {
 
   val modsTpsPaymentsNoAmendmentReference: Journey = Journey(
     _id                         = id,
-    journeyState                = JourneyState.Landing,
+    journeyState                = JourneyState.Started,
     pid                         = pid,
     created                     = created,
     payments                    = List(
@@ -330,7 +330,7 @@ object TestData {
 
   val modsTpsPaymentsWithAnAmendmentReference: Journey = Journey(
     _id                         = id,
-    journeyState                = JourneyState.Landing,
+    journeyState                = JourneyState.Started,
     pid                         = pid,
     created                     = created,
     payments                    = List(

@@ -32,7 +32,7 @@ trait TdJourneyNtc { dependencies: TdBase =>
     override lazy val navigation: Navigation = dependencies.navigation
     override lazy val amountString: String = "108.08"
     override lazy val taxReference: String = "JJ067874050421NV"
-    override final val selectedTaxType: TaxType = TaxTypes.Ntc
+    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Ntc
 
     override lazy val paymentSpecificData: NtcSpecificData = NtcSpecificData(
       ntcReference = taxReference

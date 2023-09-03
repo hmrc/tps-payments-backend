@@ -27,6 +27,8 @@ object SbtUpdatesSettings {
     // locked to the version of play
     dependencyUpdatesFilter -= moduleFilter("org.julienrf", "play-json-derived-codecs"),
 
+    dependencyUpdatesFilter -= moduleFilter("com.github.tomakehurst", "wiremock-standalone"),
+
     dependencyUpdatesFilter -= moduleFilter("com.lightbend.akka", "akka-stream-alpakka-csv")
   )
 
