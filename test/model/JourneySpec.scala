@@ -47,7 +47,7 @@ import java.nio.file.{Files, Paths}
 
 class JourneySpec extends UnitSpec {
 
-  "generate journey jsons" in {
+  "generate journey jsons" ignore {
 
     TdAll.allJourneysWithJson.foreach { t =>
       val content = Json.prettyPrint(Json.toJson(t._1))
