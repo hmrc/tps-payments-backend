@@ -123,7 +123,6 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
 
   private def encryptOrDecryptPaymentSpecificData(paymentSpecificData: PaymentSpecificData)(encryptOrDecrypt: String => String): PaymentSpecificData = {
     paymentSpecificData match {
-      case psd @ SimplePaymentSpecificData(_)   => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
       case psd @ PngrSpecificData(_, _, _, _)   => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
       case psd @ MibSpecificData(_, _, _, _)    => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
       case psd @ ChildBenefitSpecificData(_)    => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))

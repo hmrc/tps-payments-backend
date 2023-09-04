@@ -75,6 +75,12 @@ sealed trait TaxType extends EnumEntry {
 
   def clientId(usePcipalTestSettings: Boolean): String =
     if (usePcipalTestSettings) pcipalTestClientId else pcipalProductionClientId
+
+  def asTpsNativeTaxType: TpsNativeTaxType = this match {
+    case t: TpsNativeTaxType => t
+    case t                   => throw new RuntimeException(s"Unsupported tax type ${t.toString}")
+  }
+
 }
 
 object TaxType {

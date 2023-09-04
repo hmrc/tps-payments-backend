@@ -19,7 +19,7 @@ package testsupport.testdata
 import paymentsprocessor.ModsPaymentCallBackRequest
 import play.api.libs.json.{JsValue, Json}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
-import tps.model.TaxTypes.{MIB, PNGR, Sa}
+import tps.model.TaxTypes.{MIB, PNGR}
 import tps.model._
 import tps.pcipalmodel.StatusTypes.validated
 import tps.pcipalmodel._
@@ -49,8 +49,8 @@ object TestData {
         customerName        = CustomerName("customerName"),
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
-        taxType             = Sa,
-        paymentSpecificData = SimplePaymentSpecificData("chargeReference"),
+        taxType             = PNGR,
+        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("22.00"), BigDecimal("15.00"), BigDecimal("5.00")),
         email               = Some(Email("test@email.com"))
       )
     ),
@@ -382,10 +382,8 @@ object TestData {
             "customerName": "customerName",
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
-            "taxType": "Sa",
-            "paymentSpecificData":{
-              "chargeReference":"chargeReference"
-            },
+            "taxType": "PNGR",
+            "paymentSpecificData":{"chargeReference":"chargeReference","vat":22,"customs":15,"excise":5},
             "email": "test@email.com"
           }
           ],

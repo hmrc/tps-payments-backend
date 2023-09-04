@@ -25,15 +25,6 @@ sealed trait PaymentSpecificData {
   def getRawReference: String
 }
 
-final case class SimplePaymentSpecificData(chargeReference: String) extends PaymentSpecificData {
-  override def getReference: String = chargeReference
-  override def getRawReference: String = chargeReference
-}
-
-object SimplePaymentSpecificData {
-  implicit val format: OFormat[SimplePaymentSpecificData] = Json.format[SimplePaymentSpecificData]
-}
-
 final case class PngrSpecificData(
     chargeReference: String,
     vat:             BigDecimal,
@@ -180,7 +171,6 @@ object PptSpecificData {
 
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
-    case simple: SimplePaymentSpecificData                  => SimplePaymentSpecificData.format.writes(simple)
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
     case childBenefitSpecificData: ChildBenefitSpecificData => ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
@@ -196,8 +186,6 @@ object PaymentSpecificData {
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case json: JsObject if json.keys === jsonKeysSimplePaymentSpecificData =>
-      JsSuccess(json.as[SimplePaymentSpecificData])
     case json: JsObject if json.keys === jsonKeysPngrSpecificData =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
