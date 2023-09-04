@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package tps.testdata
+package tps.testdata.tdjourney
+
 import tps.journey.model.{Journey, JourneyState}
 import tps.pcipalmodel.{PcipalInitialValues, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
+import tps.testdata.TdBase
+import tps.testdata.util.JourneyJson
 
 trait TdMultiPaymentJourney { dependencies: TdBase with TdJourneyChildBenefit //for 1st item in a basket
 with TdJourneyCotax //for 2nd item in a basket
@@ -29,15 +32,15 @@ with TdJourneyNtc //for 5th item in a basket
   //TODO: make TdJourneyInStates abstract so it can be used here
   object TdJourneyMultiPayment {
 
-    private lazy val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyCreated
+    private lazy val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyStarted
 
     lazy val journeyWith5itemsInBasket: Journey = exampleJourneyAfterCreated.copy(
       payments = List(
-        dependencies.TdJourneyChildBenefit.paymentItemBeforePcipal,
-        dependencies.TdJourneyCotax.paymentItemBeforePcipal,
-        dependencies.TdJourneyVat.paymentItemBeforePcipal,
-        dependencies.TdJourneyPaye.paymentItemBeforePcipal,
-        dependencies.TdJourneyNtc.paymentItemBeforePcipal
+        dependencies.TdJourneyChildBenefit.paymentItemInitial,
+        dependencies.TdJourneyCotax.paymentItemInitial,
+        dependencies.TdJourneyVat.paymentItemInitial,
+        dependencies.TdJourneyPaye.paymentItemInitial,
+        dependencies.TdJourneyNtc.paymentItemInitial
       )
     )
     lazy val journeyWith5itemsInBasketJson: JourneyJson = JourneyJson(

@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package tps.testdata
+package tps.testdata.tdjourney.externaltaxtypes
 
 import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.{ExternalTaxType, Navigation, PaymentItem, PaymentSpecificData}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
+import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 

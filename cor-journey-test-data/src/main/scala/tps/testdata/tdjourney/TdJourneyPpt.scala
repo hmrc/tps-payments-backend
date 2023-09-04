@@ -14,45 +14,40 @@
  * limitations under the License.
  */
 
-package tps.testdata
+package tps.testdata.tdjourney
 
 import tps.journey.model.JourneyId
 import tps.model._
 import tps.pcipalmodel._
+import tps.testdata.TdBase
+import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-trait TdJourneyPaye { dependencies: TdBase =>
+trait TdJourneyPpt { dependencies: TdBase =>
 
-  object TdJourneyPaye extends TdJourneyInStates {
+  object TdJourneyPpt extends TdJourneyInStates {
 
     override lazy val journeyId: JourneyId = dependencies.journeyId
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
     override lazy val navigation: Navigation = dependencies.navigation
-
-    override lazy val amountString: String = "209.09" //nicAmount + taxAmount
-    override lazy val taxReference: String = "123PW123456782213"
-    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Paye
-
-    override lazy val paymentSpecificData: PayeSpecificData = PayeSpecificData(
-      payeReference = taxReference,
-      taxAmount     = BigDecimal("109.09"),
-      nicAmount     = BigDecimal("100")
-    )
+    override lazy val amountString: String = "112.12"
+    override lazy val taxReference: String = "XRPPT0001234567"
+    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Ppt
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,
       InitialValues       = List(PcipalInitialValues(
-        clientId           = "PAPL",
+        clientId           = "TPSETMP",
         pid                = dependencies.pid,
-        accountOfficeId    = "G1",
-        HODIdentifier      = HeadOfDutyIndicators.P,
+        accountOfficeId    = "S1",
+        HODIdentifier      = HeadOfDutyIndicators.C,
         UTRReference       = taxReference,
         name1              = dependencies.customerName.value,
         amount             = amountString,
-        taxAmount          = Some("109.09"),
-        nicAmount          = Some("100.00"),
+        taxAmount          = None,
+        nicAmount          = None,
         lnpClass2          = None,
         nirRate            = None,
         startDate          = None,
@@ -61,7 +56,7 @@ trait TdJourneyPaye { dependencies: TdBase =>
         vatRemittanceType  = None,
         paymentItemId      = dependencies.paymentItemId,
         chargeReference    = taxReference,
-        taxRegimeDisplay   = "PAYE",
+        taxRegimeDisplay   = "PPT",
         reference          = dependencies.pciPalReferenceNumber,
         increment          = "1"
       )),
@@ -81,7 +76,7 @@ trait TdJourneyPaye { dependencies: TdBase =>
     )
 
     override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-      HoD                  = HeadOfDutyIndicators.P,
+      HoD                  = HeadOfDutyIndicators.C,
       TaxReference         = taxReference,
       Amount               = amount,
       Commission           = 0,
@@ -95,53 +90,62 @@ trait TdJourneyPaye { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
+    override lazy val paymentItemInitial: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
-      headOfDutyIndicator = HeadOfDutyIndicators.P,
+      headOfDutyIndicator = HeadOfDutyIndicators.C,
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
       pcipalData          = None,
-      paymentSpecificData = paymentSpecificData,
-      taxType             = TaxTypes.Paye,
+      paymentSpecificData = PptSpecificData(
+        pptReference = taxReference
+      ),
+      taxType             = TaxTypes.Ppt,
       email               = Some(dependencies.email)
     )
 
-    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
+    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemInitial.copy(pcipalData = Some(pcipalData))
 
-    override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-1-Created.json"
+    override lazy val journeyStartedJson: JourneyJson = JourneyJson(
+      "/tps/testdata/ppt/journey-1-Started.json"
     )
 
-    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-2-SelectedTaxType.json"
+    override lazy val journeyInEnterPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/ppt/journey-2-InEnterPaymentJson.json"
     )
 
-    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-3-EnteredPayment.json"
+    override lazy val journeyWithEnteredPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/ppt/journey-3-WithOnePaymentInTheBasket.json"
+    )
+
+    override def journeyInEditPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/ppt/journey-4-InEditPayment.json"
+    )
+
+    override def journeyWithEditedPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/ppt/journey-5-WithEditedPayment.json"
     )
 
     override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-4-AtPciPal.json"
+      "/tps/testdata/ppt/journey-6-AtPciPal.json"
     )
 
     override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-5-ResetByPciPal.json"
+      "/tps/testdata/ppt/journey-7.a-ResetByPciPal.json"
     )
 
     override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-6-FinishedByPciPal.json"
+      "/tps/testdata/ppt/journey-7.b-FinishedByPciPal.json"
     )
 
     override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-7-BackByPciPal.json"
+      "/tps/testdata/ppt/journey-7.c-BackByPciPal.json"
     )
 
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
-      "/tps/testdata/paye/journey-8-ReceivedNotification.json"
+      "/tps/testdata/ppt/journey-8-ReceivedNotification.json"
     )
-
   }
 
 }

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package tps.testdata
+package tps.testdata.util
 
 import play.api.libs.json.JsObject
 import tps.testdata.util.JsonSyntax.toJsonOps
-import tps.testdata.util.ResourceReader
 
 final case class JourneyJson(resourcePath: String) {
   val simpleName: String = resourcePath

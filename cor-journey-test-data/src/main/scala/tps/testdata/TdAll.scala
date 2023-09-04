@@ -17,6 +17,9 @@
 package tps.testdata
 
 import tps.journey.model.Journey
+import tps.testdata.tdjourney.externaltaxtypes.{TdJourneyInStatesExternalTaxTypes, TdJourneyMib, TdJourneyPngr}
+import tps.testdata.tdjourney.{TdJourneyChildBenefit, TdJourneyCotax, TdJourneyInStates, TdJourneyNps, TdJourneyNtc, TdJourneyPaye, TdJourneyPpt, TdJourneySa, TdJourneySafe, TdJourneySdlt, TdJourneyVat, TdMultiPaymentJourney}
+import tps.testdata.util.JourneyJson
 
 object TdAll extends TdAll
 

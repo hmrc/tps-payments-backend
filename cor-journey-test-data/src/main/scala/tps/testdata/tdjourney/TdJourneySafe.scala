@@ -14,37 +14,35 @@
  * limitations under the License.
  */
 
-package tps.testdata
+package tps.testdata.tdjourney
 
 import tps.journey.model.JourneyId
 import tps.model._
 import tps.pcipalmodel._
+import tps.testdata.TdBase
+import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-trait TdJourneyChildBenefit { dependencies: TdBase =>
+trait TdJourneySafe { dependencies: TdBase =>
 
-  object TdJourneyChildBenefit extends TdJourneyInStates {
+  object TdJourneySafe extends TdJourneyInStates {
 
     override lazy val journeyId: JourneyId = dependencies.journeyId
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
     override lazy val navigation: Navigation = dependencies.navigation
-    override lazy val amountString: String = "103.03"
-    override lazy val taxReference: String = "YA123456789123"
-    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.ChildBenefitsRepayments
-
-    override lazy val paymentSpecificData = ChildBenefitSpecificData(
-      childBenefitYReference = taxReference
-    )
+    override lazy val amountString: String = "106.06"
+    override lazy val taxReference: String = "XA1234567890123"
+    override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Safe
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,
       InitialValues       = List(PcipalInitialValues(
-        clientId           = "CBCE",
+        clientId           = "SFPL",
         pid                = dependencies.pid,
         accountOfficeId    = "S1",
-        HODIdentifier      = HeadOfDutyIndicators.B,
+        HODIdentifier      = HeadOfDutyIndicators.X,
         UTRReference       = taxReference,
         name1              = dependencies.customerName.value,
         amount             = amountString,
@@ -58,7 +56,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
         vatRemittanceType  = None,
         paymentItemId      = dependencies.paymentItemId,
         chargeReference    = taxReference,
-        taxRegimeDisplay   = "Repay Child Benefit overpayments",
+        taxRegimeDisplay   = "SAFE",
         reference          = dependencies.pciPalReferenceNumber,
         increment          = "1"
       )),
@@ -78,7 +76,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
     )
 
     override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-      HoD                  = HeadOfDutyIndicators.B,
+      HoD                  = HeadOfDutyIndicators.X,
       TaxReference         = taxReference,
       Amount               = amount,
       Commission           = 0,
@@ -92,51 +90,62 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItemBeforePcipal: PaymentItem = PaymentItem(
+    override lazy val paymentItemInitial: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
-      headOfDutyIndicator = HeadOfDutyIndicators.B,
-      updated             = instant,
+      headOfDutyIndicator = HeadOfDutyIndicators.X,
+      updated             = dependencies.instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
       pcipalData          = None,
-      paymentSpecificData = paymentSpecificData,
-      taxType             = TaxTypes.ChildBenefitsRepayments,
+      paymentSpecificData = SafeSpecificData(
+        safeReference = taxReference
+      ),
+      taxType             = TaxTypes.Safe,
       email               = Some(dependencies.email)
     )
 
-    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
+    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemInitial.copy(pcipalData = Some(pcipalData))
 
-    override lazy val journeyCreatedJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-1-Created.json"
+    override lazy val journeyStartedJson: JourneyJson = JourneyJson(
+      "/tps/testdata/safe/journey-1-Started.json"
     )
 
-    override lazy val journeySelectedTaxTypeJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-2-SelectedTaxType.json"
+    override lazy val journeyInEnterPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/safe/journey-2-InEnterPaymentJson.json"
     )
 
-    override lazy val journeyEnteredPaymentJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-3-EnteredPayment.json"
+    override lazy val journeyWithEnteredPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/safe/journey-3-WithOnePaymentInTheBasket.json"
+    )
+
+    override def journeyInEditPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/safe/journey-4-InEditPayment.json"
+    )
+
+    override def journeyWithEditedPaymentJson: JourneyJson = JourneyJson(
+      "/tps/testdata/safe/journey-5-WithEditedPayment.json"
     )
 
     override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-4-AtPciPal.json"
+      "/tps/testdata/safe/journey-6-AtPciPal.json"
     )
 
     override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-5-ResetByPciPal.json"
+      "/tps/testdata/safe/journey-7.a-ResetByPciPal.json"
     )
 
     override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-6-FinishedByPciPal.json"
+      "/tps/testdata/safe/journey-7.b-FinishedByPciPal.json"
     )
 
     override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-7-BackByPciPal.json"
+      "/tps/testdata/safe/journey-7.c-BackByPciPal.json"
     )
 
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
-      "/tps/testdata/childbenefit/journey-8-ReceivedNotification.json"
+      "/tps/testdata/safe/journey-8-ReceivedNotification.json"
     )
   }
+
 }
