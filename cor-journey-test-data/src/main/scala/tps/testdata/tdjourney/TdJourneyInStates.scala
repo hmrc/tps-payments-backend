@@ -55,14 +55,14 @@ trait TdJourneyInStates {
   /**
    * This amount entered during `EnterPayment` state. Later it's changed.
    */
-  final def initialAmount: BigDecimal = BigDecimal("606.60")
+  final def amountEntered: BigDecimal = BigDecimal("606.60")
 
-  def amountString: String
+  def amountEditedString: String
 
   /**
-   * This amount is set in `EditPayment` state. Change it usinng `amountString`
+   * This amount is set in `EditPayment` state. Change it using `amountEditedString`
    */
-  final def amount: BigDecimal = BigDecimal(amountString)
+  final def amountEdited: BigDecimal = BigDecimal(amountEditedString)
 
   //TODO: provide a strong type for that, use it in Journey, etc. Make sure you don't break existing json formats
   def taxReference: String
@@ -74,17 +74,17 @@ trait TdJourneyInStates {
   /**
    * Initial PaymentItem created during EnterPayment state.
    */
-  def paymentItemInitial: PaymentItem
+  def paymentItemEntered: PaymentItem
 
   /**
    * PaymentItem updated during EditPayment state.
    */
-  def paymentItemUpdated: PaymentItem = paymentItemInitial.copy(amount = amount)
+  def paymentItemEdited: PaymentItem = paymentItemEntered.copy(amount = amountEdited)
 
   /**
    * PaymentItem when received notification from PciPal (via payments-processor)
    */
-  lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemUpdated.copy(
+  lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEdited.copy(
     pcipalData = Some(pcipalData)
   )
 
@@ -114,7 +114,7 @@ trait TdJourneyInStates {
   lazy val journeyWithEnteredPayment: Journey =
     journeyInEnterPayment.copy(
       journeyState = JourneyState.Started,
-      payments     = List(paymentItemInitial)
+      payments     = List(paymentItemEntered)
     )
 
   def journeyWithEnteredPaymentJson: JourneyJson
@@ -122,15 +122,15 @@ trait TdJourneyInStates {
   lazy val journeyInEditPayment: Journey =
     journeyInEnterPayment.copy(
       journeyState = JourneyState.EditPayment(paymentItemAfterReceivedNotification.paymentItemId),
-      payments     = List(paymentItemInitial)
+      payments     = List(paymentItemEntered)
     )
 
   def journeyInEditPaymentJson: JourneyJson
 
   lazy val journeyWithEditedPayment: Journey =
-    journeyInEnterPayment.copy(
-      journeyState = JourneyState.EditPayment(paymentItemAfterReceivedNotification.paymentItemId),
-      payments     = List(paymentItemInitial)
+    journeyInEditPayment.copy(
+      journeyState = JourneyState.Started,
+      payments     = List(paymentItemEdited)
     )
 
   def journeyWithEditedPaymentJson: JourneyJson

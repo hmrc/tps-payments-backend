@@ -36,11 +36,11 @@ with TdJourneyNtc //for 5th item in a basket
 
     lazy val journeyWith5itemsInBasket: Journey = exampleJourneyAfterCreated.copy(
       payments = List(
-        dependencies.TdJourneyChildBenefit.paymentItemInitial,
-        dependencies.TdJourneyCotax.paymentItemInitial,
-        dependencies.TdJourneyVat.paymentItemInitial,
-        dependencies.TdJourneyPaye.paymentItemInitial,
-        dependencies.TdJourneyNtc.paymentItemInitial
+        dependencies.TdJourneyChildBenefit.paymentItemEntered,
+        dependencies.TdJourneyCotax.paymentItemEntered,
+        dependencies.TdJourneyVat.paymentItemEntered,
+        dependencies.TdJourneyPaye.paymentItemEntered,
+        dependencies.TdJourneyNtc.paymentItemEntered
       )
     )
     lazy val journeyWith5itemsInBasketJson: JourneyJson = JourneyJson(
@@ -61,11 +61,11 @@ with TdJourneyNtc //for 5th item in a basket
       }
 
     lazy val amount =
-      dependencies.TdJourneyChildBenefit.amount +
-        dependencies.TdJourneyCotax.amount +
-        dependencies.TdJourneyVat.amount +
-        dependencies.TdJourneyPaye.amount +
-        dependencies.TdJourneyNtc.amount
+      dependencies.TdJourneyChildBenefit.amountEdited +
+        dependencies.TdJourneyCotax.amountEdited +
+        dependencies.TdJourneyVat.amountEdited +
+        dependencies.TdJourneyPaye.amountEdited +
+        dependencies.TdJourneyNtc.amountEdited
 
     lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,

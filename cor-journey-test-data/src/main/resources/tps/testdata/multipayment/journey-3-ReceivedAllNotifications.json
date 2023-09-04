@@ -7,7 +7,7 @@
   "created" : "2059-11-25T16:33:51.880Z",
   "payments" : [ {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
-    "amount" : 103.03,
+    "amount" : 606.6,
     "headOfDutyIndicator" : "B",
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
@@ -33,7 +33,7 @@
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
-    "amount" : 107.07,
+    "amount" : 606.6,
     "headOfDutyIndicator" : "A",
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
@@ -59,7 +59,7 @@
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
-    "amount" : 111.11,
+    "amount" : 606.6,
     "headOfDutyIndicator" : "V",
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
@@ -86,7 +86,7 @@
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
-    "amount" : 209.09,
+    "amount" : 606.6,
     "headOfDutyIndicator" : "P",
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",
@@ -114,7 +114,7 @@
     "email" : "test@email.com"
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
-    "amount" : 108.08,
+    "amount" : 606.6,
     "headOfDutyIndicator" : "N",
     "updated" : "2059-11-25T16:33:51.880Z",
     "customerName" : "customerName",

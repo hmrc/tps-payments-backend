@@ -32,7 +32,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
     override lazy val navigation: Navigation = dependencies.navigation
-    override lazy val amountString: String = "112.12"
+    override lazy val amountEditedString: String = "112.12"
     override lazy val taxReference: String = "XRPPT0001234567"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Ppt
 
@@ -45,7 +45,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
         HODIdentifier      = HeadOfDutyIndicators.C,
         UTRReference       = taxReference,
         name1              = dependencies.customerName.value,
-        amount             = amountString,
+        amount             = amountEditedString,
         taxAmount          = None,
         nicAmount          = None,
         lnpClass2          = None,
@@ -63,7 +63,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
       UTRBlacklistFlag    = "N",
       postcodeFlag        = "Y",
       taxRegime           = "gen",
-      TotalTaxAmountToPay = amountString,
+      TotalTaxAmountToPay = amountEditedString,
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,
       resetUrl            = navigation.reset,
@@ -78,7 +78,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
     override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
       HoD                  = HeadOfDutyIndicators.C,
       TaxReference         = taxReference,
-      Amount               = amount,
+      Amount               = amountEdited,
       Commission           = 0,
       CardType             = dependencies.cardType,
       Status               = StatusTypes.validated,
@@ -90,9 +90,9 @@ trait TdJourneyPpt { dependencies: TdBase =>
       CardLast4            = dependencies.cardLast4Digits
     )
 
-    override lazy val paymentItemInitial: PaymentItem = PaymentItem(
+    override lazy val paymentItemEntered: PaymentItem = PaymentItem(
       paymentItemId       = dependencies.paymentItemId,
-      amount              = amount,
+      amount              = amountEntered,
       headOfDutyIndicator = HeadOfDutyIndicators.C,
       updated             = dependencies.instant,
       customerName        = dependencies.customerName,
@@ -105,7 +105,7 @@ trait TdJourneyPpt { dependencies: TdBase =>
       email               = Some(dependencies.email)
     )
 
-    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemInitial.copy(pcipalData = Some(pcipalData))
+    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEntered.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyStartedJson: JourneyJson = JourneyJson(
       "/tps/testdata/ppt/journey-1-Started.json"
