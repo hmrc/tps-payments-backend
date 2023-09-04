@@ -55,7 +55,7 @@ trait TdJourneyInStates {
   /**
    * This amount entered during `EnterPayment` state. Later it's changed.
    */
-  final def amountEntered: BigDecimal = BigDecimal("606.60")
+  final def amountEntered: BigDecimal = BigDecimal("606.61")
 
   def amountEditedString: String
 
