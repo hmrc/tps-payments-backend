@@ -51,7 +51,7 @@
     "chargeReference" : "123PW123456782213",
     "paymentSpecificData" : {
       "payeReference" : "123PW123456782213",
-      "taxAmount" : 109.09,
+      "taxAmount" : 506.61,
       "nicAmount" : 100
     },
     "taxType" : "Paye",

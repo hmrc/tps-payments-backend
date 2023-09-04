@@ -101,14 +101,26 @@ trait TdJourneyPaye { dependencies: TdBase =>
       pcipalData          = None,
       paymentSpecificData = PayeSpecificData(
         payeReference = taxReference,
-        taxAmount     = BigDecimal("109.09"),
+        taxAmount     = BigDecimal("506.61"), //taxAmount+nicAmount shouldBe amountEntered
         nicAmount     = BigDecimal("100")
       ),
       taxType             = TaxTypes.Paye,
       email               = Some(dependencies.email)
     )
 
-    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEntered.copy(pcipalData = Some(pcipalData))
+    /**
+     * PaymentItem updated during EditPayment state.
+     */
+    override def paymentItemEdited: PaymentItem = paymentItemEntered.copy(
+      amount              = amountEdited,
+      paymentSpecificData = PayeSpecificData(
+        payeReference = taxReference,
+        taxAmount     = BigDecimal("109.09"), //taxAmount+nicAmount shouldBe amountEntered
+        nicAmount     = BigDecimal ("100")
+      )
+    )
+
+    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEdited.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyStartedJson: JourneyJson = JourneyJson(
       "/tps/testdata/paye/journey-1-Started.json"
