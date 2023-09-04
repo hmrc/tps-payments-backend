@@ -123,20 +123,19 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
 
   private def encryptOrDecryptPaymentSpecificData(paymentSpecificData: PaymentSpecificData)(encryptOrDecrypt: String => String): PaymentSpecificData = {
     paymentSpecificData match {
-      case psd @ SimplePaymentSpecificData(_)        => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
-      case psd @ PngrSpecificData(_, _, _, _)        => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
-      case psd @ MibSpecificData(_, _, _, _)         => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
-      case psd @ ChildBenefitSpecificData(_)         => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
-      case psd @ SaSpecificData(_)                   => psd.copy(encryptOrDecrypt(psd.saReference))
-      case psd @ SdltSpecificData(_)                 => psd.copy(encryptOrDecrypt(psd.sdltReference))
-      case psd @ SafeSpecificData(_)                 => psd.copy(encryptOrDecrypt(psd.safeReference))
-      case psd @ CotaxSpecificData(_)                => psd.copy(encryptOrDecrypt(psd.cotaxReference))
-      case psd @ NtcSpecificData(_)                  => psd.copy(encryptOrDecrypt(psd.ntcReference))
-      case psd @ PayeSpecificData(_, _, _)           => psd.copy(encryptOrDecrypt(psd.payeReference))
-      case psd @ NpsSpecificData(_, _, _, _, _)      => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
-      case psd @ VatSpecificData(_, _)               => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
-      case psd @ PptSpecificData(_)                  => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
-      case psd @ PaymentSpecificDataP800(_, _, _, _) => psd.copy(ninoPart1 = encryptOrDecrypt(psd.ninoPart1), ninoPart2 = encryptOrDecrypt(psd.ninoPart2))
+      case psd @ SimplePaymentSpecificData(_)   => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ PngrSpecificData(_, _, _, _)   => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ MibSpecificData(_, _, _, _)    => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd @ ChildBenefitSpecificData(_)    => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
+      case psd @ SaSpecificData(_)              => psd.copy(encryptOrDecrypt(psd.saReference))
+      case psd @ SdltSpecificData(_)            => psd.copy(encryptOrDecrypt(psd.sdltReference))
+      case psd @ SafeSpecificData(_)            => psd.copy(encryptOrDecrypt(psd.safeReference))
+      case psd @ CotaxSpecificData(_)           => psd.copy(encryptOrDecrypt(psd.cotaxReference))
+      case psd @ NtcSpecificData(_)             => psd.copy(encryptOrDecrypt(psd.ntcReference))
+      case psd @ PayeSpecificData(_, _, _)      => psd.copy(encryptOrDecrypt(psd.payeReference))
+      case psd @ NpsSpecificData(_, _, _, _, _) => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
+      case psd @ VatSpecificData(_, _)          => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
+      case psd @ PptSpecificData(_)             => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
     }
   }
 

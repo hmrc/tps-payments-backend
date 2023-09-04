@@ -58,7 +58,7 @@ class TaxTypeSpec extends UnitSpec {
   }
 
   "ExternalTaxTypes vs TpsNativeTaxTypes" in {
-    TaxTypes.values.toSet shouldBe (ExternalTaxTypes.values ++ TpsNativeTaxTypes.values ++ Set (TaxTypes.P800)).toSet
+    TaxTypes.values.toSet shouldBe (ExternalTaxTypes.values ++ TpsNativeTaxTypes.values).toSet
 
   }
   "json De/Serialize" in {

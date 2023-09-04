@@ -198,14 +198,6 @@ object TaxTypes extends Enum[TaxType] {
   val Vat: TpsNativeTaxTypes.Vat.type = TpsNativeTaxTypes.Vat
   val Ppt: TpsNativeTaxTypes.Ppt.type = TpsNativeTaxTypes.Ppt
 
-  //TODO: remove this tax type
-  case object P800 extends TaxType {
-    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"P800 should not be looking for its HoD")
-    override def pcipalProductionClientId: String = throw new RuntimeException("p800 is not suported")
-    override def pcipalTestClientId: String = throw new RuntimeException("p800 is not suported")
-    override def screenValue: String = throw new RuntimeException("p800 is not suported")
-  }
-
   override def values: IndexedSeq[TaxType] = findValues ++ TpsNativeTaxTypes.values ++ ExternalTaxTypes.values
 }
 

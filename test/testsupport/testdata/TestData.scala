@@ -157,8 +157,8 @@ object TestData {
           CustomerName("some test name"),
           "12345",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          TaxTypes.P800,
+          ChildBenefitSpecificData(reference),
+          TaxTypes.ChildBenefitsRepayments,
           Some(Email("test@email.com")))
       ),
       navigation                  = navigation,
@@ -218,8 +218,8 @@ object TestData {
           CustomerName("some test name"),
           "12345",
           Some(chargeRefNotificationPcipalRequest),
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          TaxTypes.P800,
+          ChildBenefitSpecificData(reference),
+          TaxTypes.ChildBenefitsRepayments,
           Some(Email("test@email.com")))
       ),
       navigation                  = navigation,
@@ -243,8 +243,8 @@ object TestData {
           CustomerName("some test name"),
           "12345",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          TaxTypes.P800,
+          ChildBenefitSpecificData(reference),
+          TaxTypes.ChildBenefitsRepayments,
           Some(Email("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")))
       ),
       navigation                  = navigation,
@@ -268,8 +268,8 @@ object TestData {
           CustomerName("some test name"),
           "12345",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          TaxTypes.P800,
+          ChildBenefitSpecificData(reference),
+          TaxTypes.ChildBenefitsRepayments,
           None)),
       navigation                  = navigation,
       pcipalSessionLaunchRequest  = None,
@@ -292,8 +292,8 @@ object TestData {
           CustomerName("some test name"),
           "12345",
           None,
-          PaymentSpecificDataP800(reference, reference2, reference3, 2000),
-          TaxTypes.P800,
+          ChildBenefitSpecificData(reference),
+          TaxTypes.ChildBenefitsRepayments,
           Some(Email.emptyEmail))
       ),
       navigation                  = navigation,
@@ -568,7 +568,7 @@ object TestData {
         }
      """.stripMargin)
 
-  val tpsItemsForEmail: String = """[{"taxType":"P800","amount":"1.92","transactionFee":"1.23","transactionNumber":"3123456701"}]"""
+  val tpsItemsForEmail: String = """[{"taxType":"Child Benefits repayments","amount":"1.92","transactionFee":"1.23","transactionNumber":"3123456701"}]"""
 
   //language=JSON
   val modsReconLookupJson: JsValue = Json.parse(
