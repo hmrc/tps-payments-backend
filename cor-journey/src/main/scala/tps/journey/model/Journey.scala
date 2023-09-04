@@ -18,7 +18,7 @@ package tps.journey.model
 
 import play.api.libs.json._
 import tps.model.repo.HasId
-import tps.model.{Navigation, PaymentItem}
+import tps.model.{Navigation, PaymentItem, PaymentItemId}
 import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
 import tps.utils.SafeEquals.EqualsOps
 
@@ -41,7 +41,8 @@ final case class Journey(
 
   def basketFull: Boolean = payments.size >= 5
 
-  def getPcipalSessionLaunchResponse: PcipalSessionLaunchResponse = pcipalSessionLaunchResponse.getOrElse(throw new RuntimeException(s"Error: PcipalSessionLaunchResponse is missing from journey [journeyId:${journeyId.value}]"))
+  def getPcipalSessionLaunchResponse: PcipalSessionLaunchResponse = pcipalSessionLaunchResponse.getOrElse(throw new RuntimeException(s"Error: Missing PcipalSessionLaunchResponse in the journey [${journeyId.toString}]"))
+  def getPaymentItem(paymentItemId: PaymentItemId): PaymentItem = payments.find(_.paymentItemId === paymentItemId).getOrElse(throw new RuntimeException(s"Error: Missing payment item identified by [${paymentItemId.toString}] [${journeyId.toString}]"))
 }
 
 object Journey {

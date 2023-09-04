@@ -29,7 +29,7 @@ object JourneyState {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: Format[JourneyState] = derived.oformat[JourneyState]()
 
-  //Journey Started by Tps, on Landing page (or in MIB or in PNGR)
+  //Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
   final case object Started extends JourneyState
 
   //Entering Payment
