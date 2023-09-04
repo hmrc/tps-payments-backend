@@ -120,9 +120,8 @@ trait TdJourneyInStates {
   def journeyWithEnteredPaymentJson: JourneyJson
 
   lazy val journeyInEditPayment: Journey =
-    journeyInEnterPayment.copy(
-      journeyState = JourneyState.EditPayment(paymentItemAfterReceivedNotification.paymentItemId),
-      payments     = List(paymentItemEntered)
+    journeyWithEnteredPayment.copy(
+      journeyState = JourneyState.EditPayment(paymentItemEntered.paymentItemId)
     )
 
   def journeyInEditPaymentJson: JourneyJson
@@ -135,12 +134,11 @@ trait TdJourneyInStates {
 
   def journeyWithEditedPaymentJson: JourneyJson
 
-  lazy val journeyAtPciPal: Journey =
-    journeyWithEnteredPayment.copy(
-      journeyState                = JourneyState.AtPciPal,
-      pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
-      pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
-    )
+  lazy val journeyAtPciPal: Journey = journeyWithEditedPayment.copy(
+    journeyState                = JourneyState.AtPciPal,
+    pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
+    pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
+  )
 
   def journeyAtPciPalJson: JourneyJson
 
