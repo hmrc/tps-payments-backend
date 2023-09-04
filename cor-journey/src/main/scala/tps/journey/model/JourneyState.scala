@@ -17,7 +17,7 @@
 package tps.journey.model
 
 import julienrf.json.derived
-import play.api.libs.json.Format
+import play.api.libs.json._
 import tps.model.{PaymentItemId, TpsNativeTaxType}
 
 sealed trait JourneyState
@@ -27,7 +27,20 @@ object JourneyState {
   sealed trait FinalState { self: JourneyState => }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: Format[JourneyState] = derived.oformat[JourneyState]()
+  implicit val format: Format[JourneyState] = {
+
+    val default: OFormat[JourneyState] = derived.oformat[JourneyState]()
+    val legacyReadsLandingAsStarted: Reads[JourneyState] = (__ \ "Landing").read[JsObject].map[JourneyState](_ => Started)
+    val legacyReadsBasketNotEmptyAsStarted: Reads[JourneyState] = (__ \ "BasketNotEmpty").read[JsObject].map[JourneyState](_ => Started)
+
+    OFormat[JourneyState](
+      r = default
+        .orElse(legacyReadsLandingAsStarted)
+        .orElse(legacyReadsBasketNotEmptyAsStarted),
+      w = default
+    )
+
+  }
 
   //Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
   final case object Started extends JourneyState

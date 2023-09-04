@@ -19,12 +19,14 @@ package tps.journey.model
 import play.api.libs.json.{JsValue, Json}
 import testsupport.UnitSpec
 import tps.model.TaxTypes
+import tps.testdata.TdAll
 
 class JourneyStateSpec extends UnitSpec {
 
   private val testCases: List[(JourneyState, String)] = List(
     JourneyState.Started -> """{"Started":{}}""",
     JourneyState.EnterPayment(TaxTypes.Sa) -> """{"EnterPayment":{"taxType":"Sa"}}""",
+    JourneyState.EditPayment(TdAll.paymentItemId) -> """{"EditPayment":{"paymentItemId":"64897aee16fe8b501cbf008a"}}""",
     JourneyState.AtPciPal -> """{"AtPciPal":{}}""",
     JourneyState.Rejected -> """{"Rejected":{}}""",
     JourneyState.ResetByPciPal -> """{"ResetByPciPal":{}}""",
@@ -50,11 +52,10 @@ class JourneyStateSpec extends UnitSpec {
     )
 
     testCases.foreach { tc =>
-      val jsonString = tc._1
-      val journeyState = tc._2
-      s"deserialize ${journeyState.toString}" in {
+      val jsonString: String = tc._1
+      val journeyState: JourneyState = tc._2
+      s"deserialize $jsonString" in {
         val json: JsValue = Json.parse(jsonString)
-        Json.toJson(journeyState: JourneyState) shouldBe json
         json.as[JourneyState] shouldBe journeyState
       }
     }
