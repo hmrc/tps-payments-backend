@@ -49,7 +49,7 @@ class JourneySpec extends UnitSpec {
 
   "generate journey jsons" ignore {
 
-    TdAll.allTdJourneysWithJson.foreach { t =>
+    TdAll.allJourneysWithJson.foreach { t =>
       val content = Json.prettyPrint(Json.toJson(t._1))
       val rootPath = "/dbox/projects/hmrcdigital/tps-payments-backend/cor-journey-test-data/src/main/resources"
       val path = s"$rootPath${t._2.resourcePath}"
@@ -64,7 +64,7 @@ class JourneySpec extends UnitSpec {
 
   case class TestCase(journey: Journey, json: JsObject, testCaseName: String)
 
-  lazy val testCases: List[TestCase] = TdAll.allTdJourneysWithJson
+  lazy val testCases: List[TestCase] = TdAll.allJourneysWithJson
     .map { t =>
       val journey = t._1
       val json = t._2.json

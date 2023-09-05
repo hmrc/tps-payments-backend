@@ -96,7 +96,7 @@ class TestConnectorSpec extends ItSpec with Status {
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
     journeyService.upsert(journey).futureValue
-    connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.P800
+    connector.getPaymentItemTaxType(paymentItemId).futureValue shouldBe TaxTypes.ChildBenefitsRepayments
   }
 
   "getTaxType should return 404 when the tps payment item id is not found" in {

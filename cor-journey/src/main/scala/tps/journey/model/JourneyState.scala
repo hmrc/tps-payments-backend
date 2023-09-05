@@ -17,8 +17,8 @@
 package tps.journey.model
 
 import julienrf.json.derived
-import play.api.libs.json.Format
-import tps.model.TaxType
+import play.api.libs.json._
+import tps.model.{PaymentItemId, TpsNativeTaxType}
 
 sealed trait JourneyState
 
@@ -27,16 +27,29 @@ object JourneyState {
   sealed trait FinalState { self: JourneyState => }
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: Format[JourneyState] = derived.oformat[JourneyState]()
+  implicit val format: Format[JourneyState] = {
 
-  //Journey Started by Tps, on Landing page (or in MIB or in PNGR)
-  final case object Landing extends JourneyState
+    val default: OFormat[JourneyState] = derived.oformat[JourneyState]()
+    val legacyReadsLandingAsStarted: Reads[JourneyState] = (__ \ "Landing").read[JsObject].map[JourneyState](_ => Started)
+    val legacyReadsBasketNotEmptyAsStarted: Reads[JourneyState] = (__ \ "BasketNotEmpty").read[JsObject].map[JourneyState](_ => Started)
 
-  //Entering or Editing payment
-  final case class EnterPayment(taxType: TaxType) extends JourneyState
+    OFormat[JourneyState](
+      r = default
+        .orElse(legacyReadsLandingAsStarted)
+        .orElse(legacyReadsBasketNotEmptyAsStarted),
+      w = default
+    )
 
-  //At least one payment is in the basket, but user can be on the landing page
-  final case object BasketNotEmpty extends JourneyState
+  }
+
+  //Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
+  final case object Started extends JourneyState
+
+  //Entering Payment
+  final case class EnterPayment(taxType: TpsNativeTaxType) extends JourneyState
+
+  //Editing Payment
+  final case class EditPayment(paymentItemId: PaymentItemId) extends JourneyState
 
   //Journey handed over to PciPal
   final case object AtPciPal extends JourneyState

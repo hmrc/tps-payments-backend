@@ -25,15 +25,6 @@ sealed trait PaymentSpecificData {
   def getRawReference: String
 }
 
-final case class SimplePaymentSpecificData(chargeReference: String) extends PaymentSpecificData {
-  override def getReference: String = chargeReference
-  override def getRawReference: String = chargeReference
-}
-
-object SimplePaymentSpecificData {
-  implicit val format: OFormat[SimplePaymentSpecificData] = Json.format[SimplePaymentSpecificData]
-}
-
 final case class PngrSpecificData(
     chargeReference: String,
     vat:             BigDecimal,
@@ -178,27 +169,8 @@ object PptSpecificData {
   implicit val format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
 }
 
-final case class PaymentSpecificDataP800(
-    ninoPart1:          String,
-    ninoPart2:          String,
-    taxTypeScreenValue: String,
-    period:             Int
-) extends PaymentSpecificData {
-  override def getReference: String = {
-    s"$ninoPart1$ninoPart2$taxTypeScreenValue${period.toString}"
-  }
-  override def getRawReference: String = throw new RuntimeException("P800 is not supported")
-}
-
-object PaymentSpecificDataP800 {
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PaymentSpecificDataP800] = Json.format[PaymentSpecificDataP800]
-}
-
 object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
-    case p800: PaymentSpecificDataP800                      => PaymentSpecificDataP800.format.writes(p800)
-    case simple: SimplePaymentSpecificData                  => SimplePaymentSpecificData.format.writes(simple)
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
     case childBenefitSpecificData: ChildBenefitSpecificData => ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
@@ -214,10 +186,6 @@ object PaymentSpecificData {
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case json: JsObject if json.keys === jsonKeysSimplePaymentSpecificData =>
-      JsSuccess(json.as[SimplePaymentSpecificData])
-    case json: JsObject if json.keys === jsonKeysPaymentSpecificDataP800 =>
-      JsSuccess(json.as[PaymentSpecificDataP800])
     case json: JsObject if json.keys === jsonKeysPngrSpecificData =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
@@ -261,6 +229,5 @@ object PaymentSpecificData {
   val jsonKeysNps: Set[String] = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
   val jsonKeysVat: Set[String] = Set("vatReference", "remittanceType")
   val jsonKeysPpt: Set[String] = Set("pptReference")
-  val jsonKeysPaymentSpecificDataP800: Set[String] = Set("ninoPart1", "ninoPart2", "taxTypeScreenValue", "period")
 }
 

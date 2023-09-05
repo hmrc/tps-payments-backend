@@ -19,7 +19,10 @@ object  WartRemoverSettings {
           Wart.SortedMaxMinOption,
           Wart.Throw,
           Wart.ToString,
-          Wart.PlatformDefault
+          Wart.PlatformDefault,
+          Wart.Product,
+          Wart.JavaSerializable,
+          Wart.Serializable
         )
         else Nil
       },

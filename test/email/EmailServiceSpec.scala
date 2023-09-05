@@ -18,20 +18,16 @@ package email
 
 import email.model.IndividualPaymentForEmail
 import testsupport.ItSpec
-import testsupport.testdata.TestData.paymentItemId
-import tps.model.TaxTypes.P800
 import tps.model._
-
-import java.time.Instant
+import tps.testdata.TdAll
 
 class EmailServiceSpec extends ItSpec {
 
   def emailService: EmailService = app.injector.instanceOf[EmailService]
 
-  val testTpsPaymentItem = PaymentItem(paymentItemId, 1.92, HeadOfDutyIndicators.B, Instant.parse("2020-01-20T11:56:46Z"), CustomerName("JB"), "12345", None, PaymentSpecificDataP800("JE231111", "B", "P800", 2000), P800, Some(Email("test@email.com")))
-
   "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
-    val testTpsPaymentItemWithNoPciPalData = testTpsPaymentItem
+    @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+    val testTpsPaymentItemWithNoPciPalData: PaymentItem = TdAll.TdJourneySa.journeyAtPciPal.payments.head
     val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
     individualPaymentForEmail.transactionFee shouldBe "Unknown"
     individualPaymentForEmail.transactionNumber shouldBe "Unknown"
@@ -48,15 +44,17 @@ class EmailServiceSpec extends ItSpec {
     TaxTypes.Nps -> "NPS/NIRS",
     TaxTypes.Vat -> "VAT",
     TaxTypes.Ppt -> "Plastic Packaging Tax",
-    TaxTypes.P800 -> "P800",
     TaxTypes.MIB -> "MIB",
     TaxTypes.PNGR -> "PNGR"
   ).foreach {
       case (tt, expectedTaxTypeString) =>
         s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
           //TODO: stronger test would compare entire object instead of just one filed.
+          //TODO: rewrite this so it iterates through valid test data instead of mocking only tax type
+          @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+          val testTpsPaymentItem = TdAll.TdJourneySa.journeyReceivedNotification.payments.head
           val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
-          val individualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
+          val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
           individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
         }
     }

@@ -127,7 +127,6 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     case TaxTypes.Nps                     => "NPS/NIRS"
     case TaxTypes.Vat                     => "VAT"
     case TaxTypes.Ppt                     => "Plastic Packaging Tax"
-    case TaxTypes.P800                    => taxType.toString
     case TaxTypes.MIB                     => taxType.toString
     case TaxTypes.PNGR                    => taxType.toString
   }

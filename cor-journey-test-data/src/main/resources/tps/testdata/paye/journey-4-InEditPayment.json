@@ -1,0 +1,31 @@
+{
+  "_id" : "64886ed616fe8b501cbf0088",
+  "journeyState" : {
+    "EditPayment" : {
+      "paymentItemId" : "64897aee16fe8b501cbf008a"
+    }
+  },
+  "pid" : "1234567",
+  "created" : "2059-11-25T16:33:51.880Z",
+  "payments" : [ {
+    "paymentItemId" : "64897aee16fe8b501cbf008a",
+    "amount" : 606.61,
+    "headOfDutyIndicator" : "P",
+    "updated" : "2059-11-25T16:33:51.880Z",
+    "customerName" : "customerName",
+    "chargeReference" : "123PW123456782213",
+    "paymentSpecificData" : {
+      "payeReference" : "123PW123456782213",
+      "taxAmount" : 506.61,
+      "nicAmount" : 100
+    },
+    "taxType" : "Paye",
+    "email" : "test@email.com"
+  } ],
+  "navigation" : {
+    "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
+    "reset" : "http://localhost:9124/tps-payments/full/reset",
+    "finish" : "http://localhost:9124/tps-payments/finish",
+    "callback" : "http://notification.host/payments/notifications/send-card-payments"
+  }
+}

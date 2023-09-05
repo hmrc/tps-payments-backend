@@ -23,9 +23,6 @@ import tps.model._
 class PaymentItemSpecificDataSpec extends UnitSpec {
 
   "PaymentSpecificData get reference utility methods" - {
-    "PaymentSpecificDataP800" in {
-      PaymentSpecificDataP800("1", "2", "P800", 1).getReference shouldBe "12P8001"
-    }
     "PngrSpecificData" in {
       PngrSpecificData("ref", BigDecimal(1), BigDecimal(1), BigDecimal(1)).getReference shouldBe "ref"
     }
