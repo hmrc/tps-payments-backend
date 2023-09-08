@@ -3,7 +3,7 @@ import sbt._
 
 object AppDependencies {
 
-  val bootstrapVersion: String = "7.21.0"
+  val bootstrapVersion: String = "7.22.0"
   val hmrcMongoVersion: String = "1.3.0"
   val playJsonDerivedCodesVersion: String = "7.0.0"
   val enumeratumVersion: String = "1.7.0"
@@ -18,7 +18,7 @@ object AppDependencies {
     )
 
     val test: Seq[ModuleID] = Seq(
-      "org.scalatest"          %% "scalatest"              % "3.2.16",
+      "org.scalatest"          %% "scalatest"              % "3.2.17",
       "com.vladsch.flexmark"   %  "flexmark-all"           % "0.62.2",
       "org.scalatestplus.play" %% "scalatestplus-play"     % "5.1.0",
       "org.pegdown"            %  "pegdown"                % "1.6.0",
