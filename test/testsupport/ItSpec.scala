@@ -112,7 +112,8 @@ trait ItSpec
     "microservice.services.auth.port" -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.protocol" -> "http",
     "microservice.services.tps-payments-backend.host" -> "localhost",
-    "microservice.services.tps-payments-backend.port" -> testPort
+    "microservice.services.tps-payments-backend.port" -> testPort,
+    "paymentNotificationUrl" -> "http://notification.host/payments/notifications/send-card-payments"
   ) ++ configOverrides
 
   def injector: Injector = fakeApplication().injector

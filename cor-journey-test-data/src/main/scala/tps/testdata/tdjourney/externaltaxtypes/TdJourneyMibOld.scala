@@ -24,22 +24,22 @@ import tps.testdata.TdBase
 import tps.testdata.util.JourneyJson
 
 import java.time.Instant
+// TODO: remove according to OPS-11079
+trait TdJourneyMibOld { dependencies: TdBase =>
 
-trait TdJourneyPngr { dependencies: TdBase =>
+  object TdJourneyMibOld extends TdJourneyInStatesExternalTaxTypesOld {
 
-  object TdJourneyPngr extends TdJourneyInStatesExternalTaxTypes {
+    override final val taxType: ExternalTaxType = TaxTypes.MIB
 
-    override final val taxType: ExternalTaxType = TaxTypes.PNGR
-
-    lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
+    override lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
       pid        = dependencies.pid,
       payments   = Seq[SjPaymentItem](
         SjPaymentItem(
           chargeReference     = taxReference,
           customerName        = dependencies.customerName,
           amount              = amount,
-          taxRegimeDisplay    = "PNGR", //yes, "PNGR" -> https://github.com/hmrc/bc-passengers-stride-frontend/blob/c4bf6dc0c52c02dc46b05f8990e679992830a03b/app/services/PayApiService.scala#L77
-          taxType             = TaxTypes.PNGR,
+          taxRegimeDisplay    = "MODS", //https://github.com/hmrc/merchandise-in-baggage-frontend/blob/96027c5b4cdbc4f957c06b0c7e295861962f2432/app/uk/gov/hmrc/merchandiseinbaggage/model/api/tpspayments/TpsPaymentsItem.scala#L25
+          taxType             = taxType,
           paymentSpecificData = paymentSpecificData,
           email               = Some(dependencies.email)
         )
@@ -51,20 +51,20 @@ trait TdJourneyPngr { dependencies: TdBase =>
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
     override lazy val navigation: Navigation = dependencies.navigation
-    override lazy val amountString: String = "101.01"
-    override lazy val taxReference: String = "XSPR5814332193"
+    override lazy val amountString: String = "102.02"
+    override lazy val taxReference: String = "XJPR5573376231"
 
-    override lazy val paymentSpecificData: PngrSpecificData = PngrSpecificData(
-      chargeReference = taxReference,
-      vat             = BigDecimal("297.25"),
-      customs         = BigDecimal("150.00"),
-      excise          = BigDecimal("136.27")
+    override lazy val paymentSpecificData: MibSpecificData = MibSpecificData(
+      chargeReference    = taxReference,
+      vat                = BigDecimal("0.07"),
+      customs            = BigDecimal("0.05"),
+      amendmentReference = Some(123)
     )
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId              = dependencies.flowId,
       InitialValues       = List(PcipalInitialValues(
-        clientId           = "PSML",
+        clientId           = "MBML",
         pid                = dependencies.pid,
         accountOfficeId    = "S1",
         HODIdentifier      = HeadOfDutyIndicators.B,
@@ -81,7 +81,7 @@ trait TdJourneyPngr { dependencies: TdBase =>
         vatRemittanceType  = None,
         paymentItemId      = dependencies.paymentItemId,
         chargeReference    = taxReference,
-        taxRegimeDisplay   = "PNGR",
+        taxRegimeDisplay   = "MIB",
         reference          = dependencies.pciPalReferenceNumber,
         increment          = "1"
       )),
@@ -119,50 +119,50 @@ trait TdJourneyPngr { dependencies: TdBase =>
       paymentItemId       = dependencies.paymentItemId,
       amount              = amount,
       headOfDutyIndicator = HeadOfDutyIndicators.B,
-      updated             = dependencies.instant,
+      updated             = instant,
       customerName        = dependencies.customerName,
       chargeReference     = taxReference,
       pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
-      taxType             = TaxTypes.PNGR,
+      taxType             = TaxTypes.MIB,
       email               = Some(dependencies.email)
     )
 
-    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
       journeyState                = JourneyState.Started,
       pid                         = pid,
       created                     = created,
-      payments                    = List(paymentItem),
+      payments                    = List(paymentItemBeforePcipal),
       navigation                  = navigation,
       pcipalSessionLaunchRequest  = None,
       pcipalSessionLaunchResponse = None
     )
 
     override lazy val journeyCreatedJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-1-Started.json"
+      "/tps/testdata/mib/journey-1-Started.json"
     )
 
     override lazy val journeyAtPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-6-AtPciPal.json"
+      "/tps/testdata/mib/journey-6-AtPciPal.json"
     )
 
     override lazy val journeyResetByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-7.a-ResetByPciPal.json"
+      "/tps/testdata/mib/journey-7.a-ResetByPciPal.json"
     )
 
     override lazy val journeyFinishedByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-7.b-FinishedByPciPal.json"
+      "/tps/testdata/mib/journey-7.b-FinishedByPciPal.json"
     )
 
     override lazy val journeyBackByPciPalJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-7.c-BackByPciPal.json"
+      "/tps/testdata/mib/journey-7.c-BackByPciPal.json"
     )
 
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
-      "/tps/testdata/pngr/journey-8-ReceivedNotification.json"
+      "/tps/testdata/mib/journey-8-ReceivedNotification.json"
     )
 
   }

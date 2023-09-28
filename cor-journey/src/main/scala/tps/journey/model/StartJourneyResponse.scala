@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package auth
+package tps.journey.model
 
-import play.api.mvc.Result
-import play.api.mvc.Results.Unauthorized
+import play.api.libs.json.{Json, OFormat}
 
-object UnhappyPathResponses {
-  val unauthorised: Result = Unauthorized("You do not have access to this service")
-  val notLoggedIn: Result = Unauthorized("You are not logged in")
+final case class StartJourneyResponse(
+    journeyId: JourneyId,
+    nextUrl:   String
+)
+
+object StartJourneyResponse {
+  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  implicit val format: OFormat[StartJourneyResponse] = Json.format[StartJourneyResponse]
 }

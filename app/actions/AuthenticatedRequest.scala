@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package auth
+package actions
 
-import com.google.inject.Inject
-import play.api.mvc._
+import play.api.mvc.{Request, WrappedRequest}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
-class Actions @Inject() (authoriseAction: AuthenticatedAction, actionBuilder: DefaultActionBuilder) {
+class AuthenticatedRequest[A](
+    val request:     Request[A],
+    val credentials: Credentials
+) extends WrappedRequest[A](request)
 
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  def strideAuthenticateAction(): ActionBuilder[Request, AnyContent] = actionBuilder andThen authoriseAction
-}

@@ -17,8 +17,8 @@
 package tps.journey
 
 import play.api.mvc.RequestHeader
-import tps.journey.model.{Journey, JourneyId}
-import tps.startjourneymodel.StartJourneyRequestMibOrPngr
+import tps.journey.model.{Journey, JourneyId, StartJourneyResponse}
+import tps.startjourneymodel.{StartJourneyRequestMib, StartJourneyRequestMibOrPngr}
 import tps.utils.HttpReadsInstances._
 import tps.utils.RequestSupport._
 import uk.gov.hmrc.http.HttpClient
@@ -34,6 +34,10 @@ class JourneyConnector(
 
   def startMibOrPngrJourney(startJourneyRequest: StartJourneyRequestMibOrPngr)(implicit request: RequestHeader): Future[JourneyId] = {
     httpClient.POST[StartJourneyRequestMibOrPngr, JourneyId](s"$baseUrl/tps-payments-backend/tps-payments", startJourneyRequest)
+  }
+
+  def startJourneyMib(startJourneyRequestMib: StartJourneyRequestMib)(implicit request: RequestHeader): Future[StartJourneyResponse] = {
+    httpClient.POST[StartJourneyRequestMib, StartJourneyResponse](s"$baseUrl/tps-payments-backend/start-tps-journey/mib", startJourneyRequestMib)
   }
 
   def upsert(journey: Journey)(implicit request: RequestHeader): Future[Unit] = httpClient

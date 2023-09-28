@@ -49,6 +49,9 @@ object AuthStub {
                    "$authProvider"
                  ]
                }
+             ],
+             "retrieve": [
+               "optionalCredentials"
              ]
            }""", true, true
         )
