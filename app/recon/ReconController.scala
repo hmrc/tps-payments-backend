@@ -18,6 +18,7 @@ package recon
 
 import play.api.libs.json._
 import play.api.mvc.{Action, ControllerComponents}
+import tps.model.PaymentSpecificData
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
@@ -28,7 +29,7 @@ class ReconController @Inject() (cc: ControllerComponents, reconService: ReconSe
 
   def findModsPayments(): Action[FindRPaymentSpecificDataRequest] = Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
     for {
-      transactions <- reconService.findModsPaymentsByReference(request.body.modsReferences)
+      transactions: Seq[PaymentSpecificData] <- reconService.findModsPaymentsByReference(request.body.modsReferences)
     } yield Ok(Json.toJson(transactions))
   }
 }

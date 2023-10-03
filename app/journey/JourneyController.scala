@@ -16,7 +16,7 @@
 
 package journey
 
-import auth.Actions
+import actions.Actions
 import email.EmailService
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
@@ -37,21 +37,21 @@ class JourneyController @Inject() (actions:        Actions,
                                    emailService:   EmailService,
                                    journeyService: JourneyService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-  def startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticateAction().async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
+  def startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
     val journey: Journey = request.body.makeJourney(Instant.now())
     journeyService.upsert(journey).map { _ =>
       Created(toJson(journey._id))
     }
   }
 
-  def upsert(): Action[Journey] = actions.strideAuthenticateAction().async(parse.json[Journey]) { implicit request =>
+  def upsert(): Action[Journey] = actions.strideAuthenticated.async(parse.json[Journey]) { implicit request =>
     val journey: Journey = request.body
     journeyService
       .upsert(journey)
       .map(_ => Ok)
   }
 
-  def findJourney(journeyId: JourneyId): Action[AnyContent] = actions.strideAuthenticateAction().async {
+  def findJourney(journeyId: JourneyId): Action[AnyContent] = actions.strideAuthenticated.async {
     journeyService.find(journeyId).map {
       case Some(journey) => Ok(toJson(journey))
       case None          => NotFound(s"No journey with given id [${journeyId.value}]")

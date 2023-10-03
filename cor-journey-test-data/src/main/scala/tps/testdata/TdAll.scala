@@ -17,7 +17,7 @@
 package tps.testdata
 
 import tps.journey.model.Journey
-import tps.testdata.tdjourney.externaltaxtypes.{TdJourneyInStatesExternalTaxTypes, TdJourneyMib, TdJourneyPngr}
+import tps.testdata.tdjourney.externaltaxtypes.{TdJourneyInStatesExternalTaxTypesOld, TdJourneyMib, TdJourneyMibOld, TdJourneyPngrOld}
 import tps.testdata.tdjourney.{TdJourneyChildBenefit, TdJourneyCotax, TdJourneyInStates, TdJourneyNps, TdJourneyNtc, TdJourneyPaye, TdJourneyPpt, TdJourneySa, TdJourneySafe, TdJourneySdlt, TdJourneyVat, TdMultiPaymentJourney}
 import tps.testdata.util.JourneyJson
 
@@ -27,8 +27,9 @@ trait TdAll
   extends AnyRef
   with TdBase
   with TdRequest
+  with TdJourneyMibOld
   with TdJourneyMib
-  with TdJourneyPngr
+  with TdJourneyPngrOld
   with TdJourneyChildBenefit
   with TdJourneyCotax
   with TdJourneySa
@@ -64,9 +65,9 @@ trait TdAll
   /**
    * only journeys with ExternalTaxType
    */
-  lazy val allTdJourneyInStatesExternalTaxTypes: List[TdJourneyInStatesExternalTaxTypes] = List(
+  lazy val allTdJourneyInStatesExternalTaxTypes: List[TdJourneyInStatesExternalTaxTypesOld] = List(
     TdJourneyPngr,
-    TdJourneyMib
+    TdJourneyMibOld
   )
 
   lazy val allJourneysWithJson: List[(Journey, JourneyJson)] =

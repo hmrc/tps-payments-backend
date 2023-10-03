@@ -19,11 +19,13 @@ package tps.testdata.tdjourney.externaltaxtypes
 import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.{ExternalTaxType, Navigation, PaymentItem, PaymentSpecificData}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
+import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-trait TdJourneyInStatesExternalTaxTypes {
+// TODO: remove according to OPS-11079
+trait TdJourneyInStatesExternalTaxTypesOld {
   def taxType: ExternalTaxType
 
   def journeyId: JourneyId
@@ -51,6 +53,8 @@ trait TdJourneyInStatesExternalTaxTypes {
   def paymentItem: PaymentItem
 
   def paymentSpecificData: PaymentSpecificData
+
+  def startJourneyRequest: StartJourneyRequestMibOrPngr
 
   def journeyCreated: Journey
 

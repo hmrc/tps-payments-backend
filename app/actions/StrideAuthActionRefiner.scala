@@ -14,42 +14,43 @@
  * limitations under the License.
  */
 
-package auth
+package actions
 
-import auth.UnhappyPathResponses.{notLoggedIn, unauthorised}
+import actions.UnhappyPathResponses.{notLoggedIn, unauthorised}
 import play.api.Logger
 import play.api.mvc._
 import uk.gov.hmrc.auth.core.AuthProvider.PrivilegedApplication
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.authorise.{EmptyPredicate, Predicate}
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.credentials
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
-class AuthenticatedAction @Inject() (
+class StrideAuthActionRefiner @Inject() (
     cc:            MessagesControllerComponents,
-    authConnector: AuthConnector)(implicit ec: ExecutionContext) extends ActionBuilder[Request, AnyContent] { self =>
+    authConnector: AuthConnector)(implicit ec: ExecutionContext) extends ActionRefiner[Request, AuthenticatedRequest] { self =>
 
-  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
+  override def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
-    val strideRoles: Set[String] = Set("tps_payment_taker_call_handler")
-    val enrolments: Set[Predicate] = strideRoles.map(Enrolment.apply)
-    val stridePredicate: Predicate = enrolments.reduceOption(_ or _).getOrElse(EmptyPredicate)
+    val predicate = Enrolment("tps_payment_taker_call_handler") and AuthProviders(PrivilegedApplication)
 
-    af.authorised(stridePredicate and AuthProviders(PrivilegedApplication))(block(request)).recover {
-      case _: NoActiveSession =>
-        logger.info(s"no active session")
-        notLoggedIn
-      case e: AuthorisationException =>
-        logger.info(s"Unauthorised because of ${e.reason}, ${e.toString}")
-        unauthorised
-    }
+    af
+      .authorised(predicate)
+      .retrieve(credentials) {
+        case Some(credentials) => Future.successful(Right(new AuthenticatedRequest(request, credentials)))
+        case None              => Future.successful(Left(unauthorised))
+      }.recover {
+        case _: NoActiveSession =>
+          logger.warn(s"Unauthorised, no active session")
+          Left(notLoggedIn)
+        case e: AuthorisationException =>
+          logger.info(s"Unauthorised because of ${e.reason}, ${e.toString}")
+          Left(unauthorised)
+      }
   }
-
-  override def parser: BodyParser[AnyContent] = cc.parsers.defaultBodyParser
 
   override protected def executionContext: ExecutionContext = cc.executionContext
 
