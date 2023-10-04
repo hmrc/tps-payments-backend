@@ -16,12 +16,14 @@
 
 package tps.testdata.tdjourney.externaltaxtypes
 
+import play.api.libs.json.JsObject
 import tps.journey.model.{Journey, JourneyId, JourneyState, StartJourneyResponse}
 import tps.model._
 import tps.pcipalmodel._
 import tps.startjourneymodel.StartJourneyRequestMib
 import tps.testdata.TdBase
-import tps.testdata.util.JourneyJson
+import tps.testdata.util.{JourneyJson, ResourceReader}
+import tps.testdata.util.JsonSyntax.toJsonOps
 
 import java.time.Instant
 
@@ -46,6 +48,9 @@ trait TdJourneyMib { dependencies: TdBase =>
       resetUrl           = dependencies.navigation.reset,
       finishUrl          = dependencies.navigation.finish
     )
+
+    lazy val startJourneyRequestJson: JsObject = ResourceReader.read("/tps/testdata/mib/0-startJourneyRequest.json").asJson
+    lazy val startJourneyRequestJsonAmountsAsStrings: JsObject = ResourceReader.read("/tps/testdata/mib/0-startJourneyRequest-amounts-as-strings.json").asJson
 
     lazy val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(
       journeyId = dependencies.journeyId, nextUrl = s"http://localhost:9124/tps-payments/make-payment/mib/${dependencies.journeyId.value}"

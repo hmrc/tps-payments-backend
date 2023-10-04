@@ -1,0 +1,11 @@
+{
+  "mibReference": "XJPR5573376231",
+  "customerName": "customerName",
+  "amount": 102.02,
+  "amendmentReference": 12345666,
+  "totalVatDue": 0.07,
+  "totalDutyDue": 0.05,
+  "backUrl": "http://localhost:9124/tps-payments/back-from-pcipal",
+  "resetUrl": "http://localhost:9124/tps-payments/full/reset",
+  "finishUrl": "http://localhost:9124/tps-payments/finish"
+}

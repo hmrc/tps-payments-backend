@@ -67,4 +67,14 @@ class StartJourneyControllerMibSpec extends ItSpec {
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
+  "deserialize request" in {
+    val json = TdAll.TdJourneyMib.startJourneyRequestJson
+    json.as[StartJourneyRequestMib] shouldBe TdAll.TdJourneyMib.startJourneyRequest
+  }
+
+  "deserialize request (amounts as strings)" in {
+    val json = TdAll.TdJourneyMib.startJourneyRequestJsonAmountsAsStrings
+    json.as[StartJourneyRequestMib] shouldBe TdAll.TdJourneyMib.startJourneyRequest
+  }
+
 }

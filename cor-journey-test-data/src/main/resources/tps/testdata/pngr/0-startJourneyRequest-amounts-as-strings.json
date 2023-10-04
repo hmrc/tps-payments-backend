@@ -1,0 +1,8 @@
+{
+  "chargeReference": "XSPR5814332193",
+  "customerName": "customerName",
+  "amount": "101.01",
+  "backUrl": "http://localhost:9124/tps-payments/back-from-pcipal",
+  "resetUrl": "http://localhost:9124/tps-payments/full/reset",
+  "finishUrl": "http://localhost:9124/tps-payments/finish"
+}
