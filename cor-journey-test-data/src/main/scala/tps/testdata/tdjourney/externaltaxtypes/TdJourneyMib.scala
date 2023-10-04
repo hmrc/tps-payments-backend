@@ -55,6 +55,7 @@ trait TdJourneyMib { dependencies: TdBase =>
     lazy val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(
       journeyId = dependencies.journeyId, nextUrl = s"http://localhost:9124/tps-payments/make-payment/mib/${dependencies.journeyId.value}"
     )
+
     override lazy val journeyId: JourneyId = dependencies.journeyId
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
