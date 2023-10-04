@@ -21,7 +21,6 @@ import tps.model.CustomerName
 
 /**
  * Start Journey Request (Sjr) For Merchandise in Baggage (Mib)
- * `totalVatDue` and `totalDutyDue` - are
  * @param amendmentReference used to when processing notification from pcipal (this value is send back to Mib)
  * @param totalVatDue used in reconciliation when building finance report. They aren't strictly required to maka a payment.
  * @param totalDutyDue used in reconciliation when building finance report. They aren't strictly required to maka a payment.

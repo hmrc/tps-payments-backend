@@ -123,18 +123,18 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
 
   private def encryptOrDecryptPaymentSpecificData(paymentSpecificData: PaymentSpecificData)(encryptOrDecrypt: String => String): PaymentSpecificData = {
     paymentSpecificData match {
-      case psd @ PngrSpecificData(_, _, _, _)   => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
-      case psd @ MibSpecificData(_, _, _, _)    => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
-      case psd @ ChildBenefitSpecificData(_)    => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
-      case psd @ SaSpecificData(_)              => psd.copy(encryptOrDecrypt(psd.saReference))
-      case psd @ SdltSpecificData(_)            => psd.copy(encryptOrDecrypt(psd.sdltReference))
-      case psd @ SafeSpecificData(_)            => psd.copy(encryptOrDecrypt(psd.safeReference))
-      case psd @ CotaxSpecificData(_)           => psd.copy(encryptOrDecrypt(psd.cotaxReference))
-      case psd @ NtcSpecificData(_)             => psd.copy(encryptOrDecrypt(psd.ntcReference))
-      case psd @ PayeSpecificData(_, _, _)      => psd.copy(encryptOrDecrypt(psd.payeReference))
-      case psd @ NpsSpecificData(_, _, _, _, _) => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
-      case psd @ VatSpecificData(_, _)          => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
-      case psd @ PptSpecificData(_)             => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
+      case psd: PngrSpecificData         => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd: MibSpecificData          => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
+      case psd: ChildBenefitSpecificData => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
+      case psd: SaSpecificData           => psd.copy(encryptOrDecrypt(psd.saReference))
+      case psd: SdltSpecificData         => psd.copy(encryptOrDecrypt(psd.sdltReference))
+      case psd: SafeSpecificData         => psd.copy(encryptOrDecrypt(psd.safeReference))
+      case psd: CotaxSpecificData        => psd.copy(encryptOrDecrypt(psd.cotaxReference))
+      case psd: NtcSpecificData          => psd.copy(encryptOrDecrypt(psd.ntcReference))
+      case psd: PayeSpecificData         => psd.copy(encryptOrDecrypt(psd.payeReference))
+      case psd: NpsSpecificData          => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
+      case psd: VatSpecificData          => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
+      case psd: PptSpecificData          => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
     }
   }
 
@@ -156,6 +156,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
 object JourneyService {
 
   sealed trait FindByPcipalSessionIdResult
+
   object FindByPcipalSessionIdResult {
     /**
      * Journey Found by PcipalSessionId and payments contain item with give paymentItemId

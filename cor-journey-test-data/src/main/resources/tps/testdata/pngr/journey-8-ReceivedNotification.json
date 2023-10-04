@@ -27,13 +27,9 @@
       "CardLast4" : "1234"
     },
     "paymentSpecificData" : {
-      "chargeReference" : "XSPR5814332193",
-      "vat" : 297.25,
-      "customs" : 150,
-      "excise" : 136.27
+      "chargeReference" : "XSPR5814332193"
     },
-    "taxType" : "PNGR",
-    "email" : "test@email.com"
+    "taxType" : "PNGR"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
