@@ -76,5 +76,4 @@ class StartJourneyControllerMibSpec extends ItSpec {
     val json = TdAll.TdJourneyMib.startJourneyRequestJsonAmountsAsStrings
     json.as[StartJourneyRequestMib] shouldBe TdAll.TdJourneyMib.startJourneyRequest
   }
-
 }
