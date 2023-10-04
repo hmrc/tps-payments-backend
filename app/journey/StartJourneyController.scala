@@ -23,7 +23,7 @@ import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, ControllerComponents}
 import tps.journey.model._
 import tps.model._
-import tps.startjourneymodel.{StartJourneyRequestMib, StartJourneyRequestMibOrPngr}
+import tps.startjourneymodel.{StartJourneyRequestMib, StartJourneyRequestMibOrPngr, StartJourneyRequestPngr}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.time.{Clock, Instant}
@@ -86,6 +86,46 @@ class StartJourneyController @Inject() (actions:                Actions,
       .upsert(journey)
       .map { _ =>
         val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(journeyId = journey.id, nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/mib/${journey.id.value}")
+        Created(toJson(startJourneyResponse))
+      }
+  }
+
+  def startJourneyPngr: Action[StartJourneyRequestPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestPngr]) { implicit request =>
+    val journeyId = journeyIdGenerator.nextId()
+    logger.info(s"Starting PNGR journey [${journeyId.toString}] ...")
+    val sjr = request.body
+    val journey: Journey =
+      Journey(
+        _id          = journeyId,
+        journeyState = JourneyState.Started,
+        pid          = request.credentials.providerId,
+        created      = Instant.now(clock),
+        payments     = List(PaymentItem(
+          paymentItemId       = paymentItemIdGenerator.nextId(),
+          amount              = sjr.amount,
+          headOfDutyIndicator = HeadOfDutyIndicators.B,
+          updated             = Instant.now(clock),
+          customerName        = sjr.customerName,
+          chargeReference     = sjr.chargeReference,
+          pcipalData          = None,
+          paymentSpecificData = PngrSpecificData(
+            chargeReference = sjr.chargeReference
+          ),
+          taxType             = TaxTypes.PNGR,
+          email               = None
+        )),
+        navigation   = Navigation(
+          back     = sjr.backUrl,
+          reset    = sjr.resetUrl,
+          finish   = sjr.finishUrl,
+          callback = appConfig.paymentNotificationUrl
+        )
+      )
+
+    journeyService
+      .upsert(journey)
+      .map { _ =>
+        val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(journeyId = journey.id, nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/pngr/${journey.id.value}")
         Created(toJson(startJourneyResponse))
       }
   }

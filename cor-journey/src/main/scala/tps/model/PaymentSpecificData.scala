@@ -26,10 +26,7 @@ sealed trait PaymentSpecificData {
 }
 
 final case class PngrSpecificData(
-    chargeReference: String,
-    vat:             BigDecimal,
-    customs:         BigDecimal,
-    excise:          BigDecimal
+    chargeReference: String
 ) extends PaymentSpecificData {
   override def getReference: String = chargeReference
   override def getRawReference: String = chargeReference
@@ -188,6 +185,8 @@ object PaymentSpecificData {
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
     case json: JsObject if json.keys === jsonKeysPngrSpecificData =>
       JsSuccess(json.as[PngrSpecificData])
+    case json: JsObject if json.keys === jsonKeysPngrSpecificDataLegacy =>
+      JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
       JsSuccess(json.as[MibSpecificData])
     case json: JsObject if json.keys === jsonKeysChildBenefit =>
@@ -213,8 +212,8 @@ object PaymentSpecificData {
     case JsObject(_) | JsNumber(_) | JsArray(_) | JsString(_) | JsTrue | JsFalse | JsNull => JsError("Could not read PaymentSpecificData")
   }
 
-  val jsonKeysSimplePaymentSpecificData: Set[String] = Set("chargeReference")
   val jsonKeysPngrSpecificData: Set[String] = Set("chargeReference", "vat", "customs", "excise")
+  val jsonKeysPngrSpecificDataLegacy: Set[String] = Set("chargeReference")
   val jsonKeysMibSpecificDataVariant1: Set[String] = Set("chargeReference", "vat", "customs")
   val jsonKeysMibSpecificDataVariant2: Set[String] = Set("chargeReference", "vat", "customs", "amendmentReference")
   val jsonKeysChildBenefit: Set[String] = Set("childBenefitYReference")

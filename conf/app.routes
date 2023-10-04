@@ -6,7 +6,7 @@
 POST       /tps-payments                                            journey.StartJourneyController.startJourneyMibOrPngr()
 
 POST       /start-tps-journey/mib                                   journey.StartJourneyController.startJourneyMib()
-#TODO: POST       /start-tps-journey/pngr                                  journey.StartJourneyController.startJourneyPngr()
+POST       /start-tps-journey/pngr                                  journey.StartJourneyController.startJourneyPngr()
 
 #TODO: once tps-payments is renamed to Journey, remove "upsert" part from that URL
 GET        /journey/:id                                             journey.JourneyController.findJourney(id: JourneyId)

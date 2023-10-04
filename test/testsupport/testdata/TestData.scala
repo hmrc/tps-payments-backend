@@ -50,7 +50,7 @@ object TestData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "taxRegimeDisplay",
         taxType             = PNGR,
-        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("22.00"), BigDecimal("15.00"), BigDecimal("5.00")),
+        paymentSpecificData = PngrSpecificData("chargeReference"),
         email               = Some(Email("test@email.com"))
       )
     ),
@@ -66,7 +66,7 @@ object TestData {
         amount              = BigDecimal("100.00"),
         taxRegimeDisplay    = "PNGR",
         taxType             = PNGR,
-        paymentSpecificData = PngrSpecificData("chargeReference", BigDecimal("1.00"), BigDecimal("2.00"), BigDecimal("3.00")),
+        paymentSpecificData = PngrSpecificData("chargeReference"),
         email               = None
       )
     ),
@@ -383,7 +383,7 @@ object TestData {
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
             "taxType": "PNGR",
-            "paymentSpecificData":{"chargeReference":"chargeReference","vat":22,"customs":15,"excise":5},
+            "paymentSpecificData":{"chargeReference":"chargeReference"},
             "email": "test@email.com"
           }
           ],
@@ -406,10 +406,7 @@ object TestData {
             "taxRegimeDisplay": "PNGR",
             "taxType": "PNGR",
             "paymentSpecificData":{
-              "chargeReference":"chargeReference",
-              "vat": 1,
-              "customs": 2,
-              "excise": 3
+              "chargeReference":"chargeReference"
             }
           }
           ],

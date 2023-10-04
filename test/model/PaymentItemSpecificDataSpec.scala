@@ -24,7 +24,7 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
 
   "PaymentSpecificData get reference utility methods" - {
     "PngrSpecificData" in {
-      PngrSpecificData("ref", BigDecimal(1), BigDecimal(1), BigDecimal(1)).getReference shouldBe "ref"
+      PngrSpecificData("ref").getReference shouldBe "ref"
     }
     "MibSpecificData" in {
       val psd = MibSpecificData("ref", BigDecimal(1), BigDecimal(1), Some(1))

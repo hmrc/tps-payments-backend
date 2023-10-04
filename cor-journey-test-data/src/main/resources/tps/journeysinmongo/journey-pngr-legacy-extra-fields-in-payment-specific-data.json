@@ -4,7 +4,11 @@
     "Started" : { }
   },
   "pid" : "1234567",
-  "created" : "2059-11-25T16:33:51.880Z",
+  "created": {
+    "$date": {
+      "$numberLong": "2837003631880"
+    }
+  },
   "payments" : [ {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 101.01,
@@ -13,7 +17,10 @@
     "customerName" : "customerName",
     "chargeReference" : "XSPR5814332193",
     "paymentSpecificData" : {
-      "chargeReference" : "XSPR5814332193"
+      "chargeReference" : "XSPR5814332193",
+      "vat" : 297.25,
+      "customs" : 150,
+      "excise" : 136.27
     },
     "taxType" : "PNGR"
   } ],

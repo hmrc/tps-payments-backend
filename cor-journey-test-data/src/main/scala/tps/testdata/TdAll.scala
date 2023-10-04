@@ -17,7 +17,7 @@
 package tps.testdata
 
 import tps.journey.model.Journey
-import tps.testdata.tdjourney.externaltaxtypes.{TdJourneyInStatesExternalTaxTypesOld, TdJourneyMib, TdJourneyMibOld, TdJourneyPngrOld}
+import tps.testdata.tdjourney.externaltaxtypes.{TdJourneyInStatesExternalTaxTypes, TdJourneyInStatesExternalTaxTypesOld, TdJourneyMib, TdJourneyMibOld, TdJourneyPngr, TdJourneyPngrOld}
 import tps.testdata.tdjourney.{TdJourneyChildBenefit, TdJourneyCotax, TdJourneyInStates, TdJourneyNps, TdJourneyNtc, TdJourneyPaye, TdJourneyPpt, TdJourneySa, TdJourneySafe, TdJourneySdlt, TdJourneyVat, TdMultiPaymentJourney}
 import tps.testdata.util.JourneyJson
 
@@ -30,6 +30,7 @@ trait TdAll
   with TdJourneyMibOld
   with TdJourneyMib
   with TdJourneyPngrOld
+  with TdJourneyPngr
   with TdJourneyChildBenefit
   with TdJourneyCotax
   with TdJourneySa
@@ -49,7 +50,7 @@ trait TdAll
     "org.wartremover.warts.JavaSerializable",
     "org.wartremover.warts.Serializable",
     "org.wartremover.warts.Product"))
-  lazy val allTdJourneyInStates: List[TdJourneyInStates] = List(
+  lazy val allTdJourneyInStatesInternalTaxTypes: List[TdJourneyInStates] = List(
     TdJourneyChildBenefit,
     TdJourneyCotax,
     TdJourneyNps,
@@ -65,13 +66,21 @@ trait TdAll
   /**
    * only journeys with ExternalTaxType
    */
-  lazy val allTdJourneyInStatesExternalTaxTypes: List[TdJourneyInStatesExternalTaxTypesOld] = List(
-    TdJourneyPngr,
+  lazy val allTdJourneyInStatesExternalTaxTypesOld: List[TdJourneyInStatesExternalTaxTypesOld] = List(
+    TdJourneyPngrOld,
     TdJourneyMibOld
   )
 
+  /**
+   * only journeys with ExternalTaxType
+   */
+  lazy val allTdJourneyInStatesExternalTaxTypes: List[TdJourneyInStatesExternalTaxTypes] = List(
+    TdJourneyPngr,
+    TdJourneyMib
+  )
+
   lazy val allJourneysWithJson: List[(Journey, JourneyJson)] =
-    (allTdJourneyInStates.map(_.allJourneys) ++ allTdJourneyInStatesExternalTaxTypes.map(_.allJourneys))
+    (allTdJourneyInStatesInternalTaxTypes.map(_.allJourneys) ++ allTdJourneyInStatesExternalTaxTypesOld.map(_.allJourneys))
       .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
       .++(TdJourneyMultiPayment.allJourneys)
 

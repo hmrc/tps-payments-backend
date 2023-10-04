@@ -16,38 +16,33 @@
 
 package tps.testdata.tdjourney.externaltaxtypes
 
-import tps.journey.model.{Journey, JourneyId, JourneyState}
+import tps.journey.model.{Journey, JourneyId, JourneyState, StartJourneyResponse}
 import tps.model._
 import tps.pcipalmodel._
-import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
+import tps.startjourneymodel.StartJourneyRequestPngr
 import tps.testdata.TdBase
 import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-//TODO: remove according to OPS-11079
-trait TdJourneyPngrOld { dependencies: TdBase =>
+trait TdJourneyPngr { dependencies: TdBase =>
 
-  object TdJourneyPngrOld extends TdJourneyInStatesExternalTaxTypesOld {
+  object TdJourneyPngr extends TdJourneyInStatesExternalTaxTypes {
 
     override final val taxType: ExternalTaxType = TaxTypes.PNGR
 
-    lazy val startJourneyRequest: StartJourneyRequestMibOrPngr = StartJourneyRequestMibOrPngr(
-      pid        = dependencies.pid,
-      payments   = Seq[SjPaymentItem](
-        SjPaymentItem(
-          chargeReference     = taxReference,
-          customerName        = dependencies.customerName,
-          amount              = amount,
-          taxRegimeDisplay    = "PNGR", //yes, "PNGR" -> https://github.com/hmrc/bc-passengers-stride-frontend/blob/c4bf6dc0c52c02dc46b05f8990e679992830a03b/app/services/PayApiService.scala#L77
-          taxType             = TaxTypes.PNGR,
-          paymentSpecificData = paymentSpecificData,
-          email               = None
-        )
-      ),
-      navigation = dependencies.navigation
+    lazy val startJourneyRequest: StartJourneyRequestPngr = StartJourneyRequestPngr(
+      chargeReference = taxReference,
+      customerName    = dependencies.customerName,
+      amount          = amount,
+      backUrl         = dependencies.navigation.back,
+      resetUrl        = dependencies.navigation.reset,
+      finishUrl       = dependencies.navigation.finish
     )
 
+    lazy val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(
+      journeyId = dependencies.journeyId, nextUrl = s"http://localhost:9124/tps-payments/make-payment/pngr/${dependencies.journeyId.value}"
+    )
     override lazy val journeyId: JourneyId = dependencies.journeyId
     override lazy val pid: String = dependencies.pid
     override lazy val created: Instant = dependencies.instant
@@ -127,14 +122,14 @@ trait TdJourneyPngrOld { dependencies: TdBase =>
       email               = None
     )
 
-    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal
+    override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyCreated: Journey = Journey(
       _id                         = journeyId,
       journeyState                = JourneyState.Started,
       pid                         = pid,
       created                     = created,
-      payments                    = List(paymentItem),
+      payments                    = List(paymentItemBeforePcipal),
       navigation                  = navigation,
       pcipalSessionLaunchRequest  = None,
       pcipalSessionLaunchResponse = None
@@ -165,5 +160,4 @@ trait TdJourneyPngrOld { dependencies: TdBase =>
     )
 
   }
-
 }

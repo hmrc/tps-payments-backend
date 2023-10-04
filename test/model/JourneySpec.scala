@@ -125,4 +125,12 @@ class JourneySpec extends UnitSpec {
     JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
   }
 
+  "mongo format can read legacy pngr journey" in {
+    val legacyJourneyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-pngr-legacy-extra-fields-in-payment-specific-data.json"
+    ).asJson
+    val journey = TdAll.TdJourneyPngr.journeyCreated
+    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
+  }
+
 }
