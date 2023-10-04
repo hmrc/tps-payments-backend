@@ -124,7 +124,7 @@ trait TdJourneyPngrOld { dependencies: TdBase =>
       pcipalData          = None,
       paymentSpecificData = paymentSpecificData,
       taxType             = TaxTypes.PNGR,
-      email               = Some(dependencies.email)
+      email               = None
     )
 
     override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal

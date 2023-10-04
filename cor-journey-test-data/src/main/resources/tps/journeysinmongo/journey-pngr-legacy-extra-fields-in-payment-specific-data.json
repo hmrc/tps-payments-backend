@@ -22,8 +22,7 @@
       "customs" : 150,
       "excise" : 136.27
     },
-    "taxType" : "PNGR",
-    "email" : "test@email.com"
+    "taxType" : "PNGR"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
