@@ -383,7 +383,7 @@ object TestData {
             "amount": 100,
             "taxRegimeDisplay": "taxRegimeDisplay",
             "taxType": "PNGR",
-            "paymentSpecificData":{"chargeReference":"chargeReference","vat":22,"customs":15,"excise":5},
+            "paymentSpecificData":{"chargeReference":"chargeReference"},
             "email": "test@email.com"
           }
           ],
@@ -406,10 +406,7 @@ object TestData {
             "taxRegimeDisplay": "PNGR",
             "taxType": "PNGR",
             "paymentSpecificData":{
-              "chargeReference":"chargeReference",
-              "vat": 1,
-              "customs": 2,
-              "excise": 3
+              "chargeReference":"chargeReference"
             }
           }
           ],
