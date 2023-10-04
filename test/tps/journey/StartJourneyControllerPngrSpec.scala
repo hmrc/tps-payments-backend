@@ -67,4 +67,13 @@ class StartJourneyControllerPngrSpec extends ItSpec {
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
 
+  "deserialize request" in {
+    val json = TdAll.TdJourneyPngr.startJourneyRequestJson
+    json.as[StartJourneyRequestPngr] shouldBe TdAll.TdJourneyPngr.startJourneyRequest
+  }
+
+  "deserialize request (amounts as strings)" in {
+    val json = TdAll.TdJourneyPngr.startJourneyRequestJsonAmountsAsStrings
+    json.as[StartJourneyRequestPngr] shouldBe TdAll.TdJourneyPngr.startJourneyRequest
+  }
 }
