@@ -16,9 +16,9 @@
 
 package deniedrefs
 
-import akka.stream.IOResult
-import akka.stream.scaladsl.{FileIO, Sink}
-import akka.util.ByteString
+import org.apache.pekko.stream.IOResult
+import org.apache.pekko.stream.scaladsl.{FileIO, Sink}
+import org.apache.pekko.util.ByteString
 import deniedrefs.model.UploadDeniedRefsResponse
 import play.api.libs.json.Json
 import play.api.libs.streams.Accumulator

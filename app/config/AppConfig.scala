@@ -18,6 +18,7 @@ package config
 
 import play.api.Configuration
 
+import java.net.URI
 import javax.inject.{Inject, Singleton}
 import scala.util.Try
 
@@ -40,7 +41,7 @@ class AppConfig @Inject() (
    */
   private def readConfigAsValidUrlString(configPath: String): String = {
     val url: String = config.get[String](configPath)
-    Try(new java.net.URL(url)).fold[String](
+    Try(URI.create(url).toURL.toString).fold[String](
       e => throw new RuntimeException(s"Invalid URL in config under [$configPath]", e),
       _ => url
     )
