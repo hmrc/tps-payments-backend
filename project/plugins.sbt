@@ -3,6 +3,8 @@ resolvers += "hmrc-releases" at "https://artefacts.tax.service.gov.uk/artifactor
 resolvers += "Typesafe Releases" at "https://repo.typesafe.com/typesafe/releases/"
 resolvers += MavenRepository("HMRC-open-artefacts-maven2", "https://open.artefacts.tax.service.gov.uk/maven2")
 
+ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
+
 addSbtPlugin("org.playframework" %  "sbt-plugin"            % "3.0.1")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-auto-build"        % "3.18.0")
 addSbtPlugin("uk.gov.hmrc"       %  "sbt-distributables"    % "2.4.0")
