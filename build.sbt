@@ -47,7 +47,7 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
       "uk.gov.hmrc"       %% "auth-client-play-30"      % "7.1.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
-      "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumVersion,
+      "com.beachape"      %% "enumeratum-play"          % "1.8.0",
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
   )
@@ -75,7 +75,7 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Compile / scalacOptions -= "utf8",
-  libraryDependencySchemes         += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
+  libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
   scalacOptions ++= scalaCompilerOptions,
   scalacOptions ++= {
     if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil
