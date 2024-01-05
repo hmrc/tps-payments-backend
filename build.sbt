@@ -1,8 +1,6 @@
-import uk.gov.hmrc.DefaultBuildSettings.{defaultSettings, integrationTestSettings, scalaSettings}
-
 val appName = "tps-payments-backend"
 
-val scalaV = "2.13.10"
+val scalaV = "2.13.12"
 scalaVersion := scalaV
 val majorVer = 2
 majorVersion := majorVer
@@ -15,8 +13,6 @@ lazy val microservice = Project(appName, file("."))
     majorVersion                     := majorVer,
     scalaVersion                     := scalaV,
     libraryDependencies              ++= AppDependencies.microserviceDependencies,
-    //otherwise scoverage pulls newer incompatible lib:
-    libraryDependencySchemes         += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     routesGenerator                  :=  InjectedRoutesGenerator,
     update / evictionWarningOptions  :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
   )
@@ -48,11 +44,11 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "uk.gov.hmrc"       %% "auth-client"              % "6.1.0-play-28",
-      "uk.gov.hmrc"       %% "bootstrap-common-play-28" % AppDependencies.bootstrapVersion % Provided,
+      "uk.gov.hmrc"       %% "auth-client-play-30"      % "7.1.0",
+      "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
-      "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumVersion,
-      "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-28"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
+      "com.beachape"      %% "enumeratum-play"          % "1.8.0",
+      "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
   )
 
@@ -66,8 +62,8 @@ lazy val corJourneyTestData = Project(appName + "-cor-journey-test-data", file("
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "com.typesafe.play" %% "play"      % play.core.PlayVersion.current % Provided,
-      "com.typesafe.play" %% "play-test" % play.core.PlayVersion.current % Provided
+      "org.playframework" %% "play"      % play.core.PlayVersion.current % Provided,
+      "org.playframework" %% "play-test" % play.core.PlayVersion.current % Provided
     )
   )
   .dependsOn(corJourney)
@@ -88,7 +84,7 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   .++(ScalariformSettings())
   .++(ScoverageSettings())
   .++(WartRemoverSettings.wartRemoverSettings)
-  .++(scalaSettings)
+  .++(uk.gov.hmrc.DefaultBuildSettings.scalaSettings)
   .++(uk.gov.hmrc.DefaultBuildSettings.defaultSettings())
   .++(SbtUpdatesSettings.sbtUpdatesSettings)
 

@@ -17,11 +17,11 @@
 package deniedrefs
 
 import tps.utils.SafeEquals._
-import akka.Done
-import akka.stream.Materializer
-import akka.stream.alpakka.csv.scaladsl.CsvParsing
-import akka.stream.scaladsl.{FileIO, Keep, Sink}
-import akka.util.ByteString
+import org.apache.pekko.Done
+import org.apache.pekko.stream.Materializer
+import org.apache.pekko.stream.connectors.csv.scaladsl.CsvParsing
+import org.apache.pekko.stream.scaladsl.{FileIO, Keep, Sink}
+import org.apache.pekko.util.ByteString
 import tps.deniedrefs.model.VerifyRefStatuses._
 import deniedrefs.model._
 import org.mongodb.scala.result.UpdateResult
