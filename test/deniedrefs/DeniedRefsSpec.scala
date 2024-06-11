@@ -18,6 +18,7 @@ package deniedrefs
 
 import deniedrefs.TdDeniedRefs._
 import deniedrefs.model._
+import org.scalatest.Assertion
 import play.api.libs.json.JsObject
 import play.api.mvc.Request
 import testsupport.ItSpec
@@ -26,7 +27,8 @@ import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsRes
 import tps.model.Reference
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
@@ -91,15 +93,15 @@ class DeniedRefsSpec extends ItSpec {
 
   override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
-  private def dropDb() = {
+  private def dropDb(): Assertion = {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
   }
 
-  private def uploadDeniedRefs(deniedRefsCsv: String) = {
+  private def uploadDeniedRefs(deniedRefsCsv: String): Future[UploadDeniedRefsResponse] = {
     implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url = s"http://localhost:${port.toString}/tps-payments-backend" + "/upload-denied-refs"
-    val httpClient = app.injector.instanceOf[HttpClient]
-    httpClient.POSTString[UploadDeniedRefsResponse](url, deniedRefsCsv)
+    val deniedRefsUrl = s"http://localhost:${port.toString}/tps-payments-backend" + "/upload-denied-refs"
+    val httpClient = app.injector.instanceOf[HttpClientV2]
+    httpClient.post(url"$deniedRefsUrl").withBody(deniedRefsCsv).execute[UploadDeniedRefsResponse]
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
