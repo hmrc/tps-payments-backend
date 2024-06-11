@@ -18,6 +18,7 @@ package deniedrefs
 
 import deniedrefs.TdDeniedRefs._
 import deniedrefs.model._
+import org.scalatest.Assertion
 import play.api.libs.json.JsObject
 import play.api.mvc.Request
 import testsupport.ItSpec
@@ -92,11 +93,11 @@ class DeniedRefsSpec extends ItSpec {
 
   override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
-  private def dropDb() = {
+  private def dropDb(): Assertion = {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
   }
 
-  private def uploadDeniedRefs(deniedRefsCsv: String) = {
+  private def uploadDeniedRefs(deniedRefsCsv: String): Future[UploadDeniedRefsResponse] = {
     implicit val dummyHc: HeaderCarrier = HeaderCarrier()
     val url = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
     val httpClient = app.injector.instanceOf[HttpClientV2]

@@ -41,4 +41,5 @@ class VerifyRefsConnector @Inject() (
       .post(url"$serviceURL/tps-payments-backend/verify-refs")
       .withBody(Json.toJson(verifyRefsRequest))
       .execute[VerifyRefsResponse]
+
 }
