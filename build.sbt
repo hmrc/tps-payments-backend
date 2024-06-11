@@ -6,7 +6,7 @@ val majorVer = 2
 majorVersion := majorVer
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
   .settings(commonSettings: _*)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
@@ -38,13 +38,12 @@ lazy val microservice = Project(appName, file("."))
 
 
 lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .settings(commonSettings: _*)
   .settings(
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "uk.gov.hmrc"       %% "auth-client-play-30"      % "7.1.0",
+      "uk.gov.hmrc"       %% "auth-client-play-30"      % "8.0.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
       "com.beachape"      %% "enumeratum-play"          % "1.8.0",
@@ -56,7 +55,6 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
  * Collection Of Routines - test data
  */
 lazy val corJourneyTestData = Project(appName + "-cor-journey-test-data", file("cor-journey-test-data"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
   .settings(commonSettings: _*)
   .settings(
     scalaVersion := scalaV,

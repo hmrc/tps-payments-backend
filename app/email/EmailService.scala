@@ -16,7 +16,7 @@
 
 package email
 
-import email.model.IndividualPaymentForEmail
+import email.model.{EmailSendRequest, IndividualPaymentForEmail}
 import play.api.Logger
 import play.api.libs.json.JsArray
 import play.api.libs.json.Json.toJson
@@ -74,19 +74,27 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
       transactionReference: String,
       emailAddress:         Email,
       cardType:             String,
-      cardNumber:           String)(implicit hc: HeaderCarrier): Unit = {
+      cardNumber:           String
+  )(implicit hc: HeaderCarrier): Unit = {
 
     val totalCommissionPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
     val totalAmountPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
 
-    emailConnector.sendEmail(
-      emailAddress            = emailAddress,
-      totalAmountPaid         = parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
-      transactionReference    = transactionReference,
-      cardType                = cardType,
-      cardNumber              = cardNumber,
-      tpsPaymentItemsForEmail = stringifyTpsPaymentsItemsForEmail(payments.map(toIndividualPaymentForEmail))
-    ).recover {
+    val emailSendRequest: EmailSendRequest = EmailSendRequest(
+      Seq(emailAddress),
+      "telephone_payments_service",
+      parameters = Map[String, String](
+        "transactionReference" -> transactionReference,
+        "totalAmountPaid" -> parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
+        "cardType" -> cardType,
+        "cardNumber" -> cardNumber,
+        "tpsPaymentItemsForEmail" -> stringifyTpsPaymentsItemsForEmail(payments.map(toIndividualPaymentForEmail))
+      )
+    )
+
+    emailConnector
+      .sendEmail(emailSendRequest)
+      .recover {
         case e => logger.error("Failed to send email, investigate", e)
       }
     ()
