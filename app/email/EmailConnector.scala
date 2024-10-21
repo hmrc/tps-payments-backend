@@ -18,9 +18,11 @@ package email
 
 import email.model.EmailSendRequest
 import play.api.Logger
+import play.api.libs.json.Json
 import tps.model.Email
 import uk.gov.hmrc.http.HttpReads.Implicits.readUnit
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
@@ -28,16 +30,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class EmailConnector @Inject() (
-    httpClient:     HttpClient,
+    httpClient:     HttpClientV2,
     servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
   //TODO: refactor so it doesn't take dozen String parameters
   def sendEmail(emailAddress: Email, totalAmountPaid: String, transactionReference: String, cardType: String, cardNumber: String, tpsPaymentItemsForEmail: String)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
     logger.info("sending email ...")
-    httpClient.POST[EmailSendRequest, Unit](
-      sendEmailUrl,
-      EmailSendRequest(
+    httpClient
+      .post(url"$sendEmailUrl")
+      .withBody(Json.toJson(EmailSendRequest(
         Seq(emailAddress),
         "telephone_payments_service",
         parameters = Map(
@@ -47,8 +49,8 @@ final class EmailConnector @Inject() (
           "cardNumber" -> cardNumber,
           "tpsPaymentItemsForEmail" -> tpsPaymentItemsForEmail
         )
-      )
-    )
+      )))
+      .execute[Unit]
   }
 
   private val sendEmailUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"

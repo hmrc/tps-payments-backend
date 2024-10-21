@@ -213,7 +213,8 @@
       "callbackUrl" : "http://notification.host/payments/notifications/send-card-payments",
       "resetURL" : "http://localhost:9124/tps-payments/full/reset",
       "backURL" : "http://localhost:9124/tps-payments/back-from-pcipal",
-      "finishURL" : "http://localhost:9124/tps-payments/finish"
+      "finishURL" : "http://localhost:9124/tps-payments/finish",
+      "LanguageFlag": "E"
     }
   },
   "pcipalSessionLaunchResponse" : {

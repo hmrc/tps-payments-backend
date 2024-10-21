@@ -16,45 +16,61 @@
 
 package tps.journey
 
+import play.api.libs.json.Json
 import play.api.mvc.RequestHeader
 import tps.journey.model.{Journey, JourneyId, StartJourneyResponse}
 import tps.startjourneymodel.{StartJourneyRequestMib, StartJourneyRequestMibOrPngr, StartJourneyRequestPngr}
 import tps.utils.HttpReadsInstances._
 import tps.utils.RequestSupport._
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-import javax.inject.Inject
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class JourneyConnector(
-    httpClient: HttpClient,
+    httpClient: HttpClientV2,
     baseUrl:    String
 )(implicit ec: ExecutionContext) {
 
   def startMibOrPngrJourney(startJourneyRequest: StartJourneyRequestMibOrPngr)(implicit request: RequestHeader): Future[JourneyId] = {
-    httpClient.POST[StartJourneyRequestMibOrPngr, JourneyId](s"$baseUrl/tps-payments-backend/tps-payments", startJourneyRequest)
+    httpClient
+      .post(url"$baseUrl/tps-payments-backend/tps-payments")
+      .withBody(Json.toJson(startJourneyRequest))
+      .execute[JourneyId]
   }
 
   def startJourneyMib(startJourneyRequestMib: StartJourneyRequestMib)(implicit request: RequestHeader): Future[StartJourneyResponse] = {
-    httpClient.POST[StartJourneyRequestMib, StartJourneyResponse](s"$baseUrl/tps-payments-backend/start-tps-journey/mib", startJourneyRequestMib)
+    httpClient
+      .post(url"$baseUrl/tps-payments-backend/start-tps-journey/mib")
+      .withBody(Json.toJson(startJourneyRequestMib))
+      .execute[StartJourneyResponse]
   }
 
   def startJourneyPngr(startJourneyRequestPngr: StartJourneyRequestPngr)(implicit request: RequestHeader): Future[StartJourneyResponse] = {
-    httpClient.POST[StartJourneyRequestPngr, StartJourneyResponse](s"$baseUrl/tps-payments-backend/start-tps-journey/pngr", startJourneyRequestPngr)
+    httpClient
+      .post(url"$baseUrl/tps-payments-backend/start-tps-journey/pngr")
+      .withBody(Json.toJson(startJourneyRequestPngr))
+      .execute[StartJourneyResponse]
   }
 
-  def upsert(journey: Journey)(implicit request: RequestHeader): Future[Unit] = httpClient
-    .POST[Journey, Unit](
-      s"$baseUrl/tps-payments-backend/journey",
-      journey
-    )
+  def upsert(journey: Journey)(implicit request: RequestHeader): Future[Unit] = {
+    httpClient
+      .post(url"$baseUrl/tps-payments-backend/journey")
+      .withBody(Json.toJson(journey))
+      .execute[Unit]
+  }
 
-  def find(journeyId: JourneyId)(implicit request: RequestHeader): Future[Option[Journey]] = httpClient
-    .GET[Option[Journey]](s"$baseUrl/tps-payments-backend/journey/${journeyId.value}")
+  def find(journeyId: JourneyId)(implicit request: RequestHeader): Future[Option[Journey]] = {
+    httpClient
+      .get(url"$baseUrl/tps-payments-backend/journey/${journeyId.value}")
+      .execute[Option[Journey]]
+  }
 
   @Inject()
-  def this(httpClient: HttpClient, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(
+  def this(httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(
     httpClient,
     servicesConfig.baseUrl("tps-payments-backend")
   )

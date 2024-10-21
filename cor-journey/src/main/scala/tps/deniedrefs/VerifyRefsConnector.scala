@@ -16,11 +16,13 @@
 
 package tps.deniedrefs
 
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import tps.deniedrefs.model.{VerifyRefsRequest, VerifyRefsResponse}
 import tps.utils.HttpReadsInstances._
 import tps.utils.RequestSupport._
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.StringContextOps
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.{Inject, Singleton}
@@ -28,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyRefsConnector @Inject() (
-    httpClient:     HttpClient,
+    httpClient:     HttpClientV2,
     servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
@@ -36,9 +38,7 @@ class VerifyRefsConnector @Inject() (
 
   def verifyRefs(verifyRefsRequest: VerifyRefsRequest)(implicit request: Request[_]): Future[VerifyRefsResponse] =
     httpClient
-      .POST[VerifyRefsRequest, VerifyRefsResponse](
-        s"$serviceURL/tps-payments-backend/verify-refs",
-        verifyRefsRequest
-      )
-
+      .post(url"$serviceURL/tps-payments-backend/verify-refs")
+      .withBody(Json.toJson(verifyRefsRequest))
+      .execute[VerifyRefsResponse]
 }

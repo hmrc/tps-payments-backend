@@ -199,7 +199,8 @@ object TestData {
     callbackUrl         = navigation.callback,
     backUrl             = navigation.back,
     resetUrl            = navigation.reset,
-    finishUrl           = navigation.finish
+    finishUrl           = navigation.finish,
+    LanguageFlag        = "E"
   )
 
   val tpsPaymentsWithPcipalData: Journey =

@@ -71,5 +71,6 @@ object PcipalInitialValues {
   val backURL = "backURL"
   val resetURL = "resetURL"
   val finishURL = "finishURL"
+  val LanguageFlag = "LanguageFlag"
 
 }
