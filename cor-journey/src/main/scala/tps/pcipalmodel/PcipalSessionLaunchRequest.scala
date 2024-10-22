@@ -34,7 +34,8 @@ final case class PcipalSessionLaunchRequest(
     callbackUrl:         String,
     backUrl:             String,
     resetUrl:            String,
-    finishUrl:           String
+    finishUrl:           String,
+    LanguageFlag:        String
 )
 
 object PcipalSessionLaunchRequest {
@@ -50,11 +51,16 @@ object PcipalSessionLaunchRequest {
     (JsPath \ "InitialValues").read[Map[String, String]].map(m => getSingleValue(m, PcipalInitialValues.callbackUrl)) and
     (JsPath \ "InitialValues").read[Map[String, String]].map(m => getSingleValue(m, PcipalInitialValues.backURL)) and
     (JsPath \ "InitialValues").read[Map[String, String]].map(m => getSingleValue(m, PcipalInitialValues.resetURL)) and
-    (JsPath \ "InitialValues").read[Map[String, String]].map(m => getSingleValue(m, PcipalInitialValues.finishURL))
+    (JsPath \ "InitialValues").read[Map[String, String]].map(m => getSingleValue(m, PcipalInitialValues.finishURL)) and
+    (JsPath \ "InitialValues").read[Map[String, String]].map(m => getLanguageFlag(m))
   ) (PcipalSessionLaunchRequest.apply _)
 
   private def getSingleValue(values: Map[String, String], keyToFind: String): String = {
     values.getOrElse(keyToFind, throw new RuntimeException(s"Could not find key: $keyToFind"))
+  }
+
+  private def getLanguageFlag(values: Map[String, String]): String = {
+    values.getOrElse(PcipalInitialValues.LanguageFlag, "E")
   }
 
   @tailrec
@@ -139,7 +145,8 @@ object PcipalSessionLaunchRequest {
       PcipalInitialValues.callbackUrl -> pcipalSessionLaunchRequest.callbackUrl,
       PcipalInitialValues.backURL -> pcipalSessionLaunchRequest.backUrl,
       PcipalInitialValues.resetURL -> pcipalSessionLaunchRequest.resetUrl,
-      PcipalInitialValues.finishURL -> pcipalSessionLaunchRequest.finishUrl
+      PcipalInitialValues.finishURL -> pcipalSessionLaunchRequest.finishUrl,
+      PcipalInitialValues.LanguageFlag -> pcipalSessionLaunchRequest.LanguageFlag
     )
 
     //Merge all the pairs of values in the list together plus the values from the object above to create one big list of pairs

@@ -67,7 +67,8 @@ trait TdJourneyCotax { dependencies: TdBase =>
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,
       resetUrl            = navigation.reset,
-      finishUrl           = navigation.finish
+      finishUrl           = navigation.finish,
+      LanguageFlag        = "E"
     )
 
     override lazy val pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(

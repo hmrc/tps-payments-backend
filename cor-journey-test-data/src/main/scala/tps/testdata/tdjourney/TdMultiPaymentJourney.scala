@@ -77,7 +77,8 @@ with TdJourneyNtc //for 5th item in a basket
       callbackUrl         = navigation.callback,
       backUrl             = navigation.back,
       resetUrl            = navigation.reset,
-      finishUrl           = navigation.finish
+      finishUrl           = navigation.finish,
+      LanguageFlag        = "E"
     )
 
     lazy val pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(

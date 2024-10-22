@@ -91,6 +91,7 @@ class JourneySpec extends UnitSpec {
     ).asJson
 
     val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+
     JourneyRepo.formatMongo.writes(journey) shouldBe journeyInMongoJson
     JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value shouldBe journey
   }
@@ -133,4 +134,35 @@ class JourneySpec extends UnitSpec {
     JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
   }
 
+  "mongo format can read legacy journey without LanguageFlag into object with English language flag" in {
+    val journeyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit-no-language-flag.json"
+    ).asJson
+
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+
+    val result = JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value
+
+    result shouldBe journey
+    result.pcipalSessionLaunchRequest.value.LanguageFlag shouldBe "E"
+  }
+
+  "mongo format can serialize/deserialize from/into object with Welsh language flag" in {
+    val journeyInMongoJson = ResourceReader.read(
+      "/tps/journeysinmongo/journey-childbenefit-welsh-language-flag.json"
+    ).asJson
+
+    val originalPciPalSessionRequest = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.pcipalSessionLaunchRequest.value
+    val originalPciPalSessionRequestWithWelsh = originalPciPalSessionRequest.copy(LanguageFlag = "W")
+
+    val expectedJourney = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.copy(pcipalSessionLaunchRequest = Some(originalPciPalSessionRequestWithWelsh))
+
+    val readsResult = JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value
+    val writesResult = JourneyRepo.formatMongo.writes(expectedJourney)
+
+    readsResult shouldBe expectedJourney
+    writesResult shouldBe journeyInMongoJson
+
+    readsResult.pcipalSessionLaunchRequest.value.LanguageFlag shouldBe "W"
+  }
 }

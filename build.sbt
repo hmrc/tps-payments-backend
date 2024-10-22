@@ -6,8 +6,8 @@ val majorVer = 2
 majorVersion := majorVer
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
-  .settings(commonSettings: _*)
+  .enablePlugins(play.sbt.PlayScala, SbtDistributablesPlugin)
+  .settings(commonSettings *)
   .disablePlugins(JUnitXmlReportPlugin)
   .settings(
     majorVersion                     := majorVer,
@@ -38,16 +38,14 @@ lazy val microservice = Project(appName, file("."))
 
 
 lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "uk.gov.hmrc"       %% "auth-client-play-30"      % "7.1.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
-      "com.beachape"      %% "enumeratum-play"          % "1.8.0",
+      "com.beachape"      %% "enumeratum-play"          % "1.8.1",
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
   )
@@ -56,14 +54,14 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
  * Collection Of Routines - test data
  */
 lazy val corJourneyTestData = Project(appName + "-cor-journey-test-data", file("cor-journey-test-data"))
-  .enablePlugins(SbtAutoBuildPlugin, SbtGitVersioning)
-  .settings(commonSettings: _*)
+  .settings(commonSettings *)
   .settings(
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "org.playframework" %% "play"      % play.core.PlayVersion.current % Provided,
-      "org.playframework" %% "play-test" % play.core.PlayVersion.current % Provided
+      "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
+      "org.playframework" %% "play"                     % play.core.PlayVersion.current % Provided,
+      "org.playframework" %% "play-test"                % play.core.PlayVersion.current % Provided
     )
   )
   .dependsOn(corJourney)
@@ -119,4 +117,3 @@ lazy val strictScalaCompilerOptions: Seq[String] = Seq(
 
 lazy val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`
 StrictBuilding.strictBuildingSetting
-

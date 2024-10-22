@@ -36,6 +36,7 @@ import com.google.inject.{AbstractModule, Provides}
 import journey.{JourneyRepo, JourneyService}
 import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
 import org.scalatest.TestData
+import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerTest
@@ -47,6 +48,7 @@ import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import tps.journey.model.{JourneyIdGenerator, PaymentItemIdGenerator}
 import tps.testdata.TdAll
+import uk.gov.hmrc.http.test.HttpClientV2Support
 
 import java.time.{Clock, Instant, ZoneId}
 import javax.inject.Singleton
@@ -60,8 +62,9 @@ import scala.concurrent.ExecutionContext
 trait ItSpec
   extends AnyFreeSpecLike
   with RichMatchers
+  with HttpClientV2Support
   with WireMockSupport
-  with GuiceOneServerPerTest { self =>
+  with GuiceOneServerPerTest {
 
   val testPort = 19001
 
@@ -127,14 +130,13 @@ trait ItSpec
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    repo.removeAll().futureValue
+    repo.drop().futureValue(Timeout(Span(10, Seconds)))
     ()
   }
 
   def status(of: Result): Int = of.header.status
 
-  override protected def newServerForTest(app: Application, testData: TestData): RunningServer =
-    TestServerFactory.start(app)
+  override protected def newServerForTest(app: Application, testData: TestData): RunningServer = TestServerFactory.start(app)
 
   object TestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {

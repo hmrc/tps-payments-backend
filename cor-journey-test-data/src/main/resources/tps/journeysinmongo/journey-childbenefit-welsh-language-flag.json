@@ -66,7 +66,7 @@
       "finishURL": "http://localhost:9124/tps-payments/finish",
       "backURL": "http://localhost:9124/tps-payments/back-from-pcipal",
       "resetURL": "http://localhost:9124/tps-payments/full/reset",
-      "LanguageFlag": "E"
+      "LanguageFlag": "W"
     }
   },
   "pcipalSessionLaunchResponse": {

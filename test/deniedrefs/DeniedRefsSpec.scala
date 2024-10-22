@@ -26,7 +26,8 @@ import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsRes
 import tps.model.Reference
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
@@ -97,9 +98,9 @@ class DeniedRefsSpec extends ItSpec {
 
   private def uploadDeniedRefs(deniedRefsCsv: String) = {
     implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url = s"http://localhost:${port.toString}/tps-payments-backend" + "/upload-denied-refs"
-    val httpClient = app.injector.instanceOf[HttpClient]
-    httpClient.POSTString[UploadDeniedRefsResponse](url, deniedRefsCsv)
+    val url = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
+    val httpClient = app.injector.instanceOf[HttpClientV2]
+    httpClient.post(url).withBody(deniedRefsCsv).execute[UploadDeniedRefsResponse]
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
