@@ -43,6 +43,7 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
+      "uk.gov.hmrc"       %% "auth-client-play-30"      % "8.2.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
       "com.beachape"      %% "enumeratum-play"          % "1.8.1",
