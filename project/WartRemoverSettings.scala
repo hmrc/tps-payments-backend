@@ -41,6 +41,4 @@ object  WartRemoverSettings {
       sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"
     )
   )
-
-
 }
