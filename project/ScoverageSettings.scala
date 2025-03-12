@@ -1,6 +1,6 @@
 import sbt.Keys.parallelExecution
 import scoverage.ScoverageKeys
-import sbt._
+import sbt.*
 
 object ScoverageSettings {
   def apply() = Seq( // Semicolon-separated list of regexes matching classes to exclude

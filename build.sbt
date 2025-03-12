@@ -1,6 +1,6 @@
 val appName = "tps-payments-backend"
 
-val scalaV = "2.13.12"
+val scalaV = "2.13.16"
 scalaVersion := scalaV
 val majorVer = 2
 majorVersion := majorVer
@@ -13,8 +13,7 @@ lazy val microservice = Project(appName, file("."))
     majorVersion                     := majorVer,
     scalaVersion                     := scalaV,
     libraryDependencies              ++= AppDependencies.microserviceDependencies,
-    routesGenerator                  :=  InjectedRoutesGenerator,
-    update / evictionWarningOptions  :=  EvictionWarningOptions.default.withWarnScalaVersionEviction(false)
+    routesGenerator                  :=  InjectedRoutesGenerator
   )
   .settings(WartRemoverSettings.wartRemoverSettingsPlay)
   .dependsOn(corJourney, corJourneyTestData)
@@ -43,10 +42,10 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "uk.gov.hmrc"       %% "auth-client-play-30"      % "8.2.0",
+      "uk.gov.hmrc"       %% "auth-client-play-30"      % "8.5.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
-      "com.beachape"      %% "enumeratum-play"          % "1.8.1",
+      "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumPlayVersion,
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
   )
