@@ -1,12 +1,12 @@
 import play.sbt.routes.RoutesKeys.routes
 import sbt.Keys.*
-import sbt.{Compile, Test, *}
+import sbt.{Def, *}
 import wartremover.Wart
 import wartremover.WartRemover.autoImport.*
 
 object  WartRemoverSettings {
 
-  val wartRemoverSettings =
+  val wartRemoverSettings: Seq[Def.Setting[Seq[Wart]]] =
     Seq(
       (Compile / compile / wartremoverErrors) ++= {
         if (StrictBuilding.strictBuilding.value) Warts.allBut(
@@ -36,7 +36,7 @@ object  WartRemoverSettings {
       )
     )
 
-  lazy val wartRemoverSettingsPlay = Seq(
+  lazy val wartRemoverSettingsPlay: Seq[Def.Setting[Task[Seq[File]]]] = Seq(
     wartremoverExcluded ++= (Compile / routes).value ++ Seq(
       sourceManaged.value / "main" / "sbt-buildinfo" / "BuildInfo.scala"
     )

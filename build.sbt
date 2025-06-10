@@ -42,7 +42,6 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
     scalaVersion := scalaV,
     majorVersion := majorVer,
     libraryDependencies ++= List(
-      "uk.gov.hmrc"       %% "auth-client-play-30"      % "8.6.0",
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
       "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
       "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumPlayVersion,
@@ -69,7 +68,6 @@ lazy val corJourneyTestData = Project(appName + "-cor-journey-test-data", file("
 
 lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   majorVersion := majorVer,
-  resolvers += Resolver.jcenterRepo,
   Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Compile / scalacOptions -= "utf8",
@@ -82,8 +80,6 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   .++(ScalariformSettings())
   .++(ScoverageSettings())
   .++(WartRemoverSettings.wartRemoverSettings)
-  .++(uk.gov.hmrc.DefaultBuildSettings.scalaSettings)
-  .++(uk.gov.hmrc.DefaultBuildSettings.defaultSettings())
   .++(SbtUpdatesSettings.sbtUpdatesSettings)
 
 lazy val scalaCompilerOptions: Seq[String] = Seq(
