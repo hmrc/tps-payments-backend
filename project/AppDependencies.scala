@@ -2,10 +2,10 @@ import sbt.*
 
 object AppDependencies {
 
-  val bootstrapVersion: String = "9.11.0"
+  val bootstrapVersion: String = "9.13.0"
   val hmrcMongoVersion: String = "2.6.0"
   val playJsonDerivedCodesVersion: String = "11.0.0"
-  val enumeratumPlayVersion: String = "1.8.2"
+  val enumeratumPlayVersion: String = "1.9.0"
 
   lazy val microserviceDependencies: Seq[ModuleID] = {
 
