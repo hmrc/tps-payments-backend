@@ -27,7 +27,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class ReconController @Inject() (cc: ControllerComponents, reconService: ReconService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-  def findModsPayments(): Action[FindRPaymentSpecificDataRequest] = Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
+  val findModsPayments: Action[FindRPaymentSpecificDataRequest] = Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
     for {
       transactions: Seq[PaymentSpecificData] <- reconService.findModsPaymentsByReference(request.body.modsReferences)
     } yield Ok(Json.toJson(transactions))

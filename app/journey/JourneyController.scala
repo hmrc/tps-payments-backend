@@ -18,6 +18,8 @@ package journey
 
 import actions.Actions
 import email.EmailService
+import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
+import play.api.libs.json.Json
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
@@ -37,14 +39,14 @@ class JourneyController @Inject() (actions:        Actions,
                                    emailService:   EmailService,
                                    journeyService: JourneyService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-  def startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
+  val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
     val journey: Journey = request.body.makeJourney(Instant.now())
     journeyService.upsert(journey).map { _ =>
       Created(toJson(journey._id))
     }
   }
 
-  def upsert(): Action[Journey] = actions.strideAuthenticated.async(parse.json[Journey]) { implicit request =>
+  val upsert: Action[Journey] = actions.strideAuthenticated.async(parse.json[Journey]) { implicit request =>
     val journey: Journey = request.body
     journeyService
       .upsert(journey)
@@ -67,7 +69,7 @@ class JourneyController @Inject() (actions:        Actions,
       }
   }
 
-  def updateWithPcipalData(): Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
+  val updateWithPcipalData: Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
     val notification: ChargeRefNotificationPcipalRequest = request.body
     KibanaLogger.info(
       message         = s"Update request from Pcipal received [paymentStatus: ${notification.Status.toString}][HoD:${notification.HoD.toString}]",
@@ -106,6 +108,16 @@ class JourneyController @Inject() (actions:        Actions,
           Future.successful(BadRequest(s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"))
       }
     } yield result
+  }
+
+  val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
+    if (request.body.numberOfDays < 0)
+      Future.successful(BadRequest("numberOfDays should be greater than zero"))
+    else if (request.body.references.isEmpty)
+      Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
+    else
+      journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
+
   }
 
 }

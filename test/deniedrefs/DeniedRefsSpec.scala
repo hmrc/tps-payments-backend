@@ -91,7 +91,7 @@ class DeniedRefsSpec extends ItSpec {
     fieldNames.contains("refs") shouldBe true withClue s"It looks like the field name: [refs] has changed, make sure you update the projection. Current list of fields: ${fieldNames.mkString("Array(", ", ", ")")}"
   }
 
-  override def clock: Clock = Clock.system(ZoneId.of("Europe/London"))
+  override val clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
   private def dropDb(): Assertion = {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"

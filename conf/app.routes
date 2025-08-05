@@ -3,27 +3,29 @@
 # TODO:x create dedicated, independent endpoints for those µservices calling this endpoint and return next-url instead of JourneyId. Once update done on PNGR and MIB remove this endpoint
 # Warn, this endpoint accepts optional email in the body, but clients don't pass this data
 # TODO: remove according to OPS-11079
-POST       /tps-payments                                            journey.StartJourneyController.startJourneyMibOrPngr()
+POST       /tps-payments                                            journey.StartJourneyController.startJourneyMibOrPngr
 
-POST       /start-tps-journey/mib                                   journey.StartJourneyController.startJourneyMib()
-POST       /start-tps-journey/pngr                                  journey.StartJourneyController.startJourneyPngr()
+POST       /start-tps-journey/mib                                   journey.StartJourneyController.startJourneyMib
+POST       /start-tps-journey/pngr                                  journey.StartJourneyController.startJourneyPngr
 
 #TODO: once tps-payments is renamed to Journey, remove "upsert" part from that URL
 GET        /journey/:id                                             journey.JourneyController.findJourney(id: JourneyId)
-POST       /journey                                                 journey.JourneyController.upsert()
+POST       /journey                                                 journey.JourneyController.upsert
 
 #used by payments-processor upon receiving notifcation from PciPal
 #PciPal calls payments-processor, and then it calls below endpoint:
-PATCH      /update-with-pcipal-data                                 journey.JourneyController.updateWithPcipalData()
+PATCH      /update-with-pcipal-data                                 journey.JourneyController.updateWithPcipalData
 
 #used by payments-processor for MIB payments upon receiving notifcation from PciPal
 #see MIBM-55
 # TODO: investigate if this can be removed. Maybe the tax id can be derived based on the data from the notification from pcipal
-GET        /payment-items/:paymentItemId/tax-type                              journey.JourneyController.getTaxType(paymentItemId: PaymentItemId)
+GET        /payment-items/:paymentItemId/tax-type                   journey.JourneyController.getTaxType(paymentItemId: PaymentItemId)
+
+POST       /telephone-payments                                      journey.JourneyController.findPayments
 
 # Denied Refs:
-POST       /verify-refs                                             deniedrefs.DeniedRefsController.verifyRefs()
-POST       /upload-denied-refs                                      deniedrefs.DeniedRefsController.uploadDeniedRefs()
+POST       /verify-refs                                             deniedrefs.DeniedRefsController.verifyRefs
+POST       /upload-denied-refs                                      deniedrefs.DeniedRefsController.uploadDeniedRefs
 
 #used by payments-processor for MIB payments upon receiving notifcation from PciPal
 #see OPS-6111
@@ -31,4 +33,4 @@ GET        /payment-items/:id/mods-amendment-ref                    paymentsproc
 
 #used by payments-reconciliation when reconciling MIB transactions
 #see OPS-5810
-POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments()
+POST       /payments-recon/find-mods-data                           recon.ReconController.findModsPayments

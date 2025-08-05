@@ -38,7 +38,7 @@ class DeniedRefsController @Inject() (
     deniedRefsService: DeniedRefsService
 )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  def uploadDeniedRefs(): Action[Path] = Action.async(pathBodyParser()) { implicit request =>
+  val uploadDeniedRefs: Action[Path] = Action.async(pathBodyParser()) { implicit request =>
     val pathToCsv: Path = request.body
     for {
       deniedRefs <- deniedRefsService.parseDeniedRefs(pathToCsv)
@@ -61,7 +61,7 @@ class DeniedRefsController @Inject() (
       .map((_: IOResult) => Right(path))
   }
 
-  def verifyRefs(): Action[VerifyRefsRequest] = Action.async(parse.json[VerifyRefsRequest]) { implicit request =>
+  val verifyRefs: Action[VerifyRefsRequest] = Action.async(parse.json[VerifyRefsRequest]) { implicit request =>
     val refs: Set[Reference] = request.body.refs
 
     for {

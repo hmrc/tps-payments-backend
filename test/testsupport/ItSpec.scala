@@ -35,15 +35,13 @@ package testsupport
 import com.google.inject.{AbstractModule, Provides}
 import journey.{JourneyRepo, JourneyService}
 import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
-import org.scalatest.TestData
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatestplus.play.guice.GuiceOneServerPerTest
+import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
-import play.api.mvc.Result
-import play.api.test.{DefaultTestServerFactory, RunningServer}
+import play.api.test.{DefaultTestServerFactory, TestServerFactory}
 import play.api.{Application, Mode}
 import play.core.server.ServerConfig
 import tps.journey.model.{JourneyIdGenerator, PaymentItemIdGenerator}
@@ -54,7 +52,6 @@ import java.time.{Clock, Instant, ZoneId}
 import javax.inject.Singleton
 import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
-
 /**
  * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
  */
@@ -64,7 +61,7 @@ trait ItSpec
   with RichMatchers
   with HttpClientV2Support
   with WireMockSupport
-  with GuiceOneServerPerTest {
+  with GuiceOneServerPerSuite {
 
   val testPort = 19001
 
@@ -76,7 +73,7 @@ trait ItSpec
 
   lazy val frozenInstant: Instant = TdAll.instant
 
-  def clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
+  val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   private val module: AbstractModule = new AbstractModule {
     override def configure(): Unit = {
@@ -119,9 +116,9 @@ trait ItSpec
     "paymentNotificationUrl" -> "http://notification.host/payments/notifications/send-card-payments"
   ) ++ configOverrides
 
-  def injector: Injector = fakeApplication().injector
-  def repo: JourneyRepo = injector.instanceOf[JourneyRepo]
-  def journeyService: JourneyService = injector.instanceOf[JourneyService]
+  lazy val injector: Injector = fakeApplication().injector
+  lazy val repo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+  lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
@@ -134,11 +131,9 @@ trait ItSpec
     ()
   }
 
-  def status(of: Result): Int = of.header.status
+  override protected def testServerFactory: TestServerFactory = CustomTestServerFactory
 
-  override protected def newServerForTest(app: Application, testData: TestData): RunningServer = TestServerFactory.start(app)
-
-  object TestServerFactory extends DefaultTestServerFactory {
+  object CustomTestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {
       val sc = ServerConfig(port    = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
