@@ -100,7 +100,7 @@ class FindPaymentsSpec extends ItSpec {
       "the request contains a numberOfDays value which is less than zero" in {
         val result = performAction(FindPaymentsRequest(Seq.empty, -1))
         status(result) shouldBe BAD_REQUEST
-        contentAsString(result) shouldBe "numberOfDays should be greater than zero"
+        contentAsString(result) shouldBe "numberOfDays should be equal to or greater than zero"
       }
 
     }
