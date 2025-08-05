@@ -112,7 +112,7 @@ class JourneyController @Inject() (actions:        Actions,
 
   val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
     if (request.body.numberOfDays < 0)
-      Future.successful(BadRequest("numberOfDays should be greater than zero"))
+      Future.successful(BadRequest("numberOfDays should be equal to or greater than zero"))
     else if (request.body.references.isEmpty)
       Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
     else
