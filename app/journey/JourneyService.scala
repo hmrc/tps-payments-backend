@@ -94,7 +94,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
   def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] = {
     val today = LocalDate.now(clock)
 
-    journeyRepo.findByPcipalDataTaxReference(request.references).map{ journeys =>
+    journeyRepo.findByPcipalDataTaxReference(request.references.map(crypto.encrypt)).map{ journeys =>
       val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] = {
         val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for {
           journey <- journeys.filter{ j =>
@@ -105,7 +105,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
           pcipalData <- payment.pcipalData.filter(_.Status match {
             case StatusTypes.validated => true
             case StatusTypes.failed    => false
-          })
+          }).map(c => c.copy(TaxReference = crypto.decrypt(c.TaxReference)))
         } yield (journey, payment, pcipalData)
 
         data.groupBy(_._3.TaxReference)

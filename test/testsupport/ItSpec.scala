@@ -39,7 +39,7 @@ import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.inject.Injector
+import play.api.inject.{Injector}
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, TestServerFactory}
 import play.api.{Application, Mode}
@@ -105,6 +105,8 @@ trait ItSpec
     def testPaymentItemIdGenerator(): TestPaymentItemIdGenerator = new TestPaymentItemIdGenerator()
   }
 
+  lazy val overrideModules: List[GuiceableModule] = List()
+
   protected lazy val configOverrides: Map[String, Any] = Map()
 
   private val configMap: Map[String, Any] = Map[String, Any](
@@ -121,7 +123,7 @@ trait ItSpec
   lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
-    .overrides(GuiceableModule.fromGuiceModules(Seq(module)))
+    .overrides((GuiceableModule.fromGuiceModules(Seq(module)) :: overrideModules): _*)
     .configure(configMap)
     .build()
 

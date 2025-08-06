@@ -16,9 +16,13 @@
 
 package journey
 
-import journey.FindPaymentsSpec.{PaymentData, PcipalRequestData}
+import com.google.inject.Inject
+import com.typesafe.config.Config
+import journey.FindPaymentsSpec.{PaymentData, PcipalRequestData, TestCrypto}
 import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import org.apache.pekko.stream.Materializer
+import play.api.inject.bind
+import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -27,15 +31,22 @@ import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId, StatusType, StatusTypes}
 import tps.testdata.TdAll
+import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
+import util.Crypto
 
 import java.time.{Instant, LocalDateTime, LocalTime, ZoneOffset}
 import scala.concurrent.duration._
 
 class FindPaymentsSpec extends ItSpec {
 
+  override lazy val overrideModules: List[GuiceableModule] =
+    List(bind[Crypto].to(classOf[TestCrypto]))
+
   lazy implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
   lazy val controller = app.injector.instanceOf[JourneyController]
+
+  lazy val crypto = app.injector.instanceOf[Crypto]
 
   def performAction(request: FindPaymentsRequest) =
     controller.findPayments(
@@ -54,15 +65,15 @@ class FindPaymentsSpec extends ItSpec {
     LocalTime.MIDNIGHT
   ).toInstant(ZoneOffset.of("Z"))
 
-  val pcipalRequestData = PcipalRequestData(taxReference, "transactionRef", StatusTypes.validated)
+  lazy val pcipalRequestData = PcipalRequestData(crypto.encrypt(taxReference), "transactionRef", StatusTypes.validated)
 
-  val paymentData = PaymentData(
+  lazy val paymentData = PaymentData(
     BigDecimal(101.23),
     Some(pcipalRequestData),
     TaxTypes.Sa
   )
 
-  val journey = newJourney(
+  lazy val journey = newJourney(
     frozenInstant,
     Seq(paymentData)
   )
@@ -193,7 +204,7 @@ class FindPaymentsSpec extends ItSpec {
               PaymentData(
                 BigDecimal(2.34),
                 Some(PcipalRequestData(
-                  taxReference1,
+                  crypto.encrypt(taxReference1),
                   "transaction1",
                   StatusTypes.failed
                 )),
@@ -202,7 +213,7 @@ class FindPaymentsSpec extends ItSpec {
               PaymentData(
                 BigDecimal(3.45),
                 Some(PcipalRequestData(
-                  taxReference1,
+                  crypto.encrypt(taxReference1),
                   "transaction2",
                   StatusTypes.validated
                 )),
@@ -211,7 +222,7 @@ class FindPaymentsSpec extends ItSpec {
               PaymentData(
                 BigDecimal(4.5),
                 Some(PcipalRequestData(
-                  taxReference2,
+                  crypto.encrypt(taxReference2),
                   "transaction3",
                   StatusTypes.validated
                 )),
@@ -220,7 +231,7 @@ class FindPaymentsSpec extends ItSpec {
               PaymentData(
                 BigDecimal(5.67),
                 Some(PcipalRequestData(
-                  taxReference2,
+                  crypto.encrypt(taxReference2),
                   "transaction4",
                   StatusTypes.validated
                 )),
@@ -366,5 +377,12 @@ object FindPaymentsSpec {
                                      status:               StatusType)
 
   final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
+
+  // TODO: remove this with OPS-13976 - that will introduce the new encryption method to ensure repeatable encryption
+  class TestCrypto @Inject() (config: Config) extends Crypto(config) {
+    private val encrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
+    override def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
+    override def decrypt(s: String): String = encrypterDecrypter.decrypt(Crypted(s)).value
+  }
 
 }
