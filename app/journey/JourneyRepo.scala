@@ -54,6 +54,10 @@ object JourneyRepo {
     IndexModel(
       keys         = Indexes.ascending("payments.chargeReference"),
       indexOptions = IndexOptions().name("chargeReferenceIdx")
+    ),
+    IndexModel(
+      keys         = Indexes.ascending("payments.pcipalData.TaxReference"),
+      indexOptions = IndexOptions().name("pcipalDataTaxReferenceIdx"),
     )
   )
 
@@ -130,7 +134,7 @@ final class JourneyRepo @Inject() (
   def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
     find("pcipalSessionLaunchResponse.Id" -> id.value)
 
-  def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] = {
+  def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] =
     find("payments.chargeReference" -> Json.obj("$in" -> toJson(modsReferences)))
       .map { listOfPayments =>
         listOfPayments
@@ -141,5 +145,8 @@ final class JourneyRepo @Inject() (
               }
           }
       }
-  }
+
+  def findByPcipalDataTaxReference(references: Seq[String]): Future[Seq[Journey]] =
+    find("payments.pcipalData.TaxReference" -> Json.obj("$in" -> toJson(references)))
+
 }

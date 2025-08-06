@@ -39,7 +39,7 @@ class StartJourneyController @Inject() (actions:                Actions,
                                         appConfig:              AppConfig,
                                         clock:                  Clock)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
 
-  def startJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
+  val startJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
     val startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr = request.body
     val journey: Journey = makeJourney(startJourneyRequestMibOrPngr)
     journeyService.upsert(journey).map { _ =>
@@ -47,7 +47,7 @@ class StartJourneyController @Inject() (actions:                Actions,
     }
   }
 
-  def startJourneyMib: Action[StartJourneyRequestMib] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMib]) { implicit request =>
+  val startJourneyMib: Action[StartJourneyRequestMib] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMib]) { implicit request =>
     val journeyId = journeyIdGenerator.nextId()
     logger.info(s"Starting MIB journey [${journeyId.toString}] ...")
     val sjr = request.body
@@ -90,7 +90,7 @@ class StartJourneyController @Inject() (actions:                Actions,
       }
   }
 
-  def startJourneyPngr: Action[StartJourneyRequestPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestPngr]) { implicit request =>
+  val startJourneyPngr: Action[StartJourneyRequestPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestPngr]) { implicit request =>
     val journeyId = journeyIdGenerator.nextId()
     logger.info(s"Starting PNGR journey [${journeyId.toString}] ...")
     val sjr = request.body

@@ -17,18 +17,20 @@
 package journey
 
 import journey.JourneyService.FindByPcipalSessionIdResult
+import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
 import tps.model._
-import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalInitialValues, PcipalSessionId}
+import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalInitialValues, PcipalSessionId, StatusTypes}
 import tps.utils.SafeEquals.EqualsOps
 import util.Crypto
 
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock: Clock)(implicit ec: ExecutionContext) {
 
   private lazy val logger = Logger(this.getClass)
 
@@ -88,6 +90,45 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo)(implic
 
     updatedJourney
   }
+
+  def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] = {
+    val today = LocalDate.now(clock)
+
+    journeyRepo.findByPcipalDataTaxReference(request.references.map(crypto.encrypt)).map{ journeys =>
+      val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] = {
+        val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for {
+          journey <- journeys.filter{ j =>
+            val createdDate = LocalDate.ofInstant(j.created, clock.getZone)
+            !today.isAfter(createdDate.plusDays(request.numberOfDays))
+          }
+          payment <- journey.payments
+          pcipalData <- payment.pcipalData.filter(_.Status match {
+            case StatusTypes.validated => true
+            case StatusTypes.failed    => false
+          }).map(c => c.copy(TaxReference = crypto.decrypt(c.TaxReference)))
+        } yield (journey, payment, pcipalData)
+
+        data.groupBy(_._3.TaxReference)
+      }
+
+      val payments = request.references.flatMap(
+        referenceToData.get(_).toList.flatMap(_.map((toFindPaymentResponsePayment _).tupled))
+      )
+
+      FindPaymentsResponse(payments)
+    }
+  }
+
+  private def toFindPaymentResponsePayment(journey:       Journey,
+                                           paymentItem:   PaymentItem,
+                                           pcipalRequest: ChargeRefNotificationPcipalRequest): FindPaymentsResponse.Payment =
+    FindPaymentsResponse.Payment(
+      pcipalRequest.TaxReference,
+      pcipalRequest.TransactionReference,
+      (paymentItem.amount * 100).toLongExact,
+      journey.created,
+      paymentItem.taxType.entryName
+    )
 
   private val encryptString: String => String = s => crypto.encrypt(s)
   private val decryptString: String => String = s => Try(crypto.decrypt(s)) match {
