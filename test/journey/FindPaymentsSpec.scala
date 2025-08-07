@@ -16,13 +16,9 @@
 
 package journey
 
-import com.google.inject.Inject
-import com.typesafe.config.Config
-import journey.FindPaymentsSpec.{PaymentData, PcipalRequestData, TestCrypto}
+import journey.FindPaymentsSpec.{PaymentData, PcipalRequestData}
 import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import org.apache.pekko.stream.Materializer
-import play.api.inject.bind
-import play.api.inject.guice.GuiceableModule
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -31,16 +27,12 @@ import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId, StatusType, StatusTypes}
 import tps.testdata.TdAll
-import uk.gov.hmrc.crypto.{Crypted, Decrypter, Encrypter, PlainText, SymmetricCryptoFactory}
 import util.Crypto
 
 import java.time.{Instant, LocalDateTime, LocalTime, ZoneOffset}
 import scala.concurrent.duration._
 
 class FindPaymentsSpec extends ItSpec {
-
-  override lazy val overrideModules: List[GuiceableModule] =
-    List(bind[Crypto].to(classOf[TestCrypto]))
 
   lazy implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
@@ -377,12 +369,5 @@ object FindPaymentsSpec {
                                      status:               StatusType)
 
   final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
-
-  // TODO: remove this with OPS-13976 - that will introduce the new encryption method to ensure repeatable encryption
-  class TestCrypto @Inject() (config: Config) extends Crypto(config) {
-    private val encrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
-    override def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
-    override def decrypt(s: String): String = encrypterDecrypter.decrypt(Crypted(s)).value
-  }
 
 }
