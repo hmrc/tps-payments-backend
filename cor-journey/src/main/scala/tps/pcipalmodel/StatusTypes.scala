@@ -27,9 +27,9 @@ import scala.collection.immutable
 sealed abstract class StatusType extends EnumEntry
 
 object StatusType {
-  implicit val format: Format[StatusType] = EnumFormat(StatusTypes)
+  implicit val format: Format[StatusType]                  = EnumFormat(StatusTypes)
   implicit val pathBinder: QueryStringBindable[StatusType] = tps.utils.ValueClassBinder.bindableA(_.toString)
-  implicit val statusBinder: PathBindable[StatusType] = tps.utils.ValueClassBinder.valueClassBinder(_.toString)
+  implicit val statusBinder: PathBindable[StatusType]      = tps.utils.ValueClassBinder.valueClassBinder(_.toString)
 }
 
 object StatusTypes extends Enum[StatusType] {

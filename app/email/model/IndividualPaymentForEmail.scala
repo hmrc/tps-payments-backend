@@ -19,20 +19,20 @@ package email.model
 import play.api.libs.json.{Json, OWrites}
 
 final case class IndividualPaymentForEmail(
-    taxType:           String,
-    amount:            String,
-    transactionFee:    String,
-    transactionNumber: String
+  taxType:           String,
+  amount:            String,
+  transactionFee:    String,
+  transactionNumber: String
 )
 
 object IndividualPaymentForEmail {
-  implicit val writes: OWrites[IndividualPaymentForEmail] = {
+  implicit val writes: OWrites[IndividualPaymentForEmail] =
     OWrites[IndividualPaymentForEmail](tpsPaymentItemForEmail =>
       Json.obj(
-        s"taxType" -> tpsPaymentItemForEmail.taxType,
-        s"amount" -> tpsPaymentItemForEmail.amount,
-        s"transactionFee" -> tpsPaymentItemForEmail.transactionFee,
+        s"taxType"           -> tpsPaymentItemForEmail.taxType,
+        s"amount"            -> tpsPaymentItemForEmail.amount,
+        s"transactionFee"    -> tpsPaymentItemForEmail.transactionFee,
         s"transactionNumber" -> tpsPaymentItemForEmail.transactionNumber
-      ))
-  }
+      )
+    )
 }

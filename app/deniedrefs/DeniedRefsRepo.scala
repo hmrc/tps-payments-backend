@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 object DeniedRefsRepo {
   def indexes(): Seq[IndexModel] = Seq(
     IndexModel(
-      keys         = Indexes.ascending("inserted"),
+      keys = Indexes.ascending("inserted"),
       indexOptions = IndexOptions().unique(true).name("inserted")
     )
   )
@@ -52,31 +52,29 @@ object DeniedRefsRepo {
 
 @Singleton
 final class DeniedRefsRepo @Inject() (
-    mongoComponent: MongoComponent
+  mongoComponent: MongoComponent
 )(implicit ec: ExecutionContext)
-  extends Repo[DeniedRefsId, DeniedRefs](
-    collectionName = "denied-refs",
-    mongoComponent = mongoComponent,
-    indexes        = DeniedRefsRepo.indexes(),
-    extraCodecs    = Seq(DeniedRefsRepo.jsObjectCodec),
-    replaceIndexes = true
-  ) {
+    extends Repo[DeniedRefsId, DeniedRefs](
+      collectionName = "denied-refs",
+      mongoComponent = mongoComponent,
+      indexes = DeniedRefsRepo.indexes(),
+      extraCodecs = Seq(DeniedRefsRepo.jsObjectCodec),
+      replaceIndexes = true
+    ) {
 
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] =
-    //TODO: could be less boilerplate implementation
+    // TODO: could be less boilerplate implementation
     findLatestDeniedRefsIdJson()
       .map(_.map(_ \ "_id" match {
         case JsDefined(JsString(value)) => DeniedRefsId(value)
         case other                      => throw new RuntimeException(s"Denied refs returns no '_id' field: ${other.toString}")
-      }
-      ))
+      }))
 
-  /**
-   * Projection is used (i.e. slice("_id", 1) ) to limit the number of records returned to just one.
-   * Projection is also used (i.e. slice("refs", 1) ) to limit the number of refs returned to just one.
-   * We don't need them and it can introduce performance issue if there are lots in list of refs inside DeniedRefs
-   * Don't remove this... unless you know what you're doing ;)
-   */
+  /** Projection is used (i.e. slice("_id", 1) ) to limit the number of records returned to just one. Projection is also
+    * used (i.e. slice("refs", 1) ) to limit the number of refs returned to just one. We don't need them and it can
+    * introduce performance issue if there are lots in list of refs inside DeniedRefs Don't remove this... unless you
+    * know what you're doing ;)
+    */
   private[deniedrefs] def findLatestDeniedRefsIdJson(): Future[Option[JsObject]] = collection
     .find[JsObject]()
     .projection(Projections.include("_id"))

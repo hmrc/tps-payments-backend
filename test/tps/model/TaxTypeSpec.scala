@@ -23,37 +23,47 @@ import tps.model.TaxTypes._
 class TaxTypeSpec extends UnitSpec {
 
   "Native tax types" in {
-    val expectedUsedInFrontendInCorrectOrder: Seq[TaxType] = Seq[TaxType](ChildBenefitsRepayments, Sa, Sdlt, Safe, Cotax, Ntc, Paye, Nps, Vat, Ppt)
+    val expectedUsedInFrontendInCorrectOrder: Seq[TaxType] =
+      Seq[TaxType](ChildBenefitsRepayments, Sa, Sdlt, Safe, Cotax, Ntc, Paye, Nps, Vat, Ppt)
     TaxTypes.usedOnFrontend shouldBe expectedUsedInFrontendInCorrectOrder
   }
 
   "path bind" in {
 
-    TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", ChildBenefitsRepayments) shouldBe "child-benefit-repayments"
+    TpsNativeTaxType.tpsNativeTaxTypePathBindable
+      .unbind("whatever", ChildBenefitsRepayments) shouldBe "child-benefit-repayments"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Cotax) shouldBe "corporation-tax"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Nps) shouldBe "nps"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Ntc) shouldBe "tax-credits"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Paye) shouldBe "paye"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Ppt) shouldBe "plastic-packaging-tax"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Sa) shouldBe "self-assessment"
-    TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Safe) shouldBe "strategic-accounting-framework-environment"
+    TpsNativeTaxType.tpsNativeTaxTypePathBindable
+      .unbind("whatever", Safe) shouldBe "strategic-accounting-framework-environment"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Sdlt) shouldBe "stamp-duty-land-tax"
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", Vat) shouldBe "vat"
 
-    TaxTypes.usedOnFrontend.foreach(tt => TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", tt)) withClue "all supported tax types should be able to unbind"
+    TaxTypes.usedOnFrontend.foreach(tt =>
+      TpsNativeTaxType.tpsNativeTaxTypePathBindable.unbind("whatever", tt)
+    ) withClue "all supported tax types should be able to unbind"
 
-    TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "child-benefit-repayments") shouldBe Right(ChildBenefitsRepayments)
+    TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "child-benefit-repayments") shouldBe Right(
+      ChildBenefitsRepayments
+    )
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "corporation-tax") shouldBe Right(Cotax)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "nps") shouldBe Right(Nps)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "tax-credits") shouldBe Right(Ntc)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "paye") shouldBe Right(Paye)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "plastic-packaging-tax") shouldBe Right(Ppt)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "self-assessment") shouldBe Right(Sa)
-    TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "strategic-accounting-framework-environment") shouldBe Right(Safe)
+    TpsNativeTaxType.tpsNativeTaxTypePathBindable
+      .bind("whatever", "strategic-accounting-framework-environment") shouldBe Right(Safe)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "stamp-duty-land-tax") shouldBe Right(Sdlt)
     TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "vat") shouldBe Right(Vat)
 
-    TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "notatax") shouldBe Left("could not map [notatax] to tax type [key=whatever]")
+    TpsNativeTaxType.tpsNativeTaxTypePathBindable.bind("whatever", "notatax") shouldBe Left(
+      "could not map [notatax] to tax type [key=whatever]"
+    )
 
   }
 
@@ -88,10 +98,11 @@ class TaxTypeSpec extends UnitSpec {
     JsString("MIB").as[TaxType] shouldBe MIB
     JsString("PNGR").as[TaxType] shouldBe PNGR
 
-    TaxTypes.values.foreach { tt: TaxType =>
-      val json = Json.toJson(tt)
-      val t = json.as[TaxType]
-      tt shouldBe t withClue "tt <> json map is bidirectional"
+    TaxTypes.values.foreach {
+      tt: TaxType =>
+        val json = Json.toJson(tt)
+        val t    = json.as[TaxType]
+        tt shouldBe t withClue "tt <> json map is bidirectional"
     }
   }
 }

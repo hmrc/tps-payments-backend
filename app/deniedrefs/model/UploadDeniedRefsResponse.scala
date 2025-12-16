@@ -21,9 +21,9 @@ import java.time.LocalDateTime
 import play.api.libs.json._
 
 final case class UploadDeniedRefsResponse(
-    _id:      DeniedRefsId,
-    inserted: LocalDateTime,
-    size:     Long
+  _id:      DeniedRefsId,
+  inserted: LocalDateTime,
+  size:     Long
 )
 
 object UploadDeniedRefsResponse {

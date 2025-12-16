@@ -26,8 +26,8 @@ import uk.gov.hmrc.crypto.{AesGCMCrypto, Crypted, PlainText}
 class CryptoSpec extends ItSpec {
 
   "encrypt/decrypt" in {
-    val crypto = app.injector.instanceOf[Crypto]
-    val plain: String = "sialala"
+    val crypto            = app.injector.instanceOf[Crypto]
+    val plain: String     = "sialala"
     val encrypted: String = crypto.encrypt(plain)
     val decrypted: String = crypto.decrypt(encrypted)
 
@@ -38,10 +38,9 @@ class CryptoSpec extends ItSpec {
     e should have message "Unable to decrypt value"
   }
 
-  /**
-   * This test was added to ensure our crypto implementation is consistent with the old way (i.e. AES GCM).
-   * We had an issue where the encryption type used was different and errors arose in the DeniedRefs service layer.
-   */
+  /** This test was added to ensure our crypto implementation is consistent with the old way (i.e. AES GCM). We had an
+    * issue where the encryption type used was different and errors arose in the DeniedRefs service layer.
+    */
   "crypto impl old vs new" in {
     val oldKey = "MmJhcmNsYXlzc2Z0cGRldg=="
     val newKey = "MWJhcmNsYXlzc2Z0cGRldg=="
@@ -61,8 +60,8 @@ class CryptoSpec extends ItSpec {
 
     val cryptoNew = new Crypto(configNew)
 
-    val plain = PlainText("sialala")
-    val encryptedOld: Crypted = oldAes.encrypt(plain)
+    val plain                   = PlainText("sialala")
+    val encryptedOld: Crypted   = oldAes.encrypt(plain)
     val decryptedOld: PlainText = oldAes.decrypt(encryptedOld)
 
     decryptedOld shouldBe plain
@@ -72,23 +71,26 @@ class CryptoSpec extends ItSpec {
 
 class CryptoWithDifferentKeysSpec extends ItSpec {
 
-  /**
-   * overwrite the crypto.key value with new one
-   * put the old crypto.key field in previous keys
-   * note: the 'old' i.e. previousKey is used to encrypt test@email.com to obtain an encrypted value to insert into mongo.
-   */
+  /** overwrite the crypto.key value with new one put the old crypto.key field in previous keys note: the 'old' i.e.
+    * previousKey is used to encrypt test@email.com to obtain an encrypted value to insert into mongo.
+    */
   override lazy val configOverrides: Map[String, Any] = Map(
-    "crypto.key" -> "bWFkZXVwMTIzNDVhYmNkZQ==",
+    "crypto.key"            -> "bWFkZXVwMTIzNDVhYmNkZQ==",
     "crypto.previousKeys.0" -> "MmJhcmNsYXlzc2Z0cGRldg=="
   )
 
   "successfully decrypt when the key used to encrypt a field is moved to the previousKeys field in config" in {
-    val paymentsWithEmailEncrypted = tpsPaymentsWithoutEmail.payments.map(_.copy(email = Some(Email("VIjzb5FRcfeoMQQEhSlSrIQ0Rybzs04XPFN47lizOz1KlXGs3/lXZKnLQievgA=="))))
-    Option(repo.upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted)).futureValue.getUpsertedId).isDefined shouldBe true
-    val crypto = app.injector.instanceOf[Crypto]
-    val journey: Option[Journey] = repo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
-    val encryptedEmail: Email =
-      journey.map(_.payments.headOption.flatMap(_.email))
+    val paymentsWithEmailEncrypted = tpsPaymentsWithoutEmail.payments.map(
+      _.copy(email = Some(Email("VIjzb5FRcfeoMQQEhSlSrIQ0Rybzs04XPFN47lizOz1KlXGs3/lXZKnLQievgA==")))
+    )
+    Option(
+      repo.upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted)).futureValue.getUpsertedId
+    ).isDefined shouldBe true
+    val crypto                     = app.injector.instanceOf[Crypto]
+    val journey: Option[Journey]   = repo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
+    val encryptedEmail: Email      =
+      journey
+        .map(_.payments.headOption.flatMap(_.email))
         .getOrElse(throw new Exception("somthing went wrong"))
         .getOrElse(throw new Exception("somthing went wrong"))
     crypto.decrypt(encryptedEmail.value) shouldBe "test@email.com"

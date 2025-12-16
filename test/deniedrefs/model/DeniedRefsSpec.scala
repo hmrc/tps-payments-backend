@@ -26,7 +26,7 @@ class DeniedRefsSpec extends UnitSpec {
     val deniedRefs = TdDeniedRefs.deniedRefs1
 
     val deniedRefsJson = Json.parse(
-      //language=JSON
+      // language=JSON
       """
         {
           "_id" : "denied-refs-id-123",

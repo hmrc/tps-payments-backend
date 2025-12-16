@@ -32,17 +32,21 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status {
   "getModsAmendmentRef should return the amendment reference in the ModsPaymentCallBackRequest when there is one" in {
     AuthStub.authorised()
     connector.upsert(modsTpsPaymentsWithAnAmendmentReference).futureValue
-    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithAmendmentRef
+    connector
+      .getModsPaymentItemAmendmentReference(paymentItemId)
+      .futureValue shouldBe modsPaymentCallBackRequestWithAmendmentRef
   }
 
   "getModsAmendmentRef should return None for amendment reference in the ModsPaymentCallBackRequest when isn't one" in {
     AuthStub.authorised()
     connector.upsert(modsTpsPaymentsNoAmendmentReference).futureValue
-    connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
+    connector
+      .getModsPaymentItemAmendmentReference(paymentItemId)
+      .futureValue shouldBe modsPaymentCallBackRequestWithoutAmendmentRef
   }
 
   "getModsAmendmentRef should return 500 when a duplicate id is found" in {
-    val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
+    val tpsIdForDuplicate                 = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
     repo.upsert(journey).futureValue
@@ -57,7 +61,9 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status {
     journeyService.upsert(tpsPaymentsWithEmptyEmail).futureValue
     intercept[Exception] {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
-    }.getMessage should include(s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?")
+    }.getMessage should include(
+      s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?"
+    )
   }
 
   "propagate error from findModsPaymentsByReference if no payment item is found" in {

@@ -24,4 +24,3 @@ object PcipalSessionLaunchResponse {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]
 }
-

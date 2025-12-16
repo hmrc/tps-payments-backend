@@ -38,23 +38,23 @@ object RemittanceTypes extends Enum[RemittanceType] {
     override val screenValue: String = "Unaccompanied"
   }
 
-  case object Tax extends RemittanceType {
+  case object Tax                extends RemittanceType {
     override val pcipalValue: String = "1"
     override val screenValue: String = "Tax"
   }
-  case object VatSurcharge extends RemittanceType {
+  case object VatSurcharge       extends RemittanceType {
     override val pcipalValue: String = "2"
     override val screenValue: String = "VAT surcharge"
   }
-  case object Penalties extends RemittanceType {
+  case object Penalties          extends RemittanceType {
     override val pcipalValue: String = "4"
     override val screenValue: String = "Penalties"
   }
-  case object VatDistraintCosts extends RemittanceType {
+  case object VatDistraintCosts  extends RemittanceType {
     override val pcipalValue: String = "6"
     override val screenValue: String = "VAT distraint costs"
   }
-  case object VatLegalCosts extends RemittanceType {
+  case object VatLegalCosts      extends RemittanceType {
     override val pcipalValue: String = "7"
     override val screenValue: String = "VAT legal costs"
   }
@@ -64,4 +64,3 @@ object RemittanceTypes extends Enum[RemittanceType] {
   }
 
 }
-

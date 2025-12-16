@@ -19,22 +19,24 @@ package tps.startjourneymodel
 import play.api.libs.json.{Json, OFormat}
 import tps.model.CustomerName
 
-/**
- * Start Journey Request (Sjr) For Merchandise in Baggage (Mib)
- * @param amendmentReference used to when processing notification from pcipal (this value is send back to Mib)
- * @param totalVatDue used in reconciliation when building finance report. They aren't strictly required to maka a payment.
- * @param totalDutyDue used in reconciliation when building finance report. They aren't strictly required to maka a payment.
- */
+/** Start Journey Request (Sjr) For Merchandise in Baggage (Mib)
+  * @param amendmentReference
+  *   used to when processing notification from pcipal (this value is send back to Mib)
+  * @param totalVatDue
+  *   used in reconciliation when building finance report. They aren't strictly required to maka a payment.
+  * @param totalDutyDue
+  *   used in reconciliation when building finance report. They aren't strictly required to maka a payment.
+  */
 final case class StartJourneyRequestMib(
-    mibReference:       String,
-    customerName:       CustomerName,
-    amount:             BigDecimal,
-    amendmentReference: Option[Int],
-    totalVatDue:        BigDecimal,
-    totalDutyDue:       BigDecimal,
-    backUrl:            String,
-    resetUrl:           String,
-    finishUrl:          String
+  mibReference:       String,
+  customerName:       CustomerName,
+  amount:             BigDecimal,
+  amendmentReference: Option[Int],
+  totalVatDue:        BigDecimal,
+  totalDutyDue:       BigDecimal,
+  backUrl:            String,
+  resetUrl:           String,
+  finishUrl:          String
 )
 
 object StartJourneyRequestMib {

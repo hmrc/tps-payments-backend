@@ -26,7 +26,12 @@ class JourneyServiceSpec extends ItSpec {
 
   "findByPcipalSessionId should throw error when more than one payment found" in {
     Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
-    Option(repo.upsert(tpsPaymentsWithPcipalData.copy(_id = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one"))).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(
+      repo
+        .upsert(tpsPaymentsWithPcipalData.copy(_id = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one")))
+        .futureValue
+        .getUpsertedId
+    ).isDefined shouldBe true
     val tpsPaymentId: PaymentItemId = tpsPaymentsWithPcipalData.payments.headOption.value.paymentItemId
     intercept[Exception] {
       journeyService.findByPcipalSessionId(PcipalSessionId("48c978bb"), tpsPaymentId).futureValue
@@ -40,13 +45,16 @@ class JourneyServiceSpec extends ItSpec {
   }
 
   "upsert should encrypt relevant fields in journey" in {
-    val journeyBeforeEncryption = tpsPaymentsWithPcipalData
+    val journeyBeforeEncryption   = tpsPaymentsWithPcipalData
     journeyService.upsert(journeyBeforeEncryption).futureValue
-    val journeyInMongo = repo.findById(journeyBeforeEncryption.journeyId).futureValue
+    val journeyInMongo            = repo.findById(journeyBeforeEncryption.journeyId).futureValue
     journeyInMongo should not be journeyBeforeEncryption withClue "some fields in the journey should be encrypted"
-    val sensitiveStringsInJourney = List("JE231111", "some test name", "test@email.com", "chargeReference", "1234567895K")
+    val sensitiveStringsInJourney =
+      List("JE231111", "some test name", "test@email.com", "chargeReference", "1234567895K")
     sensitiveStringsInJourney.foreach { sensitiveData =>
-      journeyBeforeEncryption.toString should include(sensitiveData) withClue "the strings should be in the unencrypted journey..."
+      journeyBeforeEncryption.toString should include(
+        sensitiveData
+      ) withClue "the strings should be in the unencrypted journey..."
       journeyInMongo.toString should not include sensitiveData withClue "there were unencrypted values in the 'encrypted' journey..."
     }
   }

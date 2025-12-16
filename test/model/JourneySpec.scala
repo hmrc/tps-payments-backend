@@ -50,9 +50,9 @@ class JourneySpec extends UnitSpec {
   "generate journey jsons" ignore {
 
     TdAll.allJourneysWithJson.foreach { t =>
-      val content = Json.prettyPrint(Json.toJson(t._1))
+      val content  = Json.prettyPrint(Json.toJson(t._1))
       val rootPath = "/dbox/projects/hmrcdigital/tps-payments-backend/cor-journey-test-data/src/main/resources"
-      val path = s"$rootPath${t._2.resourcePath}"
+      val path     = s"$rootPath${t._2.resourcePath}"
       println(s"generating $path...")
       Files.createDirectories(Paths.get(path).getParent)
       Files.write(
@@ -66,10 +66,10 @@ class JourneySpec extends UnitSpec {
 
   lazy val testCases: List[TestCase] = TdAll.allJourneysWithJson
     .map { t =>
-      val journey = t._1
-      val json = t._2.json
+      val journey      = t._1
+      val json         = t._2.json
       val testCaseName = t._2.simpleName
-      TestCase(journey      = journey, json = json, testCaseName = testCaseName)
+      TestCase(journey = journey, json = json, testCaseName = testCaseName)
     }
 
   "serialize" - testCases.foreach { tc =>
@@ -86,9 +86,11 @@ class JourneySpec extends UnitSpec {
 
   "mongo requires time formatted in a special way" in {
 
-    val journeyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit.json"
-    ).asJson
+    val journeyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit.json"
+      )
+      .asJson
 
     val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
 
@@ -98,9 +100,11 @@ class JourneySpec extends UnitSpec {
 
   "mongo format can read legacy journey with old time format" in {
 
-    val legacyJourneyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit-legacy-time-format.json"
-    ).asJson
+    val legacyJourneyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit-legacy-time-format.json"
+      )
+      .asJson
 
     val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
     JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey
@@ -108,36 +112,55 @@ class JourneySpec extends UnitSpec {
 
   "mongo format can read legacy journey without navigation data" in {
 
-    val legacyJourneyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit-legacy-no-navigation.json"
-    ).asJson
+    val legacyJourneyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit-legacy-no-navigation.json"
+      )
+      .asJson
 
-    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.copy(navigation = Navigation(
-      back     = "dummy", reset = "dummy", finish = "dummy", callback = "dummy"
-    ))
+    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.copy(navigation =
+      Navigation(
+        back = "dummy",
+        reset = "dummy",
+        finish = "dummy",
+        callback = "dummy"
+      )
+    )
     JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey
   }
 
   "mongo format can read legacy journey without journeyStatus" in {
-    val legacyJourneyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit-legacy-no-journey-status.json"
-    ).asJson
-    val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
-    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
+    val legacyJourneyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit-legacy-no-journey-status.json"
+      )
+      .asJson
+    val journey                  = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+    JourneyRepo.formatMongo
+      .reads(legacyJourneyInMongoJson)
+      .asOpt
+      .value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
   }
 
   "mongo format can read legacy pngr journey" in {
-    val legacyJourneyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-pngr-legacy-extra-fields-in-payment-specific-data.json"
-    ).asJson
-    val journey = TdAll.TdJourneyPngr.journeyCreated
-    JourneyRepo.formatMongo.reads(legacyJourneyInMongoJson).asOpt.value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
+    val legacyJourneyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-pngr-legacy-extra-fields-in-payment-specific-data.json"
+      )
+      .asJson
+    val journey                  = TdAll.TdJourneyPngr.journeyCreated
+    JourneyRepo.formatMongo
+      .reads(legacyJourneyInMongoJson)
+      .asOpt
+      .value shouldBe journey withClue "journeyState for legacy journeys is assumed to be ReceivedNotification"
   }
 
   "mongo format can read legacy journey without LanguageFlag into object with English language flag" in {
-    val journeyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit-no-language-flag.json"
-    ).asJson
+    val journeyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit-no-language-flag.json"
+      )
+      .asJson
 
     val journey = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
 
@@ -148,16 +171,20 @@ class JourneySpec extends UnitSpec {
   }
 
   "mongo format can serialize/deserialize from/into object with Welsh language flag" in {
-    val journeyInMongoJson = ResourceReader.read(
-      "/tps/journeysinmongo/journey-childbenefit-welsh-language-flag.json"
-    ).asJson
+    val journeyInMongoJson = ResourceReader
+      .read(
+        "/tps/journeysinmongo/journey-childbenefit-welsh-language-flag.json"
+      )
+      .asJson
 
-    val originalPciPalSessionRequest = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.pcipalSessionLaunchRequest.value
+    val originalPciPalSessionRequest          =
+      TdAll.TdJourneyChildBenefit.journeyReceivedNotification.pcipalSessionLaunchRequest.value
     val originalPciPalSessionRequestWithWelsh = originalPciPalSessionRequest.copy(LanguageFlag = "W")
 
-    val expectedJourney = TdAll.TdJourneyChildBenefit.journeyReceivedNotification.copy(pcipalSessionLaunchRequest = Some(originalPciPalSessionRequestWithWelsh))
+    val expectedJourney = TdAll.TdJourneyChildBenefit.journeyReceivedNotification
+      .copy(pcipalSessionLaunchRequest = Some(originalPciPalSessionRequestWithWelsh))
 
-    val readsResult = JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value
+    val readsResult  = JourneyRepo.formatMongo.reads(journeyInMongoJson).asOpt.value
     val writesResult = JourneyRepo.formatMongo.writes(expectedJourney)
 
     readsResult shouldBe expectedJourney

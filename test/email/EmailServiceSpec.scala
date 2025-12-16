@@ -27,35 +27,36 @@ class EmailServiceSpec extends ItSpec {
 
   "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
     @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
-    val testTpsPaymentItemWithNoPciPalData: PaymentItem = TdAll.TdJourneySa.journeyAtPciPal.payments.head
-    val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
+    val testTpsPaymentItemWithNoPciPalData: PaymentItem      = TdAll.TdJourneySa.journeyAtPciPal.payments.head
+    val individualPaymentForEmail: IndividualPaymentForEmail =
+      emailService.toIndividualPaymentForEmail(testTpsPaymentItemWithNoPciPalData)
     individualPaymentForEmail.transactionFee shouldBe "Unknown"
     individualPaymentForEmail.transactionNumber shouldBe "Unknown"
   }
 
   Seq[(TaxType, String)](
     TaxTypes.ChildBenefitsRepayments -> "Child Benefits repayments",
-    TaxTypes.Sa -> "Self Assessment",
-    TaxTypes.Sdlt -> "Stamp Duty Land Tax",
-    TaxTypes.Safe -> "SAFE",
-    TaxTypes.Cotax -> "Corporation Tax",
-    TaxTypes.Ntc -> "Tax credit repayments",
-    TaxTypes.Paye -> "PAYE",
-    TaxTypes.Nps -> "NPS/NIRS",
-    TaxTypes.Vat -> "VAT",
-    TaxTypes.Ppt -> "Plastic Packaging Tax",
-    TaxTypes.MIB -> "MIB",
-    TaxTypes.PNGR -> "PNGR"
-  ).foreach {
-      case (tt, expectedTaxTypeString) =>
-        s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
-          //TODO: stronger test would compare entire object instead of just one filed.
-          //TODO: rewrite this so it iterates through valid test data instead of mocking only tax type
-          @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
-          val testTpsPaymentItem = TdAll.TdJourneySa.journeyReceivedNotification.payments.head
-          val tpsPaymentItem = testTpsPaymentItem.copy(taxType = tt)
-          val individualPaymentForEmail: IndividualPaymentForEmail = emailService.toIndividualPaymentForEmail(tpsPaymentItem)
-          individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
-        }
+    TaxTypes.Sa                      -> "Self Assessment",
+    TaxTypes.Sdlt                    -> "Stamp Duty Land Tax",
+    TaxTypes.Safe                    -> "SAFE",
+    TaxTypes.Cotax                   -> "Corporation Tax",
+    TaxTypes.Ntc                     -> "Tax credit repayments",
+    TaxTypes.Paye                    -> "PAYE",
+    TaxTypes.Nps                     -> "NPS/NIRS",
+    TaxTypes.Vat                     -> "VAT",
+    TaxTypes.Ppt                     -> "Plastic Packaging Tax",
+    TaxTypes.MIB                     -> "MIB",
+    TaxTypes.PNGR                    -> "PNGR"
+  ).foreach { case (tt, expectedTaxTypeString) =>
+    s"parseTpsPaymentsItemsForEmail should use getTaxTypeString to derive correct string: [${tt.entryName}]" in {
+      // TODO: stronger test would compare entire object instead of just one filed.
+      // TODO: rewrite this so it iterates through valid test data instead of mocking only tax type
+      @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
+      val testTpsPaymentItem                                   = TdAll.TdJourneySa.journeyReceivedNotification.payments.head
+      val tpsPaymentItem                                       = testTpsPaymentItem.copy(taxType = tt)
+      val individualPaymentForEmail: IndividualPaymentForEmail =
+        emailService.toIndividualPaymentForEmail(tpsPaymentItem)
+      individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
     }
+  }
 }

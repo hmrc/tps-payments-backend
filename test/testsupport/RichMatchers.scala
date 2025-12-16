@@ -27,22 +27,20 @@ import scala.jdk.CollectionConverters.IterableHasAsScala
 object RichMatchers extends RichMatchers
 
 trait RichMatchers
-  extends Matchers
-  with TryValues
-  with EitherValues
-  with OptionValues
-  with AppendedClues
-  with ScalaFutures
-  with StreamlinedXml
-  with Inside
-  with Eventually
-  with IntegrationPatience {
+    extends Matchers
+    with TryValues
+    with EitherValues
+    with OptionValues
+    with AppendedClues
+    with ScalaFutures
+    with StreamlinedXml
+    with Inside
+    with Eventually
+    with IntegrationPatience {
 
-  /**
-   * Returns recorded by WireMock request.
-   * Asserts there was only one request made to wire mock.
-   * Use it in Connector unit tests.
-   */
+  /** Returns recorded by WireMock request. Asserts there was only one request made to wire mock. Use it in Connector
+    * unit tests.
+    */
   def getRecordedRequest: LoggedRequest = {
     val allRecordedRequests: List[LoggedRequest] = WireMock.getAllServeEvents.asScala.map(_.getRequest).toList
     allRecordedRequests should have length 1 withClue "there suppose to be only one request recorded"
@@ -50,4 +48,3 @@ trait RichMatchers
   }
 
 }
-

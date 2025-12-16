@@ -32,54 +32,44 @@ object HeadOfDutyIndicator {
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
 
-  /**
-   * Hod for P800 and Child Benefits
-   */
+  /** Hod for P800 and Child Benefits
+    */
   case object B extends HeadOfDutyIndicator
 
-  /**
-   * Hod for COTAX
-   */
+  /** Hod for COTAX
+    */
   case object A extends HeadOfDutyIndicator
 
-  /**
-   * Hod for NTC
-   */
+  /** Hod for NTC
+    */
   case object N extends HeadOfDutyIndicator
 
-  /**
-   * Hod for SDLT
-   */
+  /** Hod for SDLT
+    */
   case object M extends HeadOfDutyIndicator
 
-  /**
-   * Hod for NPS
-   */
+  /** Hod for NPS
+    */
   case object J extends HeadOfDutyIndicator
 
-  /**
-   * Hod for PAYE
-   */
+  /** Hod for PAYE
+    */
   case object P extends HeadOfDutyIndicator
 
-  /**
-   * Hod for VAT
-   */
+  /** Hod for VAT
+    */
   case object V extends HeadOfDutyIndicator
 
-  /**
-   * Hod for Safe
-   */
+  /** Hod for Safe
+    */
   case object X extends HeadOfDutyIndicator
 
-  /**
-   * Hod for Self Assesment (Cesa)
-   */
+  /** Hod for Self Assesment (Cesa)
+    */
   case object K extends HeadOfDutyIndicator
 
-  /**
-   * Hod for Ppt
-   */
+  /** Hod for Ppt
+    */
   case object C extends HeadOfDutyIndicator
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues

@@ -39,11 +39,11 @@ trait TdRequest {
     .withTrueClientPort()
     .withDeviceId()
 
-  lazy val authToken: String = "authorization-value-123"
+  lazy val authToken: String             = "authorization-value-123"
   lazy val akamaiReputationValue: String = "akamai-reputation-value-123"
-  lazy val requestId: String = "request-id-value-123"
-  lazy val trueClientIp: String = "client-ip-123"
-  lazy val trueClientPort: String = "client-port-123"
-  lazy val deviceIdInRequest: String = "device-id-123"
+  lazy val requestId: String             = "request-id-value-123"
+  lazy val trueClientIp: String          = "client-ip-123"
+  lazy val trueClientPort: String        = "client-port-123"
+  lazy val deviceIdInRequest: String     = "device-id-123"
 
 }

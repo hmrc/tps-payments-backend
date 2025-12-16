@@ -23,13 +23,11 @@ import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-/**
- * Test data representing list of journeys in various states and associated data.
- * Each journey has only one payment
- * Only Journeys with TpsNativeTaxType types are defined here.
- *
- * See `allJourneys` to see what journey moments are supported
- */
+/** Test data representing list of journeys in various states and associated data. Each journey has only one payment
+  * Only Journeys with TpsNativeTaxType types are defined here.
+  *
+  * See `allJourneys` to see what journey moments are supported
+  */
 trait TdJourneyInStates {
 
   lazy val allJourneys: List[(Journey, JourneyJson)] = List(
@@ -52,58 +50,52 @@ trait TdJourneyInStates {
 
   def selectedTaxType: TpsNativeTaxType
 
-  /**
-   * This amount entered during `EnterPayment` state. Later it's changed.
-   */
+  /** This amount entered during `EnterPayment` state. Later it's changed.
+    */
   final def amountEntered: BigDecimal = BigDecimal("606.61")
 
   def amountEditedString: String
 
-  /**
-   * This amount is set in `EditPayment` state. Change it using `amountEditedString`
-   */
+  /** This amount is set in `EditPayment` state. Change it using `amountEditedString`
+    */
   final def amountEdited: BigDecimal = BigDecimal(amountEditedString)
 
-  //TODO: provide a strong type for that, use it in Journey, etc. Make sure you don't break existing json formats
+  // TODO: provide a strong type for that, use it in Journey, etc. Make sure you don't break existing json formats
   def taxReference: String
 
   def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest
   def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse
   def pcipalData: ChargeRefNotificationPcipalRequest
 
-  /**
-   * Initial PaymentItem created during EnterPayment state.
-   */
+  /** Initial PaymentItem created during EnterPayment state.
+    */
   def paymentItemEntered: PaymentItem
 
-  /**
-   * PaymentItem updated during EditPayment state.
-   */
+  /** PaymentItem updated during EditPayment state.
+    */
   def paymentItemEdited: PaymentItem = paymentItemEntered.copy(amount = amountEdited)
 
-  /**
-   * PaymentItem when received notification from PciPal (via payments-processor)
-   */
+  /** PaymentItem when received notification from PciPal (via payments-processor)
+    */
   lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEdited.copy(
     pcipalData = Some(pcipalData)
   )
 
   lazy val journeyStarted: Journey = Journey(
-    _id                         = journeyId,
-    journeyState                = JourneyState.Started,
-    pid                         = pid,
-    created                     = created,
-    payments                    = Nil,
-    navigation                  = navigation,
-    pcipalSessionLaunchRequest  = None,
+    _id = journeyId,
+    journeyState = JourneyState.Started,
+    pid = pid,
+    created = created,
+    payments = Nil,
+    navigation = navigation,
+    pcipalSessionLaunchRequest = None,
     pcipalSessionLaunchResponse = None
   )
 
   def journeyStartedJson: JourneyJson
 
-  /**
-   * A tax type was selected, journey become in EnterPayment state
-   */
+  /** A tax type was selected, journey become in EnterPayment state
+    */
   lazy val journeyInEnterPayment: Journey =
     journeyStarted.copy(
       journeyState = JourneyState.EnterPayment(taxType = selectedTaxType)
@@ -114,7 +106,7 @@ trait TdJourneyInStates {
   lazy val journeyWithEnteredPayment: Journey =
     journeyInEnterPayment.copy(
       journeyState = JourneyState.Started,
-      payments     = List(paymentItemEntered)
+      payments = List(paymentItemEntered)
     )
 
   def journeyWithEnteredPaymentJson: JourneyJson
@@ -129,14 +121,14 @@ trait TdJourneyInStates {
   lazy val journeyWithEditedPayment: Journey =
     journeyInEditPayment.copy(
       journeyState = JourneyState.Started,
-      payments     = List(paymentItemEdited)
+      payments = List(paymentItemEdited)
     )
 
   def journeyWithEditedPaymentJson: JourneyJson
 
   lazy val journeyAtPciPal: Journey = journeyWithEditedPayment.copy(
-    journeyState                = JourneyState.AtPciPal,
-    pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
+    journeyState = JourneyState.AtPciPal,
+    pcipalSessionLaunchRequest = Some(pcipalSessionLaunchRequest),
     pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
   )
 
@@ -162,7 +154,7 @@ trait TdJourneyInStates {
 
   lazy val journeyReceivedNotification: Journey = journeyFinishedByPciPal.copy(
     journeyState = JourneyState.ReceivedNotification,
-    payments     = List(paymentItemAfterReceivedNotification)
+    payments = List(paymentItemAfterReceivedNotification)
   )
 
   def journeyReceivedNotificationJson: JourneyJson

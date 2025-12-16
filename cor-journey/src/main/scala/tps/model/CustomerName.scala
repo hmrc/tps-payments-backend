@@ -23,7 +23,8 @@ final case class CustomerName(value: String) extends AnyVal {
     value
       .replaceAll("[^a-zA-Z0-9 ]", "")
       .replaceAll("\\s+", " ")
-      .trim)
+      .trim
+  )
 }
 
 object CustomerName {

@@ -29,9 +29,11 @@ object JourneyState {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: Format[JourneyState] = {
 
-    val default: OFormat[JourneyState] = derived.oformat[JourneyState]()
-    val legacyReadsLandingAsStarted: Reads[JourneyState] = (__ \ "Landing").read[JsObject].map[JourneyState](_ => Started)
-    val legacyReadsBasketNotEmptyAsStarted: Reads[JourneyState] = (__ \ "BasketNotEmpty").read[JsObject].map[JourneyState](_ => Started)
+    val default: OFormat[JourneyState]                          = derived.oformat[JourneyState]()
+    val legacyReadsLandingAsStarted: Reads[JourneyState]        =
+      (__ \ "Landing").read[JsObject].map[JourneyState](_ => Started)
+    val legacyReadsBasketNotEmptyAsStarted: Reads[JourneyState] =
+      (__ \ "BasketNotEmpty").read[JsObject].map[JourneyState](_ => Started)
 
     OFormat[JourneyState](
       r = default
@@ -42,28 +44,28 @@ object JourneyState {
 
   }
 
-  //Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
+  // Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
   final case object Started extends JourneyState
 
-  //Entering Payment
+  // Entering Payment
   final case class EnterPayment(taxType: TpsNativeTaxType) extends JourneyState
 
-  //Editing Payment
+  // Editing Payment
   final case class EditPayment(paymentItemId: PaymentItemId) extends JourneyState
 
-  //Journey handed over to PciPal
+  // Journey handed over to PciPal
   final case object AtPciPal extends JourneyState
 
-  //User clicked reject button on the landing page
+  // User clicked reject button on the landing page
   final case object Rejected extends JourneyState with FinalState
 
-  //User clicked reset at pcipal page
+  // User clicked reset at pcipal page
   final case object ResetByPciPal extends JourneyState with FinalState
 
-  //User clicked Finish at pcipal page
+  // User clicked Finish at pcipal page
   final case object FinishedByPciPal extends JourneyState with FinalState
 
-  //User clicked back button on the PciPal. We finalize this journey and start a clone of it
+  // User clicked back button on the PciPal. We finalize this journey and start a clone of it
   final case object BackByPciPal extends JourneyState with FinalState
 
   final case object ReceivedNotification extends JourneyState with FinalState

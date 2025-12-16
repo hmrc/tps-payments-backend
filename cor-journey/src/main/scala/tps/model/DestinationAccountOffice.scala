@@ -40,4 +40,3 @@ object AccountOfficeIds extends Enum[DestinationAccountOffice] {
     override val id: String = "G1"
   }
 }
-

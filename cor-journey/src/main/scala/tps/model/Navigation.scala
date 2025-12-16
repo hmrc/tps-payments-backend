@@ -19,14 +19,13 @@ package tps.model
 import play.api.libs.json.{Json, OFormat}
 
 final case class Navigation(
-    back:     String,
-    reset:    String,
-    finish:   String,
-    callback: String
+  back:     String,
+  reset:    String,
+  finish:   String,
+  callback: String
 )
 
 object Navigation {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[Navigation] = Json.format[Navigation]
 }
-

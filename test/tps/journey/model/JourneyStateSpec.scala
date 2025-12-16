@@ -24,20 +24,20 @@ import tps.testdata.TdAll
 class JourneyStateSpec extends UnitSpec {
 
   private val testCases: List[(JourneyState, String)] = List(
-    JourneyState.Started -> """{"Started":{}}""",
-    JourneyState.EnterPayment(TaxTypes.Sa) -> """{"EnterPayment":{"taxType":"Sa"}}""",
+    JourneyState.Started                          -> """{"Started":{}}""",
+    JourneyState.EnterPayment(TaxTypes.Sa)        -> """{"EnterPayment":{"taxType":"Sa"}}""",
     JourneyState.EditPayment(TdAll.paymentItemId) -> """{"EditPayment":{"paymentItemId":"64897aee16fe8b501cbf008a"}}""",
-    JourneyState.AtPciPal -> """{"AtPciPal":{}}""",
-    JourneyState.Rejected -> """{"Rejected":{}}""",
-    JourneyState.ResetByPciPal -> """{"ResetByPciPal":{}}""",
-    JourneyState.FinishedByPciPal -> """{"FinishedByPciPal":{}}""",
-    JourneyState.BackByPciPal -> """{"BackByPciPal":{}}""",
-    JourneyState.ReceivedNotification -> """{"ReceivedNotification":{}}"""
+    JourneyState.AtPciPal                         -> """{"AtPciPal":{}}""",
+    JourneyState.Rejected                         -> """{"Rejected":{}}""",
+    JourneyState.ResetByPciPal                    -> """{"ResetByPciPal":{}}""",
+    JourneyState.FinishedByPciPal                 -> """{"FinishedByPciPal":{}}""",
+    JourneyState.BackByPciPal                     -> """{"BackByPciPal":{}}""",
+    JourneyState.ReceivedNotification             -> """{"ReceivedNotification":{}}"""
   )
 
   testCases.foreach { tc =>
     val journeyState = tc._1
-    val jsonString = tc._2
+    val jsonString   = tc._2
     s"de/serialize ${journeyState.toString}" in {
       val json: JsValue = Json.parse(jsonString)
       Json.toJson(journeyState: JourneyState) shouldBe json
@@ -47,12 +47,12 @@ class JourneyStateSpec extends UnitSpec {
 
   "legacy journey states should be deserialized" - {
     val testCases = List(
-      """{"Landing":{}}""" -> JourneyState.Started,
+      """{"Landing":{}}"""        -> JourneyState.Started,
       """{"BasketNotEmpty":{}}""" -> JourneyState.Started
     )
 
     testCases.foreach { tc =>
-      val jsonString: String = tc._1
+      val jsonString: String         = tc._1
       val journeyState: JourneyState = tc._2
       s"deserialize $jsonString" in {
         val json: JsValue = Json.parse(jsonString)

@@ -33,35 +33,55 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: ExecutionContext) {
 
-  /**
-   * This function sends email:
-   * if all notifications has been received (one for each PaymentItem)
-   * and if the tax type is not PNGR nor MIB
-   * and if the email address has been provided
-   * and if at least one payment has succeeded (failed payments aren't aggregated into the email)
-   *
-   * (!) Since the each PaymentItem can have one email address and only one aggregate email is sent
-   * the first found email from the list of PaymentItems is taken
-   * (!!) The referenceNumber being part of the emails (randomly generated number without two last characters) from first paymentItem found on the list is used as a reference for the client presented in the email)
-   *
-   * (this function had been developed before this scaladoc)
-   */
+  /** This function sends email: if all notifications has been received (one for each PaymentItem) and if the tax type
+    * is not PNGR nor MIB and if the email address has been provided and if at least one payment has succeeded (failed
+    * payments aren't aggregated into the email)
+    *
+    * (!) Since the each PaymentItem can have one email address and only one aggregate email is sent the first found
+    * email from the list of PaymentItems is taken (!!) The referenceNumber being part of the emails (randomly generated
+    * number without two last characters) from first paymentItem found on the list is used as a reference for the client
+    * presented in the email)
+    *
+    * (this function had been developed before this scaladoc)
+    */
   def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit = {
     val paymentItems: List[PaymentItem] = journey.payments
     if (weShouldSendEmail(paymentItems)) {
-      val emailAddress: Email = paymentItems.find(_.email.nonEmpty).flatMap(_.email).getOrElse(throw new RuntimeException("Missing email in payment items"))
+      val emailAddress: Email                                = paymentItems
+        .find(_.email.nonEmpty)
+        .flatMap(_.email)
+        .getOrElse(throw new RuntimeException("Missing email in payment items"))
       val listOfSuccessfulTpsPaymentItems: List[PaymentItem] =
-        paymentItems.filter(_.pcipalData
-          .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't")) (nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated))
+        paymentItems.filter(
+          _.pcipalData
+            .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't"))(
+              nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated
+            )
+        )
 
       listOfSuccessfulTpsPaymentItems.headOption match {
-        case Some(PaymentItem(_, _, _, _, _, _, Some(ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)), _, _, _)) =>
+        case Some(
+              PaymentItem(
+                _,
+                _,
+                _,
+                _,
+                _,
+                _,
+                Some(
+                  ChargeRefNotificationPcipalRequest(_, _, _, _, cardType, _, _, _, _, _, referenceNumber, cardLast4)
+                ),
+                _,
+                _,
+                _
+              )
+            ) =>
           sendEmail(
-            payments             = listOfSuccessfulTpsPaymentItems,
+            payments = listOfSuccessfulTpsPaymentItems,
             transactionReference = referenceNumber.dropRight(2),
-            emailAddress         = emailAddress,
-            cardType             = cardType,
-            cardNumber           = cardLast4
+            emailAddress = emailAddress,
+            cardType = cardType,
+            cardNumber = cardLast4
           )
         case _ => ()
       }
@@ -70,57 +90,64 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def sendEmail(
-      payments:             List[PaymentItem],
-      transactionReference: String,
-      emailAddress:         Email,
-      cardType:             String,
-      cardNumber:           String
+    payments:             List[PaymentItem],
+    transactionReference: String,
+    emailAddress:         Email,
+    cardType:             String,
+    cardNumber:           String
   )(implicit hc: HeaderCarrier): Unit = {
 
-    val totalCommissionPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission)).sum
-    val totalAmountPaid: BigDecimal = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
+    val totalCommissionPaid: BigDecimal = payments
+      .map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission))
+      .sum
+    val totalAmountPaid: BigDecimal     = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
 
     val emailSendRequest: EmailSendRequest = EmailSendRequest(
       Seq(emailAddress),
       "telephone_payments_service",
       parameters = Map[String, String](
-        "transactionReference" -> transactionReference,
-        "totalAmountPaid" -> parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
-        "cardType" -> cardType,
-        "cardNumber" -> cardNumber,
+        "transactionReference"    -> transactionReference,
+        "totalAmountPaid"         -> parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
+        "cardType"                -> cardType,
+        "cardNumber"              -> cardNumber,
         "tpsPaymentItemsForEmail" -> stringifyTpsPaymentsItemsForEmail(payments.map(toIndividualPaymentForEmail))
       )
     )
 
     emailConnector
       .sendEmail(emailSendRequest)
-      .recover {
-        case e => logger.error("Failed to send email, investigate", e)
+      .recover { case e =>
+        logger.error("Failed to send email, investigate", e)
       }
     ()
   }
 
-  private def weShouldSendEmail(tpsPaymentItems: List[PaymentItem]): Boolean = {
-    isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(tpsPaymentItems)
-  }
+  private def weShouldSendEmail(tpsPaymentItems: List[PaymentItem]): Boolean =
+    isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(
+      tpsPaymentItems
+    )
 
-  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[PaymentItem]): Boolean = tpsPaymentItems.forall(_.pcipalData.nonEmpty)
+  private def tpsPaymentsAreFullyUpdated(tpsPaymentItems: List[PaymentItem]): Boolean =
+    tpsPaymentItems.forall(_.pcipalData.nonEmpty)
 
-  private def emailAddressHasBeenProvided(tpsPaymentItems: List[PaymentItem]): Boolean = tpsPaymentItems.exists(_.email.nonEmpty)
+  private def emailAddressHasBeenProvided(tpsPaymentItems: List[PaymentItem]): Boolean =
+    tpsPaymentItems.exists(_.email.nonEmpty)
 
-  private def isNotMibOrPngr(tpsPaymentItems: List[PaymentItem]): Boolean = {
+  private def isNotMibOrPngr(tpsPaymentItems: List[PaymentItem]): Boolean =
     !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType === MIB || nextPaymentItem.taxType === PNGR)
-  }
 
   def toIndividualPaymentForEmail(paymentItem: PaymentItem): IndividualPaymentForEmail = IndividualPaymentForEmail(
     taxType = getTaxTypeString(paymentItem.taxType),
-    amount  = parseBigDecimalToString(paymentItem.amount),
-    //TODO: at this stage the pciPalData should be always there, right? If so then it should not bother with "Unknown"
-    transactionFee    = paymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
+    amount = parseBigDecimalToString(paymentItem.amount),
+    // TODO: at this stage the pciPalData should be always there, right? If so then it should not bother with "Unknown"
+    transactionFee =
+      paymentItem.pcipalData.fold("Unknown")(pcipalData => parseBigDecimalToString(pcipalData.Commission)),
     transactionNumber = paymentItem.pcipalData.fold("Unknown")(pcipalData => pcipalData.ReferenceNumber)
   )
 
-  def stringifyTpsPaymentsItemsForEmail(tpsPaymentsForEmail: List[IndividualPaymentForEmail]): String = JsArray(tpsPaymentsForEmail.map(toJson(_))).toString
+  def stringifyTpsPaymentsItemsForEmail(tpsPaymentsForEmail: List[IndividualPaymentForEmail]): String = JsArray(
+    tpsPaymentsForEmail.map(toJson(_))
+  ).toString
 
   private def parseBigDecimalToString(bigDecimal: BigDecimal): String = bigDecimal.setScale(2).toString
 

@@ -21,10 +21,10 @@ import play.api.mvc.PathBindable
 import tps.utils.ValueClassBinder.valueClassBinder
 
 final case class PaymentItemId(
-    value: String
+  value: String
 ) extends AnyVal
 
 object PaymentItemId {
-  implicit val format: Format[PaymentItemId] = Json.valueFormat
+  implicit val format: Format[PaymentItemId]                = Json.valueFormat
   implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
 }

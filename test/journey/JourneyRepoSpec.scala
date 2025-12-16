@@ -43,7 +43,6 @@ class JourneyRepoSpec extends ItSpec {
     repo.surfaceModsDataForRecon(modsLookupChargeRefs).futureValue shouldBe modsReconLookup
   }
 
-  private def collectionSize: Long = {
+  private def collectionSize: Long =
     repo.countAll().futureValue
-  }
 }

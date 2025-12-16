@@ -21,5 +21,5 @@ import play.api.mvc.Results.Unauthorized
 
 object UnhappyPathResponses {
   val unauthorised: Result = Unauthorized("You do not have access to this service")
-  val notLoggedIn: Result = Unauthorized("You are not logged in")
+  val notLoggedIn: Result  = Unauthorized("You are not logged in")
 }

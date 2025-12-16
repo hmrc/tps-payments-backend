@@ -23,13 +23,12 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import javax.inject.Inject
 
-/**
- * Repeating the pattern which was brought originally by play-framework
- * and putting some more data which can be derived from a request
- *
- * Use it to provide HeaderCarrier, Lang, or Messages
- * Note that Lang and Messages will be developed soon (see pay-frontend code for reference)
- */
+/** Repeating the pattern which was brought originally by play-framework and putting some more data which can be derived
+  * from a request
+  *
+  * Use it to provide HeaderCarrier, Lang, or Messages Note that Lang and Messages will be developed soon (see
+  * pay-frontend code for reference)
+  */
 class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport {
 
   implicit def hc(implicit request: RequestHeader): HeaderCarrier = RequestSupport.hc
@@ -37,6 +36,7 @@ class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I
 
 object RequestSupport {
 
-  implicit def hc(implicit request: RequestHeader): HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+  implicit def hc(implicit request: RequestHeader): HeaderCarrier =
+    HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
 }

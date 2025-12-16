@@ -36,56 +36,54 @@ object JourneyRepo {
 
   def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
     IndexModel(
-      keys         = Indexes.ascending("created"),
+      keys = Indexes.ascending("created"),
       indexOptions = IndexOptions().expireAfter(cacheTtlInSeconds, TimeUnit.SECONDS).name("createdIdx")
     ),
     IndexModel(
-      keys         = Indexes.ascending("pciPalSessionId"),
+      keys = Indexes.ascending("pciPalSessionId"),
       indexOptions = IndexOptions().name("pciPalSessionId")
     ),
     IndexModel(
-      keys         = Indexes.ascending("payments.paymentItemId"),
+      keys = Indexes.ascending("payments.paymentItemId"),
       indexOptions = IndexOptions().name("paymentItemIdIdx")
     ),
     IndexModel(
-      keys         = Indexes.ascending("pcipalSessionLaunchResponse.Id"),
+      keys = Indexes.ascending("pcipalSessionLaunchResponse.Id"),
       indexOptions = IndexOptions().name("pcipalSessionLaunchResponseIdIdx")
     ),
     IndexModel(
-      keys         = Indexes.ascending("payments.chargeReference"),
+      keys = Indexes.ascending("payments.chargeReference"),
       indexOptions = IndexOptions().name("chargeReferenceIdx")
     ),
     IndexModel(
-      keys         = Indexes.ascending("payments.pcipalData.TaxReference"),
-      indexOptions = IndexOptions().name("pcipalDataTaxReferenceIdx"),
+      keys = Indexes.ascending("payments.pcipalData.TaxReference"),
+      indexOptions = IndexOptions().name("pcipalDataTaxReferenceIdx")
     )
   )
 
   final case class LegacyJourney(
-      _id:                         JourneyId,
-      pid:                         String,
-      journeyState:                Option[JourneyState], //HERE the difference, recently added this state
-      created:                     Instant,
-      payments:                    List[PaymentItem], //note that field is in mongo query, don't refactor wisely making sure historical records are also updated
-      navigation:                  Option[Navigation], //HERE the difference
-      pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest]  = None,
-      pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
+    _id:                         JourneyId,
+    pid:                         String,
+    journeyState:                Option[JourneyState], // HERE the difference, recently added this state
+    created:                     Instant,
+    payments:                    List[
+      PaymentItem
+    ], // note that field is in mongo query, don't refactor wisely making sure historical records are also updated
+    navigation:                  Option[Navigation],   // HERE the difference
+    pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest] = None,
+    pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
   )
 
-  /**
-   * This format stores date time in mongo specific way.
-   * For example: {{{
-   *   "\$date":{"\$numberLong":"2837003631880"}
-   * }}}
-   * Don't change it.
-   * Use https://www.epochconverter.com/ to quickly decode Long to Instant.
-   */
+  /** This format stores date time in mongo specific way. For example: {{{"\$date":{"\$numberLong":"2837003631880"}}}}
+    * Don't change it. Use https://www.epochconverter.com/ to quickly decode Long to Instant.
+    */
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val formatMongo: OFormat[Journey] = {
 
-    //before OPS-9461 "created" was stored as string and in java.time.LocalDateTime format
-    //TODO: Delete this legacy reads in 2024
-    val legacyCreatedReads: Reads[Instant] = Reads.of[String].map(s => LocalDateTime.parse(s) toInstant (ZoneOffset.UTC))
+    // before OPS-9461 "created" was stored as string and in java.time.LocalDateTime format
+    // TODO: Delete this legacy reads in 2024
+    val legacyCreatedReads: Reads[Instant] =
+      Reads.of[String].map(s => LocalDateTime.parse(s) toInstant (ZoneOffset.UTC))
 
     implicit val instantFormatSupportingLegacyReads: Format[Instant] = Format(
       MongoJavatimeFormats.instantReads.orElse(legacyCreatedReads),
@@ -94,34 +92,41 @@ object JourneyRepo {
 
     val dummyNavigation = Navigation("dummy", "dummy", "dummy", "dummy")
 
-    val journeyReads: Reads[Journey] = Json.reads[LegacyJourney].map[Journey](lg => Journey(
-      _id                         = lg._id,
-      journeyState                = lg.journeyState.getOrElse(JourneyState.ReceivedNotification),
-      pid                         = lg.pid,
-      created                     = lg.created,
-      payments                    = lg.payments,
-      navigation                  = lg.navigation.getOrElse(dummyNavigation),
-      pcipalSessionLaunchRequest  = lg.pcipalSessionLaunchRequest,
-      pcipalSessionLaunchResponse = lg.pcipalSessionLaunchResponse
-    ))
+    val journeyReads: Reads[Journey] = Json
+      .reads[LegacyJourney]
+      .map[Journey](lg =>
+        Journey(
+          _id = lg._id,
+          journeyState = lg.journeyState.getOrElse(JourneyState.ReceivedNotification),
+          pid = lg.pid,
+          created = lg.created,
+          payments = lg.payments,
+          navigation = lg.navigation.getOrElse(dummyNavigation),
+          pcipalSessionLaunchRequest = lg.pcipalSessionLaunchRequest,
+          pcipalSessionLaunchResponse = lg.pcipalSessionLaunchResponse
+        )
+      )
     OFormat[Journey](journeyReads, Json.writes[Journey])
   }
 }
 
 @Singleton
 final class JourneyRepo @Inject() (
-    mongoComponent: MongoComponent,
-    config:         RepoConfig
+  mongoComponent: MongoComponent,
+  config:         RepoConfig
 )(implicit ec: ExecutionContext)
-  extends Repo[JourneyId, Journey](
-    collectionName = "tps-payments", //TODO: at some point address the name of the collection. Rename it to journey, rename existing collection to journey
-    mongoComponent = mongoComponent,
-    indexes        = JourneyRepo.indexes(config.expireMongo.toSeconds),
-    extraCodecs    = Seq.empty,
-    replaceIndexes = true)(
-    manifest         = implicitly[Manifest[Journey]],
-    domainFormat     = JourneyRepo.formatMongo,
-    executionContext = implicitly[ExecutionContext]) {
+    extends Repo[JourneyId, Journey](
+      collectionName =
+        "tps-payments", // TODO: at some point address the name of the collection. Rename it to journey, rename existing collection to journey
+      mongoComponent = mongoComponent,
+      indexes = JourneyRepo.indexes(config.expireMongo.toSeconds),
+      extraCodecs = Seq.empty,
+      replaceIndexes = true
+    )(
+      manifest = implicitly[Manifest[Journey]],
+      domainFormat = JourneyRepo.formatMongo,
+      executionContext = implicitly[ExecutionContext]
+    ) {
 
   def findByPaymentItemId(id: PaymentItemId): Future[List[Journey]] =
     find("payments.paymentItemId" -> id)
@@ -139,7 +144,8 @@ final class JourneyRepo @Inject() (
       .map { listOfPayments =>
         listOfPayments
           .flatMap { tpsPayments =>
-            tpsPayments.payments.filter(_.taxType === TaxTypes.MIB)
+            tpsPayments.payments
+              .filter(_.taxType === TaxTypes.MIB)
               .map { tpsPaymentItem =>
                 tpsPaymentItem.paymentSpecificData
               }

@@ -44,14 +44,14 @@ object TdDeniedRefs {
        |""".stripMargin
 
   val deniedRefs1 = DeniedRefs(
-    _id      = DeniedRefsId("denied-refs-id-123"),
-    refs     = List(ref1, ref2, ref3),
+    _id = DeniedRefsId("denied-refs-id-123"),
+    refs = List(ref1, ref2, ref3),
     inserted = LocalDateTime.parse("2022-02-04T10:00:24.371")
   )
 
   val deniedRefs2 = DeniedRefs(
-    _id      = DeniedRefsId("denied-refs-id-123"),
-    refs     = List(ref2, ref3, ref4),
+    _id = DeniedRefsId("denied-refs-id-123"),
+    refs = List(ref2, ref3, ref4),
     inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
   )
 

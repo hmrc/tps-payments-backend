@@ -19,20 +19,19 @@ package tps.startjourneymodel
 import play.api.libs.json.{Json, OFormat}
 import tps.model.{CustomerName, Email, PaymentSpecificData, TaxType}
 
-/**
- * Start Journey (Sj) Payment Item
- */
+/** Start Journey (Sj) Payment Item
+  */
 final case class SjPaymentItem(
-    chargeReference:     String,
-    customerName:        CustomerName,
-    amount:              BigDecimal,
-    taxRegimeDisplay:    String,
-    taxType:             TaxType,
-    paymentSpecificData: PaymentSpecificData,
-    email:               Option[Email])
+  chargeReference:     String,
+  customerName:        CustomerName,
+  amount:              BigDecimal,
+  taxRegimeDisplay:    String,
+  taxType:             TaxType,
+  paymentSpecificData: PaymentSpecificData,
+  email:               Option[Email]
+)
 
 object SjPaymentItem {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[SjPaymentItem] = Json.format[SjPaymentItem]
 }
-

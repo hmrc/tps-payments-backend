@@ -26,11 +26,11 @@ final case class FindPaymentsResponse(payments: Seq[Payment])
 object FindPaymentsResponse {
 
   final case class Payment(
-      reference:            String,
-      transactionReference: String,
-      amountInPence:        Long,
-      createdOn:            Instant,
-      taxType:              String
+    reference:            String,
+    transactionReference: String,
+    amountInPence:        Long,
+    createdOn:            Instant,
+    taxType:              String
   )
 
   object Payment {

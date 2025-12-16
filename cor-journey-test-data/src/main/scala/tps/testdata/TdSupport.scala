@@ -25,10 +25,11 @@ object TdSupport {
 
   implicit class FakeRequestOps[T](r: FakeRequest[T]) {
 
-    def withAuthToken(authToken: String = TdAll.authToken): FakeRequest[T] = r.withSession((SessionKeys.authToken, authToken))
+    def withAuthToken(authToken: String = TdAll.authToken): FakeRequest[T] =
+      r.withSession((SessionKeys.authToken, authToken))
 
     def withAkamaiReputationHeader(
-        akamaiReputationValue: String = TdAll.akamaiReputationValue
+      akamaiReputationValue: String = TdAll.akamaiReputationValue
     ): FakeRequest[T] = r.withHeaders(
       HeaderNames.akamaiReputation -> akamaiReputationValue
     )
@@ -50,7 +51,7 @@ object TdSupport {
     )
   }
 
-  implicit def toSome[T](t: T): Option[T] = Some(t)
-  implicit def toLocalDate(s: String): LocalDate = LocalDate.parse(s)
+  implicit def toSome[T](t:         T): Option[T]              = Some(t)
+  implicit def toLocalDate(s:       String): LocalDate         = LocalDate.parse(s)
   implicit def toOptionLocalDate(s: String): Option[LocalDate] = Some(LocalDate.parse(s))
 }
