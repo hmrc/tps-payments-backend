@@ -23,7 +23,6 @@ final case class StartJourneyResponse(
   nextUrl:   String
 ) derives CanEqual
 
-object StartJourneyResponse {
+object StartJourneyResponse:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[StartJourneyResponse] = Json.format[StartJourneyResponse]
-}

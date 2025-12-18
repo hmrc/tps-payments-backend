@@ -25,7 +25,7 @@ import tps.pcipalmodel.StatusType
 
 import scala.collection.immutable
 
-class StatusTypesSpec extends UnitSpec {
+class StatusTypesSpec extends UnitSpec:
 
   "de/serialize TaxTypes" in {
 
@@ -40,4 +40,3 @@ class StatusTypesSpec extends UnitSpec {
       jsValue.as[StatusType] shouldBe tt._2 withClue s"deserialize ${tt.toString()}"
     }
   }
-}

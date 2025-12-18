@@ -18,17 +18,15 @@ package util
 
 import uk.gov.hmrc.http.{HttpReads, HttpResponse, UpstreamErrorResponse}
 
-object HttpReadsInstances extends uk.gov.hmrc.http.HttpReadsInstances {
+object HttpReadsInstances extends uk.gov.hmrc.http.HttpReadsInstances:
 
   /** It's a backward compatible implementation of readUnit which throws exception if the http responds status is 5xx or
     * 4xx.
     *
     * It shadows/overrides `readUnit` from uk.gov.hmrc.http.HttpReads.Implicits.readUnit
     */
-  override implicit val readUnit: HttpReads[Unit] = {
+  override implicit val readUnit: HttpReads[Unit] =
     val eitherHttpResponseReads: HttpReads[Either[UpstreamErrorResponse, HttpResponse]] = readEitherOf[HttpResponse]
     val eitherUnitReads: HttpReads[Either[UpstreamErrorResponse, Unit]]                 =
       eitherHttpResponseReads.map(x => x.map(_ => ()))
     throwOnFailure(eitherUnitReads)
-  }
-}

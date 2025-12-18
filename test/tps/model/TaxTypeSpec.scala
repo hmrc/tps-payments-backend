@@ -21,7 +21,7 @@ import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.model.TaxTypes.*
 
-class TaxTypeSpec extends UnitSpec {
+class TaxTypeSpec extends UnitSpec:
 
   "Native tax types" in {
     val expectedUsedInFrontendInCorrectOrder: Seq[TaxType] =
@@ -105,4 +105,3 @@ class TaxTypeSpec extends UnitSpec {
       tt shouldBe t withClue "tt <> json map is bidirectional"
     }
   }
-}

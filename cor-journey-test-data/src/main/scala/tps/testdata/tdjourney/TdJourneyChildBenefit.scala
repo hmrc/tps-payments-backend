@@ -26,7 +26,7 @@ import java.time.Instant
 
 trait TdJourneyChildBenefit { dependencies: TdBase =>
 
-  object TdJourneyChildBenefit extends TdJourneyInStates {
+  object TdJourneyChildBenefit extends TdJourneyInStates:
 
     override lazy val journeyId: JourneyId               = dependencies.journeyId
     override lazy val pid: String                        = dependencies.pid
@@ -151,5 +151,4 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
       "/tps/testdata/childbenefit/journey-8-ReceivedNotification.json"
     )
 
-  }
 }

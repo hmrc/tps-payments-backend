@@ -34,7 +34,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
 
-class DeniedRefsSpec extends ItSpec {
+class DeniedRefsSpec extends ItSpec:
 
   def connector: VerifyRefsConnector = app.injector.instanceOf[tps.deniedrefs.VerifyRefsConnector]
 
@@ -116,5 +116,3 @@ class DeniedRefsSpec extends ItSpec {
     implicit val request: Request[_] = TdAll.request
     connector.verifyRefs(verifyRefsRequest)
   }
-
-}

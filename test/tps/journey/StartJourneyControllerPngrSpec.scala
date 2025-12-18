@@ -27,7 +27,7 @@ import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-class StartJourneyControllerPngrSpec extends ItSpec {
+class StartJourneyControllerPngrSpec extends ItSpec:
 
   private def journeyIdGenerator: TestJourneyIdGenerator         = app.injector.instanceOf[TestJourneyIdGenerator]
   private def paymentItemIdGenerator: TestPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
@@ -78,4 +78,3 @@ class StartJourneyControllerPngrSpec extends ItSpec {
     val json = TdAll.TdJourneyPngr.startJourneyRequestJsonAmountsAsStrings
     json.as[StartJourneyRequestPngr] shouldBe TdAll.TdJourneyPngr.startJourneyRequest
   }
-}

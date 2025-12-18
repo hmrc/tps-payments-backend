@@ -20,6 +20,5 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class VerifyRefsResponse(status: VerifyRefsStatus) derives CanEqual
 
-object VerifyRefsResponse {
-  implicit val format: OFormat[VerifyRefsResponse] = Json.format[VerifyRefsResponse]
-}
+object VerifyRefsResponse:
+  given OFormat[VerifyRefsResponse] = Json.format[VerifyRefsResponse]

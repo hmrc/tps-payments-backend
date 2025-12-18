@@ -36,7 +36,7 @@ import testsupport.Givens.canEqualJsValue
 
 import scala.concurrent.Future
 
-class FindPaymentsSpec extends ItSpec {
+class FindPaymentsSpec extends ItSpec:
 
   lazy implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
@@ -371,12 +371,8 @@ class FindPaymentsSpec extends ItSpec {
     )
   }
 
-}
-
-object FindPaymentsSpec {
+object FindPaymentsSpec:
 
   final case class PcipalRequestData(taxReference: String, transactionReference: String, status: StatusType)
 
   final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
-
-}

@@ -23,7 +23,7 @@ import tps.journey.model.{Journey, JourneyId}
 import tps.model.Email
 import uk.gov.hmrc.crypto.{AesGCMCrypto, Crypted, PlainText}
 
-class CryptoSpec extends ItSpec {
+class CryptoSpec extends ItSpec:
   given CanEqual[PlainText, PlainText] = CanEqual.derived
 
   "encrypt/decrypt" in {
@@ -68,9 +68,8 @@ class CryptoSpec extends ItSpec {
     decryptedOld shouldBe plain
     cryptoNew.decrypt(encryptedOld.value) shouldBe "sialala"
   }
-}
 
-class CryptoWithDifferentKeysSpec extends ItSpec {
+class CryptoWithDifferentKeysSpec extends ItSpec:
 
   /** overwrite the crypto.key value with new one put the old crypto.key field in previous keys note: the 'old' i.e.
     * previousKey is used to encrypt test@email.com to obtain an encrypted value to insert into mongo.
@@ -96,4 +95,3 @@ class CryptoWithDifferentKeysSpec extends ItSpec {
         .getOrElse(throw new Exception("somthing went wrong"))
     crypto.decrypt(encryptedEmail.value) shouldBe "test@email.com"
   }
-}

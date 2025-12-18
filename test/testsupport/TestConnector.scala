@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 //TODO: document who is calling this, also no need tests for that code as it's extra cost to maintain it
 @Singleton
-class TestConnector @Inject() (httpClient: HttpClientV2)(implicit executionContext: ExecutionContext) {
+class TestConnector @Inject() (httpClient: HttpClientV2)(using ec: ExecutionContext):
 
   private val port                      = 19001
   private val headers: (String, String) = ("Content-Type", "application/json")
@@ -91,5 +91,3 @@ class TestConnector @Inject() (httpClient: HttpClientV2)(implicit executionConte
       .withBody(Json.toJson(findRPaymentSpecificDataRequest))
       .setHeader(headers)
       .execute[HttpResponse]
-
-}

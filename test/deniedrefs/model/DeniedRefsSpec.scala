@@ -21,7 +21,7 @@ import play.api.libs.json.Json
 import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 
-class DeniedRefsSpec extends UnitSpec {
+class DeniedRefsSpec extends UnitSpec:
 
   "json serialization/deserialization" in {
     val deniedRefs = TdDeniedRefs.deniedRefs1
@@ -40,5 +40,3 @@ class DeniedRefsSpec extends UnitSpec {
     Json.toJson(deniedRefs) shouldBe deniedRefsJson
     deniedRefsJson.as[DeniedRefs] shouldBe deniedRefs
   }
-
-}

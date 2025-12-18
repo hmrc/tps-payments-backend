@@ -39,8 +39,8 @@ class StartJourneyController @Inject() (
   journeyIdGenerator:     JourneyIdGenerator,
   appConfig:              AppConfig,
   clock:                  Clock
-)(implicit executionContext: ExecutionContext)
-    extends BackendController(cc) {
+)(using ec: ExecutionContext)
+    extends BackendController(cc):
 
   val startJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
     actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
@@ -146,7 +146,7 @@ class StartJourneyController @Inject() (
         }
     }
 
-  private def makeJourney(startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr): Journey = {
+  private def makeJourney(startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr): Journey =
     val tpsPayments: List[PaymentItem] = startJourneyRequestMibOrPngr.payments.map { p =>
       PaymentItem(
         paymentItemId = paymentItemIdGenerator.nextId(),
@@ -170,7 +170,5 @@ class StartJourneyController @Inject() (
       payments = tpsPayments,
       navigation = startJourneyRequestMibOrPngr.navigation
     )
-  }
 
   private lazy val logger: Logger = Logger(this.getClass)
-}

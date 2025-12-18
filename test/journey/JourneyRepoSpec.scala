@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import testsupport.testdata.TestData.*
 import testsupport.Givens.canEqualList
 
-class JourneyRepoSpec extends ItSpec {
+class JourneyRepoSpec extends ItSpec:
 
   "Count should be 0 with empty repo" in {
     collectionSize shouldBe 0
@@ -47,4 +47,3 @@ class JourneyRepoSpec extends ItSpec {
 
   private def collectionSize: Long =
     repo.countAll().futureValue
-}

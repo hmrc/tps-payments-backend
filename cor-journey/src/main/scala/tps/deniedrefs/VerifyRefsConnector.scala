@@ -33,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class VerifyRefsConnector @Inject() (
   httpClient:     HttpClientV2,
   servicesConfig: ServicesConfig
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext):
 
   private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 
@@ -42,5 +42,3 @@ class VerifyRefsConnector @Inject() (
       .post(url"$serviceURL/tps-payments-backend/verify-refs")
       .withBody(Json.toJson(verifyRefsRequest))
       .execute[VerifyRefsResponse]
-
-}

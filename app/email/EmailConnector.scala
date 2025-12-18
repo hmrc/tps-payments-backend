@@ -32,17 +32,15 @@ import scala.concurrent.{ExecutionContext, Future}
 final class EmailConnector @Inject() (
   httpClient:     HttpClientV2,
   servicesConfig: ServicesConfig
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext):
 
-  def sendEmail(emailSendRequest: EmailSendRequest)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {
+  def sendEmail(emailSendRequest: EmailSendRequest)(implicit headerCarrier: HeaderCarrier): Future[Unit] =
     logger.info("sending email ...")
     httpClient
       .post(url"$sendEmailUrl")
       .withBody(Json.toJson(emailSendRequest))
       .execute[Unit]
-  }
 
   private val sendEmailUrl: String = servicesConfig.baseUrl("email") + "/hmrc/email"
 
   private lazy val logger: Logger = Logger(this.getClass)
-}

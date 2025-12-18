@@ -18,7 +18,7 @@ package tps.model
 
 import testsupport.UnitSpec
 
-class CustomerNameSpec extends UnitSpec {
+class CustomerNameSpec extends UnitSpec:
 
   val testCases: Map[String, String] = Map(
     "  COMPANY@# Ltd.  "           -> "COMPANY Ltd",
@@ -44,4 +44,3 @@ class CustomerNameSpec extends UnitSpec {
         CustomerName(testValue).forRecon.value shouldBe expectedResult
       }
   }
-}

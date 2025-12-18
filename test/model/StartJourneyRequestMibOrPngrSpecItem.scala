@@ -23,7 +23,7 @@ import testsupport.testdata.TestData.*
 import testsupport.UnitSpec
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 
-class StartJourneyRequestMibOrPngrSpecItem extends UnitSpec {
+class StartJourneyRequestMibOrPngrSpecItem extends UnitSpec:
   "to json should serialise to json" in {
     toJson(tpsPaymentRequest) shouldBe paymentRequestJson
   }
@@ -53,5 +53,3 @@ class StartJourneyRequestMibOrPngrSpecItem extends UnitSpec {
       invalidPaymentRequestJson.as[StartJourneyRequestMibOrPngr]
     }.getMessage.contains("Unknown TaxTypes") shouldBe true
   }
-
-}

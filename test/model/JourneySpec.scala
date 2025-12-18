@@ -47,7 +47,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
 import scala.reflect.Selectable.reflectiveSelectable
 
-class JourneySpec extends UnitSpec {
+class JourneySpec extends UnitSpec:
 
   "generate journey jsons" ignore {
 
@@ -194,4 +194,3 @@ class JourneySpec extends UnitSpec {
 
     readsResult.pcipalSessionLaunchRequest.value.LanguageFlag shouldBe "W"
   }
-}

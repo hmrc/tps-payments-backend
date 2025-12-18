@@ -26,7 +26,7 @@ import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf")) // TODO: remove according to OPS-11079
-class StartJourneyControllerOldSpec extends ItSpec {
+class StartJourneyControllerOldSpec extends ItSpec:
 
   private def journeyIdGenerator: TestJourneyIdGenerator         = app.injector.instanceOf[TestJourneyIdGenerator]
   private def paymentItemIdGenerator: TestPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
@@ -97,5 +97,3 @@ class StartJourneyControllerOldSpec extends ItSpec {
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
-
-}

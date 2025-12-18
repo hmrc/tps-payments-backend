@@ -30,7 +30,7 @@ import scala.reflect.Selectable.reflectiveSelectable
 
 trait TdJourneyPngr { dependencies: TdBase =>
 
-  object TdJourneyPngr extends TdJourneyInStatesExternalTaxTypes {
+  object TdJourneyPngr extends TdJourneyInStatesExternalTaxTypes:
 
     override final val taxType: ExternalTaxType = TaxTypes.PNGR
 
@@ -170,5 +170,4 @@ trait TdJourneyPngr { dependencies: TdBase =>
       "/tps/testdata/pngr/journey-8-ReceivedNotification.json"
     )
 
-  }
 }

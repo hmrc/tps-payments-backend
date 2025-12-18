@@ -26,7 +26,6 @@ final case class EmailSendRequest(
   force:      Boolean = false
 )
 
-object EmailSendRequest {
+object EmailSendRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[EmailSendRequest] = Json.format[EmailSendRequest]
-}
+  given OFormat[EmailSendRequest] = Json.format[EmailSendRequest]

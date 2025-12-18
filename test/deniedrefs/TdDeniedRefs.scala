@@ -22,7 +22,7 @@ import tps.model.Reference
 
 import java.time.LocalDateTime
 
-object TdDeniedRefs {
+object TdDeniedRefs:
 
   val ref1: Reference = Reference("REF1")
   val ref2: Reference = Reference("REF2")
@@ -56,5 +56,3 @@ object TdDeniedRefs {
   )
 
   val verifyRefRequest: VerifyRefsRequest = VerifyRefsRequest(Set(ref1))
-
-}

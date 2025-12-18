@@ -26,7 +26,7 @@ import tps.model.{PaymentItemId, TaxTypes}
 import tps.pcipalmodel.PcipalSessionId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier, HttpResponse}
 
-class TestConnectorSpec extends ItSpec with Status {
+class TestConnectorSpec extends ItSpec with Status:
   private def connector = injector.instanceOf[TestConnector]
 
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
@@ -130,4 +130,3 @@ class TestConnectorSpec extends ItSpec with Status {
     val t            = tpsPaymentsWithPcipalData.payments.map(emailService.toIndividualPaymentForEmail)
     emailService.stringifyTpsPaymentsItemsForEmail(t) shouldBe tpsItemsForEmail
   }
-}

@@ -42,7 +42,7 @@ final case class PcipalInitialValues(
   increment:          String
 )
 
-object PcipalInitialValues {
+object PcipalInitialValues:
 
   val ClientID            = "ClientID_"
   val PID                 = "PID_"
@@ -72,5 +72,3 @@ object PcipalInitialValues {
   val resetURL            = "resetURL"
   val finishURL           = "finishURL"
   val LanguageFlag        = "LanguageFlag"
-
-}

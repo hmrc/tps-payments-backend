@@ -1,7 +1,7 @@
 
 val appName = "tps-payments-backend"
 
-val scalaV = "2.13.17"
+val scalaV = "3.3.7"
 scalaVersion := scalaV
 val majorVer = 2
 majorVersion := majorVer
@@ -44,7 +44,6 @@ lazy val corJourney = Project(appName + "-cor-journey", file("cor-journey"))
     majorVersion := majorVer,
     libraryDependencies ++= List(
       "uk.gov.hmrc"       %% "bootstrap-common-play-30" % AppDependencies.bootstrapVersion % Provided,
-      "org.julienrf"      %% "play-json-derived-codecs" % AppDependencies.playJsonDerivedCodesVersion, //choose carefully
       "com.beachape"      %% "enumeratum-play"          % AppDependencies.enumeratumPlayVersion,
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"       % AppDependencies.hmrcMongoVersion //for java Instant Json Formats
     )
@@ -72,7 +71,6 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   Compile / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Test / doc / scalacOptions := Seq(), //this will allow to have warnings in `doc` task
   Compile / scalacOptions -= "utf8",
-  libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
   scalacOptions ++= scalaCompilerOptions,
   scalafmtOnCompile := true,
   scalacOptions ++= {
@@ -86,30 +84,22 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
 lazy val scalaCompilerOptions: Seq[String] = Seq(
   "-language:implicitConversions",
   "-language:reflectiveCalls",
-  "-Wconf:cat=unused-imports&src=html/.*:s",
+  "-language:strictEquality",
+  "-Wconf:msg=unused\\simport&src=html/.*:s",
   "-Wconf:src=routes/.*:s"
 )
 
 lazy val strictScalaCompilerOptions: Seq[String] = Seq(
   "-Xfatal-warnings",
-  "-Xlint:-missing-interpolator,_",
-  "-Xlint:adapted-args",
-  "-Xlint:constant",
-  "-Xlint:-byname-implicit",
-  "-Ywarn-unused:imports",
-  "-Ywarn-unused:patvars",
-  "-Ywarn-unused:privates",
-  "-Ywarn-unused:locals",
-  "-Ywarn-unused:explicits",
-  "-Ywarn-unused:params",
-  "-Ywarn-unused:implicits",
-  "-Ywarn-value-discard",
-  "-Ywarn-dead-code",
+  "-Wunused:implicits",
+  "-Wunused:imports",
+  "-Wunused:locals",
+  "-Wunused:params",
+  "-Wunused:patvars",
+  "-Wunused:privates",
   "-deprecation",
   "-feature",
-  "-unchecked",
-  "-Wconf:cat=unused-imports&src=html/.*:s",
-  "-Wconf:src=routes/.*:s"
+  "-unchecked"
 )
 
 lazy val strictBuilding: SettingKey[Boolean] = StrictBuilding.strictBuilding //defining here so it can be set before running sbt like `sbt 'set Global / strictBuilding := true' ...`

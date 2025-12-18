@@ -21,7 +21,6 @@ import play.api.libs.json.{Format, Json}
 //JB: we should make this use sensitive string and encrypter/decryter as in essttp/f2f
 final case class Email(value: String) extends AnyVal
 
-object Email {
+object Email:
   implicit val format: Format[Email] = Json.valueFormat
   val emptyEmail: Email              = Email("") // TODO: better None
-}

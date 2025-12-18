@@ -21,6 +21,5 @@ import tps.model.Reference
 
 final case class VerifyRefsRequest(refs: Set[Reference])
 
-object VerifyRefsRequest {
-  implicit val format: OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]
-}
+object VerifyRefsRequest:
+  given OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]

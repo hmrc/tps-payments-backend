@@ -23,7 +23,7 @@ import testsupport.{ItSpec, TestConnector}
 import tps.journey.model.JourneyId
 import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
-class PaymentItemProcessorControllerSpec extends ItSpec with Status {
+class PaymentItemProcessorControllerSpec extends ItSpec with Status:
 
   private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
@@ -71,4 +71,3 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue
     }.getMessage should include(s"No payment specific data for id [ ${paymentItemId.value} ]")
   }
-}

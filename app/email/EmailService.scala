@@ -31,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: ExecutionContext) {
+class EmailService @Inject() (emailConnector: EmailConnector)(using ec: ExecutionContext):
 
   /** This function sends email: if all notifications has been received (one for each PaymentItem) and if the tax type
     * is not PNGR nor MIB and if the email address has been provided and if at least one payment has succeeded (failed
@@ -44,9 +44,9 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     *
     * (this function had been developed before this scaladoc)
     */
-  def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit = {
+  def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit =
     val paymentItems: List[PaymentItem] = journey.payments
-    if weShouldSendEmail(paymentItems) then {
+    if weShouldSendEmail(paymentItems) then
       val emailAddress: Email                                = paymentItems
         .find(_.email.nonEmpty)
         .flatMap(_.email)
@@ -59,7 +59,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
             )
         )
 
-      listOfSuccessfulTpsPaymentItems.headOption match {
+      listOfSuccessfulTpsPaymentItems.headOption match
         case Some(
               PaymentItem(
                 _,
@@ -84,9 +84,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
             cardNumber = cardLast4
           )
         case _ => ()
-      }
-    } else ()
-  }
+    else ()
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def sendEmail(
@@ -95,7 +93,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     emailAddress:         Email,
     cardType:             String,
     cardNumber:           String
-  )(implicit hc: HeaderCarrier): Unit = {
+  )(implicit hc: HeaderCarrier): Unit =
 
     val totalCommissionPaid: BigDecimal = payments
       .map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission))
@@ -120,7 +118,6 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
         logger.error("Failed to send email, investigate", e)
       }
     ()
-  }
 
   private def weShouldSendEmail(tpsPaymentItems: List[PaymentItem]): Boolean =
     isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(
@@ -151,7 +148,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
 
   private def parseBigDecimalToString(bigDecimal: BigDecimal): String = bigDecimal.setScale(2).toString
 
-  private def getTaxTypeString(taxType: TaxType): String = taxType match {
+  private def getTaxTypeString(taxType: TaxType): String = taxType match
     case TaxTypes.ChildBenefitsRepayments => "Child Benefits repayments"
     case TaxTypes.Sa                      => "Self Assessment"
     case TaxTypes.Sdlt                    => "Stamp Duty Land Tax"
@@ -164,7 +161,5 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     case TaxTypes.Ppt                     => "Plastic Packaging Tax"
     case TaxTypes.MIB                     => taxType.toString
     case TaxTypes.PNGR                    => taxType.toString
-  }
 
   private lazy val logger = Logger(this.getClass)
-}

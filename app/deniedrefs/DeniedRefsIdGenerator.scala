@@ -22,6 +22,5 @@ import org.bson.types.ObjectId
 import javax.inject.Singleton
 
 @Singleton
-class DeniedRefsIdGenerator {
+class DeniedRefsIdGenerator:
   def nextId(): DeniedRefsId = DeniedRefsId(ObjectId.get().toHexString)
-}

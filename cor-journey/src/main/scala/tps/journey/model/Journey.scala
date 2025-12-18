@@ -35,7 +35,7 @@ final case class Journey(
   pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest] = None,
   pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
 ) extends HasId[JourneyId]
-    derives CanEqual {
+    derives CanEqual:
   def journeyId: JourneyId                          = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
   def basketEmpty: Boolean                          = payments.size == 0
@@ -53,9 +53,7 @@ final case class Journey(
         s"Error: Missing payment item identified by [${paymentItemId.toString}] [${journeyId.toString}]"
       )
     )
-}
 
-object Journey {
+object Journey:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Journey] = Json.format[Journey]
-}
+  given OFormat[Journey] = Json.format[Journey]

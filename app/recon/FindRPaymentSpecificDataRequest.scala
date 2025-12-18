@@ -20,6 +20,5 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class FindRPaymentSpecificDataRequest(modsReferences: List[String])
 
-object FindRPaymentSpecificDataRequest {
-  implicit val format: OFormat[FindRPaymentSpecificDataRequest] = Json.format[FindRPaymentSpecificDataRequest]
-}
+object FindRPaymentSpecificDataRequest:
+  given OFormat[FindRPaymentSpecificDataRequest] = Json.format[FindRPaymentSpecificDataRequest]

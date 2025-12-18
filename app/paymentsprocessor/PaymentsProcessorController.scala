@@ -29,8 +29,8 @@ import scala.concurrent.ExecutionContext
 class PaymentsProcessorController @Inject() (
   cc:                       ControllerComponents,
   paymentsProcessorService: PaymentsProcessorService
-)(implicit executionContext: ExecutionContext)
-    extends BackendController(cc) {
+)(using ec: ExecutionContext)
+    extends BackendController(cc):
 
   private[PaymentsProcessorController] val logger: Logger = Logger(this.getClass)
 
@@ -39,5 +39,3 @@ class PaymentsProcessorController @Inject() (
         paymentsProcessorService.getModsPaymentCallbackRequest(paymentItemId)
     yield Ok(Json.toJson(modsPaymentCallBackRequest))
   }
-
-}

@@ -22,6 +22,5 @@ import tps.model.PaymentItemId
 import javax.inject.Singleton;
 
 @Singleton
-class PaymentItemIdGenerator {
+class PaymentItemIdGenerator:
   def nextId(): PaymentItemId = PaymentItemId(ObjectId.get().toHexString)
-}

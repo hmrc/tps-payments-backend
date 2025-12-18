@@ -25,8 +25,8 @@ final case class IndividualPaymentForEmail(
   transactionNumber: String
 )
 
-object IndividualPaymentForEmail {
-  implicit val writes: OWrites[IndividualPaymentForEmail] =
+object IndividualPaymentForEmail:
+  given writes: OWrites[IndividualPaymentForEmail] =
     OWrites[IndividualPaymentForEmail](tpsPaymentItemForEmail =>
       Json.obj(
         s"taxType"           -> tpsPaymentItemForEmail.taxType,
@@ -35,4 +35,3 @@ object IndividualPaymentForEmail {
         s"transactionNumber" -> tpsPaymentItemForEmail.transactionNumber
       )
     )
-}

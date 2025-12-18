@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class JourneyConnector(
   httpClient: HttpClientV2,
   baseUrl:    String
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext):
 
   def startMibOrPngrJourney(
     startJourneyRequest: StartJourneyRequestMibOrPngr
@@ -72,9 +72,7 @@ class JourneyConnector(
       .execute[Option[Journey]]
 
   @Inject()
-  def this(httpClient: HttpClientV2, servicesConfig: ServicesConfig)(implicit ec: ExecutionContext) = this(
+  def this(httpClient: HttpClientV2, servicesConfig: ServicesConfig)(using ec: ExecutionContext) = this(
     httpClient,
     servicesConfig.baseUrl("tps-payments-backend")
   )
-
-}

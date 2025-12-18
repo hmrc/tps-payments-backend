@@ -25,7 +25,7 @@ import scala.util.Try
 @Singleton
 class AppConfig @Inject() (
   val config: Configuration
-) {
+):
 
   /** URL for sending notifications. On production it is given to PciPal so they know where to sent updates.
     */
@@ -36,11 +36,9 @@ class AppConfig @Inject() (
     * a valid URL, an exception is thrown. This exception is triggered early during the application's startup to
     * highlight a malformed configuration, thus increasing the chances of it being rectified promptly.
     */
-  private def readConfigAsValidUrlString(configPath: String): String = {
+  private def readConfigAsValidUrlString(configPath: String): String =
     val url: String = config.get[String](configPath)
     Try(URI.create(url).toURL.toString).fold[String](
       e => throw new RuntimeException(s"Invalid URL in config under [$configPath]", e),
       _ => url
     )
-  }
-}

@@ -26,7 +26,6 @@ final case class UploadDeniedRefsResponse(
   size:     Long
 )
 
-object UploadDeniedRefsResponse {
+object UploadDeniedRefsResponse:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[UploadDeniedRefsResponse] = Json.format[UploadDeniedRefsResponse]
-}
+  given OFormat[UploadDeniedRefsResponse] = Json.format[UploadDeniedRefsResponse]

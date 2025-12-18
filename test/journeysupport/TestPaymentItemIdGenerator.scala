@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 /** This is still a random id generator which allows to see what is going to be the next Id. Useful in tests.
   */
-class TestPaymentItemIdGenerator extends PaymentItemIdGenerator {
+class TestPaymentItemIdGenerator extends PaymentItemIdGenerator:
 
   private val idIterator: Iterator[PaymentItemId] = LazyList.from(0).map(_ => super.nextId()).iterator
   private val nextIdCached                        = new AtomicReference[PaymentItemId](idIterator.next())
@@ -31,8 +31,6 @@ class TestPaymentItemIdGenerator extends PaymentItemIdGenerator {
   def predictNextId(): PaymentItemId =
     nextIdCached.get()
 
-  override def nextId(): PaymentItemId = {
+  override def nextId(): PaymentItemId =
     val id = idIterator.next()
     nextIdCached.getAndSet(id)
-  }
-}

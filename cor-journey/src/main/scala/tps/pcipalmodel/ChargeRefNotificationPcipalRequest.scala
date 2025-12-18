@@ -37,7 +37,6 @@ final case class ChargeRefNotificationPcipalRequest(
   CardLast4:            String
 ) derives CanEqual
 
-object ChargeRefNotificationPcipalRequest {
+object ChargeRefNotificationPcipalRequest:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[ChargeRefNotificationPcipalRequest] = Json.format[ChargeRefNotificationPcipalRequest]
-}

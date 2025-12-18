@@ -36,8 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class DeniedRefsController @Inject() (
   cc:                ControllerComponents,
   deniedRefsService: DeniedRefsService
-)(implicit ec: ExecutionContext)
-    extends BackendController(cc) {
+)(using ec: ExecutionContext)
+    extends BackendController(cc):
 
   val uploadDeniedRefs: Action[Path] = Action.async(pathBodyParser()) { implicit request =>
     val pathToCsv: Path = request.body
@@ -69,5 +69,3 @@ class DeniedRefsController @Inject() (
       verifyRefStatus = deniedRefsService.verifyRefs(refs)
     yield Ok(Json.toJson(VerifyRefsResponse(verifyRefStatus)))
   }
-
-}

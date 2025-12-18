@@ -24,18 +24,16 @@ import scala.collection.immutable
 
 sealed abstract class VerifyRefsStatus extends EnumEntry
 
-object VerifyRefStatuses extends Enum[VerifyRefsStatus] {
+object VerifyRefStatuses extends Enum[VerifyRefsStatus]:
 
   case object RefDenied          extends VerifyRefsStatus
   case object RefPermitted       extends VerifyRefsStatus
   case object MissingInformation extends VerifyRefsStatus
 
   override def values: immutable.IndexedSeq[VerifyRefsStatus] = findValues
-}
 
-object VerifyRefsStatus {
-  implicit val format: Format[VerifyRefsStatus] = Format(
+object VerifyRefsStatus:
+  given Format[VerifyRefsStatus] = Format(
     EnumFormat(VerifyRefStatuses),
     EnumFormat(VerifyRefStatuses)
   )
-}

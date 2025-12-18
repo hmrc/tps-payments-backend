@@ -21,7 +21,7 @@ import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.model.{HeadOfDutyIndicator, HeadOfDutyIndicators}
 
-class HeadOfDutyIndicatorsSpec extends UnitSpec {
+class HeadOfDutyIndicatorsSpec extends UnitSpec:
 
   "de/serialize headOfDutyIndicators" in {
 
@@ -44,4 +44,3 @@ class HeadOfDutyIndicatorsSpec extends UnitSpec {
       jsValue.as[HeadOfDutyIndicator] shouldBe tt._2 withClue s"deserialize ${tt.toString()}"
     }
   }
-}

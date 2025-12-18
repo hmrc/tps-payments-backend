@@ -28,7 +28,7 @@ import uk.gov.hmrc.mongo.play.json.Codecs
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-object DeniedRefsRepo {
+object DeniedRefsRepo:
   def indexes(): Seq[IndexModel] = Seq(
     IndexModel(
       keys = Indexes.ascending("inserted"),
@@ -38,29 +38,26 @@ object DeniedRefsRepo {
 
   import play.api.libs.json._
 
-  private val jsFormat: OFormat[JsObject] = new OFormat[JsObject] {
-    override def reads(json: JsValue): JsResult[JsObject] = json match {
+  private val jsFormat: OFormat[JsObject] = new OFormat[JsObject]:
+    override def reads(json: JsValue): JsResult[JsObject] = json match
       case obj: JsObject => JsSuccess(obj)
       case _: JsValue    => JsError("Invalid JSON format for JsObject")
-    }
 
     override def writes(o: JsObject): JsObject = o
-  }
 
   val jsObjectCodec: Codec[JsObject] = Codecs.playFormatCodec(jsFormat)
-}
 
 @Singleton
 final class DeniedRefsRepo @Inject() (
   mongoComponent: MongoComponent
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Repo[DeniedRefsId, DeniedRefs](
       collectionName = "denied-refs",
       mongoComponent = mongoComponent,
       indexes = DeniedRefsRepo.indexes(),
       extraCodecs = Seq(DeniedRefsRepo.jsObjectCodec),
       replaceIndexes = true
-    ) {
+    ):
 
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] =
     // TODO: could be less boilerplate implementation
@@ -82,4 +79,3 @@ final class DeniedRefsRepo @Inject() (
     .headOption()
 
   private lazy val inserted = "inserted"
-}

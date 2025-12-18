@@ -21,26 +21,20 @@ import play.api.libs.json.Format
 
 import scala.collection.immutable
 
-sealed trait NpsType extends EnumEntry {
+sealed trait NpsType extends EnumEntry:
   val pcipalValue: String
   val screenValue: String
-}
 
-object NpsType {
+object NpsType:
   implicit val format: Format[NpsType] = tps.utils.EnumFormat(NpsTypes)
-}
 
-object NpsTypes extends Enum[NpsType] {
+object NpsTypes extends Enum[NpsType]:
   val values: immutable.IndexedSeq[NpsType] = findValues
 
-  case object Class2NationalInsurance extends NpsType {
+  case object Class2NationalInsurance extends NpsType:
     override val pcipalValue: String = "61"
     override val screenValue: String = "Class 2 National Insurance"
-  }
 
-  case object LateNotificationPenalty extends NpsType {
+  case object LateNotificationPenalty extends NpsType:
     override val pcipalValue: String = "11"
     override val screenValue: String = "Late notification penalty"
-  }
-
-}

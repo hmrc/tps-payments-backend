@@ -25,7 +25,6 @@ final case class PaymentItemId(
 ) extends AnyVal
     derives CanEqual
 
-object PaymentItemId {
+object PaymentItemId:
   implicit val format: Format[PaymentItemId]                = Json.valueFormat[PaymentItemId]
   implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-}

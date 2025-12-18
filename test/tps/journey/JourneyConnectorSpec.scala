@@ -24,11 +24,11 @@ import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
-class JourneyConnectorSpec extends ItSpec {
+class JourneyConnectorSpec extends ItSpec:
 
   def journeyIdGenerator: TestJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
   def journeyConnector: JourneyConnector         = app.injector.instanceOf[JourneyConnector]
-  implicit val request: Request[_]               = TdAll.request
+  given Request[_]                               = TdAll.request
 
   "find and upsert journey in all possible state" - TdAll.allJourneysWithJson.foreach { t =>
     val journey      = t._1
@@ -78,5 +78,3 @@ class JourneyConnectorSpec extends ItSpec {
     throwable should have message """POST of 'http://localhost:19001/tps-payments-backend/journey' returned 401. Response body: 'You are not logged in'"""
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
   }
-
-}

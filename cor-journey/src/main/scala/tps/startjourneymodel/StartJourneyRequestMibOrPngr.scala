@@ -28,14 +28,14 @@ final case class StartJourneyRequestMibOrPngr(
   pid:        String,
   payments:   Seq[SjPaymentItem],
   navigation: Navigation
-) derives CanEqual {
+) derives CanEqual:
 
   require(payments.size == 1)
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   val paymentItem: SjPaymentItem = payments.head
 
   // TODO: remove this
-  def makeJourney(now: Instant): Journey = {
+  def makeJourney(now: Instant): Journey =
     val tpsPayments: List[PaymentItem] = payments.map { p =>
       PaymentItem(
         paymentItemId = PaymentItemId(ObjectId.get().toHexString),
@@ -59,10 +59,7 @@ final case class StartJourneyRequestMibOrPngr(
       payments = tpsPayments,
       navigation = navigation
     )
-  }
-}
 
-object StartJourneyRequestMibOrPngr {
+object StartJourneyRequestMibOrPngr:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]
-}

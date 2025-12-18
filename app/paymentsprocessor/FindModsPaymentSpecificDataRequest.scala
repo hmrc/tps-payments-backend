@@ -21,6 +21,5 @@ import tps.model.PaymentItemId
 
 final case class FindModsPaymentSpecificDataRequest(paymentItemId: PaymentItemId)
 
-object FindModsPaymentSpecificDataRequest {
-  implicit val format: OFormat[FindModsPaymentSpecificDataRequest] = Json.format[FindModsPaymentSpecificDataRequest]
-}
+object FindModsPaymentSpecificDataRequest:
+  given OFormat[FindModsPaymentSpecificDataRequest] = Json.format[FindModsPaymentSpecificDataRequest]

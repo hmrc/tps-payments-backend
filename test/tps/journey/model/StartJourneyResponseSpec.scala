@@ -24,7 +24,7 @@ import tps.testdata.util.JsonSyntax.toJsonOps
 
 import scala.reflect.Selectable.reflectiveSelectable
 
-class StartJourneyResponseSpec extends UnitSpec {
+class StartJourneyResponseSpec extends UnitSpec:
 
   "(de)serialization" in {
     val json: JsObject =
@@ -40,4 +40,3 @@ class StartJourneyResponseSpec extends UnitSpec {
     Json.toJson(s) shouldBe json
     json.as[StartJourneyResponse] shouldBe s
   }
-}

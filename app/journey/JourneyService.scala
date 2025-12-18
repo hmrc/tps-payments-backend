@@ -30,7 +30,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
 
-class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock: Clock)(implicit ec: ExecutionContext) {
+class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock: Clock)(using ec: ExecutionContext):
 
   private lazy val logger = Logger(this.getClass)
 
@@ -50,22 +50,21 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
   ): Future[FindByPcipalSessionIdResult] =
     journeyRepo
       .findByPcipalSessionId(pcipalSessionId)
-      .map {
-        case Nil        =>
-          logger.info(
-            s"No Journey by session id found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]"
-          )
-          FindByPcipalSessionIdResult.NoJourneyBySessionId
-        case one :: Nil =>
-          val journey        = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
-          val hasPaymentItem = journey.payments.exists(_.paymentItemId == paymentItemId)
-          if hasPaymentItem then FindByPcipalSessionIdResult.Found(journey)
-          else FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey)
-        case multiple   =>
-          throw new RuntimeException(
-            s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]"
-          )
-      }
+      .map:
+      case Nil        =>
+        logger.info(
+          s"No Journey by session id found [pcipalSessionId:${pcipalSessionId.value}] [paymentItemId:${paymentItemId.value}]"
+        )
+        FindByPcipalSessionIdResult.NoJourneyBySessionId
+      case one :: Nil =>
+        val journey        = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
+        val hasPaymentItem = journey.payments.exists(_.paymentItemId == paymentItemId)
+        if hasPaymentItem then FindByPcipalSessionIdResult.Found(journey)
+        else FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey)
+      case multiple   =>
+        throw new RuntimeException(
+          s"Found ${multiple.size.toString} journeys with given pcipalSessionId [${pcipalSessionId.value}]"
+        )
 
   def findPaymentItem(paymentItemId: PaymentItemId): Future[Option[PaymentItem]] =
     journeyRepo
@@ -89,30 +88,28 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
           )
       })
 
-  def updateJourneyWithPcipalData(journey: Journey, pcipalData: ChargeRefNotificationPcipalRequest): Journey = {
+  def updateJourneyWithPcipalData(journey: Journey, pcipalData: ChargeRefNotificationPcipalRequest): Journey =
     val updatedJourney = journey.copy(payments = journey.payments.map {
       case p: PaymentItem if p.paymentItemId == pcipalData.paymentItemId => p.copy(pcipalData = Some(pcipalData))
       case p                                                             => p
     })
 
-    if updatedJourney == journey then {
+    if updatedJourney == journey then
       logger.error(
         s"Could not update journey with pciPalData [journeyId: ${journey.id.value}] [paymentItemId:${pcipalData.paymentItemId.value}]"
       )
-    } else {
+    else
       logger.info(
         s"Updatedjourney with pciPalData [journeyId: ${journey.id.value}] [paymentItemId:${pcipalData.paymentItemId.value}]"
       )
-    }
 
     updatedJourney
-  }
 
-  def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] = {
+  def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] =
     val today = LocalDate.now(clock)
 
     journeyRepo.findByPcipalDataTaxReference(request.references.map(crypto.encrypt)).map { journeys =>
-      val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] = {
+      val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] =
         val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for
           journey    <- journeys.filter { j =>
                           val createdDate = LocalDate.ofInstant(j.created, clock.getZone)
@@ -128,7 +125,6 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
         yield (journey, payment, pcipalData)
 
         data.groupBy(_._3.TaxReference)
-      }
 
       val payments = request.references.flatMap(
         referenceToData.get(_).toList.flatMap(_.map((toFindPaymentResponsePayment _).tupled))
@@ -136,7 +132,6 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
       FindPaymentsResponse(payments)
     }
-  }
 
   private def toFindPaymentResponsePayment(
     journey:       Journey,
@@ -153,10 +148,9 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
   private val encryptString: String => String = s => crypto.encrypt(s)
   private val decryptString: String => String = s =>
-    Try(crypto.decrypt(s)) match {
+    Try(crypto.decrypt(s)) match
       case Success(s) => s
       case Failure(e) => throw new RuntimeException(s"Failed to decrypt journey. Has encryption key changed?", e)
-    }
 
   private def encryptOrDecryptSensitiveJourneyFields(journey: Journey)(encryptOrDecrypt: String => String): Journey =
     journey.copy(
@@ -190,7 +184,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
   private def encryptOrDecryptPaymentSpecificData(
     paymentSpecificData: PaymentSpecificData
   )(encryptOrDecrypt: String => String): PaymentSpecificData =
-    paymentSpecificData match {
+    paymentSpecificData match
       case psd: PngrSpecificData         => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
       case psd: MibSpecificData          => psd.copy(chargeReference = encryptOrDecrypt(psd.chargeReference))
       case psd: ChildBenefitSpecificData => psd.copy(encryptOrDecrypt(psd.childBenefitYReference))
@@ -203,7 +197,6 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
       case psd: NpsSpecificData          => psd.copy(npsReference = encryptOrDecrypt(psd.npsReference))
       case psd: VatSpecificData          => psd.copy(vatReference = encryptOrDecrypt(psd.vatReference))
       case psd: PptSpecificData          => psd.copy(pptReference = encryptOrDecrypt(psd.pptReference))
-    }
 
   private def encryptOrDecryptPcipalData(
     pcipalData: ChargeRefNotificationPcipalRequest
@@ -222,13 +215,11 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
       chargeReference = encryptOrDecrypt(pcipalInitialValue.chargeReference)
     )
 
-}
-
-object JourneyService {
+object JourneyService:
 
   sealed trait FindByPcipalSessionIdResult derives CanEqual
 
-  object FindByPcipalSessionIdResult {
+  object FindByPcipalSessionIdResult:
 
     /** Journey Found by PcipalSessionId and payments contain item with give paymentItemId
       */
@@ -241,5 +232,3 @@ object JourneyService {
     /** Journey Found by PcipalSessionId but there is no PaymentItem in payments with given paymentItemId.
       */
     final case class NoMatchingPaymentItem(journey: Journey) extends FindByPcipalSessionIdResult
-  }
-}

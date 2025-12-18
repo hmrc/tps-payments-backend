@@ -44,7 +44,7 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
       indexes = indexes,
       replaceIndexes = replaceIndexes,
       extraCodecs = extraCodecs
-    ) {
+    ):
 
   /** Update or Insert (UpSert) element `a` identified by `id`
     */
@@ -82,5 +82,3 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .deleteMany(Filters.empty())
     .toFuture()
     .map(_ => ())
-
-}

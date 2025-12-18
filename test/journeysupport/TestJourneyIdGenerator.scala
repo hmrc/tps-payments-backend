@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicReference
 /** This is still a random journeyId generator which allows to see what is going to be the next journey Id. Useful in
   * tests.
   */
-class TestJourneyIdGenerator extends JourneyIdGenerator {
+class TestJourneyIdGenerator extends JourneyIdGenerator:
 
   private val idIterator: Iterator[JourneyId] = LazyList.from(0).map(_ => super.nextId()).iterator
   private val nextIdCached                    = new AtomicReference[JourneyId](idIterator.next())
@@ -31,8 +31,6 @@ class TestJourneyIdGenerator extends JourneyIdGenerator {
   def predictNextId(): JourneyId =
     nextIdCached.get()
 
-  override def nextId(): JourneyId = {
+  override def nextId(): JourneyId =
     val id = idIterator.next()
     nextIdCached.getAndSet(id)
-  }
-}
