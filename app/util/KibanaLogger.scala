@@ -106,7 +106,7 @@ object KibanaLogger {
       s"${pcipalSessionId.fold("")(s => s" [pcipalSessionId:${s.value}")}" +
       s"${paymentItemId.fold("")(s => s" [paymentItemId:${s.value}]")}"
 
-  private sealed trait LogLevel
+  private sealed trait LogLevel derives CanEqual
 
   private case object Debug extends LogLevel
 

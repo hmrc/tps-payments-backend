@@ -80,7 +80,7 @@ object PcipalSessionLaunchRequest {
     a:      Int = 1,
     acc:    List[PcipalInitialValues] = List.empty[PcipalInitialValues]
   ): List[PcipalInitialValues] =
-    if (!values.contains(s"${PcipalInitialValues.ClientID}${a.toString}")) acc
+    if !values.contains(s"${PcipalInitialValues.ClientID}${a.toString}") then acc
     else {
       val newPciPal = pcipalmodel.PcipalInitialValues(
         clientId = values(s"${PcipalInitialValues.ClientID}${a.toString}"),
@@ -112,35 +112,35 @@ object PcipalSessionLaunchRequest {
   implicit val pcipalInitialValuesWrites: OWrites[PcipalInitialValues] = new OWrites[PcipalInitialValues] {
     def writes(pcipalInitialValues: PcipalInitialValues): JsObject = {
       val taxAmountJs          =
-        if (pcipalInitialValues.taxAmount.isDefined)
+        if pcipalInitialValues.taxAmount.isDefined then
           Json.obj(s"$TaxAmount${pcipalInitialValues.increment}" -> pcipalInitialValues.taxAmount)
         else JsObject.empty
       val nicAmountJs          =
-        if (pcipalInitialValues.nicAmount.isDefined)
+        if pcipalInitialValues.nicAmount.isDefined then
           Json.obj(s"$NICAmount${pcipalInitialValues.increment}" -> pcipalInitialValues.nicAmount)
         else JsObject.empty
       val lnpClass2Js          =
-        if (pcipalInitialValues.lnpClass2.isDefined)
+        if pcipalInitialValues.lnpClass2.isDefined then
           Json.obj(s"$LNPClass2${pcipalInitialValues.increment}" -> pcipalInitialValues.lnpClass2)
         else JsObject.empty
       val nirRateJs            =
-        if (pcipalInitialValues.nirRate.isDefined)
+        if pcipalInitialValues.nirRate.isDefined then
           Json.obj(s"$NIRSRate${pcipalInitialValues.increment}" -> pcipalInitialValues.nirRate)
         else JsObject.empty
       val startDateJs          =
-        if (pcipalInitialValues.startDate.isDefined)
+        if pcipalInitialValues.startDate.isDefined then
           Json.obj(s"$StartDate${pcipalInitialValues.increment}" -> pcipalInitialValues.startDate)
         else JsObject.empty
       val endDateJs            =
-        if (pcipalInitialValues.endDate.isDefined)
+        if pcipalInitialValues.endDate.isDefined then
           Json.obj(s"$EndDate${pcipalInitialValues.increment}" -> pcipalInitialValues.endDate)
         else JsObject.empty
       val vatPeriodReferenceJs =
-        if (pcipalInitialValues.vatPeriodReference.isDefined)
+        if pcipalInitialValues.vatPeriodReference.isDefined then
           Json.obj(s"$VATPeriodReference${pcipalInitialValues.increment}" -> pcipalInitialValues.vatPeriodReference)
         else JsObject.empty
       val vatRemittanceTypeJs  =
-        if (pcipalInitialValues.vatRemittanceType.isDefined)
+        if pcipalInitialValues.vatRemittanceType.isDefined then
           Json.obj(s"$VATRemittanceType${pcipalInitialValues.increment}" -> pcipalInitialValues.vatRemittanceType)
         else JsObject.empty
 

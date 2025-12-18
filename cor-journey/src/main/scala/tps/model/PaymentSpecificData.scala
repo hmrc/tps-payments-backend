@@ -17,7 +17,7 @@
 package tps.model
 
 import play.api.libs.json.{Json, OFormat}
-import tps.utils.SafeEquals.EqualsOps
+
 import play.api.libs.json._
 
 sealed trait PaymentSpecificData {
@@ -184,35 +184,35 @@ object PaymentSpecificData {
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case json: JsObject if json.keys === jsonKeysPngrSpecificData                         =>
+    case json: JsObject if json.keys == jsonKeysPngrSpecificData       =>
       JsSuccess(json.as[PngrSpecificData])
-    case json: JsObject if json.keys === jsonKeysPngrSpecificDataLegacy                   =>
+    case json: JsObject if json.keys == jsonKeysPngrSpecificDataLegacy =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject
-        if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
+        if (json.keys == jsonKeysMibSpecificDataVariant1) || (json.keys == jsonKeysMibSpecificDataVariant2) =>
       JsSuccess(json.as[MibSpecificData])
-    case json: JsObject if json.keys === jsonKeysChildBenefit                             =>
+    case json: JsObject if json.keys == jsonKeysChildBenefit           =>
       JsSuccess(json.as[ChildBenefitSpecificData])
-    case json: JsObject if json.keys === jsonKeysSa                                       =>
+    case json: JsObject if json.keys == jsonKeysSa                     =>
       JsSuccess(json.as[SaSpecificData])
-    case json: JsObject if json.keys === jsonKeysSdlt                                     =>
+    case json: JsObject if json.keys == jsonKeysSdlt                   =>
       JsSuccess(json.as[SdltSpecificData])
-    case json: JsObject if json.keys === jsonKeysSafe                                     =>
+    case json: JsObject if json.keys == jsonKeysSafe                   =>
       JsSuccess(json.as[SafeSpecificData])
-    case json: JsObject if json.keys === jsonKeysCotax                                    =>
+    case json: JsObject if json.keys == jsonKeysCotax                  =>
       JsSuccess(json.as[CotaxSpecificData])
-    case json: JsObject if json.keys === jsonKeysNtc                                      =>
+    case json: JsObject if json.keys == jsonKeysNtc                    =>
       JsSuccess(json.as[NtcSpecificData])
     case json: JsObject
-        if (json.keys === jsonKeysPayeVariant1) || (json.keys === jsonKeysPayeVariant2) || (json.keys === jsonKeysPayeVariant3) =>
+        if (json.keys == jsonKeysPayeVariant1) || (json.keys == jsonKeysPayeVariant2) || (json.keys == jsonKeysPayeVariant3) =>
       JsSuccess(json.as[PayeSpecificData])
-    case json: JsObject if json.keys === jsonKeysNps                                      =>
+    case json: JsObject if json.keys == jsonKeysNps                    =>
       JsSuccess(json.as[NpsSpecificData])
-    case json: JsObject if json.keys === jsonKeysVat                                      =>
+    case json: JsObject if json.keys == jsonKeysVat                    =>
       JsSuccess(json.as[VatSpecificData])
-    case json: JsObject if json.keys === jsonKeysPpt                                      =>
+    case json: JsObject if json.keys == jsonKeysPpt                    =>
       JsSuccess(json.as[PptSpecificData])
-    case JsObject(_) | JsNumber(_) | JsArray(_) | JsString(_) | JsTrue | JsFalse | JsNull =>
+    case _                                                             =>
       JsError("Could not read PaymentSpecificData")
   }
 

@@ -33,7 +33,7 @@ final case class PaymentItem(
   paymentSpecificData: PaymentSpecificData,
   taxType:             TaxType, // TODO: remove it and derive it as val from HoD (or vice versa)
   email:               Option[Email]
-) {
+) derives CanEqual {
 
   def getPcipalData: ChargeRefNotificationPcipalRequest =
     pcipalData.getOrElse(throw new RuntimeException(s"Expected PciPal data to be there [${paymentItemId.toString}]"))

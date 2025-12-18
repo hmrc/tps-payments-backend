@@ -22,7 +22,7 @@ import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
 import tps.model._
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalInitialValues, PcipalSessionId, StatusTypes}
-import tps.utils.SafeEquals.EqualsOps
+
 import util.Crypto
 
 import java.time.{Clock, LocalDate}
@@ -58,8 +58,8 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
           FindByPcipalSessionIdResult.NoJourneyBySessionId
         case one :: Nil =>
           val journey        = encryptOrDecryptSensitiveJourneyFields(one)(decryptString)
-          val hasPaymentItem = journey.payments.exists(_.paymentItemId === paymentItemId)
-          if (hasPaymentItem) FindByPcipalSessionIdResult.Found(journey)
+          val hasPaymentItem = journey.payments.exists(_.paymentItemId == paymentItemId)
+          if hasPaymentItem then FindByPcipalSessionIdResult.Found(journey)
           else FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey)
         case multiple   =>
           throw new RuntimeException(
@@ -78,7 +78,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
             s"Found ${multiple.size.toString} journeys with given paymentItemId [${paymentItemId.value}]"
           )
       }
-      .map(_.map(_.payments.filter(_.paymentItemId === paymentItemId)))
+      .map(_.map(_.payments.filter(_.paymentItemId == paymentItemId)))
       .map(_.map {
         case Nil        =>
           throw new RuntimeException(s"Expected paymentItem in this journey [paymentItemId:${paymentItemId.value}]")
@@ -91,11 +91,11 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
   def updateJourneyWithPcipalData(journey: Journey, pcipalData: ChargeRefNotificationPcipalRequest): Journey = {
     val updatedJourney = journey.copy(payments = journey.payments.map {
-      case p: PaymentItem if p.paymentItemId === pcipalData.paymentItemId => p.copy(pcipalData = Some(pcipalData))
-      case p                                                              => p
+      case p: PaymentItem if p.paymentItemId == pcipalData.paymentItemId => p.copy(pcipalData = Some(pcipalData))
+      case p                                                             => p
     })
 
-    if (updatedJourney === journey) {
+    if updatedJourney == journey then {
       logger.error(
         s"Could not update journey with pciPalData [journeyId: ${journey.id.value}] [paymentItemId:${pcipalData.paymentItemId.value}]"
       )
@@ -113,7 +113,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
     journeyRepo.findByPcipalDataTaxReference(request.references.map(crypto.encrypt)).map { journeys =>
       val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] = {
-        val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for {
+        val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for
           journey    <- journeys.filter { j =>
                           val createdDate = LocalDate.ofInstant(j.created, clock.getZone)
                           !today.isAfter(createdDate.plusDays(request.numberOfDays))
@@ -125,7 +125,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
                             case StatusTypes.failed    => false
                           })
                           .map(c => c.copy(TaxReference = crypto.decrypt(c.TaxReference)))
-        } yield (journey, payment, pcipalData)
+        yield (journey, payment, pcipalData)
 
         data.groupBy(_._3.TaxReference)
       }
@@ -226,7 +226,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
 object JourneyService {
 
-  sealed trait FindByPcipalSessionIdResult
+  sealed trait FindByPcipalSessionIdResult derives CanEqual
 
   object FindByPcipalSessionIdResult {
 

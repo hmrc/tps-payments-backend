@@ -37,7 +37,7 @@ final case class StartJourneyRequestMib(
   backUrl:            String,
   resetUrl:           String,
   finishUrl:          String
-)
+) derives CanEqual
 
 object StartJourneyRequestMib {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

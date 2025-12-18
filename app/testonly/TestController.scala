@@ -50,9 +50,8 @@ class TestController @Inject() (
   }
 
   def dropDeniedRefsDb(): Action[AnyContent] = Action.async { _ =>
-    for {
-      result <- deniedRefsRepo.drop()
-    } yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
+    for result <- deniedRefsRepo.drop()
+    yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
   }
 
 }

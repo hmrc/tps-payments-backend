@@ -84,7 +84,7 @@ class JourneyController @Inject() (
         paymentItemId = Some(notification.paymentItemId)
       )
 
-      for {
+      for
         maybeJourney: JourneyService.FindByPcipalSessionIdResult <-
           journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
         result                                                   <- maybeJourney match {
@@ -133,16 +133,14 @@ class JourneyController @Inject() (
                                                                           )
                                                                         )
                                                                     }
-      } yield result
+      yield result
     }
 
   val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
-    if (request.body.numberOfDays < 0)
+    if request.body.numberOfDays < 0 then
       Future.successful(BadRequest("numberOfDays should be equal to or greater than zero"))
-    else if (request.body.references.isEmpty)
-      Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
-    else
-      journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
+    else if request.body.references.isEmpty then Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
+    else journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
 
   }
 

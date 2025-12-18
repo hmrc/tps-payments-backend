@@ -24,7 +24,7 @@ import tps.journey.model.Journey
 import tps.model.TaxTypes.{MIB, PNGR}
 import tps.model.{Email, PaymentItem, TaxType, TaxTypes}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
-import tps.utils.SafeEquals.EqualsOps
+
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -46,7 +46,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     */
   def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit = {
     val paymentItems: List[PaymentItem] = journey.payments
-    if (weShouldSendEmail(paymentItems)) {
+    if weShouldSendEmail(paymentItems) then {
       val emailAddress: Email                                = paymentItems
         .find(_.email.nonEmpty)
         .flatMap(_.email)
@@ -55,7 +55,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
         paymentItems.filter(
           _.pcipalData
             .fold(throw new RuntimeException("maybeSendEmail error: pcipal data should be present but isn't"))(
-              nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status === StatusTypes.validated
+              nextPaymentItemPciPalData => nextPaymentItemPciPalData.Status == StatusTypes.validated
             )
         )
 
@@ -134,7 +134,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(implicit ec: Execu
     tpsPaymentItems.exists(_.email.nonEmpty)
 
   private def isNotMibOrPngr(tpsPaymentItems: List[PaymentItem]): Boolean =
-    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType === MIB || nextPaymentItem.taxType === PNGR)
+    !tpsPaymentItems.exists(nextPaymentItem => nextPaymentItem.taxType == MIB || nextPaymentItem.taxType == PNGR)
 
   def toIndividualPaymentForEmail(paymentItem: PaymentItem): IndividualPaymentForEmail = IndividualPaymentForEmail(
     taxType = getTaxTypeString(paymentItem.taxType),

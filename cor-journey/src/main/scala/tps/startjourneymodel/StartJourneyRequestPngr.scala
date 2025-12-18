@@ -28,7 +28,7 @@ final case class StartJourneyRequestPngr(
   backUrl:         String,
   resetUrl:        String,
   finishUrl:       String
-)
+) derives CanEqual
 
 object StartJourneyRequestPngr {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))

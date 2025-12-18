@@ -17,6 +17,7 @@
 package tps.journey.model
 
 import play.api.libs.json.{JsValue, Json}
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.model.TaxTypes
 import tps.testdata.TdAll

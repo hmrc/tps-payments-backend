@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,11 @@
 
 package tps.utils
 
-/** Simple safe equals so we don't have to import cats into cor library
-  */
-object SafeEquals {
+import scala.quoted.{Expr, Quotes, Type}
 
-  @SuppressWarnings(Array("org.wartremover.warts.Equals"))
-  implicit class EqualsOps[A](v: A) {
-    def ===(other: A): Boolean = v == other
-    def =!=(other: A): Boolean = v != other
-  }
-}
+object TypeName:
+
+  inline def of[A]: String = ${ impl[A] }
+
+  def impl[A](using Type[A], Quotes): Expr[String] =
+    Expr(Type.show[A])

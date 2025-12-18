@@ -16,7 +16,7 @@
 
 package tps.model.repo
 
-trait Id {
+trait Id extends Any {
   def value: String
 }
 

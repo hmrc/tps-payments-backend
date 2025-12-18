@@ -23,7 +23,6 @@ import repository.{Repo, RepoConfig}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model.{Navigation, PaymentItem, PaymentItemId, PaymentSpecificData, TaxTypes}
 import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
-import tps.utils.SafeEquals.EqualsOps
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -31,6 +30,7 @@ import java.time.{Instant, LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 object JourneyRepo {
 
@@ -123,7 +123,7 @@ final class JourneyRepo @Inject() (
       extraCodecs = Seq.empty,
       replaceIndexes = true
     )(
-      manifest = implicitly[Manifest[Journey]],
+      manifest = implicitly[ClassTag[Journey]],
       domainFormat = JourneyRepo.formatMongo,
       executionContext = implicitly[ExecutionContext]
     ) {
@@ -145,7 +145,7 @@ final class JourneyRepo @Inject() (
         listOfPayments
           .flatMap { tpsPayments =>
             tpsPayments.payments
-              .filter(_.taxType === TaxTypes.MIB)
+              .filter(_.taxType == TaxTypes.MIB)
               .map { tpsPaymentItem =>
                 tpsPaymentItem.paymentSpecificData
               }

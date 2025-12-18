@@ -28,7 +28,8 @@ final case class DeniedRefs(
   _id:      DeniedRefsId,
   refs:     List[Reference],
   inserted: LocalDateTime
-) extends HasId[DeniedRefsId] {
+) extends HasId[DeniedRefsId]
+    derives CanEqual {
 
   private lazy val refsSet: Set[Reference] = refs.toSet
   def containsRef(reference: Reference): Boolean = refsSet.contains(reference)

@@ -41,7 +41,7 @@ class DeniedRefsController @Inject() (
 
   val uploadDeniedRefs: Action[Path] = Action.async(pathBodyParser()) { implicit request =>
     val pathToCsv: Path = request.body
-    for {
+    for
       deniedRefs <- deniedRefsService.parseDeniedRefs(pathToCsv)
       _          <- deniedRefsService.upsert(deniedRefs)
       response    = UploadDeniedRefsResponse(
@@ -49,26 +49,25 @@ class DeniedRefsController @Inject() (
                       inserted = deniedRefs.inserted,
                       size = deniedRefs.refs.size
                     )
-    } yield Ok(Json.toJson(response))
+    yield Ok(Json.toJson(response))
   }
 
   /** This request parser stores incoming request body in file and returns a Path of that file.
     */
-  private def pathBodyParser(): BodyParser[Path] = BodyParser[Path] {
-    _: RequestHeader =>
-      val path: Path                               = Paths.get(s"/tmp/${UUID.randomUUID().toString}")
-      val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(path)
-      Accumulator(sink)
-        .map((_: IOResult) => Right(path))
+  private def pathBodyParser(): BodyParser[Path] = BodyParser[Path] { (_: RequestHeader) =>
+    val path: Path                               = Paths.get(s"/tmp/${UUID.randomUUID().toString}")
+    val sink: Sink[ByteString, Future[IOResult]] = FileIO.toPath(path)
+    Accumulator(sink)
+      .map((_: IOResult) => Right(path))
   }
 
   val verifyRefs: Action[VerifyRefsRequest] = Action.async(parse.json[VerifyRefsRequest]) { implicit request =>
     val refs: Set[Reference] = request.body.refs
 
-    for {
+    for
       _              <- deniedRefsService.updateCacheIfNeeded()
       verifyRefStatus = deniedRefsService.verifyRefs(refs)
-    } yield Ok(Json.toJson(VerifyRefsResponse(verifyRefStatus)))
+    yield Ok(Json.toJson(VerifyRefsResponse(verifyRefStatus)))
   }
 
 }

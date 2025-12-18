@@ -38,7 +38,7 @@ class CustomerNameSpec extends UnitSpec {
   )
 
   "forRecon" - {
-    for ((testValue, expectedResult) <- testCases)
+    for (testValue, expectedResult) <- testCases do
       s"should sanitize the $testValue" in {
 
         CustomerName(testValue).forRecon.value shouldBe expectedResult

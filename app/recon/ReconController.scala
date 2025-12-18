@@ -31,8 +31,8 @@ class ReconController @Inject() (cc: ControllerComponents, reconService: ReconSe
 
   val findModsPayments: Action[FindRPaymentSpecificDataRequest] =
     Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
-      for {
-        transactions: Seq[PaymentSpecificData] <- reconService.findModsPaymentsByReference(request.body.modsReferences)
-      } yield Ok(Json.toJson(transactions))
+      for transactions: Seq[PaymentSpecificData] <-
+          reconService.findModsPaymentsByReference(request.body.modsReferences)
+      yield Ok(Json.toJson(transactions))
     }
 }

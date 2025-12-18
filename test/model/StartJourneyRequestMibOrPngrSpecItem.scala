@@ -18,7 +18,8 @@ package model
 
 import play.api.libs.json.JsResultException
 import play.api.libs.json.Json.toJson
-import testsupport.testdata.TestData._
+import testsupport.Givens.canEqualJsValue
+import testsupport.testdata.TestData.*
 import testsupport.UnitSpec
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 

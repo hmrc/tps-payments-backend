@@ -22,10 +22,10 @@ import play.api.mvc.PathBindable
 import tps.model.repo.Id
 import tps.utils.ValueClassBinder.valueClassBinder
 
-final case class JourneyId(value: String) extends Id
+final case class JourneyId(value: String) extends AnyVal with Id derives CanEqual
 
 object JourneyId {
-  implicit val format: Format[JourneyId]                = Json.valueFormat
+  implicit val format: Format[JourneyId]                = Json.valueFormat[JourneyId]
   implicit val journeyIdBinder: PathBindable[JourneyId] = valueClassBinder(_.value)
   def fresh(): JourneyId                                = JourneyId(ObjectId.get().toHexString)
 }

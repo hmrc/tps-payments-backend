@@ -63,14 +63,14 @@ object TpsNativeTaxType {
   */
 sealed trait ExternalTaxType extends TaxType
 
-sealed trait TaxType extends EnumEntry {
+sealed trait TaxType extends EnumEntry derives CanEqual {
   def pcipalProductionClientId: String
   def pcipalTestClientId: String
   def screenValue: String
   def hod: HeadOfDutyIndicator
 
   def clientId(usePcipalTestSettings: Boolean): String =
-    if (usePcipalTestSettings) pcipalTestClientId else pcipalProductionClientId
+    if usePcipalTestSettings then pcipalTestClientId else pcipalProductionClientId
 
   def asTpsNativeTaxType: TpsNativeTaxType = this match {
     case t: TpsNativeTaxType => t
@@ -205,5 +205,6 @@ object TaxTypes extends Enum[TaxType] {
   val Vat: TpsNativeTaxTypes.Vat.type                                         = TpsNativeTaxTypes.Vat
   val Ppt: TpsNativeTaxTypes.Ppt.type                                         = TpsNativeTaxTypes.Ppt
 
-  override def values: IndexedSeq[TaxType] = findValues ++ TpsNativeTaxTypes.values ++ ExternalTaxTypes.values
+  override def values: IndexedSeq[TaxType] =
+    (findValues ++ TpsNativeTaxTypes.values ++ ExternalTaxTypes.values).distinct
 }

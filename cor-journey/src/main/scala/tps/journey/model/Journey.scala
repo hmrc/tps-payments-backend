@@ -20,7 +20,6 @@ import play.api.libs.json._
 import tps.model.repo.HasId
 import tps.model.{Navigation, PaymentItem, PaymentItemId}
 import tps.pcipalmodel.{PcipalSessionId, PcipalSessionLaunchRequest, PcipalSessionLaunchResponse}
-import tps.utils.SafeEquals.EqualsOps
 
 import java.time.Instant
 
@@ -35,10 +34,11 @@ final case class Journey(
   navigation:                  Navigation,
   pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest] = None,
   pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
-) extends HasId[JourneyId] {
+) extends HasId[JourneyId]
+    derives CanEqual {
   def journeyId: JourneyId                          = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
-  def basketEmpty: Boolean                          = payments.size === 0
+  def basketEmpty: Boolean                          = payments.size == 0
   def basketNonEmpty: Boolean                       = !basketEmpty
 
   def basketFull: Boolean = payments.size >= 5
@@ -47,7 +47,7 @@ final case class Journey(
     throw new RuntimeException(s"Error: Missing PcipalSessionLaunchResponse in the journey [${journeyId.toString}]")
   )
   def getPaymentItem(paymentItemId: PaymentItemId): PaymentItem   = payments
-    .find(_.paymentItemId === paymentItemId)
+    .find(_.paymentItemId == paymentItemId)
     .getOrElse(
       throw new RuntimeException(
         s"Error: Missing payment item identified by [${paymentItemId.toString}] [${journeyId.toString}]"

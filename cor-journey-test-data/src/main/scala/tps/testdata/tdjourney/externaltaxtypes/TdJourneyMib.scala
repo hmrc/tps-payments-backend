@@ -18,14 +18,15 @@ package tps.testdata.tdjourney.externaltaxtypes
 
 import play.api.libs.json.JsObject
 import tps.journey.model.{Journey, JourneyId, JourneyState, StartJourneyResponse}
-import tps.model._
-import tps.pcipalmodel._
+import tps.model.*
+import tps.pcipalmodel.*
 import tps.startjourneymodel.StartJourneyRequestMib
 import tps.testdata.TdBase
 import tps.testdata.util.{JourneyJson, ResourceReader}
 import tps.testdata.util.JsonSyntax.toJsonOps
 
 import java.time.Instant
+import scala.reflect.Selectable.reflectiveSelectable
 
 trait TdJourneyMib { dependencies: TdBase =>
 

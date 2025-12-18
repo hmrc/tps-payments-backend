@@ -16,17 +16,18 @@
 
 package deniedrefs
 
-import deniedrefs.TdDeniedRefs._
-import deniedrefs.model._
+import deniedrefs.TdDeniedRefs.*
+import deniedrefs.model.*
 import org.scalatest.Assertion
 import play.api.libs.json.JsObject
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 import play.api.mvc.Request
 import testsupport.ItSpec
 import tps.deniedrefs.VerifyRefsConnector
 import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 import tps.model.Reference
 import tps.testdata.TdAll
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 

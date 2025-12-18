@@ -24,6 +24,7 @@ import tps.model.Email
 import uk.gov.hmrc.crypto.{AesGCMCrypto, Crypted, PlainText}
 
 class CryptoSpec extends ItSpec {
+  given CanEqual[PlainText, PlainText] = CanEqual.derived
 
   "encrypt/decrypt" in {
     val crypto            = app.injector.instanceOf[Crypto]

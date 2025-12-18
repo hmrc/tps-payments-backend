@@ -17,9 +17,12 @@
 package tps.journey.model
 
 import play.api.libs.json.{JsObject, Json}
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.testdata.TdAll
 import tps.testdata.util.JsonSyntax.toJsonOps
+
+import scala.reflect.Selectable.reflectiveSelectable
 
 class StartJourneyResponseSpec extends UnitSpec {
 

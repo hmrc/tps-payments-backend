@@ -18,8 +18,8 @@ package tps.model
 
 import play.api.libs.json.{Format, Json}
 
-final case class Reference(value: String)
+final case class Reference(value: String) extends AnyVal
 
 object Reference {
-  implicit val format: Format[Reference] = Json.valueFormat
+  implicit val format: Format[Reference] = Json.valueFormat[Reference]
 }

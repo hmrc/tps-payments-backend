@@ -35,6 +35,7 @@ package model
 import journey.JourneyRepo
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.json.Json.toJson
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.journey.model.Journey
 import tps.model.Navigation
@@ -44,6 +45,7 @@ import tps.testdata.util.ResourceReader
 
 import java.nio.charset.StandardCharsets
 import java.nio.file.{Files, Paths}
+import scala.reflect.Selectable.reflectiveSelectable
 
 class JourneySpec extends UnitSpec {
 

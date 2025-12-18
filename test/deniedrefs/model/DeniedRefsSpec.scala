@@ -18,6 +18,7 @@ package deniedrefs.model
 
 import deniedrefs.TdDeniedRefs
 import play.api.libs.json.Json
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 
 class DeniedRefsSpec extends UnitSpec {

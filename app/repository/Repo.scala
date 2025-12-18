@@ -21,12 +21,13 @@ import org.bson.json.JsonObject
 import org.mongodb.scala.model.{Filters, IndexModel, ReplaceOptions}
 import org.mongodb.scala.result
 import play.api.libs.json.Json.JsValueWrapper
-import play.api.libs.json._
+import play.api.libs.json.*
 import tps.model.repo.{HasId, Id}
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.reflect.ClassTag
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 abstract class Repo[ID <: Id, A <: HasId[ID]](
@@ -35,7 +36,7 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
   indexes:        Seq[IndexModel],
   extraCodecs:    Seq[Codec[_]],
   replaceIndexes: Boolean = false
-)(implicit manifest: Manifest[A], domainFormat: OFormat[A], executionContext: ExecutionContext)
+)(implicit manifest: ClassTag[A], domainFormat: OFormat[A], executionContext: ExecutionContext)
     extends PlayMongoRepository[A](
       mongoComponent = mongoComponent,
       collectionName = collectionName,

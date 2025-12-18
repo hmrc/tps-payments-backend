@@ -35,10 +35,9 @@ class PaymentsProcessorController @Inject() (
   private[PaymentsProcessorController] val logger: Logger = Logger(this.getClass)
 
   def findModsSpecificData(paymentItemId: PaymentItemId): Action[AnyContent] = Action.async { _ =>
-    for {
-      modsPaymentCallBackRequest: ModsPaymentCallBackRequest <-
+    for modsPaymentCallBackRequest: ModsPaymentCallBackRequest <-
         paymentsProcessorService.getModsPaymentCallbackRequest(paymentItemId)
-    } yield Ok(Json.toJson(modsPaymentCallBackRequest))
+    yield Ok(Json.toJson(modsPaymentCallBackRequest))
   }
 
 }

@@ -41,7 +41,7 @@ class JourneyServiceSpec extends ItSpec {
   "findPaymentItem should optionally find the matching payment item" in {
     journeyService.findPaymentItem(paymentItemId).futureValue shouldBe None
     journeyService.upsert(journey).futureValue
-    journeyService.findPaymentItem(paymentItemId).futureValue shouldBe Some(journey.payments.headOption.value)
+    journeyService.findPaymentItem(paymentItemId).futureValue.value shouldBe journey.payments.headOption.value
   }
 
   "upsert should encrypt relevant fields in journey" in {

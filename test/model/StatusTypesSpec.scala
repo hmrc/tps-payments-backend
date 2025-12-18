@@ -19,6 +19,7 @@ package model
 import tps.pcipalmodel.StatusTypes.{failed, validated}
 import play.api.libs.json.JsString
 import play.api.libs.json.Json.toJson
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.pcipalmodel.StatusType
 

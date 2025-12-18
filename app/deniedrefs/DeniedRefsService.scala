@@ -16,7 +16,6 @@
 
 package deniedrefs
 
-import tps.utils.SafeEquals._
 import org.apache.pekko.Done
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.connectors.csv.scaladsl.CsvParsing
@@ -107,7 +106,7 @@ class DeniedRefsService @Inject() (
   private def deleteTempFile(pathToCsv: Path): Unit = Future(Files.deleteIfExists(pathToCsv))
     .onComplete {
       case Success(deleted) =>
-        if (deleted) logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
+        if deleted then logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
         else logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]")
       case Failure(ex)      => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
     }
@@ -118,13 +117,13 @@ class DeniedRefsService @Inject() (
     cachedDeniedRefs.get() match {
       case Some(cache) =>
         val anyDenied = refs.exists(cache.containsRef)
-        if (anyDenied) RefDenied else RefPermitted
+        if anyDenied then RefDenied else RefPermitted
       case None        => MissingInformation
     }
 
   def updateCacheIfNeeded(): Future[Unit] = {
     val cache: Option[DeniedRefs] = cachedDeniedRefs.get()
-    for {
+    for
       latestId: Option[DeniedRefsId] <- findLatestDeniedRefsId()
       _                              <- (cache, latestId) match {
                                           case (_, None)                      =>
@@ -134,7 +133,7 @@ class DeniedRefsService @Inject() (
                                             logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
                                             updateCache(latestId)
                                           case (Some(cached), Some(latestId)) =>
-                                            if (cached._id === latestId) {
+                                            if cached._id == latestId then {
                                               logger.debug(
                                                 s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]"
                                               )
@@ -144,7 +143,7 @@ class DeniedRefsService @Inject() (
                                               updateCache(latestId)
                                             }
                                         }
-    } yield ()
+    yield ()
   }
 
   private def updateCache(latestId: DeniedRefsId): Future[Unit] = getDeniedRefs(latestId).map { deniedRefs =>

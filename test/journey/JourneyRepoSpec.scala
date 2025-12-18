@@ -16,8 +16,10 @@
 
 package journey
 
+import org.mongodb.scala.ObservableFuture
 import testsupport.ItSpec
-import testsupport.testdata.TestData._
+import testsupport.testdata.TestData.*
+import testsupport.Givens.canEqualList
 
 class JourneyRepoSpec extends ItSpec {
 

@@ -68,7 +68,7 @@ trait TdMultiPaymentJourney {
       initialValues.copy(increment = increment.toString)
     }
 
-    lazy val amount =
+    lazy val amount: BigDecimal =
       dependencies.TdJourneyChildBenefit.amountEdited +
         dependencies.TdJourneyCotax.amountEdited +
         dependencies.TdJourneyVat.amountEdited +

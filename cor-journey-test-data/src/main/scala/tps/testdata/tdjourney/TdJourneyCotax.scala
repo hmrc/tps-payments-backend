@@ -111,7 +111,7 @@ trait TdJourneyCotax { dependencies: TdBase =>
     override lazy val paymentItemAfterReceivedNotification: PaymentItem =
       paymentItemEdited.copy(pcipalData = Some(pcipalData))
 
-    override lazy val journeyStartedJson = JourneyJson(
+    override lazy val journeyStartedJson: JourneyJson = JourneyJson(
       "/tps/testdata/cotax/journey-1-Started.json"
     )
 

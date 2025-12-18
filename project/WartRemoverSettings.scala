@@ -16,6 +16,7 @@ object  WartRemoverSettings {
           Wart.Nothing,
           Wart.Overloading,
           Wart.SizeIs,
+          Wart.Equals,
           Wart.SortedMaxMinOption,
           Wart.Throw,
           Wart.ToString,
