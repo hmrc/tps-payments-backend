@@ -27,9 +27,9 @@ import scala.collection.immutable
 sealed trait TpsNativeTaxType extends TaxType
 
 object TpsNativeTaxType:
-  implicit val format: Format[TpsNativeTaxType] = tps.utils.EnumFormat(TpsNativeTaxTypes)
+  given Format[TpsNativeTaxType] = tps.utils.EnumFormat(TpsNativeTaxTypes)
 
-  implicit val tpsNativeTaxTypePathBindable: PathBindable[TpsNativeTaxType] =
+  given tpsNativeTaxTypePathBindable: PathBindable[TpsNativeTaxType] =
     import TaxTypes._
     val mapping: Map[String, TpsNativeTaxType]        = Map(
       "child-benefit-repayments"                   -> ChildBenefitsRepayments,
@@ -73,8 +73,8 @@ sealed trait TaxType extends EnumEntry derives CanEqual:
     case t                   => throw new RuntimeException(s"Unsupported tax type ${t.toString}")
 
 object TaxType:
-  implicit val format: Format[TaxType]                  = tps.utils.EnumFormat(TaxTypes)
-  implicit val pathBinder: QueryStringBindable[TaxType] = tps.utils.ValueClassBinder.bindableA(_.toString)
+  given Format[TaxType]                          = tps.utils.EnumFormat(TaxTypes)
+  given pathBinder: QueryStringBindable[TaxType] = tps.utils.ValueClassBinder.bindableA(_.toString)
 
 object TpsNativeTaxTypes extends Enum[TpsNativeTaxType]:
 

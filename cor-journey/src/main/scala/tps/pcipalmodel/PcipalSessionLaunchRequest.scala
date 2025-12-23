@@ -36,12 +36,12 @@ final case class PcipalSessionLaunchRequest(
   resetUrl:            String,
   finishUrl:           String,
   LanguageFlag:        String
-)
+) derives CanEqual
 
 object PcipalSessionLaunchRequest:
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val reads: Reads[PcipalSessionLaunchRequest] = (
+  given reads: Reads[PcipalSessionLaunchRequest] = (
     (JsPath \ "FlowId").read[Int] and
       (JsPath \ "InitialValues").read[Map[String, String]].map(m => unwrap(m)) and
       (JsPath \ "InitialValues")
@@ -108,7 +108,7 @@ object PcipalSessionLaunchRequest:
       unwrap(values, a + 1, acc :+ newPciPal)
 
   // WRITES=======================================================================================>
-  implicit val pcipalInitialValuesWrites: OWrites[PcipalInitialValues] = new OWrites[PcipalInitialValues]:
+  given pcipalInitialValuesWrites: OWrites[PcipalInitialValues] = new OWrites[PcipalInitialValues]:
     def writes(pcipalInitialValues: PcipalInitialValues): JsObject =
       val taxAmountJs          =
         if pcipalInitialValues.taxAmount.isDefined then
@@ -163,7 +163,7 @@ object PcipalSessionLaunchRequest:
         Json.obj(s"$TaxRegimeDisplay${pcipalInitialValues.increment}" -> pcipalInitialValues.taxRegimeDisplay) ++
         Json.obj(s"$ReferenceDisplay${pcipalInitialValues.increment}" -> pcipalInitialValues.reference)
 
-  implicit val pcipalSessionLaunchRequest: OWrites[PcipalSessionLaunchRequest] =
+  given pcipalSessionLaunchRequest: OWrites[PcipalSessionLaunchRequest] =
     new OWrites[PcipalSessionLaunchRequest]:
       def writes(pcipalSessionLaunchRequest: PcipalSessionLaunchRequest): JsObject = Json.obj(
         "FlowId"        -> pcipalSessionLaunchRequest.FlowId,

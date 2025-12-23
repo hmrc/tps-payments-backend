@@ -26,5 +26,5 @@ final case class PaymentItemId(
     derives CanEqual
 
 object PaymentItemId:
-  implicit val format: Format[PaymentItemId]                = Json.valueFormat[PaymentItemId]
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
+  given Format[PaymentItemId]                        = Json.valueFormat[PaymentItemId]
+  given journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)

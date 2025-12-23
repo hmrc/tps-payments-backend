@@ -22,7 +22,7 @@ import tps.utils.EnumFormat
 
 import scala.collection.immutable
 
-sealed abstract class VerifyRefsStatus extends EnumEntry
+sealed abstract class VerifyRefsStatus extends EnumEntry derives CanEqual
 
 object VerifyRefStatuses extends Enum[VerifyRefsStatus]:
 

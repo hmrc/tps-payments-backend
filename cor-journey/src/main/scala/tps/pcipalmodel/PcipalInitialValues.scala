@@ -40,7 +40,7 @@ final case class PcipalInitialValues(
   taxRegimeDisplay:   String,
   reference:          String,
   increment:          String
-)
+) derives CanEqual
 
 object PcipalInitialValues:
 

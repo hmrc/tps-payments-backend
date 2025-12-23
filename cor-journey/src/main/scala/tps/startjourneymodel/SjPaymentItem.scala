@@ -33,4 +33,4 @@ final case class SjPaymentItem(
 
 object SjPaymentItem:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[SjPaymentItem] = Json.format[SjPaymentItem]
+  given OFormat[SjPaymentItem] = Json.format[SjPaymentItem]

@@ -32,7 +32,7 @@ final case class PngrSpecificData(
 
 object PngrSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
+  given format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
 
 final case class MibSpecificData(
   chargeReference:    String,
@@ -46,7 +46,7 @@ final case class MibSpecificData(
 
 object MibSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
+  given format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
 
 final case class ChildBenefitSpecificData(
   childBenefitYReference: String
@@ -55,7 +55,7 @@ final case class ChildBenefitSpecificData(
   override def getRawReference: String = childBenefitYReference
 object ChildBenefitSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
+  given format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
 
 final case class SaSpecificData(
   saReference: String // TODO make strong type for that UTR
@@ -64,7 +64,7 @@ final case class SaSpecificData(
   override def getRawReference: String = saReference.dropRight(1)
 
 object SaSpecificData:
-  implicit val format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
+  given format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
 
 final case class SdltSpecificData(
   sdltReference: String
@@ -72,7 +72,7 @@ final case class SdltSpecificData(
   override def getReference: String    = sdltReference
   override def getRawReference: String = sdltReference
 object SdltSpecificData:
-  implicit val format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
+  given format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
 
 final case class SafeSpecificData(
   safeReference: String
@@ -80,7 +80,7 @@ final case class SafeSpecificData(
   override def getReference: String    = safeReference
   override def getRawReference: String = safeReference
 object SafeSpecificData:
-  implicit val format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
+  given format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
 
 final case class CotaxSpecificData(
   cotaxReference: String
@@ -88,7 +88,7 @@ final case class CotaxSpecificData(
   override def getReference: String    = cotaxReference
   override def getRawReference: String = cotaxReference.dropRight(7)
 object CotaxSpecificData:
-  implicit val format: OFormat[CotaxSpecificData] = Json.format[CotaxSpecificData]
+  given format: OFormat[CotaxSpecificData] = Json.format[CotaxSpecificData]
 
 final case class NtcSpecificData(
   ntcReference: String
@@ -96,7 +96,7 @@ final case class NtcSpecificData(
   override def getReference: String    = ntcReference
   override def getRawReference: String = ntcReference.dropRight(8)
 object NtcSpecificData:
-  implicit val format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
+  given format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
 
 final case class PayeSpecificData(
   payeReference: String,
@@ -107,7 +107,7 @@ final case class PayeSpecificData(
   override def getRawReference: String = payeReference.dropRight(4)
 object PayeSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
+  given format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
 
 final case class NpsSpecificData(
   npsReference:    String,
@@ -120,7 +120,7 @@ final case class NpsSpecificData(
   override def getRawReference: String = npsReference.dropRight(2)
 object NpsSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
+  given format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
 
 final case class VatSpecificData(
   vatReference:   String,
@@ -131,7 +131,7 @@ final case class VatSpecificData(
 
 object VatSpecificData:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
+  given format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
 
 final case class PptSpecificData(
   pptReference: String
@@ -139,10 +139,10 @@ final case class PptSpecificData(
   override def getReference: String    = pptReference
   override def getRawReference: String = pptReference
 object PptSpecificData:
-  implicit val format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
+  given format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
 
 object PaymentSpecificData:
-  implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
+  given writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
     case childBenefitSpecificData: ChildBenefitSpecificData =>
@@ -157,7 +157,7 @@ object PaymentSpecificData:
     case vatSpecificData: VatSpecificData                   => VatSpecificData.format.writes(vatSpecificData)
     case pptSpecificData: PptSpecificData                   => PptSpecificData.format.writes(pptSpecificData)
   }
-  implicit val reads: Reads[PaymentSpecificData]   = Reads[PaymentSpecificData] {
+  given reads: Reads[PaymentSpecificData]   = Reads[PaymentSpecificData] {
     case json: JsObject if json.keys == jsonKeysPngrSpecificData       =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if json.keys == jsonKeysPngrSpecificDataLegacy =>

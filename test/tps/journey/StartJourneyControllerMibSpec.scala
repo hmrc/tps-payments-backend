@@ -32,7 +32,7 @@ class StartJourneyControllerMibSpec extends ItSpec:
   private def journeyIdGenerator: TestJourneyIdGenerator         = app.injector.instanceOf[TestJourneyIdGenerator]
   private def paymentItemIdGenerator: TestPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
   private def journeyConnector: JourneyConnector                 = app.injector.instanceOf[JourneyConnector]
-  private implicit val request: Request[_]                       = TdAll.request
+  private given request: Request[_]                              = TdAll.request
 
   "start Mib journey" in {
     val tdAll = new TdAll {

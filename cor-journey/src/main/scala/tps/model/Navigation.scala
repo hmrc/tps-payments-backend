@@ -27,4 +27,4 @@ final case class Navigation(
 
 object Navigation:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[Navigation] = Json.format[Navigation]
+  given OFormat[Navigation] = Json.format[Navigation]

@@ -85,7 +85,6 @@ lazy val scalaCompilerOptions: Seq[String] = Seq(
   "-language:implicitConversions",
   "-language:reflectiveCalls",
   "-language:strictEquality",
-  "-Wconf:msg=unused\\simport&src=html/.*:s",
   "-Wconf:src=routes/.*:s"
 )
 

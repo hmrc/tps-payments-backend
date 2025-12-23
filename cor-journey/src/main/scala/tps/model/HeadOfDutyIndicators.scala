@@ -26,7 +26,7 @@ import tps.utils.EnumFormat
 sealed abstract class HeadOfDutyIndicator extends EnumEntry derives CanEqual
 
 object HeadOfDutyIndicator:
-  implicit val format: Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
+  given Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
 
 object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
 

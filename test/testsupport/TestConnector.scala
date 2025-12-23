@@ -40,27 +40,27 @@ class TestConnector @Inject() (httpClient: HttpClientV2)(using ec: ExecutionCont
 
   def startTpsJourneyMibOrPngr(
     launchRequest: StartJourneyRequestMibOrPngr
-  )(implicit hc: HeaderCarrier): Future[JourneyId] =
+  )(using hc: HeaderCarrier): Future[JourneyId] =
     httpClient
       .post(url"http://localhost:${port.toString}/tps-payments-backend/tps-payments")
       .withBody(Json.toJson(launchRequest))
       .setHeader(headers)
       .execute[JourneyId]
 
-  def upsert(tpsPayments: Journey)(implicit hc: HeaderCarrier): Future[Unit] =
+  def upsert(tpsPayments: Journey)(using hc: HeaderCarrier): Future[Unit] =
     httpClient
       .post(url"http://localhost:${port.toString}/tps-payments-backend/journey")
       .withBody(Json.toJson(tpsPayments))
       .setHeader(headers)
       .execute[Unit]
 
-  def find(id: JourneyId)(implicit hc: HeaderCarrier): Future[Journey] =
+  def find(id: JourneyId)(using hc: HeaderCarrier): Future[Journey] =
     httpClient
       .get(url"http://localhost:${port.toString}/tps-payments-backend/journey/${id.value}")
       .setHeader(headers)
       .execute[Journey]
 
-  def getPaymentItemTaxType(id: PaymentItemId)(implicit hc: HeaderCarrier): Future[TaxType] =
+  def getPaymentItemTaxType(id: PaymentItemId)(using hc: HeaderCarrier): Future[TaxType] =
     httpClient
       .get(url"http://localhost:${port.toString}/tps-payments-backend/payment-items/${id.value}/tax-type")
       .setHeader(headers)
@@ -68,7 +68,7 @@ class TestConnector @Inject() (httpClient: HttpClientV2)(using ec: ExecutionCont
 
   def getModsPaymentItemAmendmentReference(
     id: PaymentItemId
-  )(implicit hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] =
+  )(using hc: HeaderCarrier): Future[ModsPaymentCallBackRequest] =
     httpClient
       .get(url"http://localhost:${port.toString}/tps-payments-backend/payment-items/${id.value}/mods-amendment-ref")
       .setHeader(headers)
@@ -76,7 +76,7 @@ class TestConnector @Inject() (httpClient: HttpClientV2)(using ec: ExecutionCont
 
   def updateTpsPayments(
     chargeRefNotificationPciPalRequest: ChargeRefNotificationPcipalRequest
-  )(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  )(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient
       .patch(url"http://localhost:${port.toString}/tps-payments-backend/update-with-pcipal-data")
       .withBody(Json.toJson(chargeRefNotificationPciPalRequest))
@@ -85,7 +85,7 @@ class TestConnector @Inject() (httpClient: HttpClientV2)(using ec: ExecutionCont
 
   def findModsPayments(
     findRPaymentSpecificDataRequest: FindRPaymentSpecificDataRequest
-  )(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  )(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient
       .post(url"http://localhost:${port.toString}/tps-payments-backend/payments-recon/find-mods-data")
       .withBody(Json.toJson(findRPaymentSpecificDataRequest))

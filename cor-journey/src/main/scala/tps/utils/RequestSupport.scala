@@ -31,9 +31,9 @@ import javax.inject.Inject
   */
 class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport:
 
-  implicit def hc(implicit request: RequestHeader): HeaderCarrier = RequestSupport.hc
+  implicit def hc(using request: RequestHeader): HeaderCarrier = RequestSupport.hc
 
 object RequestSupport:
 
-  implicit def hc(implicit request: RequestHeader): HeaderCarrier =
+  implicit def hc(using request: RequestHeader): HeaderCarrier =
     HeaderCarrierConverter.fromRequestAndSession(request, request.session)

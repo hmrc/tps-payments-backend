@@ -44,7 +44,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     *
     * (this function had been developed before this scaladoc)
     */
-  def maybeSendEmail(journey: Journey)(implicit hc: HeaderCarrier): Unit =
+  def maybeSendEmail(journey: Journey)(using hc: HeaderCarrier): Unit =
     val paymentItems: List[PaymentItem] = journey.payments
     if weShouldSendEmail(paymentItems) then
       val emailAddress: Email                                = paymentItems
@@ -93,7 +93,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     emailAddress:         Email,
     cardType:             String,
     cardNumber:           String
-  )(implicit hc: HeaderCarrier): Unit =
+  )(using hc: HeaderCarrier): Unit =
 
     val totalCommissionPaid: BigDecimal = payments
       .map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission))

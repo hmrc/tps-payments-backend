@@ -24,7 +24,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 class ReconControllerSpec extends ItSpec with Status:
 
-  private implicit val emptyHC: HeaderCarrier = HeaderCarrier()
+  private given emptyHC: HeaderCarrier = HeaderCarrier()
 
   private lazy val connector = injector.instanceOf[TestConnector]
 

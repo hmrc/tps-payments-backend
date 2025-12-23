@@ -27,4 +27,4 @@ final case class CustomerName(value: String) extends AnyVal:
   )
 
 object CustomerName:
-  implicit val format: Format[CustomerName] = Json.valueFormat
+  given Format[CustomerName] = Json.valueFormat

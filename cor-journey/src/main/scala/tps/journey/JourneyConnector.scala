@@ -38,7 +38,7 @@ class JourneyConnector(
 
   def startMibOrPngrJourney(
     startJourneyRequest: StartJourneyRequestMibOrPngr
-  )(implicit request: RequestHeader): Future[JourneyId] =
+  )(using request: RequestHeader): Future[JourneyId] =
     httpClient
       .post(url"$baseUrl/tps-payments-backend/tps-payments")
       .withBody(Json.toJson(startJourneyRequest))
@@ -46,7 +46,7 @@ class JourneyConnector(
 
   def startJourneyMib(
     startJourneyRequestMib: StartJourneyRequestMib
-  )(implicit request: RequestHeader): Future[StartJourneyResponse] =
+  )(using request: RequestHeader): Future[StartJourneyResponse] =
     httpClient
       .post(url"$baseUrl/tps-payments-backend/start-tps-journey/mib")
       .withBody(Json.toJson(startJourneyRequestMib))
@@ -54,19 +54,19 @@ class JourneyConnector(
 
   def startJourneyPngr(
     startJourneyRequestPngr: StartJourneyRequestPngr
-  )(implicit request: RequestHeader): Future[StartJourneyResponse] =
+  )(using request: RequestHeader): Future[StartJourneyResponse] =
     httpClient
       .post(url"$baseUrl/tps-payments-backend/start-tps-journey/pngr")
       .withBody(Json.toJson(startJourneyRequestPngr))
       .execute[StartJourneyResponse]
 
-  def upsert(journey: Journey)(implicit request: RequestHeader): Future[Unit] =
+  def upsert(journey: Journey)(using request: RequestHeader): Future[Unit] =
     httpClient
       .post(url"$baseUrl/tps-payments-backend/journey")
       .withBody(Json.toJson(journey))
       .execute[Unit]
 
-  def find(journeyId: JourneyId)(implicit request: RequestHeader): Future[Option[Journey]] =
+  def find(journeyId: JourneyId)(using request: RequestHeader): Future[Option[Journey]] =
     httpClient
       .get(url"$baseUrl/tps-payments-backend/journey/${journeyId.value}")
       .execute[Option[Journey]]

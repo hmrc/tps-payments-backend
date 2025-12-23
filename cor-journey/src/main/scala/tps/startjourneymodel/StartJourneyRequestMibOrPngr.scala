@@ -62,4 +62,4 @@ final case class StartJourneyRequestMibOrPngr(
 
 object StartJourneyRequestMibOrPngr:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]
+  given OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]

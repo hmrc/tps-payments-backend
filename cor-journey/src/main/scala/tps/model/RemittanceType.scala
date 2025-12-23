@@ -26,7 +26,7 @@ sealed trait RemittanceType extends EnumEntry:
   val screenValue: String
 
 object RemittanceType:
-  implicit val format: Format[RemittanceType] = tps.utils.EnumFormat(RemittanceTypes)
+  given Format[RemittanceType] = tps.utils.EnumFormat(RemittanceTypes)
 
 object RemittanceTypes extends Enum[RemittanceType]:
   val values: immutable.IndexedSeq[RemittanceType] = findValues

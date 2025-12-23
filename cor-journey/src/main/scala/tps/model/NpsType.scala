@@ -26,7 +26,7 @@ sealed trait NpsType extends EnumEntry:
   val screenValue: String
 
 object NpsType:
-  implicit val format: Format[NpsType] = tps.utils.EnumFormat(NpsTypes)
+  given Format[NpsType] = tps.utils.EnumFormat(NpsTypes)
 
 object NpsTypes extends Enum[NpsType]:
   val values: immutable.IndexedSeq[NpsType] = findValues

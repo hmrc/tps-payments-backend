@@ -23,7 +23,8 @@ import tps.utils.ValueClassBinder.valueClassBinder
 final case class PcipalSessionId(
   value: String
 ) extends AnyVal
+    derives CanEqual
 
 object PcipalSessionId:
-  implicit val format: Format[PcipalSessionId]       = Json.valueFormat[PcipalSessionId]
-  implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+  given Format[PcipalSessionId]               = Json.valueFormat[PcipalSessionId]
+  given binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)

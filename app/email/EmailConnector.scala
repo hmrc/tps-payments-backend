@@ -34,7 +34,7 @@ final class EmailConnector @Inject() (
   servicesConfig: ServicesConfig
 )(using ec: ExecutionContext):
 
-  def sendEmail(emailSendRequest: EmailSendRequest)(implicit headerCarrier: HeaderCarrier): Future[Unit] =
+  def sendEmail(emailSendRequest: EmailSendRequest)(using headerCarrier: HeaderCarrier): Future[Unit] =
     logger.info("sending email ...")
     httpClient
       .post(url"$sendEmailUrl")

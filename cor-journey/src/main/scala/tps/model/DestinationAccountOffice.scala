@@ -25,7 +25,7 @@ sealed trait DestinationAccountOffice extends EnumEntry:
   val id: String
 
 object DestinationAccountOffice:
-  implicit val format: Format[DestinationAccountOffice] = tps.utils.EnumFormat(AccountOfficeIds)
+  given Format[DestinationAccountOffice] = tps.utils.EnumFormat(AccountOfficeIds)
 
 object AccountOfficeIds extends Enum[DestinationAccountOffice]:
   val values: immutable.IndexedSeq[DestinationAccountOffice] = findValues

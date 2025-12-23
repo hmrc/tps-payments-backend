@@ -25,7 +25,7 @@ import uk.gov.hmrc.http.{Authorization, HeaderCarrier}
 
 class PaymentItemProcessorControllerSpec extends ItSpec with Status:
 
-  private implicit val hc: HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
+  private given HeaderCarrier = HeaderCarrier(Some(Authorization("Bearer xyz")))
 
   private lazy val connector = injector.instanceOf[TestConnector]
 

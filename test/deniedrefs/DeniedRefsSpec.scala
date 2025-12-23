@@ -105,14 +105,14 @@ class DeniedRefsSpec extends ItSpec:
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
 
   private def uploadDeniedRefs(deniedRefsCsv: String): Future[UploadDeniedRefsResponse] = {
-    implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url                             = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
-    val httpClient                      = app.injector.instanceOf[HttpClientV2]
+    given dummyHc: HeaderCarrier = HeaderCarrier()
+    val url                      = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
+    val httpClient               = app.injector.instanceOf[HttpClientV2]
     httpClient.post(url).withBody(deniedRefsCsv).execute[UploadDeniedRefsResponse]
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
-    val verifyRefsRequest            = VerifyRefsRequest(refs.toSet)
-    implicit val request: Request[_] = TdAll.request
+    val verifyRefsRequest     = VerifyRefsRequest(refs.toSet)
+    given request: Request[_] = TdAll.request
     connector.verifyRefs(verifyRefsRequest)
   }
