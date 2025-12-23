@@ -30,32 +30,28 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @SuppressWarnings(Array("org.wartremover.warts.Any"))
 abstract class Repo[ID <: Id, A <: HasId[ID]](
-    collectionName: String,
-    mongoComponent: MongoComponent,
-    indexes:        Seq[IndexModel],
-    extraCodecs:    Seq[Codec[_]],
-    replaceIndexes: Boolean         = false
-)(implicit manifest: Manifest[A],
-  domainFormat:     OFormat[A],
-  executionContext: ExecutionContext
-)
-  extends PlayMongoRepository[A](
-    mongoComponent = mongoComponent,
-    collectionName = collectionName,
-    domainFormat   = domainFormat,
-    indexes        = indexes,
-    replaceIndexes = replaceIndexes,
-    extraCodecs    = extraCodecs
-  ) {
+  collectionName: String,
+  mongoComponent: MongoComponent,
+  indexes:        Seq[IndexModel],
+  extraCodecs:    Seq[Codec[_]],
+  replaceIndexes: Boolean = false
+)(implicit manifest: Manifest[A], domainFormat: OFormat[A], executionContext: ExecutionContext)
+    extends PlayMongoRepository[A](
+      mongoComponent = mongoComponent,
+      collectionName = collectionName,
+      domainFormat = domainFormat,
+      indexes = indexes,
+      replaceIndexes = replaceIndexes,
+      extraCodecs = extraCodecs
+    ) {
 
-  /**
-   * Update or Insert (UpSert) element `a` identified by `id`
-   */
+  /** Update or Insert (UpSert) element `a` identified by `id`
+    */
   def upsert(a: A): Future[result.UpdateResult] = collection
     .replaceOne(
-      filter      = Filters.eq("_id", a.id.value),
+      filter = Filters.eq("_id", a.id.value),
       replacement = a,
-      options     = ReplaceOptions().upsert(true)
+      options = ReplaceOptions().upsert(true)
     )
     .toFuture()
 
@@ -87,4 +83,3 @@ abstract class Repo[ID <: Id, A <: HasId[ID]](
     .map(_ => ())
 
 }
-

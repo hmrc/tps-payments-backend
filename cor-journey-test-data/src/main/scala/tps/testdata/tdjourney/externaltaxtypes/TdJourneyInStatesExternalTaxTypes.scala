@@ -58,8 +58,8 @@ trait TdJourneyInStatesExternalTaxTypes {
 
   lazy val journeyAtPciPal: Journey =
     journeyCreated.copy(
-      journeyState                = JourneyState.AtPciPal,
-      pcipalSessionLaunchRequest  = Some(pcipalSessionLaunchRequest),
+      journeyState = JourneyState.AtPciPal,
+      pcipalSessionLaunchRequest = Some(pcipalSessionLaunchRequest),
       pcipalSessionLaunchResponse = Some(pcipalSessionLaunchResponse)
     )
 
@@ -85,9 +85,11 @@ trait TdJourneyInStatesExternalTaxTypes {
 
   lazy val journeyReceivedNotification: Journey = journeyFinishedByPciPal.copy(
     journeyState = JourneyState.ReceivedNotification,
-    payments     = List(paymentItem.copy(
-      pcipalData = Some(pcipalData)
-    ))
+    payments = List(
+      paymentItem.copy(
+        pcipalData = Some(pcipalData)
+      )
+    )
   )
 
   def journeyReceivedNotificationJson: JourneyJson

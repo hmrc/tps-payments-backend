@@ -22,21 +22,21 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import tps.testdata.TdAll
 
 object AuthStub {
-  private val expectedDetail = "SessionRecordNotFound"
+  private val expectedDetail                  = "SessionRecordNotFound"
   private val authoriseUrlPattern: UrlPattern = urlEqualTo("/auth/authorise")
 
-  /**
-   * The user is authenticated and authorised
-   */
+  /** The user is authenticated and authorised
+    */
   def authorised(tdAll: TdAll = TdAll): StubMapping = {
     val authProvider: String = "PrivilegedApplication"
     val strideUserId: String = tdAll.pid
 
-    stubFor(post(authoriseUrlPattern)
-      .withRequestBody(
-        equalToJson(
-          //language=JSON
-          s"""
+    stubFor(
+      post(authoriseUrlPattern)
+        .withRequestBody(
+          equalToJson(
+            // language=JSON
+            s"""
            {
              "authorise": [
                {
@@ -53,14 +53,17 @@ object AuthStub {
              "retrieve": [
                "optionalCredentials"
              ]
-           }""", true, true
+           }""",
+            true,
+            true
+          )
         )
-      )
-      .willReturn(aResponse()
-        .withStatus(200)
-        .withBody(
-          //language=JSON
-          s"""
+        .willReturn(
+          aResponse()
+            .withStatus(200)
+            .withBody(
+              // language=JSON
+              s"""
            {
              "optionalCredentials":{
                "providerId": "$strideUserId",
@@ -68,23 +71,29 @@ object AuthStub {
              }
            }
      """.stripMargin
-        )))
+            )
+        )
+    )
   }
 
   def notAuthenticated(): StubMapping =
-    stubFor(post(urlEqualTo("/auth/authorise"))
-      .willReturn(aResponse()
-        .withStatus(401)
-        .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
-      )
+    stubFor(
+      post(urlEqualTo("/auth/authorise"))
+        .willReturn(
+          aResponse()
+            .withStatus(401)
+            .withHeader("WWW-Authenticate", s"""MDTP detail="$expectedDetail"""")
+        )
     )
 
   def notAuthorised(error: String = "clump"): StubMapping =
-    stubFor(post(urlEqualTo("/auth/authorise"))
-      .willReturn(aResponse()
-        .withStatus(401)
-        .withHeader("WWW-Authenticate", s"""MDTP detail="$error"""")
-      )
+    stubFor(
+      post(urlEqualTo("/auth/authorise"))
+        .willReturn(
+          aResponse()
+            .withStatus(401)
+            .withHeader("WWW-Authenticate", s"""MDTP detail="$error"""")
+        )
     )
 
 }

@@ -1,6 +1,7 @@
+
 val appName = "tps-payments-backend"
 
-val scalaV = "2.13.16"
+val scalaV = "2.13.17"
 scalaVersion := scalaV
 val majorVer = 2
 majorVersion := majorVer
@@ -73,11 +74,11 @@ lazy val commonSettings: Seq[Def.SettingsDefinition] = Seq(
   Compile / scalacOptions -= "utf8",
   libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
   scalacOptions ++= scalaCompilerOptions,
+  scalafmtOnCompile := true,
   scalacOptions ++= {
     if (StrictBuilding.strictBuilding.value) strictScalaCompilerOptions else Nil
   }
 )
-  .++(ScalariformSettings())
   .++(ScoverageSettings())
   .++(WartRemoverSettings.wartRemoverSettings)
   .++(SbtUpdatesSettings.sbtUpdatesSettings)

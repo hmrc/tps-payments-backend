@@ -31,128 +31,144 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class StartJourneyController @Inject() (actions:                Actions,
-                                        cc:                     ControllerComponents,
-                                        journeyService:         JourneyService,
-                                        paymentItemIdGenerator: PaymentItemIdGenerator,
-                                        journeyIdGenerator:     JourneyIdGenerator,
-                                        appConfig:              AppConfig,
-                                        clock:                  Clock)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+class StartJourneyController @Inject() (
+  actions:                Actions,
+  cc:                     ControllerComponents,
+  journeyService:         JourneyService,
+  paymentItemIdGenerator: PaymentItemIdGenerator,
+  journeyIdGenerator:     JourneyIdGenerator,
+  appConfig:              AppConfig,
+  clock:                  Clock
+)(implicit executionContext: ExecutionContext)
+    extends BackendController(cc) {
 
-  val startJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
-    val startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr = request.body
-    val journey: Journey = makeJourney(startJourneyRequestMibOrPngr)
-    journeyService.upsert(journey).map { _ =>
-      Created(toJson(journey._id))
+  val startJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
+    actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
+      val startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr = request.body
+      val journey: Journey                                           = makeJourney(startJourneyRequestMibOrPngr)
+      journeyService.upsert(journey).map { _ =>
+        Created(toJson(journey._id))
+      }
     }
-  }
 
-  val startJourneyMib: Action[StartJourneyRequestMib] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMib]) { implicit request =>
-    val journeyId = journeyIdGenerator.nextId()
-    logger.info(s"Starting MIB journey [${journeyId.toString}] ...")
-    val sjr = request.body
-    val journey: Journey =
-      Journey(
-        _id          = journeyId,
-        journeyState = JourneyState.Started,
-        pid          = request.credentials.providerId,
-        created      = Instant.now(clock),
-        payments     = List(PaymentItem(
-          paymentItemId       = paymentItemIdGenerator.nextId(),
-          amount              = sjr.amount,
-          headOfDutyIndicator = HeadOfDutyIndicators.B,
-          updated             = Instant.now(clock),
-          customerName        = sjr.customerName,
-          chargeReference     = sjr.mibReference,
-          pcipalData          = None,
-          paymentSpecificData = MibSpecificData(
-            chargeReference    = sjr.mibReference,
-            vat                = sjr.totalVatDue,
-            customs            = sjr.totalDutyDue,
-            amendmentReference = sjr.amendmentReference
+  val startJourneyMib: Action[StartJourneyRequestMib] =
+    actions.strideAuthenticated.async(parse.json[StartJourneyRequestMib]) { implicit request =>
+      val journeyId        = journeyIdGenerator.nextId()
+      logger.info(s"Starting MIB journey [${journeyId.toString}] ...")
+      val sjr              = request.body
+      val journey: Journey =
+        Journey(
+          _id = journeyId,
+          journeyState = JourneyState.Started,
+          pid = request.credentials.providerId,
+          created = Instant.now(clock),
+          payments = List(
+            PaymentItem(
+              paymentItemId = paymentItemIdGenerator.nextId(),
+              amount = sjr.amount,
+              headOfDutyIndicator = HeadOfDutyIndicators.B,
+              updated = Instant.now(clock),
+              customerName = sjr.customerName,
+              chargeReference = sjr.mibReference,
+              pcipalData = None,
+              paymentSpecificData = MibSpecificData(
+                chargeReference = sjr.mibReference,
+                vat = sjr.totalVatDue,
+                customs = sjr.totalDutyDue,
+                amendmentReference = sjr.amendmentReference
+              ),
+              taxType = TaxTypes.MIB,
+              email = None
+            )
           ),
-          taxType             = TaxTypes.MIB,
-          email               = None
-        )),
-        navigation   = Navigation(
-          back     = sjr.backUrl,
-          reset    = sjr.resetUrl,
-          finish   = sjr.finishUrl,
-          callback = appConfig.paymentNotificationUrl
+          navigation = Navigation(
+            back = sjr.backUrl,
+            reset = sjr.resetUrl,
+            finish = sjr.finishUrl,
+            callback = appConfig.paymentNotificationUrl
+          )
         )
-      )
 
-    journeyService
-      .upsert(journey)
-      .map { _ =>
-        val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(journeyId = journey.id, nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/mib/${journey.id.value}")
-        Created(toJson(startJourneyResponse))
-      }
-  }
+      journeyService
+        .upsert(journey)
+        .map { _ =>
+          val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(
+            journeyId = journey.id,
+            nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/mib/${journey.id.value}"
+          )
+          Created(toJson(startJourneyResponse))
+        }
+    }
 
-  val startJourneyPngr: Action[StartJourneyRequestPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestPngr]) { implicit request =>
-    val journeyId = journeyIdGenerator.nextId()
-    logger.info(s"Starting PNGR journey [${journeyId.toString}] ...")
-    val sjr = request.body
-    val journey: Journey =
-      Journey(
-        _id          = journeyId,
-        journeyState = JourneyState.Started,
-        pid          = request.credentials.providerId,
-        created      = Instant.now(clock),
-        payments     = List(PaymentItem(
-          paymentItemId       = paymentItemIdGenerator.nextId(),
-          amount              = sjr.amount,
-          headOfDutyIndicator = HeadOfDutyIndicators.B,
-          updated             = Instant.now(clock),
-          customerName        = sjr.customerName,
-          chargeReference     = sjr.chargeReference,
-          pcipalData          = None,
-          paymentSpecificData = PngrSpecificData(
-            chargeReference = sjr.chargeReference
+  val startJourneyPngr: Action[StartJourneyRequestPngr] =
+    actions.strideAuthenticated.async(parse.json[StartJourneyRequestPngr]) { implicit request =>
+      val journeyId        = journeyIdGenerator.nextId()
+      logger.info(s"Starting PNGR journey [${journeyId.toString}] ...")
+      val sjr              = request.body
+      val journey: Journey =
+        Journey(
+          _id = journeyId,
+          journeyState = JourneyState.Started,
+          pid = request.credentials.providerId,
+          created = Instant.now(clock),
+          payments = List(
+            PaymentItem(
+              paymentItemId = paymentItemIdGenerator.nextId(),
+              amount = sjr.amount,
+              headOfDutyIndicator = HeadOfDutyIndicators.B,
+              updated = Instant.now(clock),
+              customerName = sjr.customerName,
+              chargeReference = sjr.chargeReference,
+              pcipalData = None,
+              paymentSpecificData = PngrSpecificData(
+                chargeReference = sjr.chargeReference
+              ),
+              taxType = TaxTypes.PNGR,
+              email = None
+            )
           ),
-          taxType             = TaxTypes.PNGR,
-          email               = None
-        )),
-        navigation   = Navigation(
-          back     = sjr.backUrl,
-          reset    = sjr.resetUrl,
-          finish   = sjr.finishUrl,
-          callback = appConfig.paymentNotificationUrl
+          navigation = Navigation(
+            back = sjr.backUrl,
+            reset = sjr.resetUrl,
+            finish = sjr.finishUrl,
+            callback = appConfig.paymentNotificationUrl
+          )
         )
-      )
 
-    journeyService
-      .upsert(journey)
-      .map { _ =>
-        val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(journeyId = journey.id, nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/pngr/${journey.id.value}")
-        Created(toJson(startJourneyResponse))
-      }
-  }
+      journeyService
+        .upsert(journey)
+        .map { _ =>
+          val startJourneyResponse: StartJourneyResponse = StartJourneyResponse(
+            journeyId = journey.id,
+            nextUrl = s"${appConfig.tpsFrontendBaseUrl}/tps-payments/make-payment/pngr/${journey.id.value}"
+          )
+          Created(toJson(startJourneyResponse))
+        }
+    }
 
   private def makeJourney(startJourneyRequestMibOrPngr: StartJourneyRequestMibOrPngr): Journey = {
     val tpsPayments: List[PaymentItem] = startJourneyRequestMibOrPngr.payments.map { p =>
       PaymentItem(
-        paymentItemId       = paymentItemIdGenerator.nextId(),
-        amount              = p.amount,
+        paymentItemId = paymentItemIdGenerator.nextId(),
+        amount = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
-        updated             = Instant.now(clock),
-        customerName        = p.customerName,
-        chargeReference     = p.chargeReference,
-        pcipalData          = None,
+        updated = Instant.now(clock),
+        customerName = p.customerName,
+        chargeReference = p.chargeReference,
+        pcipalData = None,
         paymentSpecificData = p.paymentSpecificData,
-        taxType             = p.taxType,
-        email               = p.email
+        taxType = p.taxType,
+        email = p.email
       )
     }.toList
 
     Journey(
-      _id          = journeyIdGenerator.nextId(),
+      _id = journeyIdGenerator.nextId(),
       journeyState = JourneyState.Started,
-      pid          = startJourneyRequestMibOrPngr.pid,
-      created      = Instant.now(clock),
-      payments     = tpsPayments,
-      navigation   = startJourneyRequestMibOrPngr.navigation
+      pid = startJourneyRequestMibOrPngr.pid,
+      created = Instant.now(clock),
+      payments = tpsPayments,
+      navigation = startJourneyRequestMibOrPngr.navigation
     )
   }
 

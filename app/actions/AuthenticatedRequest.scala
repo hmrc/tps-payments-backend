@@ -20,7 +20,6 @@ import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 class AuthenticatedRequest[A](
-    val request:     Request[A],
-    val credentials: Credentials
+  val request:     Request[A],
+  val credentials: Credentials
 ) extends WrappedRequest[A](request)
-

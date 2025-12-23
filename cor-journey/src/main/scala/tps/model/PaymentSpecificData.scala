@@ -26,9 +26,9 @@ sealed trait PaymentSpecificData {
 }
 
 final case class PngrSpecificData(
-    chargeReference: String
+  chargeReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = chargeReference
+  override def getReference: String    = chargeReference
   override def getRawReference: String = chargeReference
 }
 
@@ -38,25 +38,25 @@ object PngrSpecificData {
 }
 
 final case class MibSpecificData(
-    chargeReference:    String,
-    vat:                BigDecimal,
-    customs:            BigDecimal,
-    amendmentReference: Option[Int] = None
+  chargeReference:    String,
+  vat:                BigDecimal,
+  customs:            BigDecimal,
+  amendmentReference: Option[Int] = None
 ) extends PaymentSpecificData {
-  override def getReference: String = chargeReference
+  override def getReference: String      = chargeReference
   def getAmendmentReference: Option[Int] = amendmentReference
-  override def getRawReference: String = chargeReference
+  override def getRawReference: String   = chargeReference
 }
 
-object MibSpecificData {
+object MibSpecificData          {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
 }
 
 final case class ChildBenefitSpecificData(
-    childBenefitYReference: String
+  childBenefitYReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = childBenefitYReference
+  override def getReference: String    = childBenefitYReference
   override def getRawReference: String = childBenefitYReference
 }
 object ChildBenefitSpecificData {
@@ -65,40 +65,40 @@ object ChildBenefitSpecificData {
 }
 
 final case class SaSpecificData(
-    saReference: String //TODO make strong type for that UTR
+  saReference: String // TODO make strong type for that UTR
 ) extends PaymentSpecificData {
-  override def getReference: String = saReference
+  override def getReference: String    = saReference
   override def getRawReference: String = saReference.dropRight(1)
 }
 
-object SaSpecificData {
+object SaSpecificData    {
   implicit val format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
 }
 
 final case class SdltSpecificData(
-    sdltReference: String
+  sdltReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = sdltReference
+  override def getReference: String    = sdltReference
   override def getRawReference: String = sdltReference
 }
-object SdltSpecificData {
+object SdltSpecificData  {
   implicit val format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
 }
 
 final case class SafeSpecificData(
-    safeReference: String
+  safeReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = safeReference
+  override def getReference: String    = safeReference
   override def getRawReference: String = safeReference
 }
-object SafeSpecificData {
+object SafeSpecificData  {
   implicit val format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
 }
 
 final case class CotaxSpecificData(
-    cotaxReference: String
+  cotaxReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = cotaxReference
+  override def getReference: String    = cotaxReference
   override def getRawReference: String = cotaxReference.dropRight(7)
 }
 object CotaxSpecificData {
@@ -106,48 +106,48 @@ object CotaxSpecificData {
 }
 
 final case class NtcSpecificData(
-    ntcReference: String
+  ntcReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = ntcReference
+  override def getReference: String    = ntcReference
   override def getRawReference: String = ntcReference.dropRight(8)
 }
-object NtcSpecificData {
+object NtcSpecificData   {
   implicit val format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
 }
 
 final case class PayeSpecificData(
-    payeReference: String,
-    taxAmount:     BigDecimal,
-    nicAmount:     BigDecimal
+  payeReference: String,
+  taxAmount:     BigDecimal,
+  nicAmount:     BigDecimal
 ) extends PaymentSpecificData {
-  override def getReference: String = payeReference
+  override def getReference: String    = payeReference
   override def getRawReference: String = payeReference.dropRight(4)
 }
-object PayeSpecificData {
+object PayeSpecificData  {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
 }
 
 final case class NpsSpecificData(
-    npsReference:    String,
-    periodStartDate: String,
-    periodEndDate:   String,
-    npsType:         String,
-    rate:            BigDecimal
+  npsReference:    String,
+  periodStartDate: String,
+  periodEndDate:   String,
+  npsType:         String,
+  rate:            BigDecimal
 ) extends PaymentSpecificData {
-  override def getReference: String = npsReference
+  override def getReference: String    = npsReference
   override def getRawReference: String = npsReference.dropRight(2)
 }
-object NpsSpecificData {
+object NpsSpecificData   {
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   implicit val format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
 }
 
 final case class VatSpecificData(
-    vatReference:   String,
-    remittanceType: String //TODO make strong type, enum
+  vatReference:   String,
+  remittanceType: String // TODO make strong type, enum
 ) extends PaymentSpecificData {
-  override def getReference: String = vatReference
+  override def getReference: String    = vatReference
   override def getRawReference: String = vatReference.dropRight(4)
 }
 
@@ -157,9 +157,9 @@ object VatSpecificData {
 }
 
 final case class PptSpecificData(
-    pptReference: String
+  pptReference: String
 ) extends PaymentSpecificData {
-  override def getReference: String = pptReference
+  override def getReference: String    = pptReference
   override def getRawReference: String = pptReference
 }
 object PptSpecificData {
@@ -170,7 +170,8 @@ object PaymentSpecificData {
   implicit val writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
-    case childBenefitSpecificData: ChildBenefitSpecificData => ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
+    case childBenefitSpecificData: ChildBenefitSpecificData =>
+      ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
     case sa: SaSpecificData                                 => SaSpecificData.format.writes(sa)
     case sdltSpecificData: SdltSpecificData                 => SdltSpecificData.format.writes(sdltSpecificData)
     case safeSpecificData: SafeSpecificData                 => SafeSpecificData.format.writes(safeSpecificData)
@@ -183,50 +184,52 @@ object PaymentSpecificData {
   }
 
   implicit val reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
-    case json: JsObject if json.keys === jsonKeysPngrSpecificData =>
+    case json: JsObject if json.keys === jsonKeysPngrSpecificData                         =>
       JsSuccess(json.as[PngrSpecificData])
-    case json: JsObject if json.keys === jsonKeysPngrSpecificDataLegacy =>
+    case json: JsObject if json.keys === jsonKeysPngrSpecificDataLegacy                   =>
       JsSuccess(json.as[PngrSpecificData])
-    case json: JsObject if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
+    case json: JsObject
+        if (json.keys === jsonKeysMibSpecificDataVariant1) || (json.keys === jsonKeysMibSpecificDataVariant2) =>
       JsSuccess(json.as[MibSpecificData])
-    case json: JsObject if json.keys === jsonKeysChildBenefit =>
+    case json: JsObject if json.keys === jsonKeysChildBenefit                             =>
       JsSuccess(json.as[ChildBenefitSpecificData])
-    case json: JsObject if json.keys === jsonKeysSa =>
+    case json: JsObject if json.keys === jsonKeysSa                                       =>
       JsSuccess(json.as[SaSpecificData])
-    case json: JsObject if json.keys === jsonKeysSdlt =>
+    case json: JsObject if json.keys === jsonKeysSdlt                                     =>
       JsSuccess(json.as[SdltSpecificData])
-    case json: JsObject if json.keys === jsonKeysSafe =>
+    case json: JsObject if json.keys === jsonKeysSafe                                     =>
       JsSuccess(json.as[SafeSpecificData])
-    case json: JsObject if json.keys === jsonKeysCotax =>
+    case json: JsObject if json.keys === jsonKeysCotax                                    =>
       JsSuccess(json.as[CotaxSpecificData])
-    case json: JsObject if json.keys === jsonKeysNtc =>
+    case json: JsObject if json.keys === jsonKeysNtc                                      =>
       JsSuccess(json.as[NtcSpecificData])
-    case json: JsObject if (json.keys === jsonKeysPayeVariant1) || (json.keys === jsonKeysPayeVariant2) || (json.keys === jsonKeysPayeVariant3) =>
+    case json: JsObject
+        if (json.keys === jsonKeysPayeVariant1) || (json.keys === jsonKeysPayeVariant2) || (json.keys === jsonKeysPayeVariant3) =>
       JsSuccess(json.as[PayeSpecificData])
-    case json: JsObject if json.keys === jsonKeysNps =>
+    case json: JsObject if json.keys === jsonKeysNps                                      =>
       JsSuccess(json.as[NpsSpecificData])
-    case json: JsObject if json.keys === jsonKeysVat =>
+    case json: JsObject if json.keys === jsonKeysVat                                      =>
       JsSuccess(json.as[VatSpecificData])
-    case json: JsObject if json.keys === jsonKeysPpt =>
+    case json: JsObject if json.keys === jsonKeysPpt                                      =>
       JsSuccess(json.as[PptSpecificData])
-    case JsObject(_) | JsNumber(_) | JsArray(_) | JsString(_) | JsTrue | JsFalse | JsNull => JsError("Could not read PaymentSpecificData")
+    case JsObject(_) | JsNumber(_) | JsArray(_) | JsString(_) | JsTrue | JsFalse | JsNull =>
+      JsError("Could not read PaymentSpecificData")
   }
 
-  val jsonKeysPngrSpecificData: Set[String] = Set("chargeReference", "vat", "customs", "excise")
-  val jsonKeysPngrSpecificDataLegacy: Set[String] = Set("chargeReference")
+  val jsonKeysPngrSpecificData: Set[String]        = Set("chargeReference", "vat", "customs", "excise")
+  val jsonKeysPngrSpecificDataLegacy: Set[String]  = Set("chargeReference")
   val jsonKeysMibSpecificDataVariant1: Set[String] = Set("chargeReference", "vat", "customs")
   val jsonKeysMibSpecificDataVariant2: Set[String] = Set("chargeReference", "vat", "customs", "amendmentReference")
-  val jsonKeysChildBenefit: Set[String] = Set("childBenefitYReference")
-  val jsonKeysSa: Set[String] = Set("saReference")
-  val jsonKeysSdlt: Set[String] = Set("sdltReference")
-  val jsonKeysSafe: Set[String] = Set("safeReference")
-  val jsonKeysCotax: Set[String] = Set("cotaxReference")
-  val jsonKeysNtc: Set[String] = Set("ntcReference")
-  val jsonKeysPayeVariant1: Set[String] = Set("payeReference", "taxAmount")
-  val jsonKeysPayeVariant2: Set[String] = Set("payeReference", "nicAmount")
-  val jsonKeysPayeVariant3: Set[String] = Set("payeReference", "taxAmount", "nicAmount")
-  val jsonKeysNps: Set[String] = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
-  val jsonKeysVat: Set[String] = Set("vatReference", "remittanceType")
-  val jsonKeysPpt: Set[String] = Set("pptReference")
+  val jsonKeysChildBenefit: Set[String]            = Set("childBenefitYReference")
+  val jsonKeysSa: Set[String]                      = Set("saReference")
+  val jsonKeysSdlt: Set[String]                    = Set("sdltReference")
+  val jsonKeysSafe: Set[String]                    = Set("safeReference")
+  val jsonKeysCotax: Set[String]                   = Set("cotaxReference")
+  val jsonKeysNtc: Set[String]                     = Set("ntcReference")
+  val jsonKeysPayeVariant1: Set[String]            = Set("payeReference", "taxAmount")
+  val jsonKeysPayeVariant2: Set[String]            = Set("payeReference", "nicAmount")
+  val jsonKeysPayeVariant3: Set[String]            = Set("payeReference", "taxAmount", "nicAmount")
+  val jsonKeysNps: Set[String]                     = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
+  val jsonKeysVat: Set[String]                     = Set("vatReference", "remittanceType")
+  val jsonKeysPpt: Set[String]                     = Set("pptReference")
 }
-

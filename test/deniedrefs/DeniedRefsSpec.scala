@@ -63,7 +63,9 @@ class DeniedRefsSpec extends ItSpec {
       verifyRefs(ref2).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied)
       verifyRefs(ref3).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied)
       verifyRefs(ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefPermitted)
-      verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied) withClue "one permitted one denied"
+      verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(
+        VerifyRefStatuses.RefDenied
+      ) withClue "one permitted one denied"
     }
 
     withClue("after uploading the second csv with denied refs some other refs should be denied") {
@@ -73,13 +75,15 @@ class DeniedRefsSpec extends ItSpec {
       verifyRefs(ref2).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied)
       verifyRefs(ref3).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied)
       verifyRefs(ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied)
-      verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(VerifyRefStatuses.RefDenied) withClue "one permitted one denied"
+      verifyRefs(ref1, ref4).futureValue shouldBe VerifyRefsResponse(
+        VerifyRefStatuses.RefDenied
+      ) withClue "one permitted one denied"
 
     }
   }
 
   "findLatestDeniedRefsIdJson should return only id so this query result doesn't transport unused fields" in {
-    val repo = app.injector.instanceOf[DeniedRefsRepo]
+    val repo             = app.injector.instanceOf[DeniedRefsRepo]
     uploadDeniedRefs(csvFile1).futureValue withClue "insert something to db"
     val result: JsObject = repo.findLatestDeniedRefsIdJson().futureValue.value
     result.fields.map(_._1) shouldBe List("_id") withClue "only '_id' in the result"
@@ -88,24 +92,26 @@ class DeniedRefsSpec extends ItSpec {
   // trivial test just to make sure no one accidentally renames refs field name in DeniedRefs case class, without updating projection in DeniedRefsRepo
   "sanity check the DeniedRefs case class" in {
     val fieldNames: Array[String] = classOf[DeniedRefs].getDeclaredFields.map(_.getName)
-    fieldNames.contains("refs") shouldBe true withClue s"It looks like the field name: [refs] has changed, make sure you update the projection. Current list of fields: ${fieldNames.mkString("Array(", ", ", ")")}"
+    fieldNames.contains(
+      "refs"
+    ) shouldBe true withClue s"It looks like the field name: [refs] has changed, make sure you update the projection. Current list of fields: ${fieldNames
+        .mkString("Array(", ", ", ")")}"
   }
 
   override val clock: Clock = Clock.system(ZoneId.of("Europe/London"))
 
-  private def dropDb(): Assertion = {
+  private def dropDb(): Assertion =
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
-  }
 
   private def uploadDeniedRefs(deniedRefsCsv: String): Future[UploadDeniedRefsResponse] = {
     implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
-    val httpClient = app.injector.instanceOf[HttpClientV2]
+    val url                             = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
+    val httpClient                      = app.injector.instanceOf[HttpClientV2]
     httpClient.post(url).withBody(deniedRefsCsv).execute[UploadDeniedRefsResponse]
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
-    val verifyRefsRequest = VerifyRefsRequest(refs.toSet)
+    val verifyRefsRequest            = VerifyRefsRequest(refs.toSet)
     implicit val request: Request[_] = TdAll.request
     connector.verifyRefs(verifyRefsRequest)
   }

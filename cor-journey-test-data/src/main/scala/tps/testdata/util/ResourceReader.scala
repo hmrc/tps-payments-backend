@@ -35,4 +35,3 @@ object ResourceReader {
     }.getOrElse(throw new RuntimeException(s"Failed to read resource: $resourcePath"))
   }
 }
-

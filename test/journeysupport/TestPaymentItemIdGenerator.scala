@@ -21,18 +21,15 @@ import tps.model.PaymentItemId
 
 import java.util.concurrent.atomic.AtomicReference
 
-/**
- * This is still a random id generator which allows to see what is going to be the next Id.
- * Useful in tests.
- */
+/** This is still a random id generator which allows to see what is going to be the next Id. Useful in tests.
+  */
 class TestPaymentItemIdGenerator extends PaymentItemIdGenerator {
 
   private val idIterator: Iterator[PaymentItemId] = LazyList.from(0).map(_ => super.nextId()).iterator
-  private val nextIdCached = new AtomicReference[PaymentItemId](idIterator.next())
+  private val nextIdCached                        = new AtomicReference[PaymentItemId](idIterator.next())
 
-  def predictNextId(): PaymentItemId = {
+  def predictNextId(): PaymentItemId =
     nextIdCached.get()
-  }
 
   override def nextId(): PaymentItemId = {
     val id = idIterator.next()

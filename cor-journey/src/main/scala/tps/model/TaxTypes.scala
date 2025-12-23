@@ -22,9 +22,8 @@ import play.api.mvc.{PathBindable, QueryStringBindable}
 
 import scala.collection.immutable
 
-/**
- * Marking type for taxes initiating payments in TPS.
- */
+/** Marking type for taxes initiating payments in TPS.
+  */
 sealed trait TpsNativeTaxType extends TaxType
 
 object TpsNativeTaxType {
@@ -32,27 +31,26 @@ object TpsNativeTaxType {
 
   implicit val tpsNativeTaxTypePathBindable: PathBindable[TpsNativeTaxType] = {
     import TaxTypes._
-    val mapping: Map[String, TpsNativeTaxType] = Map(
-      "child-benefit-repayments" -> ChildBenefitsRepayments,
-      "corporation-tax" -> Cotax,
-      "nps" -> Nps,
-      "tax-credits" -> Ntc,
-      "paye" -> Paye,
-      "plastic-packaging-tax" -> Ppt,
-      "self-assessment" -> Sa,
+    val mapping: Map[String, TpsNativeTaxType]        = Map(
+      "child-benefit-repayments"                   -> ChildBenefitsRepayments,
+      "corporation-tax"                            -> Cotax,
+      "nps"                                        -> Nps,
+      "tax-credits"                                -> Ntc,
+      "paye"                                       -> Paye,
+      "plastic-packaging-tax"                      -> Ppt,
+      "self-assessment"                            -> Sa,
       "strategic-accounting-framework-environment" -> Safe,
-      "stamp-duty-land-tax" -> Sdlt,
-      "vat" -> Vat
+      "stamp-duty-land-tax"                        -> Sdlt,
+      "vat"                                        -> Vat
     )
     val mappingReverse: Map[TpsNativeTaxType, String] = mapping.map(kv => (kv._2, kv._1))
     new PathBindable[TpsNativeTaxType] {
       override def bind(key: String, value: String): Either[String, TpsNativeTaxType] =
         mapping
           .get(value)
-          .fold[Either[String, TpsNativeTaxType]](
-            Left(s"could not map [$value] to tax type [key=$key]"))(
-              Right(_)
-            )
+          .fold[Either[String, TpsNativeTaxType]](Left(s"could not map [$value] to tax type [key=$key]"))(
+            Right(_)
+          )
 
       override def unbind(key: String, a: TpsNativeTaxType): String = mappingReverse(a)
     }
@@ -60,11 +58,9 @@ object TpsNativeTaxType {
 
 }
 
-/**
- * Marking type for taxes that initiate payments outside of TPS (currently Mib and Pngr).
- * In these cases, TPS serves as a facade to Pci Pal and does not provide functionality
- * for displaying the basket or editing payment details.
- */
+/** Marking type for taxes that initiate payments outside of TPS (currently Mib and Pngr). In these cases, TPS serves as
+  * a facade to Pci Pal and does not provide functionality for displaying the basket or editing payment details.
+  */
 sealed trait ExternalTaxType extends TaxType
 
 sealed trait TaxType extends EnumEntry {
@@ -84,7 +80,7 @@ sealed trait TaxType extends EnumEntry {
 }
 
 object TaxType {
-  implicit val format: Format[TaxType] = tps.utils.EnumFormat(TaxTypes)
+  implicit val format: Format[TaxType]                  = tps.utils.EnumFormat(TaxTypes)
   implicit val pathBinder: QueryStringBindable[TaxType] = tps.utils.ValueClassBinder.bindableA(_.toString)
 
 }
@@ -92,76 +88,76 @@ object TaxType {
 object TpsNativeTaxTypes extends Enum[TpsNativeTaxType] {
 
   case object ChildBenefitsRepayments extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.B
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.B
     override val pcipalProductionClientId: String = "CBCE"
-    override val pcipalTestClientId: String = "CBCE"
-    override val screenValue: String = "Repay Child Benefit overpayments"
+    override val pcipalTestClientId: String       = "CBCE"
+    override val screenValue: String              = "Repay Child Benefit overpayments"
   }
 
   case object Sa extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.K
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.K
     override val pcipalProductionClientId: String = "SAPM"
-    override val pcipalTestClientId: String = "SAPD"
-    override val screenValue: String = "SA"
+    override val pcipalTestClientId: String       = "SAPD"
+    override val screenValue: String              = "SA"
   }
 
   case object Sdlt extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.M
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.M
     override val pcipalProductionClientId: String = "SDPL"
-    override val pcipalTestClientId: String = "SDPD"
-    override val screenValue: String = "SDLT"
+    override val pcipalTestClientId: String       = "SDPD"
+    override val screenValue: String              = "SDLT"
   }
 
   case object Safe extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.X
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.X
     override val pcipalProductionClientId: String = "SFPL"
-    override val pcipalTestClientId: String = "SFPD"
-    override val screenValue: String = "SAFE"
+    override val pcipalTestClientId: String       = "SFPD"
+    override val screenValue: String              = "SAFE"
   }
 
   case object Cotax extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.A
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.A
     override val pcipalProductionClientId: String = "COPL"
-    override val pcipalTestClientId: String = "COPD"
-    override val screenValue: String = "COTAX"
+    override val pcipalTestClientId: String       = "COPD"
+    override val screenValue: String              = "COTAX"
   }
 
   case object Ntc extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.N
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.N
     override val pcipalProductionClientId: String = "NTPL"
-    override val pcipalTestClientId: String = "NTPD"
-    override val screenValue: String = "NTC"
+    override val pcipalTestClientId: String       = "NTPD"
+    override val screenValue: String              = "NTC"
   }
 
   case object Paye extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.P
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.P
     override val pcipalProductionClientId: String = "PAPL"
-    override val pcipalTestClientId: String = "PAPD"
-    override val screenValue: String = "PAYE"
+    override val pcipalTestClientId: String       = "PAPD"
+    override val screenValue: String              = "PAYE"
   }
 
   case object Nps extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.J
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.J
     override val pcipalProductionClientId: String = "NPPL"
-    override val pcipalTestClientId: String = "NPPD"
-    override val screenValue: String = "NPS"
+    override val pcipalTestClientId: String       = "NPPD"
+    override val screenValue: String              = "NPS"
   }
 
   case object Vat extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.V
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.V
     override val pcipalProductionClientId: String = "VAPM"
-    override val pcipalTestClientId: String = "VAPD"
-    override val screenValue: String = "VAT"
+    override val pcipalTestClientId: String       = "VAPD"
+    override val screenValue: String              = "VAT"
   }
 
   private val genericPcipalProductionClientId = "TPSETMP"
-  private val genericPcipalTestClientId = "TPSP800"
+  private val genericPcipalTestClientId       = "TPSP800"
 
   case object Ppt extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator = HeadOfDutyIndicators.C
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.C
     override val pcipalProductionClientId: String = genericPcipalProductionClientId
-    override val pcipalTestClientId: String = genericPcipalTestClientId
-    override val screenValue: String = "PPT"
+    override val pcipalTestClientId: String       = genericPcipalTestClientId
+    override val screenValue: String              = "PPT"
   }
   override val values: immutable.IndexedSeq[TpsNativeTaxType] = findValues
 }
@@ -169,19 +165,23 @@ object TpsNativeTaxTypes extends Enum[TpsNativeTaxType] {
 object ExternalTaxTypes extends Enum[ExternalTaxType] {
 
   case object MIB extends TaxType with ExternalTaxType {
-    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"MIB should not be looking for its HoD")
+    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(
+      s"MIB should not be looking for its HoD"
+    )
 
     override val pcipalProductionClientId: String = "MBML"
-    override val pcipalTestClientId: String = "MPCE"
-    override val screenValue: String = "MIB"
+    override val pcipalTestClientId: String       = "MPCE"
+    override val screenValue: String              = "MIB"
   }
 
   case object PNGR extends TaxType with ExternalTaxType {
-    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(s"PNGR should not be looking for its HoD")
+    override def hod: HeadOfDutyIndicator = throw new UnsupportedOperationException(
+      s"PNGR should not be looking for its HoD"
+    )
 
     override val pcipalProductionClientId: String = "PSML"
-    override val pcipalTestClientId: String = "PPCE"
-    override val screenValue: String = "PNGR"
+    override val pcipalTestClientId: String       = "PPCE"
+    override val screenValue: String              = "PNGR"
   }
   override val values: immutable.IndexedSeq[ExternalTaxType] = findValues
 }
@@ -190,20 +190,20 @@ object TaxTypes extends Enum[TaxType] {
 
   val usedOnFrontend: Seq[TpsNativeTaxType] = TpsNativeTaxTypes.values
 
-  val MIB: ExternalTaxTypes.MIB.type = ExternalTaxTypes.MIB
+  val MIB: ExternalTaxTypes.MIB.type   = ExternalTaxTypes.MIB
   val PNGR: ExternalTaxTypes.PNGR.type = ExternalTaxTypes.PNGR
 
-  val ChildBenefitsRepayments: TpsNativeTaxTypes.ChildBenefitsRepayments.type = TpsNativeTaxTypes.ChildBenefitsRepayments
-  val Sa: TpsNativeTaxTypes.Sa.type = TpsNativeTaxTypes.Sa
-  val Sdlt: TpsNativeTaxTypes.Sdlt.type = TpsNativeTaxTypes.Sdlt
-  val Safe: TpsNativeTaxTypes.Safe.type = TpsNativeTaxTypes.Safe
-  val Cotax: TpsNativeTaxTypes.Cotax.type = TpsNativeTaxTypes.Cotax
-  val Ntc: TpsNativeTaxTypes.Ntc.type = TpsNativeTaxTypes.Ntc
-  val Paye: TpsNativeTaxTypes.Paye.type = TpsNativeTaxTypes.Paye
-  val Nps: TpsNativeTaxTypes.Nps.type = TpsNativeTaxTypes.Nps
-  val Vat: TpsNativeTaxTypes.Vat.type = TpsNativeTaxTypes.Vat
-  val Ppt: TpsNativeTaxTypes.Ppt.type = TpsNativeTaxTypes.Ppt
+  val ChildBenefitsRepayments: TpsNativeTaxTypes.ChildBenefitsRepayments.type =
+    TpsNativeTaxTypes.ChildBenefitsRepayments
+  val Sa: TpsNativeTaxTypes.Sa.type                                           = TpsNativeTaxTypes.Sa
+  val Sdlt: TpsNativeTaxTypes.Sdlt.type                                       = TpsNativeTaxTypes.Sdlt
+  val Safe: TpsNativeTaxTypes.Safe.type                                       = TpsNativeTaxTypes.Safe
+  val Cotax: TpsNativeTaxTypes.Cotax.type                                     = TpsNativeTaxTypes.Cotax
+  val Ntc: TpsNativeTaxTypes.Ntc.type                                         = TpsNativeTaxTypes.Ntc
+  val Paye: TpsNativeTaxTypes.Paye.type                                       = TpsNativeTaxTypes.Paye
+  val Nps: TpsNativeTaxTypes.Nps.type                                         = TpsNativeTaxTypes.Nps
+  val Vat: TpsNativeTaxTypes.Vat.type                                         = TpsNativeTaxTypes.Vat
+  val Ppt: TpsNativeTaxTypes.Ppt.type                                         = TpsNativeTaxTypes.Ppt
 
   override def values: IndexedSeq[TaxType] = findValues ++ TpsNativeTaxTypes.values ++ ExternalTaxTypes.values
 }
-

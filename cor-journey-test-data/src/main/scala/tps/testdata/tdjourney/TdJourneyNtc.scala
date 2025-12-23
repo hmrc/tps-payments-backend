@@ -28,85 +28,88 @@ trait TdJourneyNtc { dependencies: TdBase =>
 
   object TdJourneyNtc extends TdJourneyInStates {
 
-    override lazy val journeyId: JourneyId = dependencies.journeyId
-    override lazy val pid: String = dependencies.pid
-    override lazy val created: Instant = dependencies.instant
-    override lazy val navigation: Navigation = dependencies.navigation
-    override lazy val amountEditedString: String = "108.08"
-    override lazy val taxReference: String = "JJ067874050421NV"
+    override lazy val journeyId: JourneyId               = dependencies.journeyId
+    override lazy val pid: String                        = dependencies.pid
+    override lazy val created: Instant                   = dependencies.instant
+    override lazy val navigation: Navigation             = dependencies.navigation
+    override lazy val amountEditedString: String         = "108.08"
+    override lazy val taxReference: String               = "JJ067874050421NV"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Ntc
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
-      FlowId              = dependencies.flowId,
-      InitialValues       = List(PcipalInitialValues(
-        clientId           = "NTPL",
-        pid                = dependencies.pid,
-        accountOfficeId    = "G1",
-        HODIdentifier      = HeadOfDutyIndicators.N,
-        UTRReference       = taxReference,
-        name1              = dependencies.customerName.value,
-        amount             = amountEditedString,
-        taxAmount          = None,
-        nicAmount          = None,
-        lnpClass2          = None,
-        nirRate            = None,
-        startDate          = None,
-        endDate            = None,
-        vatPeriodReference = None,
-        vatRemittanceType  = None,
-        paymentItemId      = dependencies.paymentItemId,
-        chargeReference    = taxReference,
-        taxRegimeDisplay   = "NTC",
-        reference          = dependencies.pciPalReferenceNumber,
-        increment          = "1"
-      )),
-      UTRBlacklistFlag    = "N",
-      postcodeFlag        = "Y",
-      taxRegime           = "gen",
+      FlowId = dependencies.flowId,
+      InitialValues = List(
+        PcipalInitialValues(
+          clientId = "NTPL",
+          pid = dependencies.pid,
+          accountOfficeId = "G1",
+          HODIdentifier = HeadOfDutyIndicators.N,
+          UTRReference = taxReference,
+          name1 = dependencies.customerName.value,
+          amount = amountEditedString,
+          taxAmount = None,
+          nicAmount = None,
+          lnpClass2 = None,
+          nirRate = None,
+          startDate = None,
+          endDate = None,
+          vatPeriodReference = None,
+          vatRemittanceType = None,
+          paymentItemId = dependencies.paymentItemId,
+          chargeReference = taxReference,
+          taxRegimeDisplay = "NTC",
+          reference = dependencies.pciPalReferenceNumber,
+          increment = "1"
+        )
+      ),
+      UTRBlacklistFlag = "N",
+      postcodeFlag = "Y",
+      taxRegime = "gen",
       TotalTaxAmountToPay = amountEditedString,
-      callbackUrl         = navigation.callback,
-      backUrl             = navigation.back,
-      resetUrl            = navigation.reset,
-      finishUrl           = navigation.finish,
-      LanguageFlag        = "E"
+      callbackUrl = navigation.callback,
+      backUrl = navigation.back,
+      resetUrl = navigation.reset,
+      finishUrl = navigation.finish,
+      LanguageFlag = "E"
     )
 
     override lazy val pcipalSessionLaunchResponse: PcipalSessionLaunchResponse = PcipalSessionLaunchResponse(
-      Id     = dependencies.pciPalSessionId,
+      Id = dependencies.pciPalSessionId,
       LinkId = dependencies.linkId
     )
 
     override lazy val pcipalData: ChargeRefNotificationPcipalRequest = ChargeRefNotificationPcipalRequest(
-      HoD                  = HeadOfDutyIndicators.N,
-      TaxReference         = taxReference,
-      Amount               = amountEdited,
-      Commission           = 0,
-      CardType             = dependencies.cardType,
-      Status               = StatusTypes.validated,
-      PCIPalSessionId      = dependencies.pciPalSessionId,
+      HoD = HeadOfDutyIndicators.N,
+      TaxReference = taxReference,
+      Amount = amountEdited,
+      Commission = 0,
+      CardType = dependencies.cardType,
+      Status = StatusTypes.validated,
+      PCIPalSessionId = dependencies.pciPalSessionId,
       TransactionReference = taxReference,
-      paymentItemId        = dependencies.paymentItemId,
-      ChargeReference      = taxReference,
-      ReferenceNumber      = dependencies.pciPalReferenceNumber,
-      CardLast4            = dependencies.cardLast4Digits
+      paymentItemId = dependencies.paymentItemId,
+      ChargeReference = taxReference,
+      ReferenceNumber = dependencies.pciPalReferenceNumber,
+      CardLast4 = dependencies.cardLast4Digits
     )
 
     override lazy val paymentItemEntered: PaymentItem = PaymentItem(
-      paymentItemId       = dependencies.paymentItemId,
-      amount              = amountEntered,
+      paymentItemId = dependencies.paymentItemId,
+      amount = amountEntered,
       headOfDutyIndicator = HeadOfDutyIndicators.N,
-      updated             = dependencies.instant,
-      customerName        = dependencies.customerName,
-      chargeReference     = taxReference,
-      pcipalData          = None,
+      updated = dependencies.instant,
+      customerName = dependencies.customerName,
+      chargeReference = taxReference,
+      pcipalData = None,
       paymentSpecificData = NtcSpecificData(
         ntcReference = taxReference
       ),
-      taxType             = TaxTypes.Ntc,
-      email               = Some(dependencies.email)
+      taxType = TaxTypes.Ntc,
+      email = Some(dependencies.email)
     )
 
-    override lazy val paymentItemAfterReceivedNotification: PaymentItem = paymentItemEdited.copy(pcipalData = Some(pcipalData))
+    override lazy val paymentItemAfterReceivedNotification: PaymentItem =
+      paymentItemEdited.copy(pcipalData = Some(pcipalData))
 
     override lazy val journeyStartedJson = JourneyJson(
       "/tps/testdata/ntc/journey-1-Started.json"

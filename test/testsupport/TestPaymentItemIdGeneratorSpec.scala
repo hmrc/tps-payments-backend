@@ -23,7 +23,7 @@ class TestPaymentItemIdGeneratorSpec extends ItSpec {
 
   "predict next PaymentItemId" in {
     val testPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
-    val paymentItemIdGenerator = app.injector.instanceOf[PaymentItemIdGenerator]
+    val paymentItemIdGenerator     = app.injector.instanceOf[PaymentItemIdGenerator]
 
     (0 to 1000).foreach { _ =>
       val predicted = testPaymentItemIdGenerator.predictNextId()

@@ -30,7 +30,7 @@ class StatusTypesSpec extends UnitSpec {
 
     val statusTypes: immutable.Seq[(String, StatusType)] = List[(String, StatusType)](
       "validated" -> validated,
-      "failed" -> failed
+      "failed"    -> failed
     )
 
     statusTypes.foreach { tt =>
@@ -40,4 +40,3 @@ class StatusTypesSpec extends UnitSpec {
     }
   }
 }
-

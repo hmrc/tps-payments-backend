@@ -39,7 +39,7 @@ import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.freespec.AnyFreeSpecLike
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.inject.{Injector}
+import play.api.inject.Injector
 import play.api.inject.guice.{GuiceApplicationBuilder, GuiceableModule}
 import play.api.test.{DefaultTestServerFactory, TestServerFactory}
 import play.api.{Application, Mode}
@@ -52,38 +52,35 @@ import java.time.{Clock, Instant, ZoneId}
 import javax.inject.Singleton
 import scala.annotation.nowarn
 import scala.concurrent.ExecutionContext
-/**
- * This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
- */
+
+/** This is common spec for every test case which brings all of useful routines we want to use in our scenarios.
+  */
 
 trait ItSpec
-  extends AnyFreeSpecLike
-  with RichMatchers
-  with HttpClientV2Support
-  with WireMockSupport
-  with GuiceOneServerPerSuite {
+    extends AnyFreeSpecLike
+    with RichMatchers
+    with HttpClientV2Support
+    with WireMockSupport
+    with GuiceOneServerPerSuite {
 
   val testPort = 19001
 
   implicit lazy val ec: ExecutionContext = scala.concurrent.ExecutionContext.Implicits.global
 
-  override implicit val patienceConfig: PatienceConfig = PatienceConfig(
-    timeout  = scaled(Span(1115, Seconds)),
-    interval = scaled(Span(300, Millis)))
+  override implicit val patienceConfig: PatienceConfig =
+    PatienceConfig(timeout = scaled(Span(1115, Seconds)), interval = scaled(Span(300, Millis)))
 
   lazy val frozenInstant: Instant = TdAll.instant
 
   val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
   private val module: AbstractModule = new AbstractModule {
-    override def configure(): Unit = {
+    override def configure(): Unit =
       bind(classOf[Clock]).toInstance(clock)
-    }
 
-    /**
-     * This one is randomised every time new test application is spawned. Thanks to that there will be no
-     * collisions in database when 2 tests insert journey.
-     */
+    /** This one is randomised every time new test application is spawned. Thanks to that there will be no collisions in
+      * database when 2 tests insert journey.
+      */
     @Provides
     @Singleton
     @nowarn // silence "method never used" warning
@@ -97,7 +94,8 @@ trait ItSpec
     @Provides
     @Singleton
     @nowarn // silence "method never used" warning
-    def paymentItemIdGenerator(testPaymentItemIdGenerator: TestPaymentItemIdGenerator): PaymentItemIdGenerator = testPaymentItemIdGenerator
+    def paymentItemIdGenerator(testPaymentItemIdGenerator: TestPaymentItemIdGenerator): PaymentItemIdGenerator =
+      testPaymentItemIdGenerator
 
     @Provides
     @Singleton
@@ -110,16 +108,16 @@ trait ItSpec
   protected lazy val configOverrides: Map[String, Any] = Map()
 
   private val configMap: Map[String, Any] = Map[String, Any](
-    "mongodb.uri " -> "mongodb://localhost:27017/tps-payments-backend-it",
-    "microservice.services.auth.port" -> WireMockSupport.port,
+    "mongodb.uri "                                        -> "mongodb://localhost:27017/tps-payments-backend-it",
+    "microservice.services.auth.port"                     -> WireMockSupport.port,
     "microservice.services.tps-payments-backend.protocol" -> "http",
-    "microservice.services.tps-payments-backend.host" -> "localhost",
-    "microservice.services.tps-payments-backend.port" -> testPort,
-    "paymentNotificationUrl" -> "http://notification.host/payments/notifications/send-card-payments"
+    "microservice.services.tps-payments-backend.host"     -> "localhost",
+    "microservice.services.tps-payments-backend.port"     -> testPort,
+    "paymentNotificationUrl"                              -> "http://notification.host/payments/notifications/send-card-payments"
   ) ++ configOverrides
 
-  lazy val injector: Injector = fakeApplication().injector
-  lazy val repo: JourneyRepo = app.injector.instanceOf[JourneyRepo]
+  lazy val injector: Injector             = fakeApplication().injector
+  lazy val repo: JourneyRepo              = app.injector.instanceOf[JourneyRepo]
   lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
@@ -137,7 +135,7 @@ trait ItSpec
 
   object CustomTestServerFactory extends DefaultTestServerFactory {
     override protected def serverConfig(app: Application): ServerConfig = {
-      val sc = ServerConfig(port    = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
+      val sc = ServerConfig(port = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
     }
   }

@@ -26,39 +26,39 @@ import java.time.Instant
 
 //TODO: remove this and use dedicated classes and endpoints for Mib and Pngr
 final case class StartJourneyRequestMibOrPngr(
-    pid:        String,
-    payments:   Seq[SjPaymentItem],
-    navigation: Navigation
+  pid:        String,
+  payments:   Seq[SjPaymentItem],
+  navigation: Navigation
 ) {
 
   require(payments.size === 1)
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   val paymentItem: SjPaymentItem = payments.head
 
-  //TODO: remove this
+  // TODO: remove this
   def makeJourney(now: Instant): Journey = {
     val tpsPayments: List[PaymentItem] = payments.map { p =>
       PaymentItem(
-        paymentItemId       = PaymentItemId(ObjectId.get().toHexString),
-        amount              = p.amount,
+        paymentItemId = PaymentItemId(ObjectId.get().toHexString),
+        amount = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
-        updated             = now,
-        customerName        = p.customerName,
-        chargeReference     = p.chargeReference,
-        pcipalData          = None,
+        updated = now,
+        customerName = p.customerName,
+        chargeReference = p.chargeReference,
+        pcipalData = None,
         paymentSpecificData = p.paymentSpecificData,
-        taxType             = p.taxType,
-        email               = p.email
+        taxType = p.taxType,
+        email = p.email
       )
     }.toList
 
     Journey(
-      _id          = JourneyId.fresh(),
+      _id = JourneyId.fresh(),
       journeyState = JourneyState.Started,
-      pid          = pid,
-      created      = now,
-      payments     = tpsPayments,
-      navigation   = navigation
+      pid = pid,
+      created = now,
+      payments = tpsPayments,
+      navigation = navigation
     )
   }
 }

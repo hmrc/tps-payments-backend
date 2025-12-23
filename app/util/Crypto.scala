@@ -23,14 +23,14 @@ import uk.gov.hmrc.crypto._
 @Singleton
 class Crypto @Inject() (config: Config) {
 
-  private val oldEncrypterDecrypter: Encrypter with Decrypter = SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", config)
+  private val oldEncrypterDecrypter: Encrypter with Decrypter =
+    SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", config)
 
-  private val encrypterDecrypter: Encrypter with Decrypter = {
+  private val encrypterDecrypter: Encrypter with Decrypter =
     SymmetricCryptoFactory.composeCrypto(
       SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config),
       Seq(oldEncrypterDecrypter)
     )
-  }
 
   def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
 

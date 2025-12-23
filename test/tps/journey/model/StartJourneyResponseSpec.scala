@@ -24,14 +24,13 @@ import tps.testdata.util.JsonSyntax.toJsonOps
 class StartJourneyResponseSpec extends UnitSpec {
 
   "(de)serialization" in {
-    val json: JsObject = {
-      //language=JSON
+    val json: JsObject =
+      // language=JSON
       """
         {
           "journeyId": "64886ed616fe8b501cbf0088",
           "nextUrl": "http://localhost:9124/tps-payments/make-payment/mib/64886ed616fe8b501cbf0088"
         }""".asJson
-    }
 
     val s: StartJourneyResponse = TdAll.TdJourneyMib.startJourneyResponse
 

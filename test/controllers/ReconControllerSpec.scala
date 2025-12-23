@@ -30,7 +30,10 @@ class ReconControllerSpec extends ItSpec with Status {
 
   "Recon connector should surface mods info correctly when they exist" in {
     repo.upsert(modsTpsPaymentsNoAmendmentReference).futureValue
-    connector.findModsPayments(FindRPaymentSpecificDataRequest(modsLookupChargeRefs)).futureValue.body shouldBe modsReconLookupJson.toString()
+    connector
+      .findModsPayments(FindRPaymentSpecificDataRequest(modsLookupChargeRefs))
+      .futureValue
+      .body shouldBe modsReconLookupJson.toString()
   }
 
 }

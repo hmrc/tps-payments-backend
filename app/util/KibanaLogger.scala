@@ -21,38 +21,86 @@ import tps.journey.model.Journey
 import tps.model.PaymentItemId
 import tps.pcipalmodel.PcipalSessionId
 
-/**
- * Logger implementation that is used by kibana dashboards
- */
+/** Logger implementation that is used by kibana dashboards
+  */
 object KibanaLogger {
 
   private val log: Logger = Logger("tps-backend-kibana-logger")
 
-  def debug(message: => String, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def debug(
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, Debug)
 
-  def info(message: => String, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def info(
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, Info)
 
-  def warn(message: => String, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def warn(
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, Warn)
 
-  def error(message: => String, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def error(
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, Error)
 
-  def debug(message: => String, ex: Throwable, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def debug(
+    message:         => String,
+    ex:              Throwable,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, ex, Debug)
 
-  def info(message: => String, ex: Throwable, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def info(
+    message:         => String,
+    ex:              Throwable,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, ex, Info)
 
-  def warn(message: => String, ex: Throwable, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def warn(
+    message:         => String,
+    ex:              Throwable,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, ex, Warn)
 
-  def error(message: => String, ex: Throwable, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): Unit =
+  def error(
+    message:         => String,
+    ex:              Throwable,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): Unit =
     logMessage(message, journey, pcipalSessionId, paymentItemId, ex, Error)
 
-  private def makeRichMessage(message: String, journey: Option[Journey], pcipalSessionId: Option[PcipalSessionId], paymentItemId: Option[PaymentItemId]): String =
+  private def makeRichMessage(
+    message:         String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId]
+  ): String =
     s"$message" +
       s"${journey.fold("")(j => s" [journeyId:${j.journeyId.value}")}" +
       s"${pcipalSessionId.fold("")(s => s" [pcipalSessionId:${s.value}")}" +
@@ -69,11 +117,11 @@ object KibanaLogger {
   private case object Error extends LogLevel
 
   private def logMessage(
-      message:         => String,
-      journey:         Option[Journey],
-      pcipalSessionId: Option[PcipalSessionId],
-      paymentItemId:   Option[PaymentItemId],
-      level:           LogLevel
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId],
+    level:           LogLevel
   ): Unit = {
     lazy val richMessage = makeRichMessage(message, journey, pcipalSessionId, paymentItemId)
     level match {
@@ -85,12 +133,12 @@ object KibanaLogger {
   }
 
   private def logMessage(
-      message:         => String,
-      journey:         Option[Journey],
-      pcipalSessionId: Option[PcipalSessionId],
-      paymentItemId:   Option[PaymentItemId],
-      ex:              Throwable,
-      level:           LogLevel
+    message:         => String,
+    journey:         Option[Journey],
+    pcipalSessionId: Option[PcipalSessionId],
+    paymentItemId:   Option[PaymentItemId],
+    ex:              Throwable,
+    level:           LogLevel
   ): Unit = {
     lazy val richMessage = makeRichMessage(message, journey, pcipalSessionId, paymentItemId)
     level match {

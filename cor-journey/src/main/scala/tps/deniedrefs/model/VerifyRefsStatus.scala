@@ -26,8 +26,8 @@ sealed abstract class VerifyRefsStatus extends EnumEntry
 
 object VerifyRefStatuses extends Enum[VerifyRefsStatus] {
 
-  case object RefDenied extends VerifyRefsStatus
-  case object RefPermitted extends VerifyRefsStatus
+  case object RefDenied          extends VerifyRefsStatus
+  case object RefPermitted       extends VerifyRefsStatus
   case object MissingInformation extends VerifyRefsStatus
 
   override def values: immutable.IndexedSeq[VerifyRefsStatus] = findValues

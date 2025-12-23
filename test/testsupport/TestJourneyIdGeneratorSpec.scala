@@ -23,7 +23,7 @@ class TestJourneyIdGeneratorSpec extends ItSpec {
 
   "predict next journeyId" in {
     val testJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
-    val journeyIdGenerator = app.injector.instanceOf[JourneyIdGenerator]
+    val journeyIdGenerator     = app.injector.instanceOf[JourneyIdGenerator]
 
     (0 to 1000).foreach { _ =>
       val predicted = testJourneyIdGenerator.predictNextId()

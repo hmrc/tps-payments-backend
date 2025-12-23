@@ -28,7 +28,8 @@ class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
   }
 
   "from json" in {
-    TestData.chargeRefNotificationPciPalRequestJson.as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPcipalRequest
+    TestData.chargeRefNotificationPciPalRequestJson
+      .as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPcipalRequest
   }
 
 }

@@ -33,7 +33,7 @@ class TestConnectorSpec extends ItSpec with Status {
 
   "tpsPayments should transform a payment request from a tps client system into tps data data, store and return the id" in {
     AuthStub.authorised()
-    val id = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
+    val id      = connector.startTpsJourneyMibOrPngr(tpsPaymentRequest).futureValue
     val payment = connector.find(id).futureValue
     payment.payments.headOption.value.paymentSpecificData.getReference shouldBe tpsPaymentRequest.payments.headOption.value.chargeReference
   }
@@ -72,16 +72,20 @@ class TestConnectorSpec extends ItSpec with Status {
     connector.upsert(tpsPaymentsWithPcipalData).futureValue
     val pciPalUpdated: HttpResponse = connector.updateTpsPayments(chargeRefNotificationPcipalRequest).futureValue
     pciPalUpdated.status shouldBe OK
-    val result: Journey = connector.find(id).futureValue
+    val result: Journey             = connector.find(id).futureValue
     result.payments.headOption.value.pcipalData.value shouldBe chargeRefNotificationPcipalRequest
   }
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
     authorised()
     Option(repo.upsert(journey).futureValue.getUpsertedId).isDefined shouldBe true
-    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)"))).futureValue
+    val response = connector
+      .updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)")))
+      .futureValue
     response.status shouldBe 400
-    response.body should include("Could not find corresponding journey matching pcipalSessionId: [paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91] [PCIPalSessionId:new)] [HoD:B]")
+    response.body should include(
+      "Could not find corresponding journey matching pcipalSessionId: [paymentItemId-48c978bb-64b6-4a00-a1f1-51e267d84f91] [PCIPalSessionId:new)] [HoD:B]"
+    )
   }
 
   "get an exception if paymentItemId not found and trying to do an update" in {
@@ -89,9 +93,13 @@ class TestConnectorSpec extends ItSpec with Status {
     journeyService.upsert(tpsPaymentsWithPcipalData).futureValue
     val nonExistingPaymentItemId: PaymentItemId = PaymentItemId("649965afeb13cd4b9787b054")
     nonExistingPaymentItemId should not be chargeRefNotificationPcipalRequest.paymentItemId withClue "notification comes with different payment item id"
-    val response = connector.updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = nonExistingPaymentItemId)).futureValue
+    val response                                = connector
+      .updateTpsPayments(chargeRefNotificationPcipalRequest.copy(paymentItemId = nonExistingPaymentItemId))
+      .futureValue
     response.status shouldBe 400
-    response.body should include("Could not find corresponding journey matching paymentItemId: [649965afeb13cd4b9787b054] [PCIPalSessionId:48c978bb] [HoD:B]")
+    response.body should include(
+      "Could not find corresponding journey matching paymentItemId: [649965afeb13cd4b9787b054] [PCIPalSessionId:48c978bb] [HoD:B]"
+    )
   }
 
   "getTaxType should return the correct tax type given the id of a persisted tps payment item" in {
@@ -106,7 +114,7 @@ class TestConnectorSpec extends ItSpec with Status {
   }
 
   "getTaxType should return 500 when a duplicate id is found" in {
-    val tpsIdForDuplicate = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
+    val tpsIdForDuplicate                 = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
     repo.upsert(journey).futureValue
@@ -119,7 +127,7 @@ class TestConnectorSpec extends ItSpec with Status {
 
   "should parse TpsPaymentItems for email correctly" in {
     val emailService = app.injector.instanceOf[EmailService]
-    val t = tpsPaymentsWithPcipalData.payments.map(emailService.toIndividualPaymentForEmail)
+    val t            = tpsPaymentsWithPcipalData.payments.map(emailService.toIndividualPaymentForEmail)
     emailService.stringifyTpsPaymentsItemsForEmail(t) shouldBe tpsItemsForEmail
   }
 }

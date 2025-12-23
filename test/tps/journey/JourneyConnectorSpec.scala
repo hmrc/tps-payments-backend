@@ -27,11 +27,11 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 class JourneyConnectorSpec extends ItSpec {
 
   def journeyIdGenerator: TestJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
-  def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
-  implicit val request: Request[_] = TdAll.request
+  def journeyConnector: JourneyConnector         = app.injector.instanceOf[JourneyConnector]
+  implicit val request: Request[_]               = TdAll.request
 
-  "find and upsert journey in all possible state" - TdAll.allJourneysWithJson.foreach{ t =>
-    val journey = t._1
+  "find and upsert journey in all possible state" - TdAll.allJourneysWithJson.foreach { t =>
+    val journey      = t._1
     val testCaseName = t._2.simpleName
     testCaseName in {
       AuthStub.authorised()
@@ -42,7 +42,9 @@ class JourneyConnectorSpec extends ItSpec {
 
   "find should return None if no journey at db" in {
     AuthStub.authorised()
-    journeyConnector.find(journeyIdGenerator.nextId()).futureValue shouldBe None withClue "journey not found as not inserted"
+    journeyConnector
+      .find(journeyIdGenerator.nextId())
+      .futureValue shouldBe None withClue "journey not found as not inserted"
   }
 
   "find unauthorised" in {

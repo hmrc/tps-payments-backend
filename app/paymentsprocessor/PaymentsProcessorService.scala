@@ -25,15 +25,18 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PaymentsProcessorService @Inject() (journeyService: JourneyService)(implicit ec: ExecutionContext) {
 
-  def getModsPaymentCallbackRequest(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] = {
+  def getModsPaymentCallbackRequest(paymentItemId: PaymentItemId): Future[ModsPaymentCallBackRequest] =
     journeyService.findPaymentItem(paymentItemId).map {
       case Some(paymentItem) =>
         paymentItem.paymentSpecificData match {
-          case paymentItem: MibSpecificData => ModsPaymentCallBackRequest(paymentItem.chargeReference, paymentItem.amendmentReference)
-          case _                            => throw new RuntimeException(s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?")
+          case paymentItem: MibSpecificData =>
+            ModsPaymentCallBackRequest(paymentItem.chargeReference, paymentItem.amendmentReference)
+          case _                            =>
+            throw new RuntimeException(
+              s"No payment items with this id [ ${paymentItemId.value} ], it's not mods, why is it being looked up?"
+            )
         }
-      case None => throw new RuntimeException(s"No payment specific data for id [ ${paymentItemId.value} ]")
+      case None              => throw new RuntimeException(s"No payment specific data for id [ ${paymentItemId.value} ]")
     }
-  }
 
 }

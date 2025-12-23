@@ -22,8 +22,8 @@ class PaymentItemIdGeneratorSpec extends UnitSpec {
 
   "generates unique values" in {
     val generator = new PaymentItemIdGenerator()
-    val n = 1000
-    val ids = (0 until n).map(_ => generator.nextId()).toSet
+    val n         = 1000
+    val ids       = (0 until n).map(_ => generator.nextId()).toSet
     ids.size shouldBe n
   }
 

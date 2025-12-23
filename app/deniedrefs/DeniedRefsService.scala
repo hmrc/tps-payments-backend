@@ -39,67 +39,65 @@ import scala.util.{Failure, Success, Try}
 
 @Singleton
 class DeniedRefsService @Inject() (
-    deniedRefsRepo:        DeniedRefsRepo,
-    crypto:                Crypto,
-    deniedRefsIdGenerator: DeniedRefsIdGenerator,
-    clock:                 Clock)(implicit ec: ExecutionContext, materializer: Materializer) {
+  deniedRefsRepo:        DeniedRefsRepo,
+  crypto:                Crypto,
+  deniedRefsIdGenerator: DeniedRefsIdGenerator,
+  clock:                 Clock
+)(implicit ec: ExecutionContext, materializer: Materializer) {
 
-  /**
-   * Upserts object into mongo. It makes sure refs are encrypted before storing in mongo.
-   */
+  /** Upserts object into mongo. It makes sure refs are encrypted before storing in mongo.
+    */
   def upsert(deniedRefs: DeniedRefs): Future[UpdateResult] = {
     val deniedRefsEncryted = deniedRefs.copy(refs = deniedRefs.refs.map(ref => Reference(crypto.encrypt(ref.value))))
     deniedRefsRepo.upsert(deniedRefsEncryted)
   }
 
-  /**
-   * Finds the latest `DeniedRefsId`
-   *
-   * @return None if a csv file has not been uploaded yet
-   *         Some(id) containing id of recently uploaded csv file
-   */
+  /** Finds the latest `DeniedRefsId`
+    *
+    * @return
+    *   None if a csv file has not been uploaded yet Some(id) containing id of recently uploaded csv file
+    */
   def findLatestDeniedRefsId(): Future[Option[DeniedRefsId]] = deniedRefsRepo.findLatestDeniedRefsId()
 
-  def getDeniedRefs(deniedRefsId: DeniedRefsId): Future[DeniedRefs] = {
+  def getDeniedRefs(deniedRefsId: DeniedRefsId): Future[DeniedRefs] =
     deniedRefsRepo
       .findById(deniedRefsId)
       .map(_.getOrElse(throw new RuntimeException(s"Could not find DeniedRefs by given id [${deniedRefsId.value}]")))
       .map(decryptDeniedRefs)
-  }
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def decryptDeniedRefs(encryptedDeniedRefs: DeniedRefs): DeniedRefs = {
-    val decryptionResult: List[Try[String]] = encryptedDeniedRefs
-      .refs
+    val decryptionResult: List[Try[String]]    = encryptedDeniedRefs.refs
       .map(ref => Try(crypto.decrypt(ref.value)))
     val successfullyDecrypted: List[Reference] = decryptionResult.collect { case Success(ref) => Reference(ref) }
-    decryptionResult.collect {
-      case Failure(ex) => logger.error(s"Failed to decrypt ref. Has encryption key changed? [${encryptedDeniedRefs._id.value}] [inserted:${encryptedDeniedRefs.inserted.toString}]", ex)
+    decryptionResult.collect { case Failure(ex) =>
+      logger.error(
+        s"Failed to decrypt ref. Has encryption key changed? [${encryptedDeniedRefs._id.value}] [inserted:${encryptedDeniedRefs.inserted.toString}]",
+        ex
+      )
     }
     encryptedDeniedRefs.copy(refs = successfullyDecrypted)
   }
 
-  /**
-   * Given a file containing list of denied refs at `pathToDeniedRefs` this method:
-   * - parses it as CSV
-   * - unifies Refs (trims, adds missing K, uppercases)
-   * - deletes file when done
-   */
+  /** Given a file containing list of denied refs at `pathToDeniedRefs` this method:
+    *   - parses it as CSV
+    *   - unifies Refs (trims, adds missing K, uppercases)
+    *   - deletes file when done
+    */
   def parseDeniedRefs(pathToDeniedrefs: Path): Future[DeniedRefs] = {
-    val deniedRefs = FileIO.fromPath(pathToDeniedrefs)
+    val deniedRefs = FileIO
+      .fromPath(pathToDeniedrefs)
       .mapMaterializedValue(_ => Done)
       .via(CsvParsing.lineScanner())
       .map(_.map(_.decodeString(ByteString.UTF_8)))
       .map(_.headOption)
       .collect { case Some(ref) => Reference(ref.toUpperCase()) }
       .toMat(Sink.collection[Reference, List[Reference]])(Keep.right[Done.type, Future[List[Reference]]])
-      .mapMaterializedValue(encryptedRefsF => encryptedRefsF
-        .map(encryptedRefs =>
-          DeniedRefs(
-            _id      = deniedRefsIdGenerator.nextId(),
-            refs     = encryptedRefs,
-            inserted = LocalDateTime.now(clock))
-        )
+      .mapMaterializedValue(encryptedRefsF =>
+        encryptedRefsF
+          .map(encryptedRefs =>
+            DeniedRefs(_id = deniedRefsIdGenerator.nextId(), refs = encryptedRefs, inserted = LocalDateTime.now(clock))
+          )
       )
       .run()
     deniedRefs.onComplete(_ => deleteTempFile(pathToDeniedrefs))
@@ -111,46 +109,49 @@ class DeniedRefsService @Inject() (
       case Success(deleted) =>
         if (deleted) logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
         else logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]")
-      case Failure(ex) => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
+      case Failure(ex)      => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
     }
 
   private val cachedDeniedRefs = new AtomicReference[Option[DeniedRefs]](None)
 
-  def verifyRefs(refs: Set[Reference]): VerifyRefsStatus = {
+  def verifyRefs(refs: Set[Reference]): VerifyRefsStatus =
     cachedDeniedRefs.get() match {
       case Some(cache) =>
         val anyDenied = refs.exists(cache.containsRef)
         if (anyDenied) RefDenied else RefPermitted
-      case None => MissingInformation
+      case None        => MissingInformation
     }
-  }
 
   def updateCacheIfNeeded(): Future[Unit] = {
     val cache: Option[DeniedRefs] = cachedDeniedRefs.get()
     for {
       latestId: Option[DeniedRefsId] <- findLatestDeniedRefsId()
-      _ <- (cache, latestId) match {
-        case (_, None) =>
-          logger.info(s"DeniedRefs cache is empty. Missing DeniedRefs in database.")
-          Future.successful(())
-        case (None, Some(latestId)) =>
-          logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
-          updateCache(latestId)
-        case (Some(cached), Some(latestId)) =>
-          if (cached._id === latestId) {
-            logger.debug(s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]")
-            Future.successful(())
-          } else {
-            logger.info(s"DeniedRefs cache is invalid. Populating it ... [${latestId.toString}]")
-            updateCache(latestId)
-          }
-      }
+      _                              <- (cache, latestId) match {
+                                          case (_, None)                      =>
+                                            logger.info(s"DeniedRefs cache is empty. Missing DeniedRefs in database.")
+                                            Future.successful(())
+                                          case (None, Some(latestId))         =>
+                                            logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
+                                            updateCache(latestId)
+                                          case (Some(cached), Some(latestId)) =>
+                                            if (cached._id === latestId) {
+                                              logger.debug(
+                                                s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]"
+                                              )
+                                              Future.successful(())
+                                            } else {
+                                              logger.info(s"DeniedRefs cache is invalid. Populating it ... [${latestId.toString}]")
+                                              updateCache(latestId)
+                                            }
+                                        }
     } yield ()
   }
 
   private def updateCache(latestId: DeniedRefsId): Future[Unit] = getDeniedRefs(latestId).map { deniedRefs =>
     cachedDeniedRefs.set(Some(deniedRefs))
-    logger.info(s"DeniedRefs cache updated [size:${deniedRefs.refs.size.toString}] [inserted:${deniedRefs.inserted.toString}] [${latestId.toString}]")
+    logger.info(
+      s"DeniedRefs cache updated [size:${deniedRefs.refs.size.toString}] [inserted:${deniedRefs.inserted.toString}] [${latestId.toString}]"
+    )
   }
 
   lazy val logger: Logger = Logger(this.getClass)

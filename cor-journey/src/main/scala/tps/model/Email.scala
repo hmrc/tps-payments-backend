@@ -23,6 +23,5 @@ final case class Email(value: String) extends AnyVal
 
 object Email {
   implicit val format: Format[Email] = Json.valueFormat
-  val emptyEmail: Email = Email("") //TODO: better None
+  val emptyEmail: Email              = Email("") // TODO: better None
 }
-

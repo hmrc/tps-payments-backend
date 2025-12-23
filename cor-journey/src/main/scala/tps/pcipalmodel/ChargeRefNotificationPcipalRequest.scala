@@ -19,23 +19,22 @@ package tps.pcipalmodel
 import play.api.libs.json.{Json, OFormat}
 import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 
-/**
- * This represents notification data being sent from PciPal to the payments-processor.
- * Also named as PciPal data in other places
- */
+/** This represents notification data being sent from PciPal to the payments-processor. Also named as PciPal data in
+  * other places
+  */
 final case class ChargeRefNotificationPcipalRequest(
-    HoD:                  HeadOfDutyIndicator,
-    TaxReference:         String,
-    Amount:               BigDecimal,
-    Commission:           BigDecimal,
-    CardType:             String,
-    Status:               StatusType,
-    PCIPalSessionId:      PcipalSessionId,
-    TransactionReference: String,
-    paymentItemId:        PaymentItemId,
-    ChargeReference:      String              = "",
-    ReferenceNumber:      String,
-    CardLast4:            String
+  HoD:                  HeadOfDutyIndicator,
+  TaxReference:         String,
+  Amount:               BigDecimal,
+  Commission:           BigDecimal,
+  CardType:             String,
+  Status:               StatusType,
+  PCIPalSessionId:      PcipalSessionId,
+  TransactionReference: String,
+  paymentItemId:        PaymentItemId,
+  ChargeReference:      String = "",
+  ReferenceNumber:      String,
+  CardLast4:            String
 )
 
 object ChargeRefNotificationPcipalRequest {

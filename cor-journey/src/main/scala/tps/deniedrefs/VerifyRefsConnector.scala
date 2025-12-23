@@ -30,8 +30,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class VerifyRefsConnector @Inject() (
-    httpClient:     HttpClientV2,
-    servicesConfig: ServicesConfig
+  httpClient:     HttpClientV2,
+  servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
   private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")

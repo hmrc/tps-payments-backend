@@ -34,17 +34,21 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class JourneyController @Inject() (actions:        Actions,
-                                   cc:             ControllerComponents,
-                                   emailService:   EmailService,
-                                   journeyService: JourneyService)(implicit executionContext: ExecutionContext) extends BackendController(cc) {
+class JourneyController @Inject() (
+  actions:        Actions,
+  cc:             ControllerComponents,
+  emailService:   EmailService,
+  journeyService: JourneyService
+)(implicit executionContext: ExecutionContext)
+    extends BackendController(cc) {
 
-  val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] = actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
-    val journey: Journey = request.body.makeJourney(Instant.now())
-    journeyService.upsert(journey).map { _ =>
-      Created(toJson(journey._id))
+  val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
+    actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
+      val journey: Journey = request.body.makeJourney(Instant.now())
+      journeyService.upsert(journey).map { _ =>
+        Created(toJson(journey._id))
+      }
     }
-  }
 
   val upsert: Action[Journey] = actions.strideAuthenticated.async(parse.json[Journey]) { implicit request =>
     val journey: Journey = request.body
@@ -69,46 +73,68 @@ class JourneyController @Inject() (actions:        Actions,
       }
   }
 
-  val updateWithPcipalData: Action[ChargeRefNotificationPcipalRequest] = Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
-    val notification: ChargeRefNotificationPcipalRequest = request.body
-    KibanaLogger.info(
-      message         = s"Update request from Pcipal received [paymentStatus: ${notification.Status.toString}][HoD:${notification.HoD.toString}]",
-      journey         = None,
-      pcipalSessionId = Some(notification.PCIPalSessionId),
-      paymentItemId   = Some(notification.paymentItemId)
-    )
+  val updateWithPcipalData: Action[ChargeRefNotificationPcipalRequest] =
+    Action.async(parse.json[ChargeRefNotificationPcipalRequest]) { implicit request =>
+      val notification: ChargeRefNotificationPcipalRequest = request.body
+      KibanaLogger.info(
+        message =
+          s"Update request from Pcipal received [paymentStatus: ${notification.Status.toString}][HoD:${notification.HoD.toString}]",
+        journey = None,
+        pcipalSessionId = Some(notification.PCIPalSessionId),
+        paymentItemId = Some(notification.paymentItemId)
+      )
 
-    for {
-      maybeJourney: JourneyService.FindByPcipalSessionIdResult <- journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
-      result <- maybeJourney match {
+      for {
+        maybeJourney: JourneyService.FindByPcipalSessionIdResult <-
+          journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
+        result                                                   <- maybeJourney match {
 
-        case JourneyService.FindByPcipalSessionIdResult.Found(journey) =>
-          val newJourney = journeyService
-            .updateJourneyWithPcipalData(journey, notification)
-            .copy(journeyState = JourneyState.ReceivedNotification)
-          emailService.maybeSendEmail(newJourney)
-          journeyService
-            .upsert(newJourney)
-            .map { _ =>
-              KibanaLogger.info(
-                message         = s"Journey updated with Pcipal data [paymentStatus: ${notification.Status.toString}",
-                journey         = Some(newJourney),
-                pcipalSessionId = Some(notification.PCIPalSessionId),
-                paymentItemId   = Some(notification.paymentItemId)
-              )
-              Ok
-            }
+                                                                      case JourneyService.FindByPcipalSessionIdResult.Found(journey) =>
+                                                                        val newJourney = journeyService
+                                                                          .updateJourneyWithPcipalData(journey, notification)
+                                                                          .copy(journeyState = JourneyState.ReceivedNotification)
+                                                                        emailService.maybeSendEmail(newJourney)
+                                                                        journeyService
+                                                                          .upsert(newJourney)
+                                                                          .map { _ =>
+                                                                            KibanaLogger.info(
+                                                                              message =
+                                                                                s"Journey updated with Pcipal data [paymentStatus: ${notification.Status.toString}",
+                                                                              journey = Some(newJourney),
+                                                                              pcipalSessionId = Some(notification.PCIPalSessionId),
+                                                                              paymentItemId = Some(notification.paymentItemId)
+                                                                            )
+                                                                            Ok
+                                                                          }
 
-        case JourneyService.FindByPcipalSessionIdResult.NoJourneyBySessionId =>
-          KibanaLogger.info("Update request from Pcipal resulted in NoJourneyBySessionId", None, Some(notification.PCIPalSessionId), Some(notification.paymentItemId))
-          Future.successful(BadRequest(s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"))
+                                                                      case JourneyService.FindByPcipalSessionIdResult.NoJourneyBySessionId =>
+                                                                        KibanaLogger.info(
+                                                                          "Update request from Pcipal resulted in NoJourneyBySessionId",
+                                                                          None,
+                                                                          Some(notification.PCIPalSessionId),
+                                                                          Some(notification.paymentItemId)
+                                                                        )
+                                                                        Future.successful(
+                                                                          BadRequest(
+                                                                            s"Could not find corresponding journey matching pcipalSessionId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"
+                                                                          )
+                                                                        )
 
-        case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey) =>
-          KibanaLogger.info("Update request from Pcipal resulted in NoMatchingPaymentItem", Some(journey), Some(notification.PCIPalSessionId), Some(notification.paymentItemId))
-          Future.successful(BadRequest(s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"))
-      }
-    } yield result
-  }
+                                                                      case JourneyService.FindByPcipalSessionIdResult.NoMatchingPaymentItem(journey) =>
+                                                                        KibanaLogger.info(
+                                                                          "Update request from Pcipal resulted in NoMatchingPaymentItem",
+                                                                          Some(journey),
+                                                                          Some(notification.PCIPalSessionId),
+                                                                          Some(notification.paymentItemId)
+                                                                        )
+                                                                        Future.successful(
+                                                                          BadRequest(
+                                                                            s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"
+                                                                          )
+                                                                        )
+                                                                    }
+      } yield result
+    }
 
   val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
     if (request.body.numberOfDays < 0)

@@ -21,11 +21,10 @@ import play.api.mvc.PathBindable
 import tps.utils.ValueClassBinder.valueClassBinder
 
 final case class PcipalSessionId(
-    value: String
+  value: String
 )
 
 object PcipalSessionId {
-  implicit val format: Format[PcipalSessionId] = Json.valueFormat
+  implicit val format: Format[PcipalSessionId]       = Json.valueFormat
   implicit val binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
 }
-

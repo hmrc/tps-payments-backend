@@ -28,18 +28,18 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf")) // TODO: remove according to OPS-11079
 class StartJourneyControllerOldSpec extends ItSpec {
 
-  private def journeyIdGenerator: TestJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
+  private def journeyIdGenerator: TestJourneyIdGenerator         = app.injector.instanceOf[TestJourneyIdGenerator]
   private def paymentItemIdGenerator: TestPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
 
   private def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
-  private implicit val request: Request[_] = TdAll.request
+  private implicit val request: Request[_]       = TdAll.request
 
   "start Mib journey" in {
 
     val tdAll = new TdAll {
-      private val precachedId = paymentItemIdGenerator.predictNextId() //don't inline
+      private val precachedId                        = paymentItemIdGenerator.predictNextId() // don't inline
       override lazy val paymentItemId: PaymentItemId = precachedId
-      override lazy val journeyId: JourneyId = journeyIdGenerator.predictNextId()
+      override lazy val journeyId: JourneyId         = journeyIdGenerator.predictNextId()
     }
 
     AuthStub.authorised()
@@ -50,7 +50,8 @@ class StartJourneyControllerOldSpec extends ItSpec {
 
   "not start Mib journey if not authorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMibOld.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMibOld.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You do not have access to this service'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -58,7 +59,8 @@ class StartJourneyControllerOldSpec extends ItSpec {
 
   "not start Mib journey if not authenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMibOld.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyMibOld.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -67,9 +69,9 @@ class StartJourneyControllerOldSpec extends ItSpec {
   "start Pngr journey" in {
 
     val tdAll = new TdAll {
-      private val precachedId = paymentItemIdGenerator.predictNextId() //don't inline
+      private val precachedId                        = paymentItemIdGenerator.predictNextId() // don't inline
       override lazy val paymentItemId: PaymentItemId = precachedId
-      override lazy val journeyId: JourneyId = journeyIdGenerator.predictNextId()
+      override lazy val journeyId: JourneyId         = journeyIdGenerator.predictNextId()
     }
 
     AuthStub.authorised()
@@ -80,7 +82,8 @@ class StartJourneyControllerOldSpec extends ItSpec {
 
   "not start Pngr journey if not authorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngrOld.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngrOld.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You do not have access to this service'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -88,7 +91,8 @@ class StartJourneyControllerOldSpec extends ItSpec {
 
   "not start Pngr journey if not authenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngrOld.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startMibOrPngrJourney(TdAll.TdJourneyPngrOld.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401

@@ -52,10 +52,12 @@ class FindPaymentsSpec extends ItSpec {
 
   val taxReference = "taxRef"
 
-  val todayStart = LocalDateTime.of(
-    TdAll.localDateTime.toLocalDate,
-    LocalTime.MIDNIGHT
-  ).toInstant(ZoneOffset.of("Z"))
+  val todayStart = LocalDateTime
+    .of(
+      TdAll.localDateTime.toLocalDate,
+      LocalTime.MIDNIGHT
+    )
+    .toInstant(ZoneOffset.of("Z"))
 
   lazy val pcipalRequestData = PcipalRequestData(crypto.encrypt(taxReference), "transactionRef", StatusTypes.validated)
 
@@ -92,9 +94,11 @@ class FindPaymentsSpec extends ItSpec {
     "return a 400 when" - {
 
       "the JSON body in the request cannot be parsed" in {
-        val result = controller.findPayments(
-          FakeRequest().withBody("""{ "a": 1 }""").withHeaders(CONTENT_TYPE -> "application/json")
-        ).run()
+        val result = controller
+          .findPayments(
+            FakeRequest().withBody("""{ "a": 1 }""").withHeaders(CONTENT_TYPE -> "application/json")
+          )
+          .run()
 
         status(result) shouldBe BAD_REQUEST
         contentAsString(result) should include("Invalid Json")
@@ -118,7 +122,6 @@ class FindPaymentsSpec extends ItSpec {
               paymentData.copy(amount = BigDecimal(1.2345))
             )
           )
-
         )
 
         an[ArithmeticException] shouldBe thrownBy(
@@ -195,38 +198,46 @@ class FindPaymentsSpec extends ItSpec {
               // this one should get ignored since the status is not validated
               PaymentData(
                 BigDecimal(2.34),
-                Some(PcipalRequestData(
-                  crypto.encrypt(taxReference1),
-                  "transaction1",
-                  StatusTypes.failed
-                )),
+                Some(
+                  PcipalRequestData(
+                    crypto.encrypt(taxReference1),
+                    "transaction1",
+                    StatusTypes.failed
+                  )
+                ),
                 TaxTypes.ChildBenefitsRepayments
               ),
               PaymentData(
                 BigDecimal(3.45),
-                Some(PcipalRequestData(
-                  crypto.encrypt(taxReference1),
-                  "transaction2",
-                  StatusTypes.validated
-                )),
+                Some(
+                  PcipalRequestData(
+                    crypto.encrypt(taxReference1),
+                    "transaction2",
+                    StatusTypes.validated
+                  )
+                ),
                 TaxTypes.MIB
               ),
               PaymentData(
                 BigDecimal(4.5),
-                Some(PcipalRequestData(
-                  crypto.encrypt(taxReference2),
-                  "transaction3",
-                  StatusTypes.validated
-                )),
+                Some(
+                  PcipalRequestData(
+                    crypto.encrypt(taxReference2),
+                    "transaction3",
+                    StatusTypes.validated
+                  )
+                ),
                 TaxTypes.Nps
               ),
               PaymentData(
                 BigDecimal(5.67),
-                Some(PcipalRequestData(
-                  crypto.encrypt(taxReference2),
-                  "transaction4",
-                  StatusTypes.validated
-                )),
+                Some(
+                  PcipalRequestData(
+                    crypto.encrypt(taxReference2),
+                    "transaction4",
+                    StatusTypes.validated
+                  )
+                ),
                 TaxTypes.Ntc
               )
             )
@@ -266,7 +277,7 @@ class FindPaymentsSpec extends ItSpec {
       }
 
       val expectedTaxTypeStrings =
-        TaxTypes.values.map{ t =>
+        TaxTypes.values.map { t =>
           val expectedString = t match {
             case TpsNativeTaxTypes.ChildBenefitsRepayments => "ChildBenefitsRepayments"
             case TpsNativeTaxTypes.Sa                      => "Sa"
@@ -284,32 +295,29 @@ class FindPaymentsSpec extends ItSpec {
           t -> expectedString
         }
 
-      expectedTaxTypeStrings.foreach{
-        case (taxType, expectedTaxTypeString) =>
+      expectedTaxTypeStrings.foreach { case (taxType, expectedTaxTypeString) =>
+        s"return '$expectedTaxTypeString' as the tax type for TaxType ${taxType.toString}" in {
+          val created = todayStart.minusMillis(1.day.toMillis)
 
-          s"return '$expectedTaxTypeString' as the tax type for TaxType ${taxType.toString}" in {
-            val created = todayStart.minusMillis(1.day.toMillis)
-
-            insertData(
-              newJourney(
-                created,
-                Seq(
-                  paymentData.copy(taxType = taxType)
-                )
-              )
-
-            )
-
-            val result = performAction(FindPaymentsRequest(Seq(taxReference), 2))
-
-            status(result) shouldBe OK
-            contentAsJson(result) shouldBe Json.toJson(
-              FindPaymentsResponse(
-                Seq(expectedPayment.copy(createdOn = created, taxType = expectedTaxTypeString))
+          insertData(
+            newJourney(
+              created,
+              Seq(
+                paymentData.copy(taxType = taxType)
               )
             )
+          )
 
-          }
+          val result = performAction(FindPaymentsRequest(Seq(taxReference), 2))
+
+          status(result) shouldBe OK
+          contentAsJson(result) shouldBe Json.toJson(
+            FindPaymentsResponse(
+              Seq(expectedPayment.copy(createdOn = created, taxType = expectedTaxTypeString))
+            )
+          )
+
+        }
 
       }
 
@@ -317,9 +325,7 @@ class FindPaymentsSpec extends ItSpec {
 
   }
 
-  def newJourney(
-      createdOn:   Instant,
-      paymentData: Seq[PaymentData]): Journey = {
+  def newJourney(createdOn: Instant, paymentData: Seq[PaymentData]): Journey = {
     val paymentItems = paymentData.map(p =>
       PaymentItem(
         PaymentItemId("paymentId"),
@@ -364,9 +370,7 @@ class FindPaymentsSpec extends ItSpec {
 
 object FindPaymentsSpec {
 
-  final case class PcipalRequestData(taxReference:         String,
-                                     transactionReference: String,
-                                     status:               StatusType)
+  final case class PcipalRequestData(taxReference: String, transactionReference: String, status: StatusType)
 
   final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
 

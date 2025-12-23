@@ -19,16 +19,15 @@ package tps.startjourneymodel
 import play.api.libs.json.{Json, OFormat}
 import tps.model.CustomerName
 
-/**
- * Start Journey Request (Sjr) For Passengers (Pngr)
- */
+/** Start Journey Request (Sjr) For Passengers (Pngr)
+  */
 final case class StartJourneyRequestPngr(
-    chargeReference: String,
-    customerName:    CustomerName,
-    amount:          BigDecimal,
-    backUrl:         String,
-    resetUrl:        String,
-    finishUrl:       String
+  chargeReference: String,
+  customerName:    CustomerName,
+  amount:          BigDecimal,
+  backUrl:         String,
+  resetUrl:        String,
+  finishUrl:       String
 )
 
 object StartJourneyRequestPngr {

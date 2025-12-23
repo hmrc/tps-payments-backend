@@ -22,14 +22,12 @@ import tps.model.repo.HasId
 
 import java.time.LocalDateTime
 
-/**
- * This entity represents list of denied refs.
- * We store it in mongo.
- */
+/** This entity represents list of denied refs. We store it in mongo.
+  */
 final case class DeniedRefs(
-    _id:      DeniedRefsId,
-    refs:     List[Reference],
-    inserted: LocalDateTime
+  _id:      DeniedRefsId,
+  refs:     List[Reference],
+  inserted: LocalDateTime
 ) extends HasId[DeniedRefsId] {
 
   private lazy val refsSet: Set[Reference] = refs.toSet

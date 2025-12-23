@@ -19,12 +19,12 @@ package tps.pcipalmodel
 import play.api.libs.json.{Json, OFormat}
 
 final case class PcipalBearerTokenResponse(
-    access_token:  String,
-    token_type:    String,
-    expires_in:    Int,
-    refresh_token: String,
-    client_id:     String,
-    tenantName:    String
+  access_token:  String,
+  token_type:    String,
+  expires_in:    Int,
+  refresh_token: String,
+  client_id:     String,
+  tenantName:    String
 )
 
 object PcipalBearerTokenResponse {

@@ -19,8 +19,8 @@ package tps.journey.model
 import play.api.libs.json.{Json, OFormat}
 
 final case class StartJourneyResponse(
-    journeyId: JourneyId,
-    nextUrl:   String
+  journeyId: JourneyId,
+  nextUrl:   String
 )
 
 object StartJourneyResponse {

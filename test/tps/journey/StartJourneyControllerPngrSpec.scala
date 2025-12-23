@@ -29,23 +29,23 @@ import uk.gov.hmrc.http.UpstreamErrorResponse
 @SuppressWarnings(Array("org.wartremover.warts.AsInstanceOf"))
 class StartJourneyControllerPngrSpec extends ItSpec {
 
-  private def journeyIdGenerator: TestJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
+  private def journeyIdGenerator: TestJourneyIdGenerator         = app.injector.instanceOf[TestJourneyIdGenerator]
   private def paymentItemIdGenerator: TestPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
-  private def journeyConnector: JourneyConnector = app.injector.instanceOf[JourneyConnector]
-  private implicit val request: Request[_] = TdAll.request
+  private def journeyConnector: JourneyConnector                 = app.injector.instanceOf[JourneyConnector]
+  private implicit val request: Request[_]                       = TdAll.request
 
   "start Pngr journey" in {
     val tdAll = new TdAll {
-      private val precachedId = paymentItemIdGenerator.predictNextId() //don't inline
+      private val precachedId                        = paymentItemIdGenerator.predictNextId() // don't inline
       override lazy val paymentItemId: PaymentItemId = precachedId
-      override lazy val journeyId: JourneyId = journeyIdGenerator.predictNextId()
+      override lazy val journeyId: JourneyId         = journeyIdGenerator.predictNextId()
     }
 
     AuthStub.authorised()
-    val journeyId: JourneyId = tdAll.journeyId
+    val journeyId: JourneyId                         = tdAll.journeyId
     val startJourneyRequest: StartJourneyRequestPngr = tdAll.TdJourneyPngr.startJourneyRequest
-    val startJourneyResponse: StartJourneyResponse = tdAll.TdJourneyPngr.startJourneyResponse
-    val journey: Journey = tdAll.TdJourneyPngr.journeyCreated
+    val startJourneyResponse: StartJourneyResponse   = tdAll.TdJourneyPngr.startJourneyResponse
+    val journey: Journey                             = tdAll.TdJourneyPngr.journeyCreated
 
     journeyConnector.startJourneyPngr(startJourneyRequest).futureValue shouldBe startJourneyResponse
     journeyConnector.find(journeyId).futureValue.value shouldBe journey
@@ -53,7 +53,8 @@ class StartJourneyControllerPngrSpec extends ItSpec {
 
   "not start Pngr journey if not authorised" in {
     AuthStub.notAuthorised()
-    val throwable: Throwable = journeyConnector.startJourneyPngr(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startJourneyPngr(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You do not have access to this service'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401
@@ -61,7 +62,8 @@ class StartJourneyControllerPngrSpec extends ItSpec {
 
   "not start Pngr journey if not authenticated" in {
     AuthStub.notAuthenticated()
-    val throwable: Throwable = journeyConnector.startJourneyPngr(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
+    val throwable: Throwable =
+      journeyConnector.startJourneyPngr(TdAll.TdJourneyPngr.startJourneyRequest).failed.futureValue
     throwable shouldBe an[UpstreamErrorResponse]
     throwable.getMessage should include("""'You are not logged in'""")
     throwable.asInstanceOf[UpstreamErrorResponse].statusCode shouldBe 401

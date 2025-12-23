@@ -28,7 +28,9 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
-class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authConnector: AuthConnector)(implicit ec: ExecutionContext) extends ActionRefiner[Request, AuthenticatedRequest] { self =>
+class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authConnector: AuthConnector)(implicit
+  ec: ExecutionContext
+) extends ActionRefiner[Request, AuthenticatedRequest] { self =>
 
   override def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
@@ -40,8 +42,9 @@ class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authC
       .retrieve(credentials) {
         case Some(credentials) => Future.successful(Right(new AuthenticatedRequest(request, credentials)))
         case None              => Future.successful(Left(unauthorised))
-      }.recover {
-        case _: NoActiveSession =>
+      }
+      .recover {
+        case _: NoActiveSession        =>
           logger.warn(s"Unauthorised, no active session")
           Left(notLoggedIn)
         case e: AuthorisationException =>
@@ -55,5 +58,5 @@ class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authC
   private val af: AuthorisedFunctions = new AuthorisedFunctions {
     override def authConnector: AuthConnector = self.authConnector
   }
-  private lazy val logger: Logger = Logger(this.getClass)
+  private lazy val logger: Logger     = Logger(this.getClass)
 }

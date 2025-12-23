@@ -31,17 +31,19 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class TestController @Inject() (
-    deniedRefsRepo: DeniedRefsRepo,
-    cc:             ControllerComponents,
-    journeyService: JourneyService
-)(implicit ec: ExecutionContext) extends BackendController(cc) {
+  deniedRefsRepo: DeniedRefsRepo,
+  cc:             ControllerComponents,
+  journeyService: JourneyService
+)(implicit ec: ExecutionContext)
+    extends BackendController(cc) {
 
   def findById(journeyId: JourneyId): Action[AnyContent] = Action.async {
     journeyService.find(journeyId).map(result => Ok(toJson(result)))
   }
 
   def storeTpsPayments(): Action[Journey] = Action.async(parse.json[Journey]) { implicit request =>
-    val updatedPayments: List[PaymentItem] = request.body.payments map (payment => payment.copy(paymentItemId = PaymentItemId(ObjectId.get().toHexString)))
+    val updatedPayments: List[PaymentItem] =
+      request.body.payments map (payment => payment.copy(paymentItemId = PaymentItemId(ObjectId.get().toHexString)))
     journeyService.upsert(request.body.copy(payments = updatedPayments)).map { _ =>
       Ok(toJson(request.body._id))
     }

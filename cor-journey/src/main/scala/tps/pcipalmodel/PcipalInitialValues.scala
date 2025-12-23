@@ -20,57 +20,57 @@ import tps.model.{HeadOfDutyIndicator, PaymentItemId}
 
 //TODO: make strong types instead of Strings
 final case class PcipalInitialValues(
-    clientId:           String,
-    pid:                String,
-    accountOfficeId:    String,
-    HODIdentifier:      HeadOfDutyIndicator,
-    UTRReference:       String,
-    name1:              String,
-    amount:             String,
-    taxAmount:          Option[String], //for Paye only
-    nicAmount:          Option[String], //for Paye only
-    lnpClass2:          Option[String], //for Nps only
-    nirRate:            Option[String], //for Nps only
-    startDate:          Option[String], //for Nps only
-    endDate:            Option[String], //for Nps only
-    vatPeriodReference: Option[String], //always None
-    vatRemittanceType:  Option[String], //for Vat only
-    paymentItemId:      PaymentItemId,
-    chargeReference:    String,
-    taxRegimeDisplay:   String,
-    reference:          String,
-    increment:          String
+  clientId:           String,
+  pid:                String,
+  accountOfficeId:    String,
+  HODIdentifier:      HeadOfDutyIndicator,
+  UTRReference:       String,
+  name1:              String,
+  amount:             String,
+  taxAmount:          Option[String], // for Paye only
+  nicAmount:          Option[String], // for Paye only
+  lnpClass2:          Option[String], // for Nps only
+  nirRate:            Option[String], // for Nps only
+  startDate:          Option[String], // for Nps only
+  endDate:            Option[String], // for Nps only
+  vatPeriodReference: Option[String], // always None
+  vatRemittanceType:  Option[String], // for Vat only
+  paymentItemId:      PaymentItemId,
+  chargeReference:    String,
+  taxRegimeDisplay:   String,
+  reference:          String,
+  increment:          String
 )
 
 object PcipalInitialValues {
 
-  val ClientID = "ClientID_"
-  val PID = "PID_"
-  val AccountOfficeID = "AccountOfficeID_"
-  val HODIdentifier = "HODIdentifier_"
-  val UTRReference = "UTRReference_"
-  val Name1 = "Name1_"
-  val Amount = "Amount_"
-  val TaxAmount = "TaxAmount_"
-  val NICAmount = "NICAmount_"
-  val LNPClass2 = "LNPClass2_"
-  val NIRSRate = "NIRSRate_"
-  val StartDate = "StartDate_"
-  val EndDate = "EndDate_"
-  val VATPeriodReference = "VATPeriodReference_"
-  val VATRemittanceType = "VATRemittanceType_"
-  val PaymentItemID = "PaymentItemID_"
-  val ChargeReference = "ChargeReference_"
-  val TaxRegimeDisplay = "TaxRegimeDisplay_"
-  val ReferenceDisplay = "Reference_"
-  val UTRBlacklistFlag = "UTRBlacklistFlag"
-  val postcodeFlag = "postcodeFlag"
-  val taxRegime = "taxRegime"
+  val ClientID            = "ClientID_"
+  val PID                 = "PID_"
+  val AccountOfficeID     = "AccountOfficeID_"
+  val HODIdentifier       = "HODIdentifier_"
+  val UTRReference        = "UTRReference_"
+  val Name1               = "Name1_"
+  val Amount              = "Amount_"
+  val TaxAmount           = "TaxAmount_"
+  val NICAmount           = "NICAmount_"
+  val LNPClass2           = "LNPClass2_"
+  val NIRSRate            = "NIRSRate_"
+  val StartDate           = "StartDate_"
+  val EndDate             = "EndDate_"
+  val VATPeriodReference  = "VATPeriodReference_"
+  val VATRemittanceType   = "VATRemittanceType_"
+  val PaymentItemID       = "PaymentItemID_"
+  val ChargeReference     = "ChargeReference_"
+  val TaxRegimeDisplay    = "TaxRegimeDisplay_"
+  val ReferenceDisplay    = "Reference_"
+  val UTRBlacklistFlag    = "UTRBlacklistFlag"
+  val postcodeFlag        = "postcodeFlag"
+  val taxRegime           = "taxRegime"
   val TotalTaxAmountToPay = "TotalTaxAmountToPay"
-  val callbackUrl = "callbackUrl"
-  val backURL = "backURL"
-  val resetURL = "resetURL"
-  val finishURL = "finishURL"
-  val LanguageFlag = "LanguageFlag"
+  val callbackUrl         = "callbackUrl"
+  val backURL             = "backURL"
+  val resetURL            = "resetURL"
+  val finishURL           = "finishURL"
+  val LanguageFlag        = "LanguageFlag"
 
 }

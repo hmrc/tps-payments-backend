@@ -29,8 +29,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 final class EmailConnector @Inject() (
-    httpClient:     HttpClientV2,
-    servicesConfig: ServicesConfig
+  httpClient:     HttpClientV2,
+  servicesConfig: ServicesConfig
 )(implicit ec: ExecutionContext) {
 
   def sendEmail(emailSendRequest: EmailSendRequest)(implicit headerCarrier: HeaderCarrier): Future[Unit] = {

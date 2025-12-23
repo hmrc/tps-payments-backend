@@ -21,20 +21,20 @@ import testsupport.UnitSpec
 class CustomerNameSpec extends UnitSpec {
 
   val testCases: Map[String, String] = Map(
-    "  COMPANY@# Ltd.  " -> "COMPANY Ltd",
-    "John   Doe!!!" -> "John Doe",
-    "Best-Buy!!! Stores" -> "BestBuy Stores",
-    "123 Trading Co. (UK)" -> "123 Trading Co UK",
-    " O'Reilly * Books " -> "OReilly Books",
-    "A/B Enterprises" -> "AB Enterprises",
-    "Smith, Johnson & Partners" -> "Smith Johnson Partners",
+    "  COMPANY@# Ltd.  "           -> "COMPANY Ltd",
+    "John   Doe!!!"                -> "John Doe",
+    "Best-Buy!!! Stores"           -> "BestBuy Stores",
+    "123 Trading Co. (UK)"         -> "123 Trading Co UK",
+    " O'Reilly * Books "           -> "OReilly Books",
+    "A/B Enterprises"              -> "AB Enterprises",
+    "Smith, Johnson & Partners"    -> "Smith Johnson Partners",
     "  Global-Tech$$$ Solutions  " -> "GlobalTech Solutions",
-    "Foo___Bar   Inc." -> "FooBar Inc",
-    " Alpha  Beta    Gamma " -> "Alpha Beta Gamma",
-    "Tr@d!ng £ Co." -> "Trdng Co",
-    "    Mega###Corp!!!   " -> "MegaCorp",
-    "Jean-Luc   Picard" -> "JeanLuc Picard",
-    "New\tLine\nCompany" -> "NewLineCompany"
+    "Foo___Bar   Inc."             -> "FooBar Inc",
+    " Alpha  Beta    Gamma "       -> "Alpha Beta Gamma",
+    "Tr@d!ng £ Co."                -> "Trdng Co",
+    "    Mega###Corp!!!   "        -> "MegaCorp",
+    "Jean-Luc   Picard"            -> "JeanLuc Picard",
+    "New\tLine\nCompany"           -> "NewLineCompany"
   )
 
   "forRecon" - {
