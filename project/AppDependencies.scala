@@ -5,7 +5,7 @@ object AppDependencies {
   val bootstrapVersion: String = "10.5.0"
   val hmrcMongoVersion: String = "2.11.0"
   val playJsonDerivedCodesVersion: String = "11.0.0"
-  val enumeratumPlayVersion: String = "1.9.1"
+  val enumeratumPlayVersion: String = "1.9.2"
 
   lazy val microserviceDependencies: Seq[ModuleID] = {
 
