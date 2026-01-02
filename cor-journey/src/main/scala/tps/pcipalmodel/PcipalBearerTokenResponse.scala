@@ -27,7 +27,6 @@ final case class PcipalBearerTokenResponse(
   tenantName:    String
 )
 
-object PcipalBearerTokenResponse {
+object PcipalBearerTokenResponse:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PcipalBearerTokenResponse] = Json.format[PcipalBearerTokenResponse]
-}
+  given OFormat[PcipalBearerTokenResponse] = Json.format[PcipalBearerTokenResponse]

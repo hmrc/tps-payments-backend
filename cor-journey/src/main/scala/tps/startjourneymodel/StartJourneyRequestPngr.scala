@@ -28,9 +28,8 @@ final case class StartJourneyRequestPngr(
   backUrl:         String,
   resetUrl:        String,
   finishUrl:       String
-)
+) derives CanEqual
 
-object StartJourneyRequestPngr {
+object StartJourneyRequestPngr:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[StartJourneyRequestPngr] = Json.format[StartJourneyRequestPngr]
-}
+  given OFormat[StartJourneyRequestPngr] = Json.format[StartJourneyRequestPngr]

@@ -34,8 +34,8 @@ class TestController @Inject() (
   deniedRefsRepo: DeniedRefsRepo,
   cc:             ControllerComponents,
   journeyService: JourneyService
-)(implicit ec: ExecutionContext)
-    extends BackendController(cc) {
+)(using ec: ExecutionContext)
+    extends BackendController(cc):
 
   def findById(journeyId: JourneyId): Action[AnyContent] = Action.async {
     journeyService.find(journeyId).map(result => Ok(toJson(result)))
@@ -50,9 +50,6 @@ class TestController @Inject() (
   }
 
   def dropDeniedRefsDb(): Action[AnyContent] = Action.async { _ =>
-    for {
-      result <- deniedRefsRepo.drop()
-    } yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
+    for result <- deniedRefsRepo.drop()
+    yield Ok(Json.obj("denied-refs-collection-dropped" -> result))
   }
-
-}

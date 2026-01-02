@@ -19,7 +19,7 @@ package testsupport
 import journeysupport.TestJourneyIdGenerator
 import tps.journey.model.JourneyIdGenerator
 
-class TestJourneyIdGeneratorSpec extends ItSpec {
+class TestJourneyIdGeneratorSpec extends ItSpec:
 
   "predict next journeyId" in {
     val testJourneyIdGenerator = app.injector.instanceOf[TestJourneyIdGenerator]
@@ -30,5 +30,3 @@ class TestJourneyIdGeneratorSpec extends ItSpec {
       journeyIdGenerator.nextId() shouldBe predicted
     }
   }
-
-}

@@ -22,7 +22,7 @@ import tps.journey.model.JourneyId
 import tps.model.PaymentItemId
 import tps.pcipalmodel.PcipalSessionId
 
-class JourneyServiceSpec extends ItSpec {
+class JourneyServiceSpec extends ItSpec:
 
   "findByPcipalSessionId should throw error when more than one payment found" in {
     Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
@@ -41,7 +41,7 @@ class JourneyServiceSpec extends ItSpec {
   "findPaymentItem should optionally find the matching payment item" in {
     journeyService.findPaymentItem(paymentItemId).futureValue shouldBe None
     journeyService.upsert(journey).futureValue
-    journeyService.findPaymentItem(paymentItemId).futureValue shouldBe Some(journey.payments.headOption.value)
+    journeyService.findPaymentItem(paymentItemId).futureValue.value shouldBe journey.payments.headOption.value
   }
 
   "upsert should encrypt relevant fields in journey" in {
@@ -58,5 +58,3 @@ class JourneyServiceSpec extends ItSpec {
       journeyInMongo.toString should not include sensitiveData withClue "there were unencrypted values in the 'encrypted' journey..."
     }
   }
-
-}

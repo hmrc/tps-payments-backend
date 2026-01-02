@@ -16,7 +16,6 @@
 
 package deniedrefs
 
-import tps.utils.SafeEquals._
 import org.apache.pekko.Done
 import org.apache.pekko.stream.Materializer
 import org.apache.pekko.stream.connectors.csv.scaladsl.CsvParsing
@@ -43,14 +42,13 @@ class DeniedRefsService @Inject() (
   crypto:                Crypto,
   deniedRefsIdGenerator: DeniedRefsIdGenerator,
   clock:                 Clock
-)(implicit ec: ExecutionContext, materializer: Materializer) {
+)(using ec: ExecutionContext, materializer: Materializer):
 
   /** Upserts object into mongo. It makes sure refs are encrypted before storing in mongo.
     */
-  def upsert(deniedRefs: DeniedRefs): Future[UpdateResult] = {
+  def upsert(deniedRefs: DeniedRefs): Future[UpdateResult] =
     val deniedRefsEncryted = deniedRefs.copy(refs = deniedRefs.refs.map(ref => Reference(crypto.encrypt(ref.value))))
     deniedRefsRepo.upsert(deniedRefsEncryted)
-  }
 
   /** Finds the latest `DeniedRefsId`
     *
@@ -66,7 +64,7 @@ class DeniedRefsService @Inject() (
       .map(decryptDeniedRefs)
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
-  private def decryptDeniedRefs(encryptedDeniedRefs: DeniedRefs): DeniedRefs = {
+  private def decryptDeniedRefs(encryptedDeniedRefs: DeniedRefs): DeniedRefs =
     val decryptionResult: List[Try[String]]    = encryptedDeniedRefs.refs
       .map(ref => Try(crypto.decrypt(ref.value)))
     val successfullyDecrypted: List[Reference] = decryptionResult.collect { case Success(ref) => Reference(ref) }
@@ -77,14 +75,13 @@ class DeniedRefsService @Inject() (
       )
     }
     encryptedDeniedRefs.copy(refs = successfullyDecrypted)
-  }
 
   /** Given a file containing list of denied refs at `pathToDeniedRefs` this method:
     *   - parses it as CSV
     *   - unifies Refs (trims, adds missing K, uppercases)
     *   - deletes file when done
     */
-  def parseDeniedRefs(pathToDeniedrefs: Path): Future[DeniedRefs] = {
+  def parseDeniedRefs(pathToDeniedrefs: Path): Future[DeniedRefs] =
     val deniedRefs = FileIO
       .fromPath(pathToDeniedrefs)
       .mapMaterializedValue(_ => Done)
@@ -102,31 +99,28 @@ class DeniedRefsService @Inject() (
       .run()
     deniedRefs.onComplete(_ => deleteTempFile(pathToDeniedrefs))
     deniedRefs
-  }
 
   private def deleteTempFile(pathToCsv: Path): Unit = Future(Files.deleteIfExists(pathToCsv))
-    .onComplete {
-      case Success(deleted) =>
-        if (deleted) logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
-        else logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]")
-      case Failure(ex)      => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
-    }
+    .onComplete:
+    case Success(deleted) =>
+      if deleted then logger.info(s"Deleted temporary csv file with refs [${pathToCsv.toString}]")
+      else logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]")
+    case Failure(ex)      => logger.warn(s"Could not deleted temporary csv file with refs [${pathToCsv.toString}]", ex)
 
   private val cachedDeniedRefs = new AtomicReference[Option[DeniedRefs]](None)
 
   def verifyRefs(refs: Set[Reference]): VerifyRefsStatus =
-    cachedDeniedRefs.get() match {
+    cachedDeniedRefs.get() match
       case Some(cache) =>
         val anyDenied = refs.exists(cache.containsRef)
-        if (anyDenied) RefDenied else RefPermitted
+        if anyDenied then RefDenied else RefPermitted
       case None        => MissingInformation
-    }
 
-  def updateCacheIfNeeded(): Future[Unit] = {
+  def updateCacheIfNeeded(): Future[Unit] =
     val cache: Option[DeniedRefs] = cachedDeniedRefs.get()
-    for {
+    for
       latestId: Option[DeniedRefsId] <- findLatestDeniedRefsId()
-      _                              <- (cache, latestId) match {
+      _                              <- (cache, latestId) match
                                           case (_, None)                      =>
                                             logger.info(s"DeniedRefs cache is empty. Missing DeniedRefs in database.")
                                             Future.successful(())
@@ -134,18 +128,15 @@ class DeniedRefsService @Inject() (
                                             logger.info(s"DeniedRefs cache is empty. Populating it ... [${latestId.toString}]")
                                             updateCache(latestId)
                                           case (Some(cached), Some(latestId)) =>
-                                            if (cached._id === latestId) {
+                                            if cached._id == latestId then
                                               logger.debug(
                                                 s"DeniedRefs cache is up to date [inserted:${cached.inserted.toString}] [${latestId.toString}]"
                                               )
                                               Future.successful(())
-                                            } else {
+                                            else
                                               logger.info(s"DeniedRefs cache is invalid. Populating it ... [${latestId.toString}]")
                                               updateCache(latestId)
-                                            }
-                                        }
-    } yield ()
-  }
+    yield ()
 
   private def updateCache(latestId: DeniedRefsId): Future[Unit] = getDeniedRefs(latestId).map { deniedRefs =>
     cachedDeniedRefs.set(Some(deniedRefs))
@@ -155,4 +146,3 @@ class DeniedRefsService @Inject() (
   }
 
   lazy val logger: Logger = Logger(this.getClass)
-}

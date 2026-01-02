@@ -61,7 +61,7 @@ trait ItSpec
     with RichMatchers
     with HttpClientV2Support
     with WireMockSupport
-    with GuiceOneServerPerSuite {
+    with GuiceOneServerPerSuite:
 
   val testPort = 19001
 
@@ -74,7 +74,7 @@ trait ItSpec
 
   val clock: Clock = Clock.fixed(frozenInstant, ZoneId.of("UTC"))
 
-  private val module: AbstractModule = new AbstractModule {
+  private val module: AbstractModule = new AbstractModule:
     override def configure(): Unit =
       bind(classOf[Clock]).toInstance(clock)
 
@@ -101,7 +101,6 @@ trait ItSpec
     @Singleton
     @nowarn // silence "method never used" warning
     def testPaymentItemIdGenerator(): TestPaymentItemIdGenerator = new TestPaymentItemIdGenerator()
-  }
 
   lazy val overrideModules: List[GuiceableModule] = List()
 
@@ -125,18 +124,14 @@ trait ItSpec
     .configure(configMap)
     .build()
 
-  override def beforeEach(): Unit = {
+  override def beforeEach(): Unit =
     super.beforeEach()
     repo.drop().futureValue(Timeout(Span(10, Seconds)))
     ()
-  }
 
   override protected def testServerFactory: TestServerFactory = CustomTestServerFactory
 
-  object CustomTestServerFactory extends DefaultTestServerFactory {
-    override protected def serverConfig(app: Application): ServerConfig = {
+  object CustomTestServerFactory extends DefaultTestServerFactory:
+    override protected def serverConfig(app: Application): ServerConfig =
       val sc = ServerConfig(port = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
-    }
-  }
-}

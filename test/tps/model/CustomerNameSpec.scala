@@ -18,7 +18,7 @@ package tps.model
 
 import testsupport.UnitSpec
 
-class CustomerNameSpec extends UnitSpec {
+class CustomerNameSpec extends UnitSpec:
 
   val testCases: Map[String, String] = Map(
     "  COMPANY@# Ltd.  "           -> "COMPANY Ltd",
@@ -38,10 +38,9 @@ class CustomerNameSpec extends UnitSpec {
   )
 
   "forRecon" - {
-    for ((testValue, expectedResult) <- testCases)
+    for (testValue, expectedResult) <- testCases do
       s"should sanitize the $testValue" in {
 
         CustomerName(testValue).forRecon.value shouldBe expectedResult
       }
   }
-}

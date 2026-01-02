@@ -28,13 +28,12 @@ final case class DeniedRefs(
   _id:      DeniedRefsId,
   refs:     List[Reference],
   inserted: LocalDateTime
-) extends HasId[DeniedRefsId] {
+) extends HasId[DeniedRefsId]
+    derives CanEqual:
 
   private lazy val refsSet: Set[Reference] = refs.toSet
   def containsRef(reference: Reference): Boolean = refsSet.contains(reference)
-}
 
-object DeniedRefs {
+object DeniedRefs:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[DeniedRefs] = Json.format[DeniedRefs]
-}
+  given OFormat[DeniedRefs] = Json.format[DeniedRefs]

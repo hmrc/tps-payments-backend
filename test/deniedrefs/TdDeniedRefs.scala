@@ -22,13 +22,13 @@ import tps.model.Reference
 
 import java.time.LocalDateTime
 
-object TdDeniedRefs {
+object TdDeniedRefs:
 
-  val ref1 = Reference("REF1")
-  val ref2 = Reference("REF2")
-  val ref3 = Reference("REF3")
-  val ref4 = Reference("REF4")
-  val ref5 = Reference("REF5")
+  val ref1: Reference = Reference("REF1")
+  val ref2: Reference = Reference("REF2")
+  val ref3: Reference = Reference("REF3")
+  val ref4: Reference = Reference("REF4")
+  val ref5: Reference = Reference("REF5")
 
   val csvFile1: String =
     s"""${ref1.value}
@@ -43,18 +43,16 @@ object TdDeniedRefs {
        |${ref5.value}
        |""".stripMargin
 
-  val deniedRefs1 = DeniedRefs(
+  val deniedRefs1: DeniedRefs = DeniedRefs(
     _id = DeniedRefsId("denied-refs-id-123"),
     refs = List(ref1, ref2, ref3),
     inserted = LocalDateTime.parse("2022-02-04T10:00:24.371")
   )
 
-  val deniedRefs2 = DeniedRefs(
+  val deniedRefs2: DeniedRefs = DeniedRefs(
     _id = DeniedRefsId("denied-refs-id-123"),
     refs = List(ref2, ref3, ref4),
     inserted = LocalDateTime.parse("2022-02-05T10:00:24.371")
   )
 
-  val verifyRefRequest = VerifyRefsRequest(Set(ref1))
-
-}
+  val verifyRefRequest: VerifyRefsRequest = VerifyRefsRequest(Set(ref1))

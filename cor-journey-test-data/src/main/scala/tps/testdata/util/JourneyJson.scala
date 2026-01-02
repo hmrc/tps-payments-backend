@@ -19,10 +19,11 @@ package tps.testdata.util
 import play.api.libs.json.JsObject
 import tps.testdata.util.JsonSyntax.toJsonOps
 
-final case class JourneyJson(resourcePath: String) {
+import scala.reflect.Selectable.reflectiveSelectable
+
+final case class JourneyJson(resourcePath: String):
   val simpleName: String = resourcePath
     .replace("""/tps/testdata/""", "")
     .replace(""".json""", "")
 
   lazy val json: JsObject = ResourceReader.read(resourcePath).asJson
-}

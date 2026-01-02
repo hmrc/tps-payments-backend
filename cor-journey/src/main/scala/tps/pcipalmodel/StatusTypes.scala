@@ -20,25 +20,21 @@ import enumeratum._
 import play.api.libs.json.Format
 import tps.utils.EnumFormat
 import play.api.mvc.{PathBindable, QueryStringBindable}
-import tps.utils.SafeEquals.EqualsOps
 
 import scala.collection.immutable
 
-sealed abstract class StatusType extends EnumEntry
+sealed abstract class StatusType extends EnumEntry derives CanEqual
 
-object StatusType {
-  implicit val format: Format[StatusType]                  = EnumFormat(StatusTypes)
-  implicit val pathBinder: QueryStringBindable[StatusType] = tps.utils.ValueClassBinder.bindableA(_.toString)
-  implicit val statusBinder: PathBindable[StatusType]      = tps.utils.ValueClassBinder.valueClassBinder(_.toString)
-}
+object StatusType:
+  given Format[StatusType]                          = EnumFormat(StatusTypes)
+  given pathBinder: QueryStringBindable[StatusType] = tps.utils.ValueClassBinder.bindableA(_.toString)
+  given statusBinder: PathBindable[StatusType]      = tps.utils.ValueClassBinder.valueClassBinder(_.toString)
 
-object StatusTypes extends Enum[StatusType] {
-  def forCode(code: String): Option[StatusType] = values.find(_.toString === code)
+object StatusTypes extends Enum[StatusType]:
+  def forCode(code: String): Option[StatusType] = values.find(_.toString == code)
 
   val values: immutable.IndexedSeq[StatusType] = findValues
 
   case object validated extends StatusType
 
   case object failed extends StatusType
-
-}

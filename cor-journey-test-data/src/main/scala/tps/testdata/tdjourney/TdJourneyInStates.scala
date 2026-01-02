@@ -28,7 +28,7 @@ import java.time.Instant
   *
   * See `allJourneys` to see what journey moments are supported
   */
-trait TdJourneyInStates {
+trait TdJourneyInStates:
 
   lazy val allJourneys: List[(Journey, JourneyJson)] = List(
     (journeyStarted, journeyStartedJson),
@@ -158,4 +158,3 @@ trait TdJourneyInStates {
   )
 
   def journeyReceivedNotificationJson: JourneyJson
-}

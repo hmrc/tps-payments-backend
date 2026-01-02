@@ -19,8 +19,7 @@ package tps.deniedrefs.model
 import play.api.libs.json.{Json, OFormat}
 import tps.model.Reference
 
-final case class VerifyRefsRequest(refs: Set[Reference])
+final case class VerifyRefsRequest(refs: Set[Reference]) derives CanEqual
 
-object VerifyRefsRequest {
-  implicit val format: OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]
-}
+object VerifyRefsRequest:
+  given OFormat[VerifyRefsRequest] = Json.format[VerifyRefsRequest]

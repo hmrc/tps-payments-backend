@@ -23,8 +23,8 @@ import tps.utils.ValueClassBinder.valueClassBinder
 final case class PaymentItemId(
   value: String
 ) extends AnyVal
+    derives CanEqual
 
-object PaymentItemId {
-  implicit val format: Format[PaymentItemId]                = Json.valueFormat
-  implicit val journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)
-}
+object PaymentItemId:
+  given Format[PaymentItemId]                        = Json.valueFormat[PaymentItemId]
+  given journeyIdBinder: PathBindable[PaymentItemId] = valueClassBinder(_.value)

@@ -29,14 +29,11 @@ import javax.inject.Inject
   * Use it to provide HeaderCarrier, Lang, or Messages Note that Lang and Messages will be developed soon (see
   * pay-frontend code for reference)
   */
-class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport {
+class RequestSupport @Inject() (override val messagesApi: MessagesApi) extends I18nSupport:
 
-  implicit def hc(implicit request: RequestHeader): HeaderCarrier = RequestSupport.hc
-}
+  implicit def hc(using request: RequestHeader): HeaderCarrier = RequestSupport.hc
 
-object RequestSupport {
+object RequestSupport:
 
-  implicit def hc(implicit request: RequestHeader): HeaderCarrier =
+  implicit def hc(using request: RequestHeader): HeaderCarrier =
     HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-
-}

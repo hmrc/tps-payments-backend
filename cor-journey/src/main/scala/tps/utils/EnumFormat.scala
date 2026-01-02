@@ -19,7 +19,7 @@ package tps.utils
 import enumeratum.{Enum, EnumEntry}
 import play.api.libs.json._
 
-object EnumFormat {
+object EnumFormat:
   def apply[T <: EnumEntry](e: Enum[T]): Format[T] = Format(
     Reads {
       case JsString(value) =>
@@ -30,4 +30,3 @@ object EnumFormat {
     },
     Writes(v => JsString(v.entryName))
   )
-}

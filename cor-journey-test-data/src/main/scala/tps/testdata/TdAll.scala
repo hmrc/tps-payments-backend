@@ -41,7 +41,7 @@ trait TdAll
     with TdJourneyNps
     with TdJourneyVat
     with TdJourneyPpt
-    with TdMultiPaymentJourney {
+    with TdMultiPaymentJourney:
 
   /** only journeys with TpsInternalTaxType
     */
@@ -85,5 +85,3 @@ trait TdAll
     ))
       .foldLeft[List[(Journey, JourneyJson)]](Nil)(_ ++ _)
       .++(TdJourneyMultiPayment.allJourneys)
-
-}

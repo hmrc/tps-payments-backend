@@ -18,7 +18,7 @@ package tps.journey.model
 
 import testsupport.UnitSpec
 
-class PaymentItemIdGeneratorSpec extends UnitSpec {
+class PaymentItemIdGeneratorSpec extends UnitSpec:
 
   "generates unique values" in {
     val generator = new PaymentItemIdGenerator()
@@ -26,5 +26,3 @@ class PaymentItemIdGeneratorSpec extends UnitSpec {
     val ids       = (0 until n).map(_ => generator.nextId()).toSet
     ids.size shouldBe n
   }
-
-}

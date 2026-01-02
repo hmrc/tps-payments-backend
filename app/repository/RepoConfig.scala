@@ -21,9 +21,8 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import scala.concurrent.duration.Duration
 
-final case class RepoConfig(expireMongo: Duration) {
+final case class RepoConfig(expireMongo: Duration):
 
   @Inject
   def this(servicesConfig: ServicesConfig) =
     this(servicesConfig.getDuration("expireMongo"))
-}

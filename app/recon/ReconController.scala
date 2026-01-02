@@ -25,14 +25,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ReconController @Inject() (cc: ControllerComponents, reconService: ReconService)(implicit
+class ReconController @Inject() (cc: ControllerComponents, reconService: ReconService)(using
   executionContext: ExecutionContext
-) extends BackendController(cc) {
+) extends BackendController(cc):
 
   val findModsPayments: Action[FindRPaymentSpecificDataRequest] =
     Action.async(parse.json[FindRPaymentSpecificDataRequest]) { implicit request =>
-      for {
-        transactions: Seq[PaymentSpecificData] <- reconService.findModsPaymentsByReference(request.body.modsReferences)
-      } yield Ok(Json.toJson(transactions))
+      for transactions: Seq[PaymentSpecificData] <-
+          reconService.findModsPaymentsByReference(request.body.modsReferences)
+      yield Ok(Json.toJson(transactions))
     }
-}

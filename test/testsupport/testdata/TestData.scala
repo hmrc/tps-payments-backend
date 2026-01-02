@@ -28,8 +28,8 @@ import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
 
 import java.time.Instant
 
-object TestData {
-  val navigation = Navigation(back = "back", reset = "reset", finish = "finish", callback = "callback")
+object TestData:
+  val navigation: Navigation = Navigation(back = "back", reset = "reset", finish = "finish", callback = "callback")
 
   private val createdString: String       = "2040-01-20T11:56:46Z"
   private val createdStringLegacy: String = "2040-01-20T11:56:46"
@@ -611,5 +611,3 @@ object TestData {
     ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest =
     ModsPaymentCallBackRequest("XMIB12345678", None)
-
-}

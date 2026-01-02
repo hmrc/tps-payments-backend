@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package tps.pcipalmodel
+package testsupport
 
-import play.api.libs.json._
-import play.api.mvc.PathBindable
-import tps.utils.ValueClassBinder.valueClassBinder
+import play.api.libs.json.{JsResult, JsValue}
 
-final case class PcipalSessionId(
-  value: String
-) extends AnyVal
-    derives CanEqual
-
-object PcipalSessionId:
-  given Format[PcipalSessionId]               = Json.valueFormat[PcipalSessionId]
-  given binder: PathBindable[PcipalSessionId] = valueClassBinder(_.value)
+object Givens:
+  given canEqualJsValue: CanEqual[JsValue, JsValue]             = CanEqual.derived
+  given canEqualJsResult[A]: CanEqual[JsResult[A], JsResult[A]] = CanEqual.derived
+  given canEqualOption[A]: CanEqual[Option[A], Option[A]]       = CanEqual.derived
+  given canEqualList[A]: CanEqual[List[A], List[A]]             = CanEqual.derived

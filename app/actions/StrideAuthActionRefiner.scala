@@ -28,12 +28,12 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
 
-class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authConnector: AuthConnector)(implicit
+class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authConnector: AuthConnector)(using
   ec: ExecutionContext
 ) extends ActionRefiner[Request, AuthenticatedRequest] { self =>
 
-  override def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
+  override def refine[A](request: Request[A]): Future[Either[Result, AuthenticatedRequest[A]]] =
+    given HeaderCarrier = HeaderCarrierConverter.fromRequest(request)
 
     val predicate = Enrolment("tps_payment_taker_call_handler") and AuthProviders(PrivilegedApplication)
 
@@ -51,12 +51,10 @@ class StrideAuthActionRefiner @Inject() (cc: MessagesControllerComponents, authC
           logger.info(s"Unauthorised because of ${e.reason}, ${e.toString}")
           Left(unauthorised)
       }
-  }
 
   override protected def executionContext: ExecutionContext = cc.executionContext
 
-  private val af: AuthorisedFunctions = new AuthorisedFunctions {
+  private val af: AuthorisedFunctions = new AuthorisedFunctions:
     override def authConnector: AuthConnector = self.authConnector
-  }
   private lazy val logger: Logger     = Logger(this.getClass)
 }

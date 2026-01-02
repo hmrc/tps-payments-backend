@@ -21,7 +21,7 @@ import tps.pcipalmodel.{PcipalInitialValues, PcipalSessionLaunchRequest, PcipalS
 import tps.testdata.TdBase
 import tps.testdata.util.JourneyJson
 
-trait TdMultiPaymentJourney {
+trait TdMultiPaymentJourney:
   dependencies: TdBase
     with TdJourneyChildBenefit // for 1st item in a basket
     with TdJourneyCotax // for 2nd item in a basket
@@ -32,7 +32,7 @@ trait TdMultiPaymentJourney {
 
   // special case of the journey data where journey has more then 1 (5 actually) items in a basket
   // TODO: make TdJourneyInStates abstract so it can be used here
-  object TdJourneyMultiPayment {
+  object TdJourneyMultiPayment:
 
     private lazy val exampleJourneyAfterCreated: Journey = dependencies.TdJourneyChildBenefit.journeyStarted
 
@@ -68,7 +68,7 @@ trait TdMultiPaymentJourney {
       initialValues.copy(increment = increment.toString)
     }
 
-    lazy val amount =
+    lazy val amount: BigDecimal =
       dependencies.TdJourneyChildBenefit.amountEdited +
         dependencies.TdJourneyCotax.amountEdited +
         dependencies.TdJourneyVat.amountEdited +
@@ -130,7 +130,3 @@ trait TdMultiPaymentJourney {
       (journeyAtPciPal, journeyAtPciPalJson),
       (journeyReceivedAllNotifications, journeyReceivedAllNotificationsJson)
     )
-
-  }
-
-}

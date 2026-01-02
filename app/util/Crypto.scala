@@ -21,7 +21,7 @@ import com.typesafe.config.Config
 import uk.gov.hmrc.crypto._
 
 @Singleton
-class Crypto @Inject() (config: Config) {
+class Crypto @Inject() (config: Config):
 
   private val oldEncrypterDecrypter: Encrypter with Decrypter =
     SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", config)
@@ -35,5 +35,3 @@ class Crypto @Inject() (config: Config) {
   def encrypt(s: String): String = encrypterDecrypter.encrypt(PlainText(s)).value
 
   def decrypt(s: String): String = encrypterDecrypter.decrypt(Crypted(s)).value
-
-}

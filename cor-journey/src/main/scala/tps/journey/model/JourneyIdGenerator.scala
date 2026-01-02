@@ -21,6 +21,5 @@ import org.bson.types.ObjectId
 import javax.inject.Singleton;
 
 @Singleton
-class JourneyIdGenerator {
+class JourneyIdGenerator:
   def nextId(): JourneyId = JourneyId(ObjectId.get().toHexString)
-}

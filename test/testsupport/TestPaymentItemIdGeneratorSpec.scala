@@ -19,7 +19,7 @@ package testsupport
 import journeysupport.TestPaymentItemIdGenerator
 import tps.journey.model.PaymentItemIdGenerator
 
-class TestPaymentItemIdGeneratorSpec extends ItSpec {
+class TestPaymentItemIdGeneratorSpec extends ItSpec:
 
   "predict next PaymentItemId" in {
     val testPaymentItemIdGenerator = app.injector.instanceOf[TestPaymentItemIdGenerator]
@@ -30,5 +30,3 @@ class TestPaymentItemIdGeneratorSpec extends ItSpec {
       paymentItemIdGenerator.nextId() shouldBe predicted
     }
   }
-
-}

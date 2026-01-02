@@ -24,6 +24,7 @@ import tps.utils.RequestSupport._
 import uk.gov.hmrc.http.StringContextOps
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class VerifyRefsConnector @Inject() (
   httpClient:     HttpClientV2,
   servicesConfig: ServicesConfig
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext):
 
   private val serviceURL: String = servicesConfig.baseUrl("tps-payments-backend")
 
@@ -41,5 +42,3 @@ class VerifyRefsConnector @Inject() (
       .post(url"$serviceURL/tps-payments-backend/verify-refs")
       .withBody(Json.toJson(verifyRefsRequest))
       .execute[VerifyRefsResponse]
-
-}

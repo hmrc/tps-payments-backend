@@ -37,9 +37,8 @@ final case class StartJourneyRequestMib(
   backUrl:            String,
   resetUrl:           String,
   finishUrl:          String
-)
+) derives CanEqual
 
-object StartJourneyRequestMib {
+object StartJourneyRequestMib:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[StartJourneyRequestMib] = Json.format[StartJourneyRequestMib]
-}
+  given OFormat[StartJourneyRequestMib] = Json.format[StartJourneyRequestMib]

@@ -20,7 +20,6 @@ import play.api.libs.json.{Json, OFormat}
 
 final case class PcipalSessionLaunchResponse(Id: PcipalSessionId, LinkId: String)
 
-object PcipalSessionLaunchResponse {
+object PcipalSessionLaunchResponse:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]
-}
+  given OFormat[PcipalSessionLaunchResponse] = Json.format[PcipalSessionLaunchResponse]

@@ -21,7 +21,7 @@ import testsupport.ItSpec
 import tps.model._
 import tps.testdata.TdAll
 
-class EmailServiceSpec extends ItSpec {
+class EmailServiceSpec extends ItSpec:
 
   def emailService: EmailService = app.injector.instanceOf[EmailService]
 
@@ -59,4 +59,3 @@ class EmailServiceSpec extends ItSpec {
       individualPaymentForEmail.taxType shouldBe expectedTaxTypeString
     }
   }
-}

@@ -21,22 +21,17 @@ import play.api.libs.json.Format
 
 import scala.collection.immutable
 
-sealed trait DestinationAccountOffice extends EnumEntry {
+sealed trait DestinationAccountOffice extends EnumEntry:
   val id: String
-}
 
-object DestinationAccountOffice {
-  implicit val format: Format[DestinationAccountOffice] = tps.utils.EnumFormat(AccountOfficeIds)
-}
+object DestinationAccountOffice:
+  given Format[DestinationAccountOffice] = tps.utils.EnumFormat(AccountOfficeIds)
 
-object AccountOfficeIds extends Enum[DestinationAccountOffice] {
+object AccountOfficeIds extends Enum[DestinationAccountOffice]:
   val values: immutable.IndexedSeq[DestinationAccountOffice] = findValues
 
-  case object ShipleyDestinationAccountOffice extends DestinationAccountOffice {
+  case object ShipleyDestinationAccountOffice extends DestinationAccountOffice:
     override val id: String = "S1"
-  }
 
-  case object CumbernauldDestinationAccountOffice extends DestinationAccountOffice {
+  case object CumbernauldDestinationAccountOffice extends DestinationAccountOffice:
     override val id: String = "G1"
-  }
-}

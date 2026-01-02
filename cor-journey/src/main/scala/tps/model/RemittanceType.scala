@@ -21,46 +21,35 @@ import play.api.libs.json.Format
 
 import scala.collection.immutable
 
-sealed trait RemittanceType extends EnumEntry {
+sealed trait RemittanceType extends EnumEntry:
   val pcipalValue: String
   val screenValue: String
-}
 
-object RemittanceType {
-  implicit val format: Format[RemittanceType] = tps.utils.EnumFormat(RemittanceTypes)
-}
+object RemittanceType:
+  given Format[RemittanceType] = tps.utils.EnumFormat(RemittanceTypes)
 
-object RemittanceTypes extends Enum[RemittanceType] {
+object RemittanceTypes extends Enum[RemittanceType]:
   val values: immutable.IndexedSeq[RemittanceType] = findValues
 
-  case object Unaccompanied extends RemittanceType {
+  case object Unaccompanied extends RemittanceType:
     override val pcipalValue: String = "0"
     override val screenValue: String = "Unaccompanied"
-  }
 
-  case object Tax                extends RemittanceType {
+  case object Tax                extends RemittanceType:
     override val pcipalValue: String = "1"
     override val screenValue: String = "Tax"
-  }
-  case object VatSurcharge       extends RemittanceType {
+  case object VatSurcharge       extends RemittanceType:
     override val pcipalValue: String = "2"
     override val screenValue: String = "VAT surcharge"
-  }
-  case object Penalties          extends RemittanceType {
+  case object Penalties          extends RemittanceType:
     override val pcipalValue: String = "4"
     override val screenValue: String = "Penalties"
-  }
-  case object VatDistraintCosts  extends RemittanceType {
+  case object VatDistraintCosts  extends RemittanceType:
     override val pcipalValue: String = "6"
     override val screenValue: String = "VAT distraint costs"
-  }
-  case object VatLegalCosts      extends RemittanceType {
+  case object VatLegalCosts      extends RemittanceType:
     override val pcipalValue: String = "7"
     override val screenValue: String = "VAT legal costs"
-  }
-  case object VatDefaultInterest extends RemittanceType {
+  case object VatDefaultInterest extends RemittanceType:
     override val pcipalValue: String = "8"
     override val screenValue: String = "VAT default interest"
-  }
-
-}

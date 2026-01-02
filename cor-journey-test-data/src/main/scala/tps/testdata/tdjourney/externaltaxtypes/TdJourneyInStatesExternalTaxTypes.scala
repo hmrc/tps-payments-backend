@@ -23,7 +23,7 @@ import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-trait TdJourneyInStatesExternalTaxTypes {
+trait TdJourneyInStatesExternalTaxTypes:
   def taxType: ExternalTaxType
 
   def journeyId: JourneyId
@@ -102,4 +102,3 @@ trait TdJourneyInStatesExternalTaxTypes {
     (journeyBackByPciPal, journeyBackByPciPalJson),
     (journeyReceivedNotification, journeyReceivedNotificationJson)
   )
-}

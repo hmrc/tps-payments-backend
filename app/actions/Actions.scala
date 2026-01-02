@@ -19,8 +19,7 @@ package actions
 import com.google.inject.Inject
 import play.api.mvc._
 
-class Actions @Inject() (authoriseAction: StrideAuthActionRefiner, actionBuilder: DefaultActionBuilder) {
+class Actions @Inject() (authoriseAction: StrideAuthActionRefiner, actionBuilder: DefaultActionBuilder):
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
   val strideAuthenticated: ActionBuilder[AuthenticatedRequest, AnyContent] = actionBuilder andThen authoriseAction
-}

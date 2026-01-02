@@ -28,7 +28,7 @@ import java.time.Instant
 //TODO: remove according to OPS-11079
 trait TdJourneyPngrOld { dependencies: TdBase =>
 
-  object TdJourneyPngrOld extends TdJourneyInStatesExternalTaxTypesOld {
+  object TdJourneyPngrOld extends TdJourneyInStatesExternalTaxTypesOld:
 
     override final val taxType: ExternalTaxType = TaxTypes.PNGR
 
@@ -166,7 +166,5 @@ trait TdJourneyPngrOld { dependencies: TdBase =>
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
       "/tps/testdata/pngr/journey-8-ReceivedNotification.json"
     )
-
-  }
 
 }

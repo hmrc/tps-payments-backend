@@ -26,7 +26,7 @@ import java.time.Instant
 
 trait TdJourneyNps { dependencies: TdBase =>
 
-  object TdJourneyNps extends TdJourneyInStates {
+  object TdJourneyNps extends TdJourneyInStates:
 
     override lazy val journeyId: JourneyId               = dependencies.journeyId
     override lazy val pid: String                        = dependencies.pid
@@ -115,7 +115,7 @@ trait TdJourneyNps { dependencies: TdBase =>
     override lazy val paymentItemAfterReceivedNotification: PaymentItem =
       paymentItemEdited.copy(pcipalData = Some(pcipalData))
 
-    override lazy val journeyStartedJson = JourneyJson(
+    override lazy val journeyStartedJson: JourneyJson = JourneyJson(
       "/tps/testdata/nps/journey-1-Started.json"
     )
 
@@ -154,6 +154,5 @@ trait TdJourneyNps { dependencies: TdBase =>
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
       "/tps/testdata/nps/journey-8-ReceivedNotification.json"
     )
-  }
 
 }

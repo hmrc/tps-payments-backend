@@ -20,7 +20,7 @@ import play.api.libs.json.{JsResultException, JsString}
 import testsupport.UnitSpec
 import tps.model._
 
-class PaymentItemSpecificDataSpec extends UnitSpec {
+class PaymentItemSpecificDataSpec extends UnitSpec:
 
   "PaymentSpecificData get reference utility methods" - {
     "PngrSpecificData" in {
@@ -68,4 +68,3 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
       }.getMessage.contains("Could not read PaymentSpecificData") shouldBe true
     }
   }
-}

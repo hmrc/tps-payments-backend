@@ -20,7 +20,6 @@ import org.bson.types.ObjectId
 import play.api.libs.json.{Json, OFormat}
 import tps.journey.model.{Journey, JourneyId, JourneyState}
 import tps.model._
-import tps.utils.SafeEquals.EqualsOps
 
 import java.time.Instant
 
@@ -29,14 +28,14 @@ final case class StartJourneyRequestMibOrPngr(
   pid:        String,
   payments:   Seq[SjPaymentItem],
   navigation: Navigation
-) {
+) derives CanEqual:
 
-  require(payments.size === 1)
+  require(payments.size == 1)
   @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
   val paymentItem: SjPaymentItem = payments.head
 
   // TODO: remove this
-  def makeJourney(now: Instant): Journey = {
+  def makeJourney(now: Instant): Journey =
     val tpsPayments: List[PaymentItem] = payments.map { p =>
       PaymentItem(
         paymentItemId = PaymentItemId(ObjectId.get().toHexString),
@@ -60,10 +59,7 @@ final case class StartJourneyRequestMibOrPngr(
       payments = tpsPayments,
       navigation = navigation
     )
-  }
-}
 
-object StartJourneyRequestMibOrPngr {
+object StartJourneyRequestMibOrPngr:
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val format: OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]
-}
+  given OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]

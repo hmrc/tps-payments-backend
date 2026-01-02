@@ -17,11 +17,14 @@
 package tps.journey.model
 
 import play.api.libs.json.{JsObject, Json}
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.testdata.TdAll
 import tps.testdata.util.JsonSyntax.toJsonOps
 
-class StartJourneyResponseSpec extends UnitSpec {
+import scala.reflect.Selectable.reflectiveSelectable
+
+class StartJourneyResponseSpec extends UnitSpec:
 
   "(de)serialization" in {
     val json: JsObject =
@@ -37,4 +40,3 @@ class StartJourneyResponseSpec extends UnitSpec {
     Json.toJson(s) shouldBe json
     json.as[StartJourneyResponse] shouldBe s
   }
-}

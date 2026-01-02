@@ -23,7 +23,7 @@ import tps.pcipalmodel.PcipalSessionId
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 
-trait TdBase {
+trait TdBase:
 
   lazy val pid: String                = "1234567"
   lazy val customerName: CustomerName = CustomerName("customerName")
@@ -60,5 +60,3 @@ trait TdBase {
   lazy val cardType: String        = "VISA"
   lazy val cardLast4Digits: String = "1234"
   lazy val linkId: String          = "3097"
-
-}

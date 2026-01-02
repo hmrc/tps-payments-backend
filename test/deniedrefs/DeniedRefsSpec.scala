@@ -16,24 +16,25 @@
 
 package deniedrefs
 
-import deniedrefs.TdDeniedRefs._
-import deniedrefs.model._
+import deniedrefs.TdDeniedRefs.*
+import deniedrefs.model.*
 import org.scalatest.Assertion
 import play.api.libs.json.JsObject
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 import play.api.mvc.Request
 import testsupport.ItSpec
 import tps.deniedrefs.VerifyRefsConnector
 import tps.deniedrefs.model.{VerifyRefStatuses, VerifyRefsRequest, VerifyRefsResponse}
 import tps.model.Reference
 import tps.testdata.TdAll
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import java.time.{Clock, ZoneId}
 import scala.concurrent.Future
 
-class DeniedRefsSpec extends ItSpec {
+class DeniedRefsSpec extends ItSpec:
 
   def connector: VerifyRefsConnector = app.injector.instanceOf[tps.deniedrefs.VerifyRefsConnector]
 
@@ -104,16 +105,14 @@ class DeniedRefsSpec extends ItSpec {
     injector.instanceOf[DeniedRefsRepo].drop().futureValue shouldBe true withClue "could not drop db collection"
 
   private def uploadDeniedRefs(deniedRefsCsv: String): Future[UploadDeniedRefsResponse] = {
-    implicit val dummyHc: HeaderCarrier = HeaderCarrier()
-    val url                             = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
-    val httpClient                      = app.injector.instanceOf[HttpClientV2]
+    given dummyHc: HeaderCarrier = HeaderCarrier()
+    val url                      = url"http://localhost:${port.toString}/tps-payments-backend/upload-denied-refs"
+    val httpClient               = app.injector.instanceOf[HttpClientV2]
     httpClient.post(url).withBody(deniedRefsCsv).execute[UploadDeniedRefsResponse]
   }
 
   private def verifyRefs(refs: Reference*): Future[VerifyRefsResponse] = {
-    val verifyRefsRequest            = VerifyRefsRequest(refs.toSet)
-    implicit val request: Request[_] = TdAll.request
+    val verifyRefsRequest     = VerifyRefsRequest(refs.toSet)
+    given request: Request[_] = TdAll.request
     connector.verifyRefs(verifyRefsRequest)
   }
-
-}

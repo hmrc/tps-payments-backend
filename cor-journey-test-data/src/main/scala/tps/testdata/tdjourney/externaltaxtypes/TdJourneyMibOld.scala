@@ -27,7 +27,7 @@ import java.time.Instant
 // TODO: remove according to OPS-11079
 trait TdJourneyMibOld { dependencies: TdBase =>
 
-  object TdJourneyMibOld extends TdJourneyInStatesExternalTaxTypesOld {
+  object TdJourneyMibOld extends TdJourneyInStatesExternalTaxTypesOld:
 
     override final val taxType: ExternalTaxType = TaxTypes.MIB
 
@@ -168,7 +168,5 @@ trait TdJourneyMibOld { dependencies: TdBase =>
     override lazy val journeyReceivedNotificationJson: JourneyJson = JourneyJson(
       "/tps/testdata/mib/journey-8-ReceivedNotification.json"
     )
-
-  }
 
 }

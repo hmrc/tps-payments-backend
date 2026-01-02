@@ -40,9 +40,9 @@ final case class PcipalInitialValues(
   taxRegimeDisplay:   String,
   reference:          String,
   increment:          String
-)
+) derives CanEqual
 
-object PcipalInitialValues {
+object PcipalInitialValues:
 
   val ClientID            = "ClientID_"
   val PID                 = "PID_"
@@ -72,5 +72,3 @@ object PcipalInitialValues {
   val resetURL            = "resetURL"
   val finishURL           = "finishURL"
   val LanguageFlag        = "LanguageFlag"
-
-}

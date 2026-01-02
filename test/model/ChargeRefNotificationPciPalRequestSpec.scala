@@ -17,11 +17,12 @@
 package model
 
 import play.api.libs.json.Json.toJson
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import testsupport.testdata.TestData
 import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 
-class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
+class ChargeRefNotificationPciPalRequestSpec extends UnitSpec:
 
   "to json" in {
     toJson(TestData.chargeRefNotificationPcipalRequest) shouldBe TestData.chargeRefNotificationPciPalRequestJson
@@ -31,5 +32,3 @@ class ChargeRefNotificationPciPalRequestSpec extends UnitSpec {
     TestData.chargeRefNotificationPciPalRequestJson
       .as[ChargeRefNotificationPcipalRequest] shouldBe TestData.chargeRefNotificationPcipalRequest
   }
-
-}

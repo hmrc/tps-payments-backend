@@ -18,15 +18,13 @@ package tps.model
 
 import play.api.libs.json.{Format, Json}
 
-final case class CustomerName(value: String) extends AnyVal {
+final case class CustomerName(value: String) extends AnyVal:
   def forRecon: CustomerName = this.copy(value =
     value
       .replaceAll("[^a-zA-Z0-9 ]", "")
       .replaceAll("\\s+", " ")
       .trim
   )
-}
 
-object CustomerName {
-  implicit val format: Format[CustomerName] = Json.valueFormat
-}
+object CustomerName:
+  given Format[CustomerName] = Json.valueFormat

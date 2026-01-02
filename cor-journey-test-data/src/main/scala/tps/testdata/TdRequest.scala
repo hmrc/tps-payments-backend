@@ -20,7 +20,7 @@ import play.api.mvc.{AnyContentAsEmpty, Request}
 import play.api.test.FakeRequest
 import tps.testdata.TdSupport._
 
-trait TdRequest {
+trait TdRequest:
 
   lazy val fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
     .withAuthToken()
@@ -45,5 +45,3 @@ trait TdRequest {
   lazy val trueClientIp: String          = "client-ip-123"
   lazy val trueClientPort: String        = "client-port-123"
   lazy val deviceIdInRequest: String     = "device-id-123"
-
-}

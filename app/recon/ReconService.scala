@@ -23,8 +23,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ReconService @Inject() (repo: JourneyRepo) {
+class ReconService @Inject() (repo: JourneyRepo):
 
   def findModsPaymentsByReference(listOfReferencesToFind: List[String]): Future[List[PaymentSpecificData]] =
     repo.surfaceModsDataForRecon(listOfReferencesToFind)
-}

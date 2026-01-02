@@ -21,26 +21,30 @@ import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import org.apache.pekko.stream.Materializer
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import testsupport.ItSpec
 import tps.journey.model.{Journey, JourneyId, JourneyState}
-import tps.model._
+import tps.model.*
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalSessionId, StatusType, StatusTypes}
 import tps.testdata.TdAll
 import util.Crypto
 
 import java.time.{Instant, LocalDateTime, LocalTime, ZoneOffset}
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
+import play.api.mvc.Result
+import testsupport.Givens.canEqualJsValue
 
-class FindPaymentsSpec extends ItSpec {
+import scala.concurrent.Future
+
+class FindPaymentsSpec extends ItSpec:
 
   lazy implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
-  lazy val controller = app.injector.instanceOf[JourneyController]
+  lazy val controller: JourneyController = app.injector.instanceOf[JourneyController]
 
-  lazy val crypto = app.injector.instanceOf[Crypto]
+  lazy val crypto: Crypto = app.injector.instanceOf[Crypto]
 
-  def performAction(request: FindPaymentsRequest) =
+  def performAction(request: FindPaymentsRequest): Future[Result] =
     controller.findPayments(
       FakeRequest().withBody(request).withHeaders(CONTENT_TYPE -> "application/json")
     )
@@ -52,27 +56,28 @@ class FindPaymentsSpec extends ItSpec {
 
   val taxReference = "taxRef"
 
-  val todayStart = LocalDateTime
+  val todayStart: Instant = LocalDateTime
     .of(
       TdAll.localDateTime.toLocalDate,
       LocalTime.MIDNIGHT
     )
     .toInstant(ZoneOffset.of("Z"))
 
-  lazy val pcipalRequestData = PcipalRequestData(crypto.encrypt(taxReference), "transactionRef", StatusTypes.validated)
+  lazy val pcipalRequestData: PcipalRequestData =
+    PcipalRequestData(crypto.encrypt(taxReference), "transactionRef", StatusTypes.validated)
 
-  lazy val paymentData = PaymentData(
+  lazy val paymentData: PaymentData = PaymentData(
     BigDecimal(101.23),
     Some(pcipalRequestData),
     TaxTypes.Sa
   )
 
-  lazy val journey = newJourney(
+  lazy val journey: Journey = newJourney(
     frozenInstant,
     Seq(paymentData)
   )
 
-  val expectedPayment = FindPaymentsResponse.Payment(
+  val expectedPayment: FindPaymentsResponse.Payment = FindPaymentsResponse.Payment(
     taxReference,
     "transactionRef",
     10123,
@@ -366,12 +371,8 @@ class FindPaymentsSpec extends ItSpec {
     )
   }
 
-}
-
-object FindPaymentsSpec {
+object FindPaymentsSpec:
 
   final case class PcipalRequestData(taxReference: String, transactionReference: String, status: StatusType)
 
   final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
-
-}

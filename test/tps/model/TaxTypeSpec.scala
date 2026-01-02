@@ -17,10 +17,11 @@
 package tps.model
 import play.api.libs.json.JsString
 import play.api.libs.json.Json
+import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
-import tps.model.TaxTypes._
+import tps.model.TaxTypes.*
 
-class TaxTypeSpec extends UnitSpec {
+class TaxTypeSpec extends UnitSpec:
 
   "Native tax types" in {
     val expectedUsedInFrontendInCorrectOrder: Seq[TaxType] =
@@ -98,11 +99,9 @@ class TaxTypeSpec extends UnitSpec {
     JsString("MIB").as[TaxType] shouldBe MIB
     JsString("PNGR").as[TaxType] shouldBe PNGR
 
-    TaxTypes.values.foreach {
-      tt: TaxType =>
-        val json = Json.toJson(tt)
-        val t    = json.as[TaxType]
-        tt shouldBe t withClue "tt <> json map is bidirectional"
+    TaxTypes.values.foreach { (tt: TaxType) =>
+      val json = Json.toJson(tt)
+      val t    = json.as[TaxType]
+      tt shouldBe t withClue "tt <> json map is bidirectional"
     }
   }
-}

@@ -24,14 +24,12 @@ package tps.testdata.util
 import scala.io.Source
 import scala.util.Using
 
-object ResourceReader {
+object ResourceReader:
 
-  def read(resourcePath: String): String = {
+  def read(resourcePath: String): String =
     val inputStream = Option(this.getClass.getResourceAsStream(resourcePath))
       .getOrElse(throw new IllegalArgumentException(s"Resource not found: $resourcePath"))
 
     Using(Source.fromInputStream(inputStream)) { source =>
       source.getLines().mkString("\n")
     }.getOrElse(throw new RuntimeException(s"Failed to read resource: $resourcePath"))
-  }
-}

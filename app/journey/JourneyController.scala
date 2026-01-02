@@ -39,8 +39,8 @@ class JourneyController @Inject() (
   cc:             ControllerComponents,
   emailService:   EmailService,
   journeyService: JourneyService
-)(implicit executionContext: ExecutionContext)
-    extends BackendController(cc) {
+)(using ec: ExecutionContext)
+    extends BackendController(cc):
 
   val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
     actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
@@ -58,19 +58,19 @@ class JourneyController @Inject() (
   }
 
   def findJourney(journeyId: JourneyId): Action[AnyContent] = actions.strideAuthenticated.async {
-    journeyService.find(journeyId).map {
+    journeyService
+      .find(journeyId)
+      .map:
       case Some(journey) => Ok(toJson(journey))
       case None          => NotFound(s"No journey with given id [${journeyId.value}]")
-    }
   }
 
   def getTaxType(paymentItemId: PaymentItemId): Action[AnyContent] = Action.async {
     journeyService
       .findPaymentItem(paymentItemId)
-      .map {
-        case Some(paymentItem) => Ok(toJson(paymentItem.taxType))
-        case None              => NotFound(s"No payment item found for given [paymentItemId:${paymentItemId.value}]")
-      }
+      .map:
+      case Some(paymentItem) => Ok(toJson(paymentItem.taxType))
+      case None              => NotFound(s"No payment item found for given [paymentItemId:${paymentItemId.value}]")
   }
 
   val updateWithPcipalData: Action[ChargeRefNotificationPcipalRequest] =
@@ -84,10 +84,10 @@ class JourneyController @Inject() (
         paymentItemId = Some(notification.paymentItemId)
       )
 
-      for {
+      for
         maybeJourney: JourneyService.FindByPcipalSessionIdResult <-
           journeyService.findByPcipalSessionId(notification.PCIPalSessionId, notification.paymentItemId)
-        result                                                   <- maybeJourney match {
+        result                                                   <- maybeJourney match
 
                                                                       case JourneyService.FindByPcipalSessionIdResult.Found(journey) =>
                                                                         val newJourney = journeyService
@@ -132,18 +132,13 @@ class JourneyController @Inject() (
                                                                             s"Could not find corresponding journey matching paymentItemId: [${notification.paymentItemId.value}] [PCIPalSessionId:${notification.PCIPalSessionId.value}] [HoD:${notification.HoD.toString}]"
                                                                           )
                                                                         )
-                                                                    }
-      } yield result
+      yield result
     }
 
   val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
-    if (request.body.numberOfDays < 0)
+    if request.body.numberOfDays < 0 then
       Future.successful(BadRequest("numberOfDays should be equal to or greater than zero"))
-    else if (request.body.references.isEmpty)
-      Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
-    else
-      journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
+    else if request.body.references.isEmpty then Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
+    else journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
 
   }
-
-}

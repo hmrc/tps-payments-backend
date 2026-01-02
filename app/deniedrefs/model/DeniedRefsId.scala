@@ -19,8 +19,7 @@ package deniedrefs.model
 import play.api.libs.json.{Format, Json}
 import tps.model.repo.Id
 
-final case class DeniedRefsId(value: String) extends Id
+final case class DeniedRefsId(value: String) extends AnyVal with Id derives CanEqual
 
-object DeniedRefsId {
-  implicit val format: Format[DeniedRefsId] = Json.valueFormat
-}
+object DeniedRefsId:
+  given Format[DeniedRefsId] = Json.valueFormat[DeniedRefsId]

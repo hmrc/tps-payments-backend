@@ -21,13 +21,13 @@ import com.github.tomakehurst.wiremock.matching.UrlPattern
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import tps.testdata.TdAll
 
-object AuthStub {
+object AuthStub:
   private val expectedDetail                  = "SessionRecordNotFound"
   private val authoriseUrlPattern: UrlPattern = urlEqualTo("/auth/authorise")
 
   /** The user is authenticated and authorised
     */
-  def authorised(tdAll: TdAll = TdAll): StubMapping = {
+  def authorised(tdAll: TdAll = TdAll): StubMapping =
     val authProvider: String = "PrivilegedApplication"
     val strideUserId: String = tdAll.pid
 
@@ -74,7 +74,6 @@ object AuthStub {
             )
         )
     )
-  }
 
   def notAuthenticated(): StubMapping =
     stubFor(
@@ -95,5 +94,3 @@ object AuthStub {
             .withHeader("WWW-Authenticate", s"""MDTP detail="$error"""")
         )
     )
-
-}

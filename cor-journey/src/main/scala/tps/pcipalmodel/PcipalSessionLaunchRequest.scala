@@ -36,12 +36,12 @@ final case class PcipalSessionLaunchRequest(
   resetUrl:            String,
   finishUrl:           String,
   LanguageFlag:        String
-)
+) derives CanEqual
 
-object PcipalSessionLaunchRequest {
+object PcipalSessionLaunchRequest:
 
   @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit val reads: Reads[PcipalSessionLaunchRequest] = (
+  given reads: Reads[PcipalSessionLaunchRequest] = (
     (JsPath \ "FlowId").read[Int] and
       (JsPath \ "InitialValues").read[Map[String, String]].map(m => unwrap(m)) and
       (JsPath \ "InitialValues")
@@ -80,8 +80,8 @@ object PcipalSessionLaunchRequest {
     a:      Int = 1,
     acc:    List[PcipalInitialValues] = List.empty[PcipalInitialValues]
   ): List[PcipalInitialValues] =
-    if (!values.contains(s"${PcipalInitialValues.ClientID}${a.toString}")) acc
-    else {
+    if !values.contains(s"${PcipalInitialValues.ClientID}${a.toString}") then acc
+    else
       val newPciPal = pcipalmodel.PcipalInitialValues(
         clientId = values(s"${PcipalInitialValues.ClientID}${a.toString}"),
         pid = values(s"${PcipalInitialValues.PID}${a.toString}"),
@@ -106,41 +106,40 @@ object PcipalSessionLaunchRequest {
       )
 
       unwrap(values, a + 1, acc :+ newPciPal)
-    }
 
   // WRITES=======================================================================================>
-  implicit val pcipalInitialValuesWrites: OWrites[PcipalInitialValues] = new OWrites[PcipalInitialValues] {
-    def writes(pcipalInitialValues: PcipalInitialValues): JsObject = {
+  given pcipalInitialValuesWrites: OWrites[PcipalInitialValues] = new OWrites[PcipalInitialValues]:
+    def writes(pcipalInitialValues: PcipalInitialValues): JsObject =
       val taxAmountJs          =
-        if (pcipalInitialValues.taxAmount.isDefined)
+        if pcipalInitialValues.taxAmount.isDefined then
           Json.obj(s"$TaxAmount${pcipalInitialValues.increment}" -> pcipalInitialValues.taxAmount)
         else JsObject.empty
       val nicAmountJs          =
-        if (pcipalInitialValues.nicAmount.isDefined)
+        if pcipalInitialValues.nicAmount.isDefined then
           Json.obj(s"$NICAmount${pcipalInitialValues.increment}" -> pcipalInitialValues.nicAmount)
         else JsObject.empty
       val lnpClass2Js          =
-        if (pcipalInitialValues.lnpClass2.isDefined)
+        if pcipalInitialValues.lnpClass2.isDefined then
           Json.obj(s"$LNPClass2${pcipalInitialValues.increment}" -> pcipalInitialValues.lnpClass2)
         else JsObject.empty
       val nirRateJs            =
-        if (pcipalInitialValues.nirRate.isDefined)
+        if pcipalInitialValues.nirRate.isDefined then
           Json.obj(s"$NIRSRate${pcipalInitialValues.increment}" -> pcipalInitialValues.nirRate)
         else JsObject.empty
       val startDateJs          =
-        if (pcipalInitialValues.startDate.isDefined)
+        if pcipalInitialValues.startDate.isDefined then
           Json.obj(s"$StartDate${pcipalInitialValues.increment}" -> pcipalInitialValues.startDate)
         else JsObject.empty
       val endDateJs            =
-        if (pcipalInitialValues.endDate.isDefined)
+        if pcipalInitialValues.endDate.isDefined then
           Json.obj(s"$EndDate${pcipalInitialValues.increment}" -> pcipalInitialValues.endDate)
         else JsObject.empty
       val vatPeriodReferenceJs =
-        if (pcipalInitialValues.vatPeriodReference.isDefined)
+        if pcipalInitialValues.vatPeriodReference.isDefined then
           Json.obj(s"$VATPeriodReference${pcipalInitialValues.increment}" -> pcipalInitialValues.vatPeriodReference)
         else JsObject.empty
       val vatRemittanceTypeJs  =
-        if (pcipalInitialValues.vatRemittanceType.isDefined)
+        if pcipalInitialValues.vatRemittanceType.isDefined then
           Json.obj(s"$VATRemittanceType${pcipalInitialValues.increment}" -> pcipalInitialValues.vatRemittanceType)
         else JsObject.empty
 
@@ -163,18 +162,15 @@ object PcipalSessionLaunchRequest {
         Json.obj(s"$ChargeReference${pcipalInitialValues.increment}" -> pcipalInitialValues.chargeReference) ++
         Json.obj(s"$TaxRegimeDisplay${pcipalInitialValues.increment}" -> pcipalInitialValues.taxRegimeDisplay) ++
         Json.obj(s"$ReferenceDisplay${pcipalInitialValues.increment}" -> pcipalInitialValues.reference)
-    }
-  }
 
-  implicit val pcipalSessionLaunchRequest: OWrites[PcipalSessionLaunchRequest] =
-    new OWrites[PcipalSessionLaunchRequest] {
+  given pcipalSessionLaunchRequest: OWrites[PcipalSessionLaunchRequest] =
+    new OWrites[PcipalSessionLaunchRequest]:
       def writes(pcipalSessionLaunchRequest: PcipalSessionLaunchRequest): JsObject = Json.obj(
         "FlowId"        -> pcipalSessionLaunchRequest.FlowId,
         "InitialValues" -> createInitialValues(pcipalSessionLaunchRequest)
       )
-    }
 
-  private def createInitialValues(pcipalSessionLaunchRequest: PcipalSessionLaunchRequest) = {
+  private def createInitialValues(pcipalSessionLaunchRequest: PcipalSessionLaunchRequest) =
 
     val endValues = Json.obj(
       PcipalInitialValues.UTRBlacklistFlag    -> pcipalSessionLaunchRequest.UTRBlacklistFlag,
@@ -193,11 +189,10 @@ object PcipalSessionLaunchRequest {
       pcipalSessionLaunchRequest.InitialValues.foldLeft(Json.obj())(_ deepMerge Json.toJsObject(_) deepMerge endValues)
 
     JsObject(fullSet.fields.sortBy(x => sortDecoder(x._1)))
-  }
 
   // Sort by the right most character which will be 1 to 5 then attach another character so that the sort order is 11 to 516, or 950- if it is one of the ending values
   private def sortDecoder(key: String): String =
-    key match {
+    key match
       case x if x.contains(s"${PcipalInitialValues.ClientID}")            => s"${x.takeRight(1)}1"
       case x if x.contains(s"${PcipalInitialValues.PID}")                 => s"${x.takeRight(1)}2"
       case x if x.contains(s"${PcipalInitialValues.AccountOfficeID}")     => s"${x.takeRight(1)}3"
@@ -223,6 +218,3 @@ object PcipalSessionLaunchRequest {
       case x if x.contains(s"${PcipalInitialValues.TotalTaxAmountToPay}") => "953"
       case x if x.contains(s"${PcipalInitialValues.callbackUrl}")         => "954"
       case _                                                              => "957"
-    }
-
-}

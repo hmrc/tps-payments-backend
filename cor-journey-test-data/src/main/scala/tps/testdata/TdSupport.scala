@@ -21,9 +21,9 @@ import uk.gov.hmrc.http.{HeaderNames, SessionKeys}
 
 import java.time.LocalDate
 
-object TdSupport {
+object TdSupport:
 
-  implicit class FakeRequestOps[T](r: FakeRequest[T]) {
+  implicit class FakeRequestOps[T](r: FakeRequest[T]):
 
     def withAuthToken(authToken: String = TdAll.authToken): FakeRequest[T] =
       r.withSession((SessionKeys.authToken, authToken))
@@ -49,9 +49,7 @@ object TdSupport {
     def withDeviceId(deviceId: String = TdAll.deviceIdInRequest): FakeRequest[T] = r.withHeaders(
       HeaderNames.deviceID -> deviceId
     )
-  }
 
   implicit def toSome[T](t:         T): Option[T]              = Some(t)
   implicit def toLocalDate(s:       String): LocalDate         = LocalDate.parse(s)
   implicit def toOptionLocalDate(s: String): Option[LocalDate] = Some(LocalDate.parse(s))
-}

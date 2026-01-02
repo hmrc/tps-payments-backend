@@ -16,11 +16,9 @@
 
 package tps.model.repo
 
-trait Id {
+trait Id extends Any:
   def value: String
-}
 
-trait HasId[ID <: Id] {
+trait HasId[ID <: Id]:
   def _id: ID
   def id: ID = _id
-}

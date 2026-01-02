@@ -23,7 +23,7 @@ import tps.pcipalmodel.PcipalSessionId
 
 /** Logger implementation that is used by kibana dashboards
   */
-object KibanaLogger {
+object KibanaLogger:
 
   private val log: Logger = Logger("tps-backend-kibana-logger")
 
@@ -106,7 +106,7 @@ object KibanaLogger {
       s"${pcipalSessionId.fold("")(s => s" [pcipalSessionId:${s.value}")}" +
       s"${paymentItemId.fold("")(s => s" [paymentItemId:${s.value}]")}"
 
-  private sealed trait LogLevel
+  private sealed trait LogLevel derives CanEqual
 
   private case object Debug extends LogLevel
 
@@ -122,15 +122,13 @@ object KibanaLogger {
     pcipalSessionId: Option[PcipalSessionId],
     paymentItemId:   Option[PaymentItemId],
     level:           LogLevel
-  ): Unit = {
+  ): Unit =
     lazy val richMessage = makeRichMessage(message, journey, pcipalSessionId, paymentItemId)
-    level match {
+    level match
       case Debug => log.debug(richMessage)
       case Info  => log.info(richMessage)
       case Warn  => log.warn(richMessage)
       case Error => log.error(richMessage)
-    }
-  }
 
   private def logMessage(
     message:         => String,
@@ -139,14 +137,10 @@ object KibanaLogger {
     paymentItemId:   Option[PaymentItemId],
     ex:              Throwable,
     level:           LogLevel
-  ): Unit = {
+  ): Unit =
     lazy val richMessage = makeRichMessage(message, journey, pcipalSessionId, paymentItemId)
-    level match {
+    level match
       case Debug => log.debug(richMessage, ex)
       case Info  => log.info(richMessage, ex)
       case Warn  => log.warn(richMessage, ex)
       case Error => log.error(richMessage, ex)
-    }
-  }
-
-}
