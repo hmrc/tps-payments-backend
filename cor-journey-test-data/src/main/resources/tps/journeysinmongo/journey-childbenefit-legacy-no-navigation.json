@@ -35,7 +35,8 @@
         "childBenefitYReference": "YA123456789123"
       },
       "taxType": "ChildBenefitsRepayments",
-      "email": "test@email.com"
+      "email": "test@email.com",
+      "receiptsInWelsh": false
     }
   ],
   "pcipalSessionLaunchRequest": {

@@ -19,7 +19,8 @@
       "amendmentReference" : 123
     },
     "taxType" : "MIB",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptsInWelsh": false
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

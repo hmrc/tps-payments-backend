@@ -73,6 +73,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
                 ),
                 _,
                 _,
+                _,
                 _
               )
             ) =>
