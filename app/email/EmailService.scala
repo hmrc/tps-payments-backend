@@ -74,7 +74,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
                 _,
                 _,
                 _,
-                _
+                receiptInWelsh
               )
             ) =>
           sendEmail(
@@ -82,7 +82,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
             transactionReference = referenceNumber.dropRight(2),
             emailAddress = emailAddress,
             cardType = cardType,
-            cardNumber = cardLast4
+            cardNumber = cardLast4,
+            receiptInWelsh = receiptInWelsh
           )
         case _ => ()
     else ()
@@ -93,7 +94,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     transactionReference: String,
     emailAddress:         Email,
     cardType:             String,
-    cardNumber:           String
+    cardNumber:           String,
+    receiptInWelsh:       Boolean
   )(using hc: HeaderCarrier): Unit =
 
     val totalCommissionPaid: BigDecimal = payments
@@ -102,8 +104,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     val totalAmountPaid: BigDecimal     = payments.map(nextTpsPaymentItem => nextTpsPaymentItem.amount).sum
 
     val emailSendRequest: EmailSendRequest = EmailSendRequest(
-      Seq(emailAddress),
-      "telephone_payments_service",
+      to = Seq(emailAddress),
+      templateId = if receiptInWelsh then "telephone_payments_service" else "telephone_payments_service_welsh",
       parameters = Map[String, String](
         "transactionReference"    -> transactionReference,
         "totalAmountPaid"         -> parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
