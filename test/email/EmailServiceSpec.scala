@@ -39,7 +39,7 @@ class EmailServiceSpec extends ItSpec:
   }
 
   "maybeSendEmail should send an email in Welsh" in {
-    val payments = TdAll.TdJourneySa.journeyReceivedNotification.payments.map(_.copy(receiptsInWelsh = true))
+    val payments = TdAll.TdJourneySa.journeyReceivedNotification.payments.map(_.copy(receiptInWelsh = true))
     val journey  = TdAll.TdJourneySa.journeyReceivedNotification.copy(payments = payments)
 
     given HeaderCarrier = HeaderCarrier()

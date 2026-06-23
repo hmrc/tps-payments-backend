@@ -33,7 +33,7 @@
       },
       "taxType": "ChildBenefitsRepayments",
       "email": "test@email.com",
-      "receiptsInWelsh": false
+      "receiptInWelsh": false
     }
   ],
   "navigation": {

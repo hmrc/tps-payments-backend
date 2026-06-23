@@ -17,7 +17,7 @@
     },
     "taxType" : "ChildBenefitsRepayments",
     "email" : "test@email.com",
-    "receiptsInWelsh": false
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 606.61,
@@ -30,7 +30,7 @@
     },
     "taxType" : "Cotax",
     "email" : "test@email.com",
-    "receiptsInWelsh": false
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 606.61,
@@ -44,7 +44,7 @@
     },
     "taxType" : "Vat",
     "email" : "test@email.com",
-    "receiptsInWelsh": false
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 606.61,
@@ -59,7 +59,7 @@
     },
     "taxType" : "Paye",
     "email" : "test@email.com",
-    "receiptsInWelsh": false
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 606.61,
@@ -72,7 +72,7 @@
     },
     "taxType" : "Ntc",
     "email" : "test@email.com",
-    "receiptsInWelsh": false
+    "receiptInWelsh": false
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

@@ -33,7 +33,7 @@ final case class PaymentItem(
   paymentSpecificData: PaymentSpecificData,
   taxType:             TaxType, // TODO: remove it and derive it as val from HoD (or vice versa)
   email:               Option[Email],
-  receiptsInWelsh:     Boolean = false
+  receiptInWelsh:      Boolean = false
 ) derives CanEqual:
 
   def getPcipalData: ChargeRefNotificationPcipalRequest =
