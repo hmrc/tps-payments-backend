@@ -28,7 +28,7 @@ import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class EmailService @Inject() (emailConnector: EmailConnector)(using ec: ExecutionContext):
@@ -44,7 +44,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     *
     * (this function had been developed before this scaladoc)
     */
-  def maybeSendEmail(journey: Journey)(using hc: HeaderCarrier): Unit =
+  def maybeSendEmail(journey: Journey)(using hc: HeaderCarrier): Future[Unit] =
     val paymentItems: List[PaymentItem] = journey.payments
     if weShouldSendEmail(paymentItems) then
       val emailAddress: Email                                = paymentItems
@@ -85,8 +85,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
             cardNumber = cardLast4,
             receiptInWelsh = receiptInWelsh
           )
-        case _ => ()
-    else ()
+        case _ => Future.unit
+    else Future.unit
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def sendEmail(
@@ -96,7 +96,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     cardType:             String,
     cardNumber:           String,
     receiptInWelsh:       Boolean
-  )(using hc: HeaderCarrier): Unit =
+  )(using hc: HeaderCarrier): Future[Unit] =
 
     val totalCommissionPaid: BigDecimal = payments
       .map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission))
@@ -105,7 +105,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
 
     val emailSendRequest: EmailSendRequest = EmailSendRequest(
       to = Seq(emailAddress),
-      templateId = if receiptInWelsh then "telephone_payments_service" else "telephone_payments_service_welsh",
+      templateId = if receiptInWelsh then "telephone_payments_service_cy" else "telephone_payments_service",
       parameters = Map[String, String](
         "transactionReference"    -> transactionReference,
         "totalAmountPaid"         -> parseBigDecimalToString(totalCommissionPaid + totalAmountPaid),
@@ -120,7 +120,6 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
       .recover { case e =>
         logger.error("Failed to send email, investigate", e)
       }
-    ()
 
   private def weShouldSendEmail(tpsPaymentItems: List[PaymentItem]): Boolean =
     isNotMibOrPngr(tpsPaymentItems) && tpsPaymentsAreFullyUpdated(tpsPaymentItems) && emailAddressHasBeenProvided(

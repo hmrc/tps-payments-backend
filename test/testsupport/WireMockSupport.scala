@@ -18,21 +18,39 @@ package testsupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite}
+import play.api.Logger
 
 trait WireMockSupport extends BeforeAndAfterAll with BeforeAndAfterEach:
   self: Suite =>
 
-  private val wireMockServer: WireMockServer = new WireMockServer(wireMockConfig().port(WireMockSupport.port))
+  private val logger                          = Logger(getClass)
+  implicit val wireMockServer: WireMockServer = new WireMockServer(
+    WireMockConfiguration.wireMockConfig().port(WireMockSupport.port)
+  )
 
   WireMock.configureFor(WireMockSupport.port)
 
-  override def beforeEach(): Unit = WireMock.reset()
+  override protected def beforeAll(): Unit = {
+    logger.info("Starting wiremock server...")
+    wireMockServer.start()
+    logger.info(
+      s"Starting wiremock server - done, running=${wireMockServer.isRunning.toString} on ${wireMockServer.port().toString} port"
+    )
+  }
 
-  override protected def beforeAll(): Unit = wireMockServer.start()
+  override def beforeEach(): Unit = {
+    logger.info("Resetting wire mock server ...")
+    WireMock.reset()
+    logger.info("Resetting wire mock server - done")
+  }
 
-  override protected def afterAll(): Unit = wireMockServer.stop()
+  override protected def afterAll(): Unit = {
+    logger.info("Stopping wire mock server ...")
+    wireMockServer.stop()
+    logger.info("Stopping wire mock server - done")
+  }
 
 object WireMockSupport:
   val port: Int = 11111
