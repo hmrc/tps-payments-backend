@@ -22,7 +22,6 @@ import testsupport.stubs.EmailStub
 import tps.model._
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.HeaderCarrier
-import play.api.test.Helpers.*
 
 class EmailServiceSpec extends ItSpec:
 
@@ -33,9 +32,9 @@ class EmailServiceSpec extends ItSpec:
     given HeaderCarrier = HeaderCarrier()
     EmailStub.sendEmail()
 
-    await(emailService.maybeSendEmail(journey))
+    emailService.maybeSendEmail(journey)
 
-    EmailStub.verifySendEmail()
+    eventually(EmailStub.verifySendEmail())
   }
 
   "maybeSendEmail should send an email in Welsh" in {
@@ -45,9 +44,9 @@ class EmailServiceSpec extends ItSpec:
     given HeaderCarrier = HeaderCarrier()
     EmailStub.sendEmail(welsh = true)
 
-    await(emailService.maybeSendEmail(journey))
+    emailService.maybeSendEmail(journey)
 
-    EmailStub.verifySendEmail(welsh = true)
+    eventually(EmailStub.verifySendEmail(welsh = true))
   }
 
   "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {

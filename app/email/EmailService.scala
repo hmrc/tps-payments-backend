@@ -28,7 +28,7 @@ import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class EmailService @Inject() (emailConnector: EmailConnector)(using ec: ExecutionContext):
@@ -44,7 +44,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     *
     * (this function had been developed before this scaladoc)
     */
-  def maybeSendEmail(journey: Journey)(using hc: HeaderCarrier): Future[Unit] =
+  def maybeSendEmail(journey: Journey)(using hc: HeaderCarrier): Unit =
     val paymentItems: List[PaymentItem] = journey.payments
     if weShouldSendEmail(paymentItems) then
       val emailAddress: Email                                = paymentItems
@@ -85,8 +85,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
             cardNumber = cardLast4,
             receiptInWelsh = receiptInWelsh
           )
-        case _ => Future.unit
-    else Future.unit
+        case _ => ()
+    else ()
 
   @SuppressWarnings(Array("org.wartremover.warts.NonUnitStatements"))
   private def sendEmail(
@@ -96,7 +96,7 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
     cardType:             String,
     cardNumber:           String,
     receiptInWelsh:       Boolean
-  )(using hc: HeaderCarrier): Future[Unit] =
+  )(using hc: HeaderCarrier): Unit =
 
     val totalCommissionPaid: BigDecimal = payments
       .map(nextTpsPaymentItem => nextTpsPaymentItem.pcipalData.fold(BigDecimal(0))(pcipalData => pcipalData.Commission))
