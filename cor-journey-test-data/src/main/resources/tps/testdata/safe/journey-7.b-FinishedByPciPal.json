@@ -16,7 +16,8 @@
       "safeReference" : "XA1234567890123"
     },
     "taxType" : "Safe",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

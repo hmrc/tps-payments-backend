@@ -18,12 +18,36 @@ package email
 
 import email.model.IndividualPaymentForEmail
 import testsupport.ItSpec
+import testsupport.stubs.EmailStub
 import tps.model._
 import tps.testdata.TdAll
+import uk.gov.hmrc.http.HeaderCarrier
 
 class EmailServiceSpec extends ItSpec:
 
   def emailService: EmailService = app.injector.instanceOf[EmailService]
+
+  "maybeSendEmail should send an email in English" in {
+    val journey         = TdAll.TdJourneySa.journeyReceivedNotification
+    given HeaderCarrier = HeaderCarrier()
+    EmailStub.sendEmail()
+
+    emailService.maybeSendEmail(journey)
+
+    eventually(EmailStub.verifySendEmail())
+  }
+
+  "maybeSendEmail should send an email in Welsh" in {
+    val payments = TdAll.TdJourneySa.journeyReceivedNotification.payments.map(_.copy(receiptInWelsh = true))
+    val journey  = TdAll.TdJourneySa.journeyReceivedNotification.copy(payments = payments)
+
+    given HeaderCarrier = HeaderCarrier()
+    EmailStub.sendEmail(welsh = true)
+
+    emailService.maybeSendEmail(journey)
+
+    eventually(EmailStub.verifySendEmail(welsh = true))
+  }
 
   "parseTpsPaymentsItemsForEmail should default transactionFee and transactionNumber to 'Unknown' if pcipalData is None" in {
     @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))

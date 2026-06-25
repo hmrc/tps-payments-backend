@@ -30,7 +30,8 @@
       "childBenefitYReference" : "YA123456789123"
     },
     "taxType" : "ChildBenefitsRepayments",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 107.07,
@@ -56,7 +57,8 @@
       "cotaxReference" : "1097172564A00104A"
     },
     "taxType" : "Cotax",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 111.11,
@@ -83,7 +85,8 @@
       "remittanceType" : "Unaccompanied"
     },
     "taxType" : "Vat",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 209.09,
@@ -111,7 +114,8 @@
       "nicAmount" : 100
     },
     "taxType" : "Paye",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   }, {
     "paymentItemId" : "64897aee16fe8b501cbf008a",
     "amount" : 108.08,
@@ -137,7 +141,8 @@
       "ntcReference" : "JJ067874050421NV"
     },
     "taxType" : "Ntc",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

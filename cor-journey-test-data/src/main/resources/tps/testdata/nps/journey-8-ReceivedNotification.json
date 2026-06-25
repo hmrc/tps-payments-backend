@@ -34,7 +34,8 @@
       "rate" : 1
     },
     "taxType" : "Nps",
-    "email" : "test@email.com"
+    "email" : "test@email.com",
+    "receiptInWelsh": false
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",
