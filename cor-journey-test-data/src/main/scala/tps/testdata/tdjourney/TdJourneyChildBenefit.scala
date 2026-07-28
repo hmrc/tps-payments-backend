@@ -35,6 +35,7 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
     override lazy val amountEditedString: String         = "103.03"
     override lazy val taxReference: String               = "YA123456789123"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.ChildBenefitsRepayments
+    override lazy val searchTag: SearchTag               = SearchTag("YA123456789123")
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId = dependencies.flowId,
@@ -105,7 +106,8 @@ trait TdJourneyChildBenefit { dependencies: TdBase =>
         childBenefitYReference = taxReference
       ),
       taxType = TaxTypes.ChildBenefitsRepayments,
-      email = Some(dependencies.email)
+      email = Some(dependencies.email),
+      searchTag = Some(searchTag)
     )
 
     override lazy val paymentItemAfterReceivedNotification: PaymentItem =

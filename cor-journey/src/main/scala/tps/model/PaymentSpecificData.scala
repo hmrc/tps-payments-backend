@@ -20,94 +20,125 @@ import play.api.libs.json.{Json, OFormat}
 
 import play.api.libs.json._
 
-sealed trait PaymentSpecificData:
+sealed trait PaymentSpecificData {
   def getReference: String
   def getRawReference: String
+  def searchTag: String
+}
 
 final case class PngrSpecificData(
   chargeReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = chargeReference
   override def getRawReference: String = chargeReference
+  override def searchTag: String       = chargeReference
+}
 
-object PngrSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+object PngrSpecificData {
   given format: OFormat[PngrSpecificData] = Json.format[PngrSpecificData]
+}
 
 final case class MibSpecificData(
   chargeReference:    String,
   vat:                BigDecimal,
   customs:            BigDecimal,
   amendmentReference: Option[Int] = None
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String      = chargeReference
   def getAmendmentReference: Option[Int] = amendmentReference
   override def getRawReference: String   = chargeReference
+  override def searchTag: String         = chargeReference
+}
 
-object MibSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+object MibSpecificData {
   given format: OFormat[MibSpecificData] = Json.format[MibSpecificData]
+}
 
 final case class ChildBenefitSpecificData(
   childBenefitYReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = childBenefitYReference
   override def getRawReference: String = childBenefitYReference
-object ChildBenefitSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  override def searchTag: String       = childBenefitYReference
+}
+
+object ChildBenefitSpecificData {
   given format: OFormat[ChildBenefitSpecificData] = Json.format[ChildBenefitSpecificData]
+}
 
 final case class SaSpecificData(
   saReference: String // TODO make strong type for that UTR
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = saReference
   override def getRawReference: String = saReference.dropRight(1)
+  override def searchTag: String       = saReference.toUpperCase.replaceAll("K", "")
+}
 
-object SaSpecificData:
+object SaSpecificData {
   given format: OFormat[SaSpecificData] = Json.format[SaSpecificData]
+}
 
 final case class SdltSpecificData(
   sdltReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = sdltReference
   override def getRawReference: String = sdltReference
-object SdltSpecificData:
+  override def searchTag: String       = sdltReference
+}
+
+object SdltSpecificData {
   given format: OFormat[SdltSpecificData] = Json.format[SdltSpecificData]
+}
 
 final case class SafeSpecificData(
   safeReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = safeReference
   override def getRawReference: String = safeReference
-object SafeSpecificData:
+  override def searchTag: String       = safeReference
+}
+
+object SafeSpecificData {
   given format: OFormat[SafeSpecificData] = Json.format[SafeSpecificData]
+}
 
 final case class CotaxSpecificData(
   cotaxReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = cotaxReference
   override def getRawReference: String = cotaxReference.dropRight(7)
-object CotaxSpecificData:
+  override def searchTag: String       = cotaxReference.dropRight(7)
+}
+
+object CotaxSpecificData {
   given format: OFormat[CotaxSpecificData] = Json.format[CotaxSpecificData]
+}
 
 final case class NtcSpecificData(
   ntcReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = ntcReference
   override def getRawReference: String = ntcReference.dropRight(8)
-object NtcSpecificData:
+  override def searchTag: String       = ntcReference.dropRight(8)
+}
+
+object NtcSpecificData {
   given format: OFormat[NtcSpecificData] = Json.format[NtcSpecificData]
+}
 
 final case class PayeSpecificData(
   payeReference: String,
   taxAmount:     BigDecimal,
   nicAmount:     BigDecimal
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = payeReference
   override def getRawReference: String = payeReference.dropRight(4)
-object PayeSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  override def searchTag: String       = payeReference.dropRight(4)
+}
+
+object PayeSpecificData {
   given format: OFormat[PayeSpecificData] = Json.format[PayeSpecificData]
+}
 
 final case class NpsSpecificData(
   npsReference:    String,
@@ -115,33 +146,42 @@ final case class NpsSpecificData(
   periodEndDate:   String,
   npsType:         String,
   rate:            BigDecimal
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = npsReference
   override def getRawReference: String = npsReference.dropRight(2)
-object NpsSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  override def searchTag: String       = npsReference
+}
+object NpsSpecificData  {
   given format: OFormat[NpsSpecificData] = Json.format[NpsSpecificData]
+}
 
 final case class VatSpecificData(
   vatReference:   String,
   remittanceType: String // TODO make strong type, enum
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = vatReference
   override def getRawReference: String = vatReference.dropRight(4)
+  override def searchTag: String       = vatReference
+}
 
-object VatSpecificData:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+object VatSpecificData {
   given format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
+}
 
 final case class PptSpecificData(
   pptReference: String
-) extends PaymentSpecificData:
+) extends PaymentSpecificData {
   override def getReference: String    = pptReference
   override def getRawReference: String = pptReference
-object PptSpecificData:
-  given format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
+  override def searchTag: String       = pptReference
+}
 
-object PaymentSpecificData:
+object PptSpecificData {
+  given format: OFormat[PptSpecificData] = Json.format[PptSpecificData]
+}
+
+object PaymentSpecificData {
+
   given writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
     case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
     case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
@@ -157,7 +197,8 @@ object PaymentSpecificData:
     case vatSpecificData: VatSpecificData                   => VatSpecificData.format.writes(vatSpecificData)
     case pptSpecificData: PptSpecificData                   => PptSpecificData.format.writes(pptSpecificData)
   }
-  given reads: Reads[PaymentSpecificData]   = Reads[PaymentSpecificData] {
+
+  given reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
     case json: JsObject if json.keys == jsonKeysPngrSpecificData       =>
       JsSuccess(json.as[PngrSpecificData])
     case json: JsObject if json.keys == jsonKeysPngrSpecificDataLegacy =>
@@ -206,3 +247,5 @@ object PaymentSpecificData:
   val jsonKeysNps: Set[String]                     = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
   val jsonKeysVat: Set[String]                     = Set("vatReference", "remittanceType")
   val jsonKeysPpt: Set[String]                     = Set("pptReference")
+
+}

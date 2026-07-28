@@ -19,7 +19,8 @@
     },
     "taxType" : "Ntc",
     "email" : "test@email.com",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "JJ067874"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

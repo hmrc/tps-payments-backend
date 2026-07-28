@@ -25,10 +25,11 @@ import tps.utils.EnumFormat
 
 sealed abstract class HeadOfDutyIndicator extends EnumEntry derives CanEqual
 
-object HeadOfDutyIndicator:
+object HeadOfDutyIndicator {
   given Format[HeadOfDutyIndicator] = EnumFormat(HeadOfDutyIndicators)
+}
 
-object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
+object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator] {
 
   /** Hod for P800 and Child Benefits
     */
@@ -72,6 +73,9 @@ object HeadOfDutyIndicators extends Enum[HeadOfDutyIndicator]:
 
   def values: immutable.IndexedSeq[HeadOfDutyIndicator] = findValues
 
-  def forCode(code: String): HeadOfDutyIndicator = values.find(_.toString == code) match
+  def forCode(code: String): HeadOfDutyIndicator = values.find(_.toString == code) match {
     case Some(x) => x
     case None    => throw new RuntimeException(s"Could not find code $code")
+  }
+
+}

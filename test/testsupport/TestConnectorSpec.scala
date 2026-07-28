@@ -78,7 +78,7 @@ class TestConnectorSpec extends ItSpec with Status:
 
   "get an exception if pcipalSessionId not found and trying to do an update" in {
     authorised()
-    Option(repo.upsert(journey).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(journeyRepo.upsert(journey).futureValue.getUpsertedId).isDefined shouldBe true
     val response = connector
       .updateTpsPayments(chargeRefNotificationPcipalRequest.copy(PCIPalSessionId = PcipalSessionId("new)")))
       .futureValue
@@ -117,8 +117,8 @@ class TestConnectorSpec extends ItSpec with Status:
     val tpsIdForDuplicate                 = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(journey).futureValue
-    repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
+    journeyRepo.upsert(journey).futureValue
+    journeyRepo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {
       connector.getPaymentItemTaxType(paymentItemId).futureValue

@@ -61,7 +61,7 @@ trait ItSpec
     with RichMatchers
     with HttpClientV2Support
     with WireMockSupport
-    with GuiceOneServerPerSuite:
+    with GuiceOneServerPerSuite {
 
   val testPort = 19001
 
@@ -117,9 +117,9 @@ trait ItSpec
     "paymentNotificationUrl"                              -> "http://notification.host/payments/notifications/send-card-payments"
   ) ++ configOverrides
 
-  lazy val injector: Injector             = fakeApplication().injector
-  lazy val repo: JourneyRepo              = app.injector.instanceOf[JourneyRepo]
-  lazy val journeyService: JourneyService = injector.instanceOf[JourneyService]
+  lazy val injector: Injector             = app.injector
+  lazy val journeyRepo: JourneyRepo       = app.injector.instanceOf[JourneyRepo]
+  lazy val journeyService: JourneyService = app.injector.instanceOf[JourneyService]
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .overrides((GuiceableModule.fromGuiceModules(Seq(module)) :: overrideModules): _*)
@@ -128,7 +128,7 @@ trait ItSpec
 
   override def beforeEach(): Unit =
     super.beforeEach()
-    repo.drop().futureValue(Timeout(Span(10, Seconds)))
+    journeyRepo.drop().futureValue(Timeout(Span(10, Seconds)))
     ()
 
   override protected def testServerFactory: TestServerFactory = CustomTestServerFactory
@@ -137,3 +137,5 @@ trait ItSpec
     override protected def serverConfig(app: Application): ServerConfig =
       val sc = ServerConfig(port = Some(testPort), sslPort = None, mode = Mode.Test, rootDir = app.path)
       sc.copy(configuration = sc.configuration.withFallback(overrideServerConfiguration(app)))
+
+}

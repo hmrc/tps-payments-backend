@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package tps.journey
+package controllers
 
 import journeysupport.{TestJourneyIdGenerator, TestPaymentItemIdGenerator}
 import play.api.mvc.Request
 import testsupport.ItSpec
 import testsupport.stubs.AuthStub
+import tps.journey.JourneyConnector
 import tps.journey.model.{Journey, JourneyId, StartJourneyResponse}
 import tps.model.PaymentItemId
 import tps.startjourneymodel.StartJourneyRequestMib

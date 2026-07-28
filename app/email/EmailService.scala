@@ -24,7 +24,6 @@ import tps.journey.model.Journey
 import tps.model.TaxTypes.{MIB, PNGR}
 import tps.model.{Email, PaymentItem, TaxType, TaxTypes}
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, StatusTypes}
-
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
@@ -74,7 +73,8 @@ class EmailService @Inject() (emailConnector: EmailConnector)(using ec: Executio
                 _,
                 _,
                 _,
-                receiptInWelsh
+                receiptInWelsh,
+                _
               )
             ) =>
           sendEmail(

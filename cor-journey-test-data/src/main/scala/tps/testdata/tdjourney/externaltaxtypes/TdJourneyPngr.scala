@@ -130,7 +130,8 @@ trait TdJourneyPngr { dependencies: TdBase =>
       pcipalData = None,
       paymentSpecificData = paymentSpecificData,
       taxType = TaxTypes.PNGR,
-      email = None
+      email = None,
+      searchTag = Some(SearchTag(paymentSpecificData.chargeReference))
     )
 
     override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))

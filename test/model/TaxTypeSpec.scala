@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package tps.model
-import play.api.libs.json.JsString
-import play.api.libs.json.Json
+package model
+
+import play.api.libs.json.{JsString, Json}
 import testsupport.Givens.canEqualJsValue
 import testsupport.UnitSpec
 import tps.model.TaxTypes.*
+import tps.model.*
 
-class TaxTypeSpec extends UnitSpec:
+class TaxTypeSpec extends UnitSpec {
 
   "Native tax types" in {
     val expectedUsedInFrontendInCorrectOrder: Seq[TaxType] =
@@ -105,3 +106,4 @@ class TaxTypeSpec extends UnitSpec:
       tt shouldBe t withClue "tt <> json map is bidirectional"
     }
   }
+}

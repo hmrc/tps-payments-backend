@@ -35,6 +35,7 @@ trait TdJourneySafe { dependencies: TdBase =>
     override lazy val amountEditedString: String         = "106.06"
     override lazy val taxReference: String               = "XA1234567890123"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Safe
+    override lazy val searchTag: SearchTag               = SearchTag("XA1234567890123")
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId = dependencies.flowId,
@@ -105,7 +106,8 @@ trait TdJourneySafe { dependencies: TdBase =>
         safeReference = taxReference
       ),
       taxType = TaxTypes.Safe,
-      email = Some(dependencies.email)
+      email = Some(dependencies.email),
+      searchTag = Some(searchTag)
     )
 
     override lazy val paymentItemAfterReceivedNotification: PaymentItem =

@@ -78,7 +78,8 @@ class StartJourneyController @Inject() (
                 amendmentReference = sjr.amendmentReference
               ),
               taxType = TaxTypes.MIB,
-              email = None
+              email = None,
+              searchTag = Some(SearchTag(sjr.mibReference))
             )
           ),
           navigation = Navigation(
@@ -124,7 +125,8 @@ class StartJourneyController @Inject() (
                 chargeReference = sjr.chargeReference
               ),
               taxType = TaxTypes.PNGR,
-              email = None
+              email = None,
+              searchTag = Some(SearchTag(sjr.chargeReference))
             )
           ),
           navigation = Navigation(
@@ -158,7 +160,8 @@ class StartJourneyController @Inject() (
         pcipalData = None,
         paymentSpecificData = p.paymentSpecificData,
         taxType = p.taxType,
-        email = p.email
+        email = p.email,
+        searchTag = Some(SearchTag(p.paymentSpecificData.searchTag))
       )
     }.toList
 

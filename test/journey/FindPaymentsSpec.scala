@@ -36,7 +36,7 @@ import testsupport.Givens.canEqualJsValue
 
 import scala.concurrent.Future
 
-class FindPaymentsSpec extends ItSpec:
+class FindPaymentsSpec extends ItSpec {
 
   lazy implicit val mat: Materializer = app.injector.instanceOf[Materializer]
 
@@ -50,7 +50,7 @@ class FindPaymentsSpec extends ItSpec:
     )
 
   def insertData(journey: Journey): Unit = {
-    repo.upsert(journey).futureValue.wasAcknowledged() shouldBe true
+    journeyRepo.upsert(journey).futureValue.wasAcknowledged() shouldBe true
     ()
   }
 
@@ -69,7 +69,8 @@ class FindPaymentsSpec extends ItSpec:
   lazy val paymentData: PaymentData = PaymentData(
     BigDecimal(101.23),
     Some(pcipalRequestData),
-    TaxTypes.Sa
+    TaxTypes.Sa,
+    SearchTag(taxReference)
   )
 
   lazy val journey: Journey = newJourney(
@@ -198,7 +199,8 @@ class FindPaymentsSpec extends ItSpec:
               PaymentData(
                 BigDecimal(12.34),
                 None,
-                TaxTypes.ChildBenefitsRepayments
+                TaxTypes.ChildBenefitsRepayments,
+                SearchTag("blah")
               ),
               // this one should get ignored since the status is not validated
               PaymentData(
@@ -210,7 +212,8 @@ class FindPaymentsSpec extends ItSpec:
                     StatusTypes.failed
                   )
                 ),
-                TaxTypes.ChildBenefitsRepayments
+                TaxTypes.ChildBenefitsRepayments,
+                SearchTag(taxReference1)
               ),
               PaymentData(
                 BigDecimal(3.45),
@@ -221,7 +224,8 @@ class FindPaymentsSpec extends ItSpec:
                     StatusTypes.validated
                   )
                 ),
-                TaxTypes.MIB
+                TaxTypes.MIB,
+                SearchTag(taxReference1)
               ),
               PaymentData(
                 BigDecimal(4.5),
@@ -232,7 +236,8 @@ class FindPaymentsSpec extends ItSpec:
                     StatusTypes.validated
                   )
                 ),
-                TaxTypes.Nps
+                TaxTypes.Nps,
+                SearchTag(taxReference2)
               ),
               PaymentData(
                 BigDecimal(5.67),
@@ -243,7 +248,8 @@ class FindPaymentsSpec extends ItSpec:
                     StatusTypes.validated
                   )
                 ),
-                TaxTypes.Ntc
+                TaxTypes.Ntc,
+                SearchTag(taxReference2)
               )
             )
           )
@@ -357,7 +363,8 @@ class FindPaymentsSpec extends ItSpec:
         ),
         PptSpecificData("unused"),
         p.taxType,
-        None
+        None,
+        searchTag = Some(p.searchTag)
       )
     )
 
@@ -370,9 +377,14 @@ class FindPaymentsSpec extends ItSpec:
       Navigation("back", "reset", "finish", "callback")
     )
   }
+}
 
-object FindPaymentsSpec:
-
+object FindPaymentsSpec {
   final case class PcipalRequestData(taxReference: String, transactionReference: String, status: StatusType)
-
-  final case class PaymentData(amount: BigDecimal, pcipalRequestData: Option[PcipalRequestData], taxType: TaxType)
+  final case class PaymentData(
+    amount:            BigDecimal,
+    pcipalRequestData: Option[PcipalRequestData],
+    taxType:           TaxType,
+    searchTag:         SearchTag
+  )
+}

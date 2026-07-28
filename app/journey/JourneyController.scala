@@ -40,7 +40,7 @@ class JourneyController @Inject() (
   emailService:   EmailService,
   journeyService: JourneyService
 )(using ec: ExecutionContext)
-    extends BackendController(cc):
+    extends BackendController(cc) {
 
   val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
     actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
@@ -136,9 +136,11 @@ class JourneyController @Inject() (
     }
 
   val findPayments: Action[FindPaymentsRequest] = Action.async(parse.json[FindPaymentsRequest]) { implicit request =>
-    if request.body.numberOfDays < 0 then
+    if (request.body.numberOfDays < 0) {
       Future.successful(BadRequest("numberOfDays should be equal to or greater than zero"))
-    else if request.body.references.isEmpty then Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
-    else journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
-
+    } else if (request.body.references.isEmpty) {
+      Future.successful(Ok(Json.toJson(FindPaymentsResponse(Seq.empty))))
+    } else journeyService.findPayments(request.body).map(response => Ok(Json.toJson(response)))
   }
+
+}

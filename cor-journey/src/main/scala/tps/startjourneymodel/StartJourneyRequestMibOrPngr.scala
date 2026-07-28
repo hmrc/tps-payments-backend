@@ -28,11 +28,9 @@ final case class StartJourneyRequestMibOrPngr(
   pid:        String,
   payments:   Seq[SjPaymentItem],
   navigation: Navigation
-) derives CanEqual:
+) derives CanEqual {
 
   require(payments.size == 1)
-  @SuppressWarnings(Array("org.wartremover.warts.IterableOps"))
-  val paymentItem: SjPaymentItem = payments.head
 
   // TODO: remove this
   def makeJourney(now: Instant): Journey =
@@ -47,7 +45,8 @@ final case class StartJourneyRequestMibOrPngr(
         pcipalData = None,
         paymentSpecificData = p.paymentSpecificData,
         taxType = p.taxType,
-        email = p.email
+        email = p.email,
+        searchTag = Some(SearchTag(p.paymentSpecificData.searchTag))
       )
     }.toList
 
@@ -59,7 +58,8 @@ final case class StartJourneyRequestMibOrPngr(
       payments = tpsPayments,
       navigation = navigation
     )
+}
 
-object StartJourneyRequestMibOrPngr:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+object StartJourneyRequestMibOrPngr {
   given OFormat[StartJourneyRequestMibOrPngr] = Json.format[StartJourneyRequestMibOrPngr]
+}
