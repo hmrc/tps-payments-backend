@@ -33,7 +33,8 @@
     },
     "taxType" : "Paye",
     "email" : "test@email.com",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "123PW12345678"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

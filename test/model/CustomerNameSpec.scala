@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package tps.model
+package model
 
 import testsupport.UnitSpec
+import tps.model.CustomerName
 
-class CustomerNameSpec extends UnitSpec:
+class CustomerNameSpec extends UnitSpec {
 
   val testCases: Map[String, String] = Map(
     "  COMPANY@# Ltd.  "           -> "COMPANY Ltd",
@@ -44,3 +45,4 @@ class CustomerNameSpec extends UnitSpec:
         CustomerName(testValue).forRecon.value shouldBe expectedResult
       }
   }
+}

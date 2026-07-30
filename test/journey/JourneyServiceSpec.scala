@@ -17,17 +17,20 @@
 package journey
 
 import testsupport.ItSpec
-import testsupport.testdata.TestData._
+import testsupport.testdata.TestData.*
+import _root_.journey.payments.FindPaymentsResponse.Payment
+import _root_.journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import tps.journey.model.JourneyId
 import tps.model.PaymentItemId
 import tps.pcipalmodel.PcipalSessionId
+import tps.testdata.TdAll
 
-class JourneyServiceSpec extends ItSpec:
+class JourneyServiceSpec extends ItSpec {
 
   "findByPcipalSessionId should throw error when more than one payment found" in {
-    Option(repo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
+    Option(journeyRepo.upsert(tpsPaymentsWithPcipalData).futureValue.getUpsertedId).isDefined shouldBe true
     Option(
-      repo
+      journeyRepo
         .upsert(tpsPaymentsWithPcipalData.copy(_id = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267some-new-one")))
         .futureValue
         .getUpsertedId
@@ -47,10 +50,10 @@ class JourneyServiceSpec extends ItSpec:
   "upsert should encrypt relevant fields in journey" in {
     val journeyBeforeEncryption   = tpsPaymentsWithPcipalData
     journeyService.upsert(journeyBeforeEncryption).futureValue
-    val journeyInMongo            = repo.findById(journeyBeforeEncryption.journeyId).futureValue
+    val journeyInMongo            = journeyRepo.findById(journeyBeforeEncryption.journeyId).futureValue
     journeyInMongo should not be journeyBeforeEncryption withClue "some fields in the journey should be encrypted"
     val sensitiveStringsInJourney =
-      List("JE231111", "some test name", "test@email.com", "chargeReference", "1234567895K")
+      List("some test name", "test@email.com", "chargeReference", "1234567895K")
     sensitiveStringsInJourney.foreach { sensitiveData =>
       journeyBeforeEncryption.toString should include(
         sensitiveData
@@ -58,3 +61,38 @@ class JourneyServiceSpec extends ItSpec:
       journeyInMongo.toString should not include sensitiveData withClue "there were unencrypted values in the 'encrypted' journey..."
     }
   }
+
+  "findPayments" - {
+
+    "FindPaymentsResponse" - {
+      "return journey when one is found for given searchTag" in {
+        val testJourney      = TdAll.TdJourneySa.journeyReceivedNotification
+        val expectedResponse = FindPaymentsResponse(
+          Seq(
+            FindPaymentsResponse.Payment(
+              reference = "1234567895",
+              transactionReference = "1234567895K",
+              amountInPence = 10404,
+              createdOn = frozenInstant,
+              taxType = "Sa"
+            )
+          )
+        )
+
+        journeyService.upsert(testJourney).futureValue
+
+        val testRequest = FindPaymentsRequest(Seq("1234567895"), 1)
+        val result      = journeyService.findPayments(testRequest).futureValue
+        result shouldEqual expectedResponse
+      }
+
+      "return empty collection of journeys when none are found" in {
+        val expectedResponse = FindPaymentsResponse(Seq.empty[Payment])
+        val testRequest      = FindPaymentsRequest(Seq("1234567895"), 1)
+        val result           = journeyService.findPayments(testRequest).futureValue
+        result shouldEqual expectedResponse
+      }
+    }
+  }
+
+}

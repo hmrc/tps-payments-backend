@@ -21,11 +21,14 @@ import tps.model.{PaymentItemId, TpsNativeTaxType}
 
 sealed trait JourneyState derives CanEqual
 
-object JourneyState:
+object JourneyState {
 
-  sealed trait FinalState { self: JourneyState => }
+  sealed trait FinalState {
+    self: JourneyState =>
+  }
 
-  given startedFormat: OFormat[Started.type]                           = Json.format[Started.type]
+  given startedFormat: OFormat[Started.type] = Json.format[Started.type]
+
   given enterPaymentFormat: OFormat[EnterPayment]                      = Json.format[EnterPayment]
   given editPaymentFormat: OFormat[EditPayment]                        = Json.format[EditPayment]
   given atPciPalFormat: OFormat[AtPciPal.type]                         = Json.format[AtPciPal.type]
@@ -35,8 +38,7 @@ object JourneyState:
   given backByPciPalFormat: OFormat[BackByPciPal.type]                 = Json.format[BackByPciPal.type]
   given receivedNotificationFormat: OFormat[ReceivedNotification.type] = Json.format[ReceivedNotification.type]
 
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  given Format[JourneyState] = new Format[JourneyState]:
+  given Format[JourneyState] = new Format[JourneyState] {
 
     override def writes(o: JourneyState): JsValue = o match
       case s: Started.type              => Json.obj("Started" -> Json.toJson(s)(startedFormat))
@@ -66,6 +68,7 @@ object JourneyState:
             case Some(other)                                    => JsError(s"Unknown JourneyState type: $other")
             case None                                           => JsError("Empty JSON object, expected JourneyState wrapper")
         case _                => JsError("Invalid JSON for JourneyState: expected JSON object")
+  }
 
   // Journey Started by Tps, on the Basket page (or in MIB or in PNGR)
   case object Started extends JourneyState
@@ -92,3 +95,5 @@ object JourneyState:
   case object BackByPciPal extends JourneyState with FinalState
 
   case object ReceivedNotification extends JourneyState with FinalState
+
+}

@@ -18,7 +18,8 @@
     },
     "taxType" : "Vat",
     "email" : "test@email.com",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "968501144"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

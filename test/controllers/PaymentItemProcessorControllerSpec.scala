@@ -49,8 +49,8 @@ class PaymentItemProcessorControllerSpec extends ItSpec with Status:
     val tpsIdForDuplicate                 = JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f92")
     val paymentWithDuplicatePaymentItemId = journey.copy(_id = tpsIdForDuplicate)
 
-    repo.upsert(journey).futureValue
-    repo.upsert(paymentWithDuplicatePaymentItemId).futureValue
+    journeyRepo.upsert(journey).futureValue
+    journeyRepo.upsert(paymentWithDuplicatePaymentItemId).futureValue
 
     intercept[Exception] {
       connector.getModsPaymentItemAmendmentReference(paymentItemId).futureValue

@@ -31,7 +31,8 @@
     },
     "taxType" : "ChildBenefitsRepayments",
     "email" : "test@email.com",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "YA123456789123"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

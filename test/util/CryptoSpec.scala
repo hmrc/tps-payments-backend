@@ -84,10 +84,14 @@ class CryptoWithDifferentKeysSpec extends ItSpec:
       _.copy(email = Some(Email("VIjzb5FRcfeoMQQEhSlSrIQ0Rybzs04XPFN47lizOz1KlXGs3/lXZKnLQievgA==")))
     )
     Option(
-      repo.upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted)).futureValue.getUpsertedId
+      journeyRepo
+        .upsert(tpsPaymentsWithEmptyEmail.copy(payments = paymentsWithEmailEncrypted))
+        .futureValue
+        .getUpsertedId
     ).isDefined shouldBe true
     val crypto                     = app.injector.instanceOf[Crypto]
-    val journey: Option[Journey]   = repo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
+    val journey: Option[Journey]   =
+      journeyRepo.findById(JourneyId("session-48c978bb-64b6-4a00-a1f1-51e267d84f91")).futureValue
     val encryptedEmail: Email      =
       journey
         .map(_.payments.headOption.flatMap(_.email))

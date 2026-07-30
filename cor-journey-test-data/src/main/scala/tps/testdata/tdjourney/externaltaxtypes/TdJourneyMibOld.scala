@@ -129,7 +129,8 @@ trait TdJourneyMibOld { dependencies: TdBase =>
       pcipalData = None,
       paymentSpecificData = paymentSpecificData,
       taxType = TaxTypes.MIB,
-      email = Some(dependencies.email)
+      email = Some(dependencies.email),
+      searchTag = Some(SearchTag(paymentSpecificData.chargeReference))
     )
 
     override lazy val paymentItem: PaymentItem = paymentItemBeforePcipal.copy(pcipalData = Some(pcipalData))

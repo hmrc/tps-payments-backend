@@ -19,7 +19,8 @@
     },
     "taxType" : "Sdlt",
     "email" : "test@email.com",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "123456789MA"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

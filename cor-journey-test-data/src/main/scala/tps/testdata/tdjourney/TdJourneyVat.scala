@@ -35,6 +35,7 @@ trait TdJourneyVat { dependencies: TdBase =>
     override lazy val amountEditedString: String         = "111.11"
     override lazy val taxReference: String               = "968501144"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Vat
+    override lazy val searchTag: SearchTag               = SearchTag("968501144")
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId = dependencies.flowId,
@@ -106,7 +107,8 @@ trait TdJourneyVat { dependencies: TdBase =>
         remittanceType = "Unaccompanied" // 0 PciPal Value
       ),
       taxType = TaxTypes.Vat,
-      email = Some(dependencies.email)
+      email = Some(dependencies.email),
+      searchTag = Some(searchTag)
     )
 
     override lazy val paymentItemAfterReceivedNotification: PaymentItem =

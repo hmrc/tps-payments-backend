@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2026 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package tps.journey.model
+package tps.model
 
-import testsupport.UnitSpec
+import play.api.libs.json.{Format, Json}
 
-class PaymentItemIdGeneratorSpec extends UnitSpec:
+final case class SearchTag(value: String) extends AnyVal
 
-  "generates unique values" in {
-    val generator = new PaymentItemIdGenerator()
-    val n         = 1000
-    val ids       = (0 until n).map(_ => generator.nextId()).toSet
-    ids.size shouldBe n
-  }
+object SearchTag {
+  given format: Format[SearchTag] = Json.valueFormat[SearchTag]
+}

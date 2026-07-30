@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package tps.pcipalmodel
+package model
 
-import play.api.libs.json.{Json, OFormat}
+import testsupport.UnitSpec
+import tps.journey.model.PaymentItemIdGenerator
 
-final case class PcipalBearerTokenResponse(
-  access_token:  String,
-  token_type:    String,
-  expires_in:    Int,
-  refresh_token: String,
-  client_id:     String,
-  tenantName:    String
-)
+class PaymentItemIdGeneratorSpec extends UnitSpec {
 
-object PcipalBearerTokenResponse {
-  given OFormat[PcipalBearerTokenResponse] = Json.format[PcipalBearerTokenResponse]
+  "generates unique values" in {
+    val generator = new PaymentItemIdGenerator()
+    val n         = 1000
+    val ids       = (0 until n).map(_ => generator.nextId()).toSet
+    ids.size shouldBe n
+  }
 }

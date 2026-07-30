@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package tps.journey
+package connectors
 
 import journeysupport.TestJourneyIdGenerator
 import play.api.mvc.Request
 import testsupport.ItSpec
 import testsupport.stubs.AuthStub
+import tps.journey.JourneyConnector
 import tps.testdata.TdAll
 import uk.gov.hmrc.http.UpstreamErrorResponse
 

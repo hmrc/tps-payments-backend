@@ -16,7 +16,7 @@
 
 package tps.model
 
-import play.api.libs.json._
+import play.api.libs.json.*
 import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 
 import java.time.Instant
@@ -33,13 +33,11 @@ final case class PaymentItem(
   paymentSpecificData: PaymentSpecificData,
   taxType:             TaxType, // TODO: remove it and derive it as val from HoD (or vice versa)
   email:               Option[Email],
-  receiptInWelsh:      Boolean = false
-) derives CanEqual:
+  receiptInWelsh:      Boolean = false,
+  // for looking up payments
+  searchTag:           Option[SearchTag]
+) derives CanEqual
 
-  def getPcipalData: ChargeRefNotificationPcipalRequest =
-    pcipalData.getOrElse(throw new RuntimeException(s"Expected PciPal data to be there [${paymentItemId.toString}]"))
-
-object PaymentItem:
-
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  implicit def formats: OFormat[PaymentItem] = Json.format[PaymentItem]
+object PaymentItem {
+  given formats: OFormat[PaymentItem] = Json.format[PaymentItem]
+}

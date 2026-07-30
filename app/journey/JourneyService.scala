@@ -20,9 +20,8 @@ import journey.JourneyService.FindByPcipalSessionIdResult
 import journey.payments.{FindPaymentsRequest, FindPaymentsResponse}
 import play.api.Logger
 import tps.journey.model.{Journey, JourneyId}
-import tps.model._
+import tps.model.*
 import tps.pcipalmodel.{ChargeRefNotificationPcipalRequest, PcipalInitialValues, PcipalSessionId, StatusTypes}
-
 import util.Crypto
 
 import java.time.{Clock, LocalDate}
@@ -105,11 +104,13 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
 
     updatedJourney
 
-  def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] =
+  def findPayments(request: FindPaymentsRequest): Future[FindPaymentsResponse] = {
     val today = LocalDate.now(clock)
 
-    journeyRepo.findByPcipalDataTaxReference(request.references.map(crypto.encrypt)).map { journeys =>
-      val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] =
+    journeyRepo.findBySearchTag(request.references).map { (journeys: Seq[Journey]) =>
+
+      val referenceToData: Map[String, Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)]] = {
+
         val data: Seq[(Journey, PaymentItem, ChargeRefNotificationPcipalRequest)] = for
           journey    <- journeys.filter { j =>
                           val createdDate = LocalDate.ofInstant(j.created, clock.getZone)
@@ -124,14 +125,16 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
                           .map(c => c.copy(TaxReference = crypto.decrypt(c.TaxReference)))
         yield (journey, payment, pcipalData)
 
-        data.groupBy(_._3.TaxReference)
+        data.groupBy(d => d._2.searchTag.map(_.value).getOrElse(d._3.TaxReference))
+      }
 
-      val payments = request.references.flatMap(
+      val payments: Seq[FindPaymentsResponse.Payment] = request.references.flatMap(
         referenceToData.get(_).toList.flatMap(_.map((toFindPaymentResponsePayment _).tupled))
       )
 
       FindPaymentsResponse(payments)
     }
+  }
 
   private def toFindPaymentResponsePayment(
     journey:       Journey,
@@ -139,11 +142,11 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
     pcipalRequest: ChargeRefNotificationPcipalRequest
   ): FindPaymentsResponse.Payment =
     FindPaymentsResponse.Payment(
-      pcipalRequest.TaxReference,
-      pcipalRequest.TransactionReference,
-      (paymentItem.amount * 100).toLongExact,
-      journey.created,
-      paymentItem.taxType.entryName
+      reference = paymentItem.searchTag.map(_.value).getOrElse(pcipalRequest.TaxReference),
+      transactionReference = pcipalRequest.TransactionReference,
+      amountInPence = (paymentItem.amount * 100).toLongExact,
+      createdOn = journey.created,
+      taxType = paymentItem.taxType.entryName
     )
 
   private val encryptString: String => String = s => crypto.encrypt(s)
@@ -215,11 +218,11 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
       chargeReference = encryptOrDecrypt(pcipalInitialValue.chargeReference)
     )
 
-object JourneyService:
+object JourneyService {
 
   sealed trait FindByPcipalSessionIdResult derives CanEqual
 
-  object FindByPcipalSessionIdResult:
+  object FindByPcipalSessionIdResult {
 
     /** Journey Found by PcipalSessionId and payments contain item with give paymentItemId
       */
@@ -232,3 +235,5 @@ object JourneyService:
     /** Journey Found by PcipalSessionId but there is no PaymentItem in payments with given paymentItemId.
       */
     final case class NoMatchingPaymentItem(journey: Journey) extends FindByPcipalSessionIdResult
+  }
+}

@@ -30,7 +30,8 @@
       "chargeReference" : "XSPR5814332193"
     },
     "taxType" : "PNGR",
-    "receiptInWelsh": false
+    "receiptInWelsh": false,
+    "searchTag": "XSPR5814332193"
   } ],
   "navigation" : {
     "back" : "http://localhost:9124/tps-payments/back-from-pcipal",

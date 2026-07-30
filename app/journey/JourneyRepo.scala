@@ -32,7 +32,59 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-object JourneyRepo:
+@Singleton
+final class JourneyRepo @Inject() (
+  mongoComponent: MongoComponent,
+  config:         RepoConfig
+)(using ec: ExecutionContext)
+    extends Repo[JourneyId, Journey](
+      // TODO: at some point address the name of the collection. Rename it to journey, rename existing collection to journey
+      collectionName = "tps-payments",
+      mongoComponent = mongoComponent,
+      indexes = JourneyRepo.indexes(config.expireMongo.toSeconds),
+      extraCodecs = Seq.empty,
+      replaceIndexes = true
+    )(
+      manifest = implicitly[ClassTag[Journey]],
+      domainFormat = JourneyRepo.formatMongo,
+      executionContext = implicitly[ExecutionContext]
+    ) {
+
+  def findByPaymentItemId(id: PaymentItemId): Future[List[Journey]] =
+    find(JourneyRepo.`payments.paymentItemId` -> id)
+
+  def getPayment(journeyId: JourneyId): Future[Journey] = findById(journeyId).map {
+    case Some(tpsPayment) => tpsPayment
+    case None             => throw new RuntimeException(s"Record with id ${journeyId.value} not found")
+  }
+
+  def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
+    find(JourneyRepo.`pcipalSessionLaunchResponse.Id` -> id.value)
+
+  def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] =
+    find(JourneyRepo.`payments.chargeReference` -> Json.obj("$in" -> toJson(modsReferences)))
+      .map { listOfPayments =>
+        listOfPayments
+          .flatMap { tpsPayments =>
+            tpsPayments.payments
+              .filter(_.taxType == TaxTypes.MIB)
+              .map { tpsPaymentItem =>
+                tpsPaymentItem.paymentSpecificData
+              }
+          }
+      }
+
+  def findBySearchTag(references: Seq[String]): Future[Seq[Journey]] =
+    find(JourneyRepo.`payments.searchTag` -> Json.obj("$in" -> toJson(references)))
+
+}
+
+object JourneyRepo {
+
+  private val `payments.searchTag`: String             = "payments.searchTag"
+  private val `payments.paymentItemId`: String         = "payments.paymentItemId"
+  private val `pcipalSessionLaunchResponse.Id`: String = "pcipalSessionLaunchResponse.Id"
+  private val `payments.chargeReference`: String       = "payments.chargeReference"
 
   def indexes(cacheTtlInSeconds: Long): Seq[IndexModel] = Seq(
     IndexModel(
@@ -44,20 +96,20 @@ object JourneyRepo:
       indexOptions = IndexOptions().name("pciPalSessionId")
     ),
     IndexModel(
-      keys = Indexes.ascending("payments.paymentItemId"),
+      keys = Indexes.ascending(`payments.paymentItemId`),
       indexOptions = IndexOptions().name("paymentItemIdIdx")
     ),
     IndexModel(
-      keys = Indexes.ascending("pcipalSessionLaunchResponse.Id"),
+      keys = Indexes.ascending(`pcipalSessionLaunchResponse.Id`),
       indexOptions = IndexOptions().name("pcipalSessionLaunchResponseIdIdx")
     ),
     IndexModel(
-      keys = Indexes.ascending("payments.chargeReference"),
+      keys = Indexes.ascending(`payments.chargeReference`),
       indexOptions = IndexOptions().name("chargeReferenceIdx")
     ),
     IndexModel(
-      keys = Indexes.ascending("payments.pcipalData.TaxReference"),
-      indexOptions = IndexOptions().name("pcipalDataTaxReferenceIdx")
+      keys = Indexes.ascending(`payments.searchTag`),
+      indexOptions = IndexOptions().name("searchTagIdx")
     )
   )
 
@@ -77,9 +129,7 @@ object JourneyRepo:
   /** This format stores date time in mongo specific way. For example: {{{"\$date":{"\$numberLong":"2837003631880"}}}}
     * Don't change it. Use https://www.epochconverter.com/ to quickly decode Long to Instant.
     */
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
-  given formatMongo: OFormat[Journey] =
-
+  given formatMongo: OFormat[Journey] = {
     // before OPS-9461 "created" was stored as string and in java.time.LocalDateTime format
     // TODO: Delete this legacy reads in 2024
     val legacyCreatedReads: Reads[Instant] =
@@ -107,49 +157,5 @@ object JourneyRepo:
         )
       )
     OFormat[Journey](journeyReads, Json.writes[Journey])
-
-@Singleton
-final class JourneyRepo @Inject() (
-  mongoComponent: MongoComponent,
-  config:         RepoConfig
-)(using ec: ExecutionContext)
-    extends Repo[JourneyId, Journey](
-      collectionName =
-        "tps-payments", // TODO: at some point address the name of the collection. Rename it to journey, rename existing collection to journey
-      mongoComponent = mongoComponent,
-      indexes = JourneyRepo.indexes(config.expireMongo.toSeconds),
-      extraCodecs = Seq.empty,
-      replaceIndexes = true
-    )(
-      manifest = implicitly[ClassTag[Journey]],
-      domainFormat = JourneyRepo.formatMongo,
-      executionContext = implicitly[ExecutionContext]
-    ):
-
-  def findByPaymentItemId(id: PaymentItemId): Future[List[Journey]] =
-    find("payments.paymentItemId" -> id)
-
-  def getPayment(journeyId: JourneyId): Future[Journey] =
-    findById(journeyId)
-      .map:
-      case Some(tpsPayment) => tpsPayment
-      case None             => throw new RuntimeException(s"Record with id ${journeyId.value} not found")
-
-  def findByPcipalSessionId(id: PcipalSessionId): Future[List[Journey]] =
-    find("pcipalSessionLaunchResponse.Id" -> id.value)
-
-  def surfaceModsDataForRecon(modsReferences: List[String]): Future[List[PaymentSpecificData]] =
-    find("payments.chargeReference" -> Json.obj("$in" -> toJson(modsReferences)))
-      .map { listOfPayments =>
-        listOfPayments
-          .flatMap { tpsPayments =>
-            tpsPayments.payments
-              .filter(_.taxType == TaxTypes.MIB)
-              .map { tpsPaymentItem =>
-                tpsPaymentItem.paymentSpecificData
-              }
-          }
-      }
-
-  def findByPcipalDataTaxReference(references: Seq[String]): Future[Seq[Journey]] =
-    find("payments.pcipalData.TaxReference" -> Json.obj("$in" -> toJson(references)))
+  }
+}

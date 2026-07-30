@@ -63,6 +63,8 @@ trait TdJourneyInStates:
   // TODO: provide a strong type for that, use it in Journey, etc. Make sure you don't break existing json formats
   def taxReference: String
 
+  def searchTag: SearchTag
+
   def pcipalSessionLaunchRequest: PcipalSessionLaunchRequest
   def pcipalSessionLaunchResponse: PcipalSessionLaunchResponse
   def pcipalData: ChargeRefNotificationPcipalRequest

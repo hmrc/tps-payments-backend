@@ -28,7 +28,7 @@ import tps.startjourneymodel.{SjPaymentItem, StartJourneyRequestMibOrPngr}
 
 import java.time.Instant
 
-object TestData:
+object TestData {
   val navigation: Navigation = Navigation(back = "back", reset = "reset", finish = "finish", callback = "callback")
 
   private val createdString: String       = "2040-01-20T11:56:46Z"
@@ -182,7 +182,8 @@ object TestData:
           None,
           ChildBenefitSpecificData(reference),
           TaxTypes.ChildBenefitsRepayments,
-          Some(Email("test@email.com"))
+          Some(Email("test@email.com")),
+          searchTag = Some(SearchTag(reference))
         )
       ),
       navigation = navigation,
@@ -245,7 +246,8 @@ object TestData:
           Some(chargeRefNotificationPcipalRequest),
           ChildBenefitSpecificData(reference),
           TaxTypes.ChildBenefitsRepayments,
-          Some(Email("test@email.com"))
+          Some(Email("test@email.com")),
+          searchTag = Some(SearchTag(reference))
         )
       ),
       navigation = navigation,
@@ -271,7 +273,8 @@ object TestData:
           None,
           ChildBenefitSpecificData(reference),
           TaxTypes.ChildBenefitsRepayments,
-          Some(Email("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA=="))
+          Some(Email("BEru9SQBlqfw0JgiAEKzUXm3zcq6eZHxYFdtl6Pw696S2y+d2gONPeX3MUFcLA==")),
+          searchTag = Some(SearchTag(reference))
         )
       ),
       navigation = navigation,
@@ -297,7 +300,8 @@ object TestData:
           None,
           ChildBenefitSpecificData(reference),
           TaxTypes.ChildBenefitsRepayments,
-          None
+          None,
+          searchTag = Some(SearchTag(reference))
         )
       ),
       navigation = navigation,
@@ -323,7 +327,8 @@ object TestData:
           None,
           ChildBenefitSpecificData(reference),
           TaxTypes.ChildBenefitsRepayments,
-          Some(Email.emptyEmail)
+          Some(Email.emptyEmail),
+          searchTag = Some(SearchTag(reference))
         )
       ),
       navigation = navigation,
@@ -352,7 +357,8 @@ object TestData:
           amendmentReference = None
         ),
         taxType = MIB,
-        email = None
+        email = None,
+        searchTag = Some(SearchTag(modsRef))
       )
     ),
     navigation = navigation,
@@ -381,7 +387,8 @@ object TestData:
           amendmentReference = Some(1)
         ),
         taxType = MIB,
-        email = None
+        email = None,
+        searchTag = Some(SearchTag(modsRef))
       )
     ),
     navigation = navigation,
@@ -611,3 +618,5 @@ object TestData:
     ModsPaymentCallBackRequest("XMIB12345678", Some(1))
   val modsPaymentCallBackRequestWithoutAmendmentRef: ModsPaymentCallBackRequest =
     ModsPaymentCallBackRequest("XMIB12345678", None)
+
+}

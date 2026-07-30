@@ -35,25 +35,26 @@ final case class Journey(
   pcipalSessionLaunchRequest:  Option[PcipalSessionLaunchRequest] = None,
   pcipalSessionLaunchResponse: Option[PcipalSessionLaunchResponse] = None
 ) extends HasId[JourneyId]
-    derives CanEqual:
+    derives CanEqual {
+
   def journeyId: JourneyId                          = _id
   lazy val pciPalSessionId: Option[PcipalSessionId] = pcipalSessionLaunchResponse.map(_.Id)
-  def basketEmpty: Boolean                          = payments.size == 0
-  def basketNonEmpty: Boolean                       = !basketEmpty
 
   def basketFull: Boolean = payments.size >= 5
 
   def getPcipalSessionLaunchResponse: PcipalSessionLaunchResponse = pcipalSessionLaunchResponse.getOrElse(
     throw new RuntimeException(s"Error: Missing PcipalSessionLaunchResponse in the journey [${journeyId.toString}]")
   )
-  def getPaymentItem(paymentItemId: PaymentItemId): PaymentItem   = payments
+
+  def getPaymentItem(paymentItemId: PaymentItemId): PaymentItem = payments
     .find(_.paymentItemId == paymentItemId)
     .getOrElse(
       throw new RuntimeException(
         s"Error: Missing payment item identified by [${paymentItemId.toString}] [${journeyId.toString}]"
       )
     )
+}
 
-object Journey:
-  @SuppressWarnings(Array("org.wartremover.warts.Any"))
+object Journey {
   given OFormat[Journey] = Json.format[Journey]
+}

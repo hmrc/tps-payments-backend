@@ -36,6 +36,7 @@ trait TdJourneyPaye { dependencies: TdBase =>
     override lazy val amountEditedString: String         = "209.09" // nicAmount + taxAmount
     override lazy val taxReference: String               = "123PW123456782213"
     override final val selectedTaxType: TpsNativeTaxType = TaxTypes.Paye
+    override lazy val searchTag: SearchTag               = SearchTag("123PW12345678")
 
     override lazy val pcipalSessionLaunchRequest: PcipalSessionLaunchRequest = PcipalSessionLaunchRequest(
       FlowId = dependencies.flowId,
@@ -108,7 +109,8 @@ trait TdJourneyPaye { dependencies: TdBase =>
         nicAmount = BigDecimal("100")
       ),
       taxType = TaxTypes.Paye,
-      email = Some(dependencies.email)
+      email = Some(dependencies.email),
+      searchTag = Some(searchTag)
     )
 
     /** PaymentItem updated during EditPayment state.

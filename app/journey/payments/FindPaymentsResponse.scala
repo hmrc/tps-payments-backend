@@ -23,7 +23,7 @@ import java.time.Instant
 
 final case class FindPaymentsResponse(payments: Seq[Payment])
 
-object FindPaymentsResponse:
+object FindPaymentsResponse {
 
   final case class Payment(
     reference:            String,
@@ -33,9 +33,9 @@ object FindPaymentsResponse:
     taxType:              String
   )
 
-  object Payment:
-
-    @SuppressWarnings(Array("org.wartremover.warts.Any"))
+  object Payment {
     given OFormat[Payment] = Json.format
+  }
 
   given OFormat[FindPaymentsResponse] = Json.format
+}
