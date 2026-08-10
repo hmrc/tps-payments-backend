@@ -21,12 +21,13 @@ import config.AppConfig
 import play.api.Logger
 import play.api.libs.json.Json.toJson
 import play.api.mvc.{Action, ControllerComponents}
-import tps.journey.model._
-import tps.model._
+import tps.journey.model.*
+import tps.model.*
 import tps.startjourneymodel.{StartJourneyRequestMib, StartJourneyRequestMibOrPngr, StartJourneyRequestPngr}
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import util.AppClock
 
-import java.time.{Clock, Instant}
+import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
@@ -38,7 +39,7 @@ class StartJourneyController @Inject() (
   paymentItemIdGenerator: PaymentItemIdGenerator,
   journeyIdGenerator:     JourneyIdGenerator,
   appConfig:              AppConfig,
-  clock:                  Clock
+  clock:                  AppClock
 )(using ec: ExecutionContext)
     extends BackendController(cc):
 
@@ -61,13 +62,13 @@ class StartJourneyController @Inject() (
           _id = journeyId,
           journeyState = JourneyState.Started,
           pid = request.credentials.providerId,
-          created = Instant.now(clock),
+          created = clock.now,
           payments = List(
             PaymentItem(
               paymentItemId = paymentItemIdGenerator.nextId(),
               amount = sjr.amount,
               headOfDutyIndicator = HeadOfDutyIndicators.B,
-              updated = Instant.now(clock),
+              updated = clock.now,
               customerName = sjr.customerName,
               chargeReference = sjr.mibReference,
               pcipalData = None,
@@ -111,13 +112,13 @@ class StartJourneyController @Inject() (
           _id = journeyId,
           journeyState = JourneyState.Started,
           pid = request.credentials.providerId,
-          created = Instant.now(clock),
+          created = clock.now,
           payments = List(
             PaymentItem(
               paymentItemId = paymentItemIdGenerator.nextId(),
               amount = sjr.amount,
               headOfDutyIndicator = HeadOfDutyIndicators.B,
-              updated = Instant.now(clock),
+              updated = clock.now,
               customerName = sjr.customerName,
               chargeReference = sjr.chargeReference,
               pcipalData = None,
@@ -154,7 +155,7 @@ class StartJourneyController @Inject() (
         paymentItemId = paymentItemIdGenerator.nextId(),
         amount = p.amount,
         headOfDutyIndicator = HeadOfDutyIndicators.B,
-        updated = Instant.now(clock),
+        updated = clock.now,
         customerName = p.customerName,
         chargeReference = p.chargeReference,
         pcipalData = None,
@@ -169,7 +170,7 @@ class StartJourneyController @Inject() (
       _id = journeyIdGenerator.nextId(),
       journeyState = JourneyState.Started,
       pid = startJourneyRequestMibOrPngr.pid,
-      created = Instant.now(clock),
+      created = clock.now,
       payments = tpsPayments,
       navigation = startJourneyRequestMibOrPngr.navigation
     )
