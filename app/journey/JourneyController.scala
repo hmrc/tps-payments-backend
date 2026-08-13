@@ -27,9 +27,8 @@ import tps.model.PaymentItemId
 import tps.pcipalmodel.ChargeRefNotificationPcipalRequest
 import tps.startjourneymodel.StartJourneyRequestMibOrPngr
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import util.KibanaLogger
+import util.{AppClock, KibanaLogger}
 
-import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,13 +37,14 @@ class JourneyController @Inject() (
   actions:        Actions,
   cc:             ControllerComponents,
   emailService:   EmailService,
-  journeyService: JourneyService
+  journeyService: JourneyService,
+  clock:          AppClock
 )(using ec: ExecutionContext)
     extends BackendController(cc) {
 
   val startTpsJourneyMibOrPngr: Action[StartJourneyRequestMibOrPngr] =
     actions.strideAuthenticated.async(parse.json[StartJourneyRequestMibOrPngr]) { implicit request =>
-      val journey: Journey = request.body.makeJourney(Instant.now())
+      val journey: Journey = request.body.makeJourney(clock.now)
       journeyService.upsert(journey).map { _ =>
         Created(toJson(journey._id))
       }
