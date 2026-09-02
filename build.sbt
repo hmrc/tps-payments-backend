@@ -20,6 +20,7 @@ lazy val microservice = Project(appName, file("."))
   .dependsOn(corJourney, corJourneyTestData)
   .aggregate(corJourney, corJourneyTestData)
   .settings(PlayKeys.playDefaultPort := 9125)
+  .settings(commands ++= SbtCommands.commands)
   .settings(
     routesImport ++= Seq(
       "tps.model._",
