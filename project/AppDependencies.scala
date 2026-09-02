@@ -13,7 +13,7 @@ object AppDependencies {
       "uk.gov.hmrc.mongo" %% "hmrc-mongo-play-30"        % hmrcMongoVersion,
       "uk.gov.hmrc"       %% "bootstrap-backend-play-30" % bootstrapVersion,
       "com.beachape"      %% "enumeratum-play"           % enumeratumPlayVersion,
-      "org.apache.pekko"  %% "pekko-connectors-csv"      % "1.0.2" // higher version not yet compatible with Play Framework 3.0.8
+      "org.apache.pekko"  %% "pekko-connectors-csv"      % "1.0.2"
     )
 
     val test: Seq[ModuleID] = Seq(

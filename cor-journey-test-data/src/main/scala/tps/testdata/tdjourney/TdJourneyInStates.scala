@@ -23,8 +23,8 @@ import tps.testdata.util.JourneyJson
 
 import java.time.Instant
 
-/** Test data representing list of journeys in various states and associated data. Each journey has only one payment
-  * Only Journeys with TpsNativeTaxType types are defined here.
+/** Test data representing list of journeys in various states and associated data. Each journey has only one payment Only Journeys with TpsNativeTaxType types
+  * are defined here.
   *
   * See `allJourneys` to see what journey moments are supported
   */

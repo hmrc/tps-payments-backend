@@ -160,8 +160,7 @@ class JourneyService @Inject() (crypto: Crypto, journeyRepo: JourneyRepo, clock:
       payments = journey.payments.map(encryptOrDecryptSensitivePaymentItemFields(_)(encryptOrDecrypt)),
       pcipalSessionLaunchRequest = journey.pcipalSessionLaunchRequest.map { pcipalSessionLaunchRequest =>
         pcipalSessionLaunchRequest.copy(
-          InitialValues =
-            pcipalSessionLaunchRequest.InitialValues.map(encryptOrDecryptPcipalInitialValue(_)(encryptOrDecrypt))
+          InitialValues = pcipalSessionLaunchRequest.InitialValues.map(encryptOrDecryptPcipalInitialValue(_)(encryptOrDecrypt))
         )
       }
     )

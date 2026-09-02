@@ -10,7 +10,6 @@ object SbtUpdatesSettings {
     (Compile / compile)        := ((Compile / compile) dependsOn dependencyUpdates).value,
     dependencyUpdatesFilter -= moduleFilter("org.scala-lang"),
     dependencyUpdatesFilter -= moduleFilter("org.playframework"),
-    // newest version of pekko-connectors-csv is not yet compatible with Play Framework 3.0.6
     dependencyUpdatesFilter -= moduleFilter("org.apache.pekko", "pekko-connectors-csv")
   )
 }
