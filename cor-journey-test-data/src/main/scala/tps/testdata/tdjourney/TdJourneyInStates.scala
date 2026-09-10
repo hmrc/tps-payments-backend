@@ -49,6 +49,7 @@ trait TdJourneyInStates:
   def navigation: Navigation
 
   def selectedTaxType: TpsNativeTaxType
+  def tdNameForTest: String = selectedTaxType.entryName
 
   /** This amount entered during `EnterPayment` state. Later it's changed.
     */

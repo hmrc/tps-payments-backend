@@ -148,7 +148,7 @@ object TpsNativeTaxTypes extends Enum[TpsNativeTaxType] {
   }
 
   case object VatIossAndOss extends TaxType with TpsNativeTaxType {
-    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.X
+    override val hod: HeadOfDutyIndicator         = HeadOfDutyIndicators.D // set to D, but in fact it can be D, E or F depending on the type of payment.
     override val pcipalProductionClientId: String = "OSSM"
     override val pcipalTestClientId: String       = "OSSM"
     override val screenValue: String              = "VAT IOSS and OSS"

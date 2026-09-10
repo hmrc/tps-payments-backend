@@ -17,8 +17,8 @@
 package tps.model
 
 import play.api.libs.json.{Json, OFormat}
-
-import play.api.libs.json._
+import play.api.libs.json.*
+import tps.model.vatiossandoss.{CalendarPeriod, CalendarQuarterlyPeriod, IossAndOssPaymentType, IossAndOssPaymentTypes, IossOssChargeReference, IossRegistrationNumber, OssVrn}
 
 sealed trait PaymentSpecificData {
   def getReference: String
@@ -168,6 +168,54 @@ object VatSpecificData {
   given format: OFormat[VatSpecificData] = Json.format[VatSpecificData]
 }
 
+final case class VatIossAndOssSpecificData(
+  iossAndOssPaymentType:      IossAndOssPaymentType,
+  vatIossRegistrationNumber:  Option[IossRegistrationNumber],
+  vatIossPeriod:              Option[CalendarPeriod],
+  vatOssVrn:                  Option[OssVrn],
+  vatOssPeriod:               Option[CalendarQuarterlyPeriod],
+  vatIossOssPenaltyReference: Option[IossOssChargeReference]
+) extends PaymentSpecificData {
+
+  override def getReference: String = iossAndOssPaymentType match {
+
+    case IossAndOssPaymentTypes.Ioss =>
+      val reference: Option[String] = for {
+        iossRef <- vatIossRegistrationNumber
+        period  <- vatIossPeriod
+      } yield s"${iossRef.value}M${period.asReferenceSuffix}"
+
+      reference.getOrElse(throw new IllegalStateException("vatIossRegistrationNumber and vatIossPeriod are required for IOSS payment type"))
+
+    case IossAndOssPaymentTypes.Oss =>
+      val reference: Option[String] = for {
+        vrn    <- vatOssVrn
+        period <- vatOssPeriod
+      } yield s"NI${vrn.value}Q${period.periodCode}"
+
+      reference.getOrElse(throw new IllegalStateException("vatOssVrn and vatOssPeriod are required for OSS payment type"))
+
+    case IossAndOssPaymentTypes.ChargeReference =>
+      vatIossOssPenaltyReference.getOrElse(throw new IllegalStateException("vatIossOssPenaltyReference is required for ChargeReference payment type")).value
+  }
+
+  override def getRawReference: String = getReference
+
+  override def searchTag: String = iossAndOssPaymentType match {
+    case IossAndOssPaymentTypes.Ioss            =>
+      vatIossRegistrationNumber.getOrElse(throw new IllegalStateException("vatIossRegistrationNumber is required for IOSS payment type")).value
+    case IossAndOssPaymentTypes.Oss             =>
+      vatOssVrn.getOrElse(throw new IllegalStateException("vatOssVrn is required for OSS payment type")).value
+    case IossAndOssPaymentTypes.ChargeReference =>
+      vatIossOssPenaltyReference.getOrElse(throw new IllegalStateException("vatIossOssPenaltyReference is required for ChargeReference payment type")).value
+  }
+
+}
+
+object VatIossAndOssSpecificData {
+  given format: OFormat[VatIossAndOssSpecificData] = Json.format[VatIossAndOssSpecificData]
+}
+
 final case class PptSpecificData(
   pptReference: String
 ) extends PaymentSpecificData {
@@ -183,19 +231,20 @@ object PptSpecificData {
 object PaymentSpecificData {
 
   given writes: Writes[PaymentSpecificData] = Writes[PaymentSpecificData] {
-    case pngr: PngrSpecificData                             => PngrSpecificData.format.writes(pngr)
-    case mib: MibSpecificData                               => MibSpecificData.format.writes(mib)
-    case childBenefitSpecificData: ChildBenefitSpecificData =>
+    case pngr: PngrSpecificData                               => PngrSpecificData.format.writes(pngr)
+    case mib: MibSpecificData                                 => MibSpecificData.format.writes(mib)
+    case childBenefitSpecificData: ChildBenefitSpecificData   =>
       ChildBenefitSpecificData.format.writes(childBenefitSpecificData)
-    case sa: SaSpecificData                                 => SaSpecificData.format.writes(sa)
-    case sdltSpecificData: SdltSpecificData                 => SdltSpecificData.format.writes(sdltSpecificData)
-    case safeSpecificData: SafeSpecificData                 => SafeSpecificData.format.writes(safeSpecificData)
-    case cotaxSpecificData: CotaxSpecificData               => CotaxSpecificData.format.writes(cotaxSpecificData)
-    case ntcSpecificData: NtcSpecificData                   => NtcSpecificData.format.writes(ntcSpecificData)
-    case payeSpecificData: PayeSpecificData                 => PayeSpecificData.format.writes(payeSpecificData)
-    case npsSpecificData: NpsSpecificData                   => NpsSpecificData.format.writes(npsSpecificData)
-    case vatSpecificData: VatSpecificData                   => VatSpecificData.format.writes(vatSpecificData)
-    case pptSpecificData: PptSpecificData                   => PptSpecificData.format.writes(pptSpecificData)
+    case sa: SaSpecificData                                   => SaSpecificData.format.writes(sa)
+    case sdltSpecificData: SdltSpecificData                   => SdltSpecificData.format.writes(sdltSpecificData)
+    case safeSpecificData: SafeSpecificData                   => SafeSpecificData.format.writes(safeSpecificData)
+    case cotaxSpecificData: CotaxSpecificData                 => CotaxSpecificData.format.writes(cotaxSpecificData)
+    case ntcSpecificData: NtcSpecificData                     => NtcSpecificData.format.writes(ntcSpecificData)
+    case payeSpecificData: PayeSpecificData                   => PayeSpecificData.format.writes(payeSpecificData)
+    case npsSpecificData: NpsSpecificData                     => NpsSpecificData.format.writes(npsSpecificData)
+    case vatSpecificData: VatSpecificData                     => VatSpecificData.format.writes(vatSpecificData)
+    case vatIossAndOssSpecificData: VatIossAndOssSpecificData => VatIossAndOssSpecificData.format.writes(vatIossAndOssSpecificData)
+    case pptSpecificData: PptSpecificData                     => PptSpecificData.format.writes(pptSpecificData)
   }
 
   given reads: Reads[PaymentSpecificData] = Reads[PaymentSpecificData] {
@@ -223,6 +272,10 @@ object PaymentSpecificData {
       JsSuccess(json.as[NpsSpecificData])
     case json: JsObject if json.keys == jsonKeysVat                                                                                          =>
       JsSuccess(json.as[VatSpecificData])
+    case json: JsObject
+        if (json.keys == jsonKeysVatIossAndOss_IOSS) || (json.keys == jsonKeysVatIossAndOss_OSS) || (json.keys ==
+          jsonKeysVatIossAndOss_PENALTY) =>
+      JsSuccess(json.as[VatIossAndOssSpecificData])
     case json: JsObject if json.keys == jsonKeysPpt                                                                                          =>
       JsSuccess(json.as[PptSpecificData])
     case _                                                                                                                                   =>
@@ -244,6 +297,9 @@ object PaymentSpecificData {
   val jsonKeysPayeVariant3: Set[String]            = Set("payeReference", "taxAmount", "nicAmount")
   val jsonKeysNps: Set[String]                     = Set("npsReference", "periodStartDate", "periodEndDate", "npsType", "rate")
   val jsonKeysVat: Set[String]                     = Set("vatReference", "remittanceType")
+  val jsonKeysVatIossAndOss_IOSS: Set[String]      = Set("iossAndOssPaymentType", "vatIossRegistrationNumber", "vatIossPeriod")
+  val jsonKeysVatIossAndOss_OSS: Set[String]       = Set("iossAndOssPaymentType", "vatOssVrn", "vatOssPeriod")
+  val jsonKeysVatIossAndOss_PENALTY: Set[String]   = Set("iossAndOssPaymentType", "vatIossOssPenaltyReference")
   val jsonKeysPpt: Set[String]                     = Set("pptReference")
 
 }

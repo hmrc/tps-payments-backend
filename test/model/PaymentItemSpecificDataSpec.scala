@@ -18,7 +18,9 @@ package model
 
 import play.api.libs.json.{JsResultException, JsString}
 import testsupport.UnitSpec
-import tps.model._
+import tps.model.*
+import tps.model.vatiossandoss.CalendarQuarter.AprilToJune
+import tps.model.vatiossandoss.{CalendarPeriod, CalendarQuarterlyPeriod, IossAndOssPaymentTypes, IossOssChargeReference, IossRegistrationNumber, OssVrn}
 
 class PaymentItemSpecificDataSpec extends UnitSpec {
 
@@ -222,6 +224,81 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
 
       "searchTag should return the vatReference" in {
         testVatSpecificData.searchTag shouldBe "someReference"
+      }
+    }
+
+    "VatIossAndOssSpecificData" - {
+
+      "when paymentType is Ioss" - {
+
+        val testVatIossAndOssSpecificData = VatIossAndOssSpecificData(
+          iossAndOssPaymentType = IossAndOssPaymentTypes.Ioss,
+          vatIossRegistrationNumber = Some(IossRegistrationNumber("IM1234567891")),
+          vatIossPeriod = Some(CalendarPeriod(1, 2027)),
+          vatOssVrn = None,
+          vatOssPeriod = None,
+          vatIossOssPenaltyReference = None
+        )
+
+        "getReference should return the vatIossRegistrationNumber and vatIossPeriod formatted as IMNNNNNNNNNNMDDDD" in {
+          testVatIossAndOssSpecificData.getReference shouldBe "IM1234567891M0127"
+        }
+
+        "getRawReference should return the vatIossRegistrationNumber and vatIossPeriod formatted as IMNNNNNNNNNNMDDDD" in {
+          testVatIossAndOssSpecificData.getRawReference shouldBe "IM1234567891M0127"
+        }
+
+        "searchTag should return the vatIossRegistrationNumber" in {
+          testVatIossAndOssSpecificData.searchTag shouldBe "IM1234567891"
+        }
+      }
+
+      "when paymentType is Oss" - {
+
+        val testVatIossAndOssSpecificData = VatIossAndOssSpecificData(
+          iossAndOssPaymentType = IossAndOssPaymentTypes.Oss,
+          vatIossRegistrationNumber = None,
+          vatIossPeriod = None,
+          vatOssVrn = Some(OssVrn("968501144")),
+          vatOssPeriod = Some(CalendarQuarterlyPeriod(AprilToJune, 2026)),
+          vatIossOssPenaltyReference = None
+        )
+
+        "getReference should return the vatOssVrn and vatOssPeriod formatted as NI + VRN + Q + (Quarter) + YY" in {
+          testVatIossAndOssSpecificData.getReference shouldBe "NI968501144Q226"
+        }
+
+        "getRawReference should return the vatOssVrn and vatOssPeriod formatted as NI + VRN + Q + (Quarter) + YY" in {
+          testVatIossAndOssSpecificData.getRawReference shouldBe "NI968501144Q226"
+        }
+
+        "searchTag should return the vatOssVrn" in {
+          testVatIossAndOssSpecificData.searchTag shouldBe "968501144"
+        }
+      }
+
+      "when paymentType is ChargeReference" - {
+
+        val testVatIossAndOssSpecificData = VatIossAndOssSpecificData(
+          iossAndOssPaymentType = IossAndOssPaymentTypes.ChargeReference,
+          vatIossRegistrationNumber = None,
+          vatIossPeriod = None,
+          vatOssVrn = None,
+          vatOssPeriod = None,
+          vatIossOssPenaltyReference = Some(IossOssChargeReference("XE123456789012"))
+        )
+
+        "getReference should return the vatIossOssPenaltyReference" in {
+          testVatIossAndOssSpecificData.getReference shouldBe "XE123456789012"
+        }
+
+        "getRawReference should return the vatIossOssPenaltyReference" in {
+          testVatIossAndOssSpecificData.getRawReference shouldBe "XE123456789012"
+        }
+
+        "searchTagshould return the vatIossOssPenaltyReference" in {
+          testVatIossAndOssSpecificData.searchTag shouldBe "XE123456789012"
+        }
       }
     }
 
