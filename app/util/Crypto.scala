@@ -24,11 +24,11 @@ import uk.gov.hmrc.crypto._
 class Crypto @Inject() (config: Config):
 
   private val oldEncrypterDecrypter: Encrypter with Decrypter =
-    SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config)
+    SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", config)
 
   private val encrypterDecrypter: Encrypter with Decrypter =
     SymmetricCryptoFactory.composeCrypto(
-      SymmetricCryptoFactory.aesGcmCryptoFromConfig("crypto", config),
+      SymmetricCryptoFactory.aesCryptoFromConfig("crypto", config),
       Seq(oldEncrypterDecrypter)
     )
 
