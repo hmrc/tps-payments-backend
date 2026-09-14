@@ -241,18 +241,18 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
         )
 
         "getReference" - {
-          
+
           "should return the vatIossRegistrationNumber and vatIossPeriod formatted as IMNNNNNNNNNNMDDDD" in {
             testVatIossAndOssSpecificData.getReference shouldBe "IM1234567891M0127"
           }
-          
+
           "when vatIossRegistrationNumber is none" in {
             val error: IllegalStateException = intercept[IllegalStateException](
               testVatIossAndOssSpecificData.copy(vatIossRegistrationNumber = None).getReference
             )
             error.getMessage shouldBe "vatIossRegistrationNumber and vatIossPeriod are required for IOSS payment type"
           }
-          
+
           "when period is none" in {
             val error: IllegalStateException = intercept[IllegalStateException](
               testVatIossAndOssSpecificData.copy(vatIossPeriod = None).getReference
@@ -292,20 +292,20 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
         )
 
         "getReference" - {
-          
+
           "should return the vatOssVrn and vatOssPeriod formatted as NI + VRN + Q + (Quarter) + YY" in {
             testVatIossAndOssSpecificData.getReference shouldBe "NI968501144Q226"
           }
-          
+
           "throw an error" - {
-            
+
             "when vrn is none" in {
               val error: IllegalStateException = intercept[IllegalStateException](
                 testVatIossAndOssSpecificData.copy(vatOssVrn = None).getReference
               )
               error.getMessage shouldBe "vatOssVrn and vatOssPeriod are required for OSS payment type"
             }
-            
+
             "when period is none" in {
               val error: IllegalStateException = intercept[IllegalStateException](
                 testVatIossAndOssSpecificData.copy(vatOssPeriod = None).getReference
@@ -367,11 +367,11 @@ class PaymentItemSpecificDataSpec extends UnitSpec {
         }
 
         "searchTag" - {
-          
+
           "should return the vatIossOssPenaltyReference" in {
             testVatIossAndOssSpecificData.searchTag shouldBe "XE123456789012"
           }
-          
+
           "should throw an error when vatIossOssPenaltyReference is none" in {
             val error = intercept[IllegalStateException](testVatIossAndOssSpecificData.copy(vatIossOssPenaltyReference = None).searchTag)
             error.getMessage shouldBe "vatIossOssPenaltyReference is required for ChargeReference payment type"
