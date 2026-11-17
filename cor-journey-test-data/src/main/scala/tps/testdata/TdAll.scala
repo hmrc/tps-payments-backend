@@ -64,8 +64,6 @@ trait TdAll
     TdJourneySafe,
     TdJourneySdlt,
     TdJourneyVat,
-    TdJourneyVatIoss,
-    TdJourneyVatOss,
     TdJourneyIossOssPenalty
   )
 
